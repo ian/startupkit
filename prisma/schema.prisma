@@ -11,8 +11,8 @@ generator client {
 
 // Enum definitions
 enum PricingType {
-  one_time
-  recurring
+  ONE_TIME
+  RECURRING
 }
 
 enum PricingPlanInterval {
@@ -36,7 +36,10 @@ enum SubscriptionStatus {
 // Table definitions
 model User {
   id             String         @id @default(uuid())
-  fullName       String?
+  workOSId       String         @unique
+  firstName      String?
+  lastName       String?
+  email          String
   avatarUrl      String?
   billingAddress Json?
   paymentMethod  Json?
@@ -65,7 +68,7 @@ model Price {
   productId       String
   active          Boolean
   description     String?
-  unitAmount      BigInt
+  unitAmount      Int
   currency        String
   type            PricingType
   interval        PricingPlanInterval

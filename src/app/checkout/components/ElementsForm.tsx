@@ -13,9 +13,9 @@ import {
 import CustomDonationInput from "./CustomDonationInput";
 import StripeTestCards from "./StripeTestCards";
 
-import { formatAmountForDisplay } from "@/stripe/helpers";
+import { formatAmountForDisplay } from "@/stripe/format";
 import * as config from "@/stripe/config";
-import { getStripe } from "@/stripe/helpers";
+import { getStripe } from "@/stripe/get-stripe";
 import { createPaymentIntent } from "@/stripe/actions";
 
 function CheckoutForm(): JSX.Element {

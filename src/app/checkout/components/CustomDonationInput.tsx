@@ -1,4 +1,4 @@
-import { formatAmountForDisplay } from "@/stripe/helpers";
+import { formatAmountForDisplay } from "@/stripe/format";
 
 export default function CustomDonationInput({
   name,

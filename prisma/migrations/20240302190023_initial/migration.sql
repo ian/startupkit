@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "PricingType" AS ENUM ('one_time', 'recurring');
+CREATE TYPE "PricingType" AS ENUM ('ONE_TIME', 'RECURRING');
 
 -- CreateEnum
 CREATE TYPE "PricingPlanInterval" AS ENUM ('day', 'week', 'month', 'year');
@@ -44,7 +44,7 @@ CREATE TABLE "Price" (
     "productId" TEXT NOT NULL,
     "active" BOOLEAN NOT NULL,
     "description" TEXT,
-    "unitAmount" BIGINT NOT NULL,
+    "unitAmount" INTEGER NOT NULL,
     "currency" TEXT NOT NULL,
     "type" "PricingType" NOT NULL,
     "interval" "PricingPlanInterval" NOT NULL,

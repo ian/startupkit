@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { clearSession, getAuthorizationUrl, getSession } from "./auth";
+import { clearSession, getAuthorizationUrl, getSession } from "./auth/server";
 
 export async function middleware() {
   const hasVerifiedToken = await getSession();

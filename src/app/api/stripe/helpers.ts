@@ -2,7 +2,7 @@ import { TRIAL_PERIOD_DAYS } from "@/stripe/config";
 import { stripe } from "@/stripe/server";
 import Stripe from "stripe";
 
-import { PrismaClient } from "@prisma/client";
+import { PricingType, PrismaClient } from "@prisma/client";
 
 export const prisma = new PrismaClient();
 
@@ -41,8 +41,8 @@ const upsertPriceRecord = async (
     productId: typeof price.product === "string" ? price.product : "",
     active: price.active,
     currency: price.currency,
-    type: price.type,
-    unitAmount: BigInt(price.unit_amount ?? 0),
+    type: price.type.toUpperCase() as PricingType,
+    unitAmount: price.unit_amount ?? 0,
     interval: price.recurring?.interval ?? "month",
     intervalCount: price.recurring?.interval_count ?? 0,
     trialPeriodDays: price.recurring?.trial_period_days ?? TRIAL_PERIOD_DAYS,
@@ -95,11 +95,11 @@ const deletePriceRecord = async (price: Stripe.Price) => {
     });
 };
 
-const upsertCustomer = async (uuid: string, customerId: string) => {
+const upsertCustomer = async (id: string, customerId: string) => {
   return await prisma.customer
     .upsert({
-      where: { id: uuid },
-      create: { id: uuid, stripeCustomerId: customerId },
+      where: { id },
+      create: { id, stripeCustomerId: customerId },
       update: { stripeCustomerId: customerId },
     })
     .catch((upsertError) => {
@@ -114,6 +114,25 @@ const createCustomerInStripe = async (uuid: string, email: string) => {
   const newCustomer = await stripe.customers.create(customerData);
   if (!newCustomer) throw new Error("Stripe customer creation failed.");
   return newCustomer.id;
+};
+
+export const calculateTrialEndUnixTimestamp = (
+  trialPeriodDays: number | null | undefined,
+) => {
+  // Check if trialPeriodDays is null, undefined, or less than 2 days
+  if (
+    trialPeriodDays === null ||
+    trialPeriodDays === undefined ||
+    trialPeriodDays < 2
+  ) {
+    return undefined;
+  }
+
+  const currentDate = new Date(); // Current date and time
+  const trialEnd = new Date(
+    currentDate.getTime() + (trialPeriodDays + 1) * 24 * 60 * 60 * 1000,
+  ); // Add trial days
+  return Math.floor(trialEnd.getTime() / 1000); // Convert to Unix timestamp in seconds
 };
 
 const createOrRetrieveCustomer = async ({
@@ -146,10 +165,10 @@ const createOrRetrieveCustomer = async ({
   const stripeIdToInsert = stripeCustomerId
     ? stripeCustomerId
     : await createCustomerInStripe(uuid, email);
+
   if (!stripeIdToInsert) throw new Error("Stripe customer creation failed.");
 
   if (existingCustomer && stripeCustomerId) {
-    // If Supabase has a record but doesn't match Stripe, update Supabase record
     if (existingCustomer.stripeCustomerId !== stripeCustomerId) {
       await prisma.customer
         .update({
@@ -179,7 +198,7 @@ const createOrRetrieveCustomer = async ({
     if (!upsertedStripeCustomer)
       throw new Error("Supabase customer record creation failed.");
 
-    return upsertedStripeCustomer;
+    return stripeIdToInsert;
   }
 };
 

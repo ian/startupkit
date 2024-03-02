@@ -1,8 +1,9 @@
-import { clearSession, getAuthorizationUrl, getUser } from "../auth";
+import { getAuthorizationUrl } from "@/auth/client";
+import { clearSession, getUser } from "../auth/server";
 
 export async function SignInButton({ large }: { large?: boolean }) {
   const { isAuthenticated } = await getUser();
-  const authorizationUrl = await getAuthorizationUrl();
+  const authorizationUrl = getAuthorizationUrl();
 
   if (isAuthenticated) {
     return (

@@ -7,10 +7,10 @@ import React, { useState } from "react";
 import CustomDonationInput from "@/app/checkout/components/CustomDonationInput";
 import StripeTestCards from "@/app/checkout/components/StripeTestCards";
 
-import { formatAmountForDisplay } from "@/stripe/helpers";
+import { formatAmountForDisplay } from "@/stripe/format";
 import * as config from "@/stripe/config";
 import { createCheckoutSession } from "@/stripe/actions";
-import { getStripe } from "@/stripe/helpers";
+import { getStripe } from "@/stripe/get-stripe";
 
 import {
   EmbeddedCheckout,

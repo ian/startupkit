@@ -1,6 +1,4 @@
-import { cookies } from "next/headers";
 import WorkOS, { User } from "@workos-inc/node";
-import { IronSession, getIronSession } from "iron-session";
 
 export interface SessionData {
   user: User;
@@ -20,7 +18,7 @@ export function getClientId() {
   return clientId;
 }
 
-export async function getAuthorizationUrl() {
+export function getAuthorizationUrl() {
   const redirectUri = process.env.WORKOS_REDIRECT_URI;
 
   if (!redirectUri) {
@@ -35,33 +33,4 @@ export async function getAuthorizationUrl() {
   });
 
   return authorizationUrl;
-}
-
-export async function getSession(): Promise<IronSession<SessionData>> {
-  return getIronSession<SessionData>(cookies(), {
-    password: process.env.AUTH_SECRET!,
-    cookieName: "_a",
-  });
-}
-
-export async function getUser(): Promise<{
-  isAuthenticated: boolean;
-  user?: User | null;
-}> {
-  const session = await getSession();
-
-  if (session.user) {
-    return {
-      isAuthenticated: true,
-      user: session.user,
-    };
-  }
-
-  return { isAuthenticated: false };
-}
-
-export async function clearSession() {
-  const session = await getSession();
-  session?.destroy();
-  // redirect("/");
 }

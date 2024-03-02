@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { workos, getClientId, getSession } from "../../auth";
+import { getSession } from "../../auth/server";
+import { getClientId, workos } from "@/auth/client";
+import { prisma } from "prisma/client";
 
 export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get("code");
@@ -7,9 +9,26 @@ export async function GET(request: NextRequest) {
   if (code) {
     try {
       // Use the code returned to us by AuthKit and authenticate the user with WorkOS
-      const { user } = await workos.userManagement.authenticateWithCode({
-        clientId: getClientId(),
-        code,
+      const { user: wosUser } =
+        await workos.userManagement.authenticateWithCode({
+          clientId: getClientId(),
+          code,
+        });
+
+      const props = {
+        workOSId: wosUser.id,
+        avatarUrl: wosUser.profilePictureUrl,
+        email: wosUser.email,
+        firstName: wosUser.firstName,
+        lastName: wosUser.lastName,
+      };
+
+      const user = await prisma.user.upsert({
+        where: {
+          workOSId: wosUser.id,
+        },
+        create: props,
+        update: {},
       });
 
       const session = await getSession();

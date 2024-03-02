@@ -1,38 +1,47 @@
-import type { Metadata } from "next";
+import { getSession } from "@/auth/server";
+import Pricing from "./components/Pricing";
+import { prisma } from "prisma/client";
 
-import Link from "next/link";
+export default async function PricingPage() {
+  const { user } = await getSession();
 
-export const metadata: Metadata = {
-  title: "Home | Next.js + TypeScript Example",
-};
+  const products = await prisma.product.findMany({
+    where: {
+      active: true,
+    },
+    include: {
+      prices: {
+        where: {
+          active: true,
+        },
+      },
+    },
+  });
 
-export default function IndexPage(): JSX.Element {
+  let subscription;
+  if (user) {
+    subscription = await prisma.subscription.findFirst({
+      where: {
+        userId: user.id,
+        status: {
+          in: ["trialing", "active"],
+        },
+      },
+      select: {
+        price: {
+          select: {
+            product: true,
+          },
+        },
+      },
+    });
+  }
+
   return (
-    <ul className="card-list">
-      <li>
-        <Link
-          href="/checkout/donate-with-embedded-checkout"
-          className="card checkout-style-background"
-        >
-          <h2 className="bottom">Donate with embedded Checkout</h2>
-        </Link>
-      </li>
-      <li>
-        <Link
-          href="/checkout/donate-with-checkout"
-          className="card checkout-style-background"
-        >
-          <h2 className="bottom">Donate with hosted Checkout</h2>
-        </Link>
-      </li>
-      <li>
-        <Link
-          href="/checkout/donate-with-elements"
-          className="card elements-style-background"
-        >
-          <h2 className="bottom">Donate with Elements</h2>
-        </Link>
-      </li>
-    </ul>
+    <Pricing
+      products={products ?? []}
+      subscription={subscription}
+      user={user}
+    />
   );
 }

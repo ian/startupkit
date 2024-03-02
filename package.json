@@ -11,7 +11,7 @@
     "prettier": "prettier .",
     "prettier:fix": "prettier --write .",
     "stripe:login": "stripe login",
-    "stripe:listen": "stripe listen --forward-to=localhost:3000/api/webhooks/stripe",
+    "stripe:listen": "stripe listen --forward-to=localhost:3000/api/stripe/webhook",
     "stripe:fixtures": "stripe fixtures src/stripe/fixtures.json"
   },
   "dependencies": {
@@ -19,6 +19,7 @@
     "@stripe/react-stripe-js": "^2.5.1",
     "@stripe/stripe-js": "^3.0.6",
     "@workos-inc/node": "^5.0.0",
+    "classnames": "^2.5.1",
     "iron-session": "^8.0.1",
     "next": "14.0.1",
     "react": "^18",
