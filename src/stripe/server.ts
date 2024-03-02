@@ -115,16 +115,9 @@ export async function checkoutWithStripe(
 
 export async function createStripePortal(currentPath: string) {
   try {
-    const supabase = createClient();
-    const {
-      error,
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { user } = await getSession();
 
     if (!user) {
-      if (error) {
-        console.error(error);
-      }
       throw new Error("Could not get user session.");
     }
 

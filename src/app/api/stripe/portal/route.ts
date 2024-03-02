@@ -1,18 +1,14 @@
-import { checkoutWithStripe } from "@/stripe/server";
+import { createStripePortal } from "@/stripe/server";
 
 export async function POST(req: Request) {
   const body = await req.json();
-  const { price, redirectTo } = body;
+  const { redirectTo } = body;
 
-  const { errorRedirect, sessionId } = await checkoutWithStripe(
-    price,
-    redirectTo || "/",
-  );
+  const redirectUrl = await createStripePortal(redirectTo || "/");
 
   return Response.json(
     {
-      errorRedirect,
-      sessionId,
+      redirectUrl,
     },
     {
       status: 200,
