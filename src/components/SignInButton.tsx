@@ -1,7 +1,7 @@
 import { getAuthorizationUrl } from "@/auth/client";
 import { clearSession, getUser } from "../auth/server";
 
-export async function SignInButton({ redirectTo }: { redirectTo: string }) {
+export async function SignInButton() {
   const { isAuthenticated } = await getUser();
   const authorizationUrl = getAuthorizationUrl();
 
