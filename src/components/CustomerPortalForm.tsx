@@ -47,21 +47,18 @@ export function CustomerPortalForm({ subscription }: Props) {
     return router.push(redirectUrl);
   };
 
-  const footer = useMemo(() => {
-    if (!subscription) return null;
-    return (
-      <div className="flex flex-col items-start justify-between sm:flex-row sm:items-center">
-        <p className="pb-4 sm:pb-0">Manage your subscription on Stripe.</p>
-        <Button
-          variant="slim"
-          onClick={handleStripePortalRequest}
-          loading={isSubmitting}
-        >
-          Open customer portal
-        </Button>
-      </div>
-    );
-  }, [subscription]);
+  const footer = subscription ? (
+    <div className="flex flex-col items-start justify-between sm:flex-row sm:items-center">
+      <p className="pb-4 sm:pb-0">Manage your subscription on Stripe.</p>
+      <Button
+        variant="slim"
+        onClick={handleStripePortalRequest}
+        loading={isSubmitting}
+      >
+        Open customer portal
+      </Button>
+    </div>
+  ) : null;
 
   return (
     <Card
