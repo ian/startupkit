@@ -18,7 +18,7 @@ export function getClientId() {
   return clientId;
 }
 
-export function getAuthorizationUrl(url: string) {
+export function getAuthorizationUrl() {
   const redirectUri = process.env.WORKOS_REDIRECT_URI;
 
   if (!redirectUri) {
@@ -28,7 +28,6 @@ export function getAuthorizationUrl(url: string) {
   const authorizationUrl = workos.userManagement.getAuthorizationUrl({
     provider: "authkit",
     clientId: getClientId(),
-    // The endpoint that WorkOS will redirect to after a user authenticates
     redirectUri,
   });
 

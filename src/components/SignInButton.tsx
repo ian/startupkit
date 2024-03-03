@@ -1,7 +1,7 @@
 import { getAuthorizationUrl } from "@/auth/client";
 import { clearSession, getUser } from "../auth/server";
 
-export async function SignInButton({ large }: { large?: boolean }) {
+export async function SignInButton({ redirectTo }: { redirectTo: string }) {
   const { isAuthenticated } = await getUser();
   const authorizationUrl = getAuthorizationUrl();
 
@@ -20,5 +20,5 @@ export async function SignInButton({ large }: { large?: boolean }) {
     );
   }
 
-  return <a href={authorizationUrl}>Sign In {large && "with AuthKit"}</a>;
+  return <a href={authorizationUrl}>Sign In</a>;
 }

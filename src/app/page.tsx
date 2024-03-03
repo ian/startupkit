@@ -9,18 +9,20 @@ export default async function HomePage() {
     <div className="flex flex-col items-center justify-center">
       {isAuthenticated ? (
         <>
-          <h2>Welcome back{user?.firstName && `, ${user?.firstName}`}</h2>
+          <h2 className="text-2xl font-bold">
+            Welcome back{user?.firstName && `, ${user?.firstName}`}
+          </h2>
           <p>You are now authenticated into the application</p>
           <div className="flex space-x-2">
             <NextLink href="/account">View account</NextLink>
-            <SignInButton large />
+            <SignInButton />
           </div>
         </>
       ) : (
         <>
-          <h2>AuthKit authentication example</h2>
+          <h2 className="text-2xl font-bold">Welcome to Startupkit</h2>
           <p>Sign in to view your account details</p>
-          <SignInButton large />
+          <SignInButton />
         </>
       )}
     </div>

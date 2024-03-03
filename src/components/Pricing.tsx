@@ -31,7 +31,7 @@ type BillingInterval = "lifetime" | "year" | "month";
 export default function Pricing({ user, products, subscription }: Props) {
   const router = useRouter();
   const currentPath = usePathname();
-  const authorizationUrl = getAuthorizationUrl(currentPath);
+  const authorizationUrl = getAuthorizationUrl();
 
   const [billingInterval, setBillingInterval] =
     useState<BillingInterval>("month");
