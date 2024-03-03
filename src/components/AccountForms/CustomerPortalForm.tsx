@@ -1,10 +1,10 @@
 "use client";
 
-import Button from "@/components/ui/Button";
+import Button from "@/ui/Button";
 import { useRouter, usePathname } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
-import Card from "@/components/ui/Card";
+import Card from "@/ui/Card";
 import { Price, Product, Subscription } from "@prisma/client";
 
 type SubscriptionWithPriceAndProduct = Subscription & {

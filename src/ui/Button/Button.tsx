@@ -3,7 +3,7 @@
 import cn from "classnames";
 import React, { forwardRef, useRef, ButtonHTMLAttributes } from "react";
 
-import LoadingDots from "@/components/ui/LoadingDots";
+import LoadingDots from "@/ui/LoadingDots";
 
 import styles from "./Button.module.css";
 

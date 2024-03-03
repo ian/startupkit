@@ -1,6 +1,6 @@
 "use client";
 
-import Button from "@/components/ui/Button";
+import Button from "@/ui/Button";
 import { getStripe } from "@/stripe/get-stripe";
 
 import { useRouter, usePathname } from "next/navigation";
