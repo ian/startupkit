@@ -18,7 +18,7 @@ export function getClientId() {
   return clientId;
 }
 
-export function getAuthorizationUrl() {
+export function getAuthorizationUrl(url: string) {
   const redirectUri = process.env.WORKOS_REDIRECT_URI;
 
   if (!redirectUri) {

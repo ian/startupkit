@@ -1,12 +1,15 @@
 import { getSession } from "@/auth/server";
-import { CustomerPortalForm } from "@/components/AccountForms/CustomerPortalForm";
-// import EmailForm from "@/components/ui/AccountForms/EmailForm";
-// import NameForm from "@/components/ui/AccountForms/NameForm";
+import { CustomerPortalForm } from "@/components/CustomerPortalForm";
 import { redirect } from "next/navigation";
 import { prisma } from "prisma/client";
 
 export default async function Account() {
   const { user } = await getSession();
+
+  if (!user) {
+    return redirect("/");
+  }
+
   const subscription = await prisma.subscription.findFirst({
     where: {
       userId: user.id,
@@ -19,10 +22,6 @@ export default async function Account() {
       },
     },
   });
-
-  if (!user) {
-    return redirect("/signin");
-  }
 
   return (
     <section className="mb-32">
@@ -38,8 +37,6 @@ export default async function Account() {
       </div>
       <div className="p-4">
         <CustomerPortalForm subscription={subscription} />
-        {/* <NameForm userName={userDetails?.full_name ?? ""} />
-        <EmailForm userEmail={user.email} /> */}
       </div>
     </section>
   );

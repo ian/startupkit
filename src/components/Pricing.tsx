@@ -30,11 +30,12 @@ type BillingInterval = "lifetime" | "year" | "month";
 
 export default function Pricing({ user, products, subscription }: Props) {
   const router = useRouter();
-  const authorizationUrl = getAuthorizationUrl();
+  const currentPath = usePathname();
+  const authorizationUrl = getAuthorizationUrl(currentPath);
+
   const [billingInterval, setBillingInterval] =
     useState<BillingInterval>("month");
   const [priceIdLoading, setPriceIdLoading] = useState<string>();
-  const currentPath = usePathname();
 
   const intervals = Array.from(
     new Set(
@@ -127,7 +128,7 @@ export default function Pricing({ user, products, subscription }: Props) {
                       : "ml-0.5 relative w-1/2 border border-transparent text-zinc-400"
                   } rounded-md m-1 py-2 text-sm font-medium whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-opacity-50 focus:z-10 sm:w-auto sm:px-8`}
                 >
-                  Monthly billing
+                  Monthly
                 </button>
               )}
               {intervals.includes("year") && (
@@ -140,7 +141,7 @@ export default function Pricing({ user, products, subscription }: Props) {
                       : "ml-0.5 relative w-1/2 border border-transparent text-zinc-400"
                   } rounded-md m-1 py-2 text-sm font-medium whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-opacity-50 focus:z-10 sm:w-auto sm:px-8`}
                 >
-                  Yearly billing
+                  Yearly (save 30%)
                 </button>
               )}
             </div>

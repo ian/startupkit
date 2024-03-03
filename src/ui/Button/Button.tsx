@@ -1,7 +1,7 @@
 "use client";
 
 import cn from "classnames";
-import React, { forwardRef, useRef, ButtonHTMLAttributes } from "react";
+import React, { forwardRef, ButtonHTMLAttributes } from "react";
 
 import LoadingDots from "@/ui/LoadingDots";
 
@@ -28,7 +28,6 @@ const Button = forwardRef<HTMLButtonElement, Props>((props, buttonRef) => {
     Component = "button",
     ...rest
   } = props;
-  const ref = useRef(null);
   const rootClassName = cn(
     styles.root,
     {
