@@ -161,9 +161,9 @@ export default function Pricing({ user, products, subscription }: Props) {
                 <div
                   key={product.id}
                   className={classNames(
-                    "flex flex-col rounded-lg shadow-sm divide-y divide-zinc-600 bg-zinc-900",
+                    "border-4 flex flex-col rounded-lg shadow-sm divide-y divide-zinc-600 bg-zinc-100",
                     {
-                      "border border-pink-500": subscription
+                      "border-pink-500": subscription
                         ? product.name === subscription?.prices?.products?.name
                         : product.name === "Freelancer",
                     },
@@ -173,12 +173,12 @@ export default function Pricing({ user, products, subscription }: Props) {
                   )}
                 >
                   <div className="p-6">
-                    <h2 className="text-2xl font-semibold leading-6 text-white">
+                    <h2 className="text-2xl font-semibold leading-6 text-black">
                       {product.name}
                     </h2>
-                    <p className="mt-4 text-zinc-300">{product.description}</p>
+                    <p className="mt-4 text-zinc-500">{product.description}</p>
                     <p className="mt-8">
-                      <span className="text-5xl font-extrabold text-white">
+                      <span className="text-5xl font-extrabold text-black">
                         {priceString}
                       </span>
                       <span className="text-base font-medium text-zinc-100">

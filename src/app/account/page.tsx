@@ -35,7 +35,7 @@ export default async function Account() {
           </p>
         </div>
       </div>
-      <div className="p-4">
+      <div className="max-w-2xl p-4 mx-auto">
         <CustomerPortalForm subscription={subscription} />
       </div>
     </section>

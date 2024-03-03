@@ -2,7 +2,7 @@
 
 import Button from "@/ui/Button";
 import { useRouter, usePathname } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import Card from "@/ui/Card";
 import { Price, Product, Subscription } from "@prisma/client";
@@ -22,7 +22,7 @@ interface Props {
 export function CustomerPortalForm({ subscription }: Props) {
   const router = useRouter();
   const currentPath = usePathname();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting, setSubmitting] = useState(false);
 
   const subscriptionPrice =
     subscription &&
@@ -33,7 +33,7 @@ export function CustomerPortalForm({ subscription }: Props) {
     }).format((subscription?.price?.unitAmount || 0) / 100);
 
   const handleStripePortalRequest = async () => {
-    setIsSubmitting(true);
+    setSubmitting(true);
 
     const { redirectUrl } = await fetch("/api/stripe/portal", {
       method: "POST",
@@ -43,9 +43,25 @@ export function CustomerPortalForm({ subscription }: Props) {
       },
     }).then((res) => res.json());
 
-    setIsSubmitting(false);
+    setSubmitting(false);
     return router.push(redirectUrl);
   };
+
+  const footer = useMemo(() => {
+    if (!subscription) return null;
+    return (
+      <div className="flex flex-col items-start justify-between sm:flex-row sm:items-center">
+        <p className="pb-4 sm:pb-0">Manage your subscription on Stripe.</p>
+        <Button
+          variant="slim"
+          onClick={handleStripePortalRequest}
+          loading={isSubmitting}
+        >
+          Open customer portal
+        </Button>
+      </div>
+    );
+  }, [subscription]);
 
   return (
     <Card
@@ -55,24 +71,13 @@ export function CustomerPortalForm({ subscription }: Props) {
           ? `You are currently on the ${subscription?.price?.product?.name} plan.`
           : "You are not currently subscribed to any plan."
       }
-      footer={
-        <div className="flex flex-col items-start justify-between sm:flex-row sm:items-center">
-          <p className="pb-4 sm:pb-0">Manage your subscription on Stripe.</p>
-          <Button
-            variant="slim"
-            onClick={handleStripePortalRequest}
-            loading={isSubmitting}
-          >
-            Open customer portal
-          </Button>
-        </div>
-      }
+      footer={footer}
     >
       <div className="mt-8 mb-4 text-xl font-semibold">
         {subscription ? (
           `${subscriptionPrice}/${subscription?.price?.interval}`
         ) : (
-          <Link href="/">Choose your plan</Link>
+          <Link href="/checkout">Choose your plan</Link>
         )}
       </div>
     </Card>
