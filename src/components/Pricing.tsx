@@ -3,32 +3,32 @@
 import Button from "@/ui/Button";
 import { getStripe } from "@/stripe/get-stripe";
 
+import classNames from "classnames";
 import { useRouter, usePathname } from "next/navigation";
 import { useState } from "react";
 import { Price, Product, Subscription, User } from "@prisma/client";
 import { getErrorRedirect } from "@/utils/url";
-import classNames from "classnames";
 import { getAuthorizationUrl } from "@/auth/client";
 
 interface ProductWithPrices extends Product {
   prices: Price[];
 }
 interface PriceWithProduct extends Price {
-  products: Product | null;
+  product: Product | null;
 }
 interface SubscriptionWithProduct extends Subscription {
-  prices: PriceWithProduct | null;
+  price: PriceWithProduct | null;
 }
 
 interface Props {
   user: User | null | undefined;
   products: ProductWithPrices[];
-  subscription: SubscriptionWithProduct | null;
+  subscription: SubscriptionWithProduct | null | undefined;
 }
 
 type BillingInterval = "lifetime" | "year" | "month";
 
-export default function Pricing({ user, products, subscription }: Props) {
+export function Pricing({ user, products, subscription }: Props) {
   const router = useRouter();
   const currentPath = usePathname();
   const authorizationUrl = getAuthorizationUrl();
@@ -164,7 +164,7 @@ export default function Pricing({ user, products, subscription }: Props) {
                     "border-4 flex flex-col rounded-lg shadow-sm divide-y divide-zinc-600 bg-zinc-100",
                     {
                       "border-pink-500": subscription
-                        ? product.name === subscription?.prices?.products?.name
+                        ? product.name === subscription?.price?.product?.name
                         : product.name === "Freelancer",
                     },
                     "flex-1", // This makes the flex item grow to fill the space

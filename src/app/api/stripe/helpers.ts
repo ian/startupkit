@@ -254,11 +254,13 @@ const manageSubscriptionStatusChange = async (
 
   const subscriptionData = await prisma.subscription.upsert({
     where: { id: subscription.id, userId: uuid },
-    update: {
+    create: {
+      id: subscription.id,
+      userId: uuid,
       metadata: subscription.metadata,
       status: subscription.status,
       priceId: subscription.items.data[0].price.id,
-      quantity: subscription.quantity,
+      quantity: subscription.items.data[0].quantity || 1,
       cancelAtPeriodEnd: subscription.cancel_at_period_end,
       cancelAt: subscription.cancel_at
         ? new Date(subscription.cancel_at)
@@ -277,13 +279,11 @@ const manageSubscriptionStatusChange = async (
         ? new Date(subscription.trial_end)
         : null,
     },
-    create: {
-      id: subscription.id,
-      userId: uuid,
+    update: {
       metadata: subscription.metadata,
       status: subscription.status,
       priceId: subscription.items.data[0].price.id,
-      quantity: subscription.quantity,
+      quantity: subscription.items.data[0].quantity,
       cancelAtPeriodEnd: subscription.cancel_at_period_end,
       cancelAt: subscription.cancel_at
         ? new Date(subscription.cancel_at)

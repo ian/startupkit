@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "typecheck": "tsc",
     "prettier": "prettier .",
     "prettier:fix": "prettier --write .",
     "stripe:login": "stripe login",

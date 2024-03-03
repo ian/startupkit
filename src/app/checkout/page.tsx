@@ -1,5 +1,5 @@
 import { getSession } from "@/auth/server";
-import Pricing from "../../components/Pricing";
+import { Pricing } from "../../components/Pricing";
 import { prisma } from "prisma/client";
 
 export default async function PricingPage() {
@@ -27,9 +27,9 @@ export default async function PricingPage() {
           in: ["trialing", "active"],
         },
       },
-      select: {
+      include: {
         price: {
-          select: {
+          include: {
             product: true,
           },
         },
