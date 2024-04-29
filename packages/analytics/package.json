@@ -21,6 +21,8 @@
     "@rudderstack/rudder-sdk-node": "^2.0.7"
   },
   "devDependencies": {
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
     "next": "~14",
     "react": "~18.2.0",
     "react-dom": "~18.2.0"
