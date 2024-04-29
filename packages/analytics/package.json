@@ -1,0 +1,33 @@
+{
+  "name": "@startupkit/analytics",
+  "version": "0.0.0",
+  "description": "",
+  "scripts": {},
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./server": {
+      "types": "./src/server.ts",
+      "default": "./src/server.ts"
+    }
+  },
+  "dependencies": {
+    "@rudderstack/analytics-js": "^3.0.3",
+    "@rudderstack/rudder-sdk-node": "^2.0.7"
+  },
+  "devDependencies": {
+    "next": "~14",
+    "react": "~18.2.0",
+    "react-dom": "~18.2.0"
+  },
+  "peerDependencies": {
+    "next": "~14",
+    "react": "~18.2.0",
+    "react-dom": "~18.2.0"
+  }
+}
