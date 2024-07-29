@@ -1,8 +1,12 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
+import React, { createContext, useEffect, useMemo } from "react";
 import { usePathname } from "next/navigation";
-import { Analytics } from "analytics";
+import { Analytics, AnalyticsInstance } from "analytics";
+
+export const AnalyticsContext = createContext<AnalyticsInstance | undefined>(
+  undefined
+);
 
 export const AnalyticsProvider = ({
   children,
@@ -24,5 +28,9 @@ export const AnalyticsProvider = ({
     analytics.page({ path: pathname });
   }, [analytics, pathname]);
 
-  return <>{children}</>;
+  return (
+    <AnalyticsContext.Provider value={analytics}>
+      {children}
+    </AnalyticsContext.Provider>
+  );
 };

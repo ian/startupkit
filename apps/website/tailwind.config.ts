@@ -1,61 +1,100 @@
 import type { Config } from "tailwindcss";
 
-const config: Config = {
+const config = {
+  darkMode: ["class"],
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
   ],
+  prefix: "",
   theme: {
-    colors: {
-      black: "#000000",
-      white: "#ffffff",
-      blue: {
-        DEFAULT: "#14213D",
-        50: "#466EC2",
-        100: "#3C63B8",
-        200: "#325399",
-        300: "#28427A",
-        400: "#1E325C",
-        500: "#14213D",
-        600: "#060A13",
-        700: "#000000",
-        800: "#000000",
-        900: "#000000",
-        950: "#000000",
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
       },
-      gold: {
-        DEFAULT: "#FCA311",
-        50: "#FEE9C6",
-        100: "#FEE1B2",
-        200: "#FED28A",
-        300: "#FDC262",
-        400: "#FDB339",
-        500: "#FCA311",
-        600: "#D28403",
-        700: "#9B6102",
-        800: "#633E01",
-        900: "#2C1C01",
-        950: "#100A00",
-      },
-      silver: "#e5e5e5",
     },
     extend: {
-      animation: {
-        meteor: "meteor 5s linear infinite",
+      colors: {
+        blue: {
+          DEFAULT: "#4877AB",
+          50: "#C4D4E6",
+          100: "#B6CAE0",
+          200: "#99B5D4",
+          300: "#7DA0C8",
+          400: "#608CBC",
+          500: "#4877AB",
+          600: "#375C84",
+          700: "#27405C",
+          800: "#162535",
+          900: "#06090D",
+          950: "#000000",
+        },
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        "background-light": "hsl(var(--background-light))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      fontFamily: {
+        sans: ["var(--font-sans)"],
+        serif: ["var(--font-serif)"],
+        mono: ["var(--font-mono)"],
       },
       keyframes: {
-        meteor: {
-          "0%": { transform: "rotate(215deg) translateX(0)", opacity: "1" },
-          "70%": { opacity: "1" },
-          "100%": {
-            transform: "rotate(215deg) translateX(-500px)",
-            opacity: "0",
-          },
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
       },
     },
   },
-  plugins: [],
-};
+  plugins: [require("tailwindcss-animate")],
+} satisfies Config;
+
 export default config;

@@ -1,43 +1,75 @@
-const navigation = [
-  { name: "Product", href: "#" },
-  { name: "Features", href: "#" },
-  { name: "Marketplace", href: "#" },
-  { name: "Company", href: "#" },
-];
+"use client";
+import { motion } from "framer-motion";
+import { CopyCmd } from "./CopyCmd";
 
-export default function Hero() {
+export const Hero = () => {
   return (
-    <div className="">
-      <div className="relative px-6 isolate lg:px-8">
-        <div className="max-w-2xl mx-auto">
-          {/* <div className="hidden sm:mb-8 sm:flex sm:justify-center">
-            <div className="relative px-3 py-1 text-sm leading-6 text-gray-600 rounded-full ring-1 ring-gray-900/10 hover:ring-gray-900/20">
-              Announcing our next round of funding.{" "}
-              <a href="#" className="font-semibold text-indigo-600">
-                <span className="absolute inset-0" aria-hidden="true" />
-                Read more <span aria-hidden="true">&rarr;</span>
-              </a>
-            </div>
-          </div> */}
-          <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-              Launch a SaaS startup with{" "}
-              <span className="text-gold-200">StartupKit</span>
-            </h1>
-            <p className="mt-6 text-lg leading-8 text-gray-600">
-              StartupKit is a SaaS boilerplate designed to get you launched for{" "}
-              <span className="font-bold text-white underline">free</span>,
-              using only free partners &amp; integrations, including
-              authentication, payments, email marketing, analytics, and more.
-            </p>
-            <div className="mt-5">
-              <span className="w-auto px-4 py-2 font-mono text-white rounded-xl bg-blue">
-                ~ npx startupkit init
-              </span>
-            </div>
-          </div>
+    <section className="relative z-10 flex flex-col items-center justify-center h-full px-10">
+      <motion.div
+        initial={{ opacity: 0, marginTop: 0, scale: 0.9 }}
+        whileInView={{ opacity: 1, marginTop: -10, scale: 1 }}
+        viewport={{ once: true }}
+        className="py-8 mx-auto text-center md:max-w-screen-sm lg:max-w-screen-md lg:py-16 lg:px-12"
+      >
+        <Badge />
+        <h1 className="mb-4 font-serif text-4xl font-extrabold leading-none tracking-tight text-white md:text-5xl lg:text-6xl">
+          {/* The Ultimate Startup Framework */}
+          Everything you need to launch a SaaS product
+        </h1>
+        <p className="mb-8 text-lg font-normal text-gray-300 lg:text-xl">
+          {/* StartupKit is the open-source SaaS framework designed to ensure you
+          not only launch but also thrive. */}
+          Your startup-in-a-box. Built using modern open-source frameworks and
+          packed full of integrations, StartupKit provides everything you need
+          to build, grow, and scale your startup.
+        </p>
+        <div className="flex flex-col items-center mb-8 space-y-4 lg:mb-16 sm:flex-row sm:justify-center sm:space-y-0 sm:space-x-4">
+          <span className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300">
+            Get started
+            <svg
+              className="w-5 h-5 ml-2 -mr-1"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+                clipRule="evenodd"
+              ></path>
+            </svg>
+          </span>
+          <CopyCmd />
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </section>
   );
-}
+};
+
+const Badge = () => {
+  return (
+    <span
+      className="inline-flex items-center justify-between px-1 py-1 pr-4 text-sm text-white rounded-full mb-7 bg-blue-500/30"
+      role="alert"
+    >
+      <span className="text-xs bg-blue-500 rounded-full text-white px-4 py-1.5 mr-3">
+        New
+      </span>{" "}
+      <span className="font-mono text-sm font-medium text-white">
+        startupkit<span className="text-orange-400">@0.0.1</span>
+      </span>
+      {/* <svg
+        className="w-5 h-5 ml-2"
+        fill="currentColor"
+        viewBox="0 0 20 20"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          fillRule="evenodd"
+          d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+          clipRule="evenodd"
+        ></path>
+      </svg> */}
+    </span>
+  );
+};
