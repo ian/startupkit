@@ -4,15 +4,13 @@
 node_modules
 
 # testing
-/coverage
-
-# next.js
-/.next/
-/out/
+coverage
 
 # build
-/build
+build/
+dist/
 .turbo
+.next
 
 # misc
 .DS_Store
