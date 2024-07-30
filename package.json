@@ -4,9 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "type-check": "turbo run type-check",
     "bump": "pnpm recursive --filter  \"./packages/**\" exec -- npm version patch"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "packageManager": "pnpm@9.6.0",
+  "author": "Ian Hunter <ian@01.studio>",
+  "license": "ISC",
+  "devDependencies": {
+    "turbo": "^2.0.9"
+  }
 }

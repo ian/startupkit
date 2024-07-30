@@ -10,7 +10,7 @@
     "./posthog": "./src/ext/posthog.ts"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "type-check": "tsc --noEmit"
   },
   "keywords": [],
   "author": "",
@@ -24,13 +24,14 @@
     "react-ga": "^3.3.1"
   },
   "peerDependencies": {
-    "react": "^18.2.0",
-    "next": "^14"
+    "next": "^14",
+    "react": "^18.2.0"
   },
   "devDependencies": {
-    "@types/react": "^18.2.0",
     "@types/next": "9",
+    "@types/react": "^18.2.0",
+    "next": "^14",
     "react": "^18.2.0",
-    "next": "^14"
+    "typescript": "^5"
   }
 }
