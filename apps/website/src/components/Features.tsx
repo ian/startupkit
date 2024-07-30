@@ -6,28 +6,28 @@ export const Features = ({ className }: { className?: string }) => {
   return (
     <Container>
       <section className={className}>
-        <div className="py-8 mx-auto max-w-screen-xl">
+        <div className="max-w-screen-xl py-8 mx-auto">
           <div className="max-w-screen-md mb-8 lg:mb-16">
-            <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-white font-serif">
+            <h2 className="mb-4 font-serif text-4xl font-extrabold tracking-tight text-white">
               {/* Everything you need to launch a SaaS product */}
               Powerful Integrations for Every Aspect of Your SaaS Product
             </h2>
-            <p className="sm:text-xl text-gray-400">
+            <p className="text-gray-400 sm:text-xl">
               Save time and reduce costs with our pre-configured solutions.
             </p>
           </div>
           <div className="space-y-8 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12 md:space-y-0">
             {FEATURES.map((f) => (
               <div key={f.title}>
-                <div className="text-white flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-blue/20 lg:h-12 lg:w-12">
+                <div className="flex items-center justify-center w-10 h-10 mb-4 text-white rounded-full bg-blue/20 lg:h-12 lg:w-12">
                   {f.icon}
                 </div>
                 <h3 className="mb-2 text-xl font-bold text-white">{f.title}</h3>
                 <p className="text-gray-400">{f.desc}</p>
-                <div className="grid grid-cols-3 justify-start mt-4 gap-2">
+                <div className="grid justify-start grid-cols-3 gap-2 mt-4">
                   {f.integrations?.map((i) => (
                     <div
-                      className="flex flex-column justify-start items-center h-10 relative"
+                      className="relative flex items-center justify-start h-10 flex-column"
                       key={i.label}
                     >
                       {i.soon && (
@@ -182,15 +182,14 @@ const FEATURES = [
     desc: "Bridge the gap between marketing and sales effortlessly. Our CMS solutions make it super easy to add and manage content like blogs, guides, and more, keeping your site engaging and up-to-date.",
     integrations: [
       {
-        label: "Loops",
-        image: require("@/images/integrations/payload.svg"),
-        className: "h-6",
-      },
-      {
         label: "ConvertKit",
         image: require("@/images/integrations/prismic.svg"),
         className: "h-6",
-        soon: true,
+      },
+      {
+        label: "Loops",
+        image: require("@/images/integrations/payload.svg"),
+        className: "h-6",
       },
     ],
   },
