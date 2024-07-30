@@ -1,0 +1,21 @@
+{
+  "name": "startupkit",
+  "version": "0.0.0",
+  "author": "Ian Hunter <ian@01.studio>",
+  "license": "ISC",
+  "description": "The NextJS framework with everything you need to launch a SaaS product.",
+  "keywords": [
+    "startup",
+    "boostrap",
+    "boilerplate",
+    "analytics",
+    "auth"
+  ],
+  "main": "index.js",
+  "bin": {
+    "startupkit": "./index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}

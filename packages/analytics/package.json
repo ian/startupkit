@@ -1,7 +1,9 @@
 {
   "name": "@startupkit/analytics",
   "version": "0.0.0",
-  "description": "",
+  "author": "Ian Hunter <ian@01.studio>",
+  "license": "ISC",
+  "description": "Analytics package for StartupKit",
   "main": "src/index.ts",
   "exports": {
     ".": "./src/index.ts",
@@ -12,9 +14,6 @@
   "scripts": {
     "type-check": "tsc --noEmit"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "@analytics/google-analytics": "^1.0.7",
     "@metro-fs/analytics-plugin-posthog": "^1.14.0",
