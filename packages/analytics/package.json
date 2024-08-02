@@ -4,16 +4,21 @@
   "author": "Ian Hunter <ian@01.studio>",
   "license": "ISC",
   "description": "Analytics package for StartupKit",
-  "main": "dist/index.ts",
+  "homepage": "https://startupkit.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/01-studio/startupkit"
+  },
+  "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
-    "./ga": "./dist/ext/ga.ts",
-    "./plausible": "./dist/ext/plausible.ts",
-    "./posthog": "./dist/ext/posthog.ts"
+    "./ga": "./dist/ext/ga.js",
+    "./plausible": "./dist/ext/plausible.js",
+    "./posthog": "./dist/ext/posthog.js"
   },
   "scripts": {
     "build": "tsc",
