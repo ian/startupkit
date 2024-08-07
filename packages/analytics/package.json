@@ -1,6 +1,6 @@
 {
   "name": "@startupkit/analytics",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "author": "Ian Hunter <ian@01.studio>",
   "license": "ISC",
   "description": "Analytics package for StartupKit",

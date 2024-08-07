@@ -8,9 +8,7 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "type-check": "turbo run type-check",
-    "bump": "pnpm recursive --filter \"./packages/**\" exec -- npm version ${1:-patch}",
-    "bump:minor": "pnpm run bump minor",
-    "bump:major": "pnpm run bump major",
+    "bump": "pnpm recursive --filter \"./packages/**\" exec -- npm version",
     "release": "pnpm recursive --filter  \"./packages/**\" exec -- npm publish"
   },
   "packageManager": "pnpm@9.6.0",
