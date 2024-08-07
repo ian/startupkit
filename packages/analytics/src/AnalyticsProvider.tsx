@@ -25,6 +25,7 @@ export const AnalyticsProvider = ({
   const pathname = usePathname();
 
   useEffect(() => {
+    if (!pathname) return;
     analytics.page({ path: pathname });
   }, [analytics, pathname]);
 

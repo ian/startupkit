@@ -1,0 +1,60 @@
+{
+  "name": "@startupkit/cms",
+  "version": "0.0.1",
+  "author": "Ian Hunter <ian@01.studio>",
+  "license": "ISC",
+  "description": "CMS package for StartupKit",
+  "homepage": "https://startupkit.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/01-studio/startupkit"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./plugin": {
+      "types": "./dist/plugin.d.ts",
+      "import": "./dist/plugin.mjs",
+      "require": "./dist/plugin.js"
+    },
+    "./mdx-config": "./dist/mdx-config.mjs"
+  },
+  "scripts": {
+    "clean": "rm -rf ./dist",
+    "build": "esbuild src/**/*.ts src/**/*.tsx --outdir=dist/ --format=esm --platform=node --out-extension:.js=.mjs && tsc --declaration --emitDeclarationOnly --outDir dist/",
+    "build:watch": "npx chokidar-cli \"src/**/*\" -c \"pnpm run build\" --initial",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@mdx-js/loader": "^3.0.1",
+    "@mdx-js/react": "^3.0.1",
+    "@next/mdx": "^14.2.5",
+    "date-fns": "^3.6.0",
+    "gray-matter": "^4.0.3",
+    "next-mdx-remote": "^5.0.0",
+    "remark-frontmatter": "^5.0.0",
+    "remark-mdx-frontmatter": "^5.0.0"
+  },
+  "peerDependencies": {
+    "next": "^14",
+    "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/mdast": "^4.0.4",
+    "@types/mdx": "^2.0.13",
+    "@types/next": "9",
+    "@types/react": "^18.2.0",
+    "@types/vfile": "^4.0.0",
+    "esbuild": "^0.23.0",
+    "next": "^14",
+    "react": "^18.2.0",
+    "typescript": "^5"
+  }
+}
