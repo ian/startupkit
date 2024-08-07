@@ -12,5 +12,5 @@ export const tsup: Options = {
   watch: false,
   target: "es2020",
   outDir: "./dist",
-  entry: ["src/**/*.ts"], //include all files under src
+  entry: ["src/**/*.ts", "src/**/*.tsx"],
 };

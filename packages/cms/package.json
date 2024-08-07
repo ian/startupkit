@@ -23,11 +23,16 @@
       "import": "./dist/plugin.mjs",
       "require": "./dist/plugin.js"
     },
-    "./mdx-config": "./dist/mdx-config.mjs"
+    "./mdx-config": {
+      "types": "./dist/mdx-config.d.ts",
+      "import": "./dist/mdx-config.mjs",
+      "require": "./dist/mdx-config.js"
+    }
   },
   "scripts": {
     "clean": "rm -rf ./dist ./.turbo",
     "build": "tsup",
+    "postbuild": "validate-package-exports --check --verify",
     "build:watch": "npx chokidar-cli \"src/**/*\" -c \"pnpm run build\" --initial",
     "type-check": "tsc --noEmit"
   },
@@ -54,6 +59,7 @@
     "esbuild": "^0.23.0",
     "next": "^14",
     "react": "^18.2.0",
-    "typescript": "^5"
+    "typescript": "^5",
+    "validate-package-exports": "^0.6.0"
   }
 }
