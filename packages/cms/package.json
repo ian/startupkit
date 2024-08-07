@@ -27,8 +27,8 @@
     "./mdx-config": "./dist/mdx-config.mjs"
   },
   "scripts": {
-    "clean": "rm -rf ./dist",
-    "build": "esbuild src/**/*.ts src/**/*.tsx --outdir=dist/ --format=esm --platform=node --out-extension:.js=.mjs && tsc --declaration --emitDeclarationOnly --outDir dist/",
+    "clean": "rm -rf ./dist ./.turbo",
+    "build": "tsup",
     "build:watch": "npx chokidar-cli \"src/**/*\" -c \"pnpm run build\" --initial",
     "type-check": "tsc --noEmit"
   },

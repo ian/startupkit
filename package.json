@@ -5,6 +5,7 @@
   "main": "index.js",
   "private": true,
   "scripts": {
+    "clean": "pnpm -r run clean",
     "build": "turbo run build",
     "dev": "turbo run dev",
     "type-check": "turbo run type-check",
@@ -15,6 +16,8 @@
   "author": "Ian Hunter <ian@01.studio>",
   "license": "ISC",
   "devDependencies": {
-    "turbo": "^2.0.9"
+    "tsup": "^8.2.4",
+    "turbo": "^2.0.9",
+    "typescript": "^5.4.5"
   }
 }

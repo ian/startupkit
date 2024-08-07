@@ -9,19 +9,39 @@
     "type": "git",
     "url": "https://github.com/01-studio/startupkit"
   },
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "source": "./src/index.ts"
     },
-    "./ga": "./dist/ext/ga.js",
-    "./plausible": "./dist/ext/plausible.js",
-    "./posthog": "./dist/ext/posthog.js"
+    "./ga": {
+      "types": "./dist/ext/ga.d.ts",
+      "import": "./dist/ext/ga.mjs",
+      "require": "./dist/ext/ga.js",
+      "source": "./src/ext/ga.ts"
+    },
+    "./plausible": {
+      "types": "./dist/ext/plausible.d.ts",
+      "import": "./dist/ext/plausible.mjs",
+      "require": "./dist/ext/plausible.js",
+      "source": "./src/ext/plausible.ts"
+    },
+    "./posthog": {
+      "types": "./dist/ext/posthog.d.ts",
+      "import": "./dist/ext/posthog.mjs",
+      "require": "./dist/ext/posthog.js",
+      "source": "./src/ext/posthog.ts"
+    }
   },
   "scripts": {
-    "build": "tsc",
+    "clean": "rm -rf ./dist ./.turbo",
+    "build": "tsup",
+    "build:watch": "npx chokidar-cli \"src/**/*\" -c \"pnpm run build\" --initial",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
@@ -37,10 +57,12 @@
     "react": "^18.2.0"
   },
   "devDependencies": {
+    "@types/mdast": "^4.0.4",
+    "@types/mdx": "^2.0.13",
     "@types/next": "9",
     "@types/react": "^18.2.0",
+    "@types/vfile": "^4.0.0",
     "next": "^14",
-    "react": "^18.2.0",
-    "typescript": "^5"
+    "react": "^18.2.0"
   }
 }
