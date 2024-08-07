@@ -9,7 +9,7 @@
     "dev": "turbo run dev",
     "type-check": "turbo run type-check",
     "bump": "./scripts/bump",
-    "release": "pnpm recursive --filter  \"./packages/**\" exec -- npm publish"
+    "release": "pnpm recursive --filter  \"./packages/**\" exec -- npm publish --access public"
   },
   "packageManager": "pnpm@9.6.0",
   "author": "Ian Hunter <ian@01.studio>",
