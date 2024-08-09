@@ -5,16 +5,25 @@
   "main": "index.js",
   "private": true,
   "scripts": {
+    "clean": "pnpm -r run clean",
     "build": "turbo run build",
     "dev": "turbo run dev",
     "type-check": "turbo run type-check",
-    "bump": "pnpm recursive --filter  \"./packages/**\" exec -- npm version patch",
-    "release": "pnpm recursive --filter  \"./packages/**\" exec -- npm publish"
+    "bump": "./scripts/bump",
+    "release": "pnpm recursive --filter  \"./packages/**\" exec -- npm publish --access public"
   },
   "packageManager": "pnpm@9.6.0",
   "author": "Ian Hunter <ian@01.studio>",
   "license": "ISC",
   "devDependencies": {
-    "turbo": "^2.0.9"
+    "@rollup/plugin-swc": "^0.3.1",
+    "@swc/core": "^1.7.6",
+    "rollup": "^4.20.0",
+    "rollup-plugin-esbuild": "^6.1.1",
+    "rollup-preserve-directives": "^1.1.1",
+    "tsup": "^8.2.4",
+    "turbo": "^2.0.9",
+    "typescript": "^5.4.5",
+    "validate-package-exports": "^0.6.0"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "startupkit",
-  "version": "0.0.1",
+  "version": "0.2.0",
   "author": "Ian Hunter <ian@01.studio>",
   "license": "ISC",
   "description": "The NextJS framework with everything you need to launch a SaaS product.",
@@ -22,5 +22,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "validate-package-exports": "^0.6.0"
   }
 }

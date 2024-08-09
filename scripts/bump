@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Default to patch if no argument is provided
+VERSION_TYPE=${1:-patch}
+
+# Validate input
+if [[ "$VERSION_TYPE" != "patch" && "$VERSION_TYPE" != "minor" && "$VERSION_TYPE" != "major" ]]; then
+    echo "Invalid version type. Use 'patch', 'minor', or 'major'."
+    exit 1
+fi
+
+# Execute the bump command
+pnpm recursive --filter "./packages/**" exec -- npm version "$VERSION_TYPE"

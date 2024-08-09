@@ -1,15 +1,15 @@
 {
-  "name": "@startupkit/analytics",
+  "name": "@startupkit/cms",
   "version": "0.2.0",
   "author": "Ian Hunter <ian@01.studio>",
   "license": "ISC",
-  "description": "Analytics package for StartupKit",
+  "description": "CMS package for StartupKit",
   "homepage": "https://startupkit.com",
   "repository": {
     "type": "git",
     "url": "https://github.com/01-studio/startupkit"
   },
-  "main": "./dist/cjs/index.js",
+  "main": "./dist/esm/index.js",
   "module": "./dist/esm/index.js",
   "types": "./dist/types/index.d.ts",
   "exports": {
@@ -17,18 +17,8 @@
       "types": "./dist/types/index.d.ts",
       "import": "./dist/esm/index.js"
     },
-    "./ga": {
-      "types": "./dist/types/ext/ga.d.js",
-      "import": "./dist/esm/ga.js"
-    },
-    "./plausible": {
-      "types": "./dist/types/ext/plausible.d.ts",
-      "import": "./dist/esm/plausible.js"
-    },
-    "./posthog": {
-      "types": "./dist/types/ext/posthog.d.ts",
-      "import": "./dist/esm/posthog.js"
-    }
+    "./plugin": "./dist/cjs/plugin.js",
+    "./mdx-config": "./dist/cjs/mdx-config.js"
   },
   "scripts": {
     "clean": "rm -rf ./dist ./.turbo",
@@ -38,12 +28,14 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@analytics/google-analytics": "^1.0.7",
-    "@metro-fs/analytics-plugin-posthog": "^1.14.0",
-    "analytics": "^0.8.13",
-    "analytics-plugin-plausible": "^0.0.6",
-    "posthog-js": "1.154.2",
-    "react-ga": "^3.3.1"
+    "@mdx-js/loader": "^3.0.1",
+    "@mdx-js/react": "^3.0.1",
+    "@next/mdx": "^14.2.5",
+    "date-fns": "^3.6.0",
+    "gray-matter": "^4.0.3",
+    "next-mdx-remote": "^5.0.0",
+    "remark-frontmatter": "^5.0.0",
+    "remark-mdx-frontmatter": "^5.0.0"
   },
   "peerDependencies": {
     "next": "^14",
