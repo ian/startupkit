@@ -1,4 +1,4 @@
-import { swc } from "rollup-plugin-swc3";
+import esbuild from 'rollup-plugin-esbuild'
 import preserveDirectives from "rollup-preserve-directives";
 
 import { readFileSync } from "fs"; // Import fs to read package.json
@@ -29,11 +29,26 @@ export default {
   ],
   external,
   plugins: [
-    swc({
-      include: /\.[mc]?[jt]sx?$/, // default
+    esbuild({
+      include: /\.[jt]sx?$/, // default, inferred from `loaders` option
       exclude: /node_modules/, // default
-      tsconfig: "tsconfig.json", // default
-      jsc: {},
+      sourceMap: true, // default
+      minify: process.env.NODE_ENV === 'production',
+      target: 'esnext', // default, or 'es20XX', 'esnext'
+      jsx: 'transform', // default, or 'preserve'
+      jsxFactory: 'React.createElement',
+      jsxFragment: 'React.Fragment',
+      // define: {
+      //   __VERSION__: pkg.version,
+      // },
+      tsconfig: 'tsconfig.json', // default
+      loaders: {
+        // Add .json files support
+        // require @rollup/plugin-commonjs
+        '.json': 'json',
+        // Enable JSX in .js files too
+        '.js': 'jsx',
+      },
     }),
     preserveDirectives(),
   ],

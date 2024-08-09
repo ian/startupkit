@@ -30,13 +30,6 @@ export default {
   ],
   external,
   plugins: [
-    // swc({
-    //   bundle: true,
-    //   include: /\.[mc]?[jt]sx?$/, // default
-    //   exclude: /node_modules/, // default
-    //   tsconfig: "tsconfig.json", // default
-    //   jsc: {},
-    // }),
     esbuild({
       include: /\.[jt]sx?$/, // default, inferred from `loaders` option
       exclude: /node_modules/, // default
