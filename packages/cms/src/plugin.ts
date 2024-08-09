@@ -11,7 +11,7 @@ type CMSConfig = {
   debug?: boolean;
 };
 
-const startupkitCMS = (
+export const startupkitCMS = (
   cmsConfig: CMSConfig
 ): ((nextConfig: NextConfig) => NextConfig) => {
   return function withStartupKitCMS(nextConfig: NextConfig) {

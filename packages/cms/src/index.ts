@@ -1,3 +1,3 @@
-// export { startupkitCMS as default } from "./plugin";
+export { startupkitCMS } from "./plugin";
 export { CMSProvider } from "./provider";
 export * from "./utils";

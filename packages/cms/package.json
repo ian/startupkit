@@ -9,30 +9,21 @@
     "type": "git",
     "url": "https://github.com/01-studio/startupkit"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/esm/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js"
     },
-    "./plugin": {
-      "types": "./dist/plugin.d.ts",
-      "import": "./dist/plugin.mjs",
-      "require": "./dist/plugin.js"
-    },
-    "./mdx-config": {
-      "types": "./dist/mdx-config.d.ts",
-      "import": "./dist/mdx-config.mjs",
-      "require": "./dist/mdx-config.js"
-    }
+    "./plugin": "./dist/cjs/plugin.js",
+    "./mdx-config": "./dist/cjs/mdx-config.js"
   },
   "scripts": {
     "clean": "rm -rf ./dist ./.turbo",
-    "build": "tsup",
-    "postbuild": "validate-package-exports --check --verify",
+    "build": "rollup -c && tsc --emitDeclarationOnly",
+    "oldpostbuild": "validate-package-exports --check --verify",
     "build:watch": "npx chokidar-cli \"src/**/*\" -c \"pnpm run build\" --initial",
     "type-check": "tsc --noEmit"
   },

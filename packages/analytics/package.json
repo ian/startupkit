@@ -9,39 +9,31 @@
     "type": "git",
     "url": "https://github.com/01-studio/startupkit"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js",
-      "source": "./src/index.ts"
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js"
     },
     "./ga": {
-      "types": "./dist/ext/ga.d.ts",
-      "import": "./dist/ext/ga.mjs",
-      "require": "./dist/ext/ga.js",
-      "source": "./src/ext/ga.ts"
+      "types": "./dist/types/ext/ga.d.js",
+      "import": "./dist/esm/ga.js"
     },
     "./plausible": {
-      "types": "./dist/ext/plausible.d.ts",
-      "import": "./dist/ext/plausible.mjs",
-      "require": "./dist/ext/plausible.js",
-      "source": "./src/ext/plausible.ts"
+      "types": "./dist/types/ext/plausible.d.ts",
+      "import": "./dist/esm/plausible.js"
     },
     "./posthog": {
-      "types": "./dist/ext/posthog.d.ts",
-      "import": "./dist/ext/posthog.mjs",
-      "require": "./dist/ext/posthog.js",
-      "source": "./src/ext/posthog.ts"
+      "types": "./dist/types/ext/posthog.d.ts",
+      "import": "./dist/esm/posthog.js"
     }
   },
   "scripts": {
     "clean": "rm -rf ./dist ./.turbo",
-    "build": "tsup",
-    "postbuild": "validate-package-exports --check --verify",
+    "build": "rollup -c && tsc --emitDeclarationOnly",
+    "oldpostbuild": "validate-package-exports --check --verify",
     "build:watch": "npx chokidar-cli \"src/**/*\" -c \"pnpm run build\" --initial",
     "type-check": "tsc --noEmit"
   },
@@ -65,6 +57,7 @@
     "@types/vfile": "^4.0.0",
     "next": "^14",
     "react": "^18.2.0",
+    "rollup-plugin-esbuild": "^6.1.1",
     "validate-package-exports": "^0.6.0"
   }
 }
