@@ -16,13 +16,11 @@ export type Meta = {
 };
 
 export const readStatic = (dir: string): Array<Meta> => {
-  console.log({ dir });
   const postsDirectory = path.join(dir);
   const records = fs
     .readdirSync(postsDirectory)
     .filter((filename) => filename.endsWith(".mdx"))
     .map((filename) => {
-      console.log({ filename });
       const filePath = path.join(postsDirectory, filename);
       const fileContents = fs.readFileSync(filePath, "utf8");
       const { data } = matter(fileContents);
