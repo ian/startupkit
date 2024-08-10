@@ -93,6 +93,9 @@ importers:
       '@startupkit/cms':
         specifier: workspace:*
         version: link:../cms
+      '@startupkit/utils':
+        specifier: workspace:*
+        version: link:../utils
       '@types/commander':
         specifier: ^2.12.2
         version: 2.12.2
@@ -171,11 +174,7 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0
 
-  packages/utils:
-    dependencies:
-      inquirer:
-        specifier: 10.1.8
-        version: 10.1.8
+  packages/utils: {}
 
 packages:
 

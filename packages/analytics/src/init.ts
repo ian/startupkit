@@ -1,4 +1,8 @@
-import type { Initializer, InitializerQuestion } from "@startupkit/utils";
+import type {
+  Initializer,
+  InitializerOptions,
+  InitializerQuestion,
+} from "@startupkit/utils";
 
 const questions: InitializerQuestion[] = [
   {
@@ -15,7 +19,12 @@ const questions: InitializerQuestion[] = [
 
 type Answers = ("posthog" | "googleAnalytics" | "plausible")[];
 
-const init = async (analytics: Answers) => {
+// init() does the following:
+// 1. adds the AnalyticsProvider + pluigins
+// 2. adds AnalyticsProvider to the provider stack
+// 3. adds @startupkit/analytics to the project
+
+const init = async (analytics: Answers, opts: InitializerOptions) => {
   console.log("Installing Analytics", analytics);
 };
 

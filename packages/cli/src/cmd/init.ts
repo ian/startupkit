@@ -4,7 +4,7 @@ import AnalyticsPlugin from "@startupkit/analytics/init";
 import CMSPlugin from "@startupkit/cms/init";
 
 import { spinner } from "../lib/spinner";
-import { exec } from "../lib/run";
+import { exec, InitializerActions } from "../../../utils/src";
 
 type Answers = {
   name: string;
@@ -34,19 +34,22 @@ export async function init() {
   opener();
 
   const answers: Answers = await inquirer.prompt(questions);
-  const example =
-    "https://github.com/01-studio/startupkit#feat/cli-and-base-template";
-  const examplePath = "template";
   const destPath = (process.env.SK_DIR ?? process.cwd()) + "/" + answers.name;
-  // @see https://nextjs.org/docs/pages/api-reference/create-next-app
-  const cmd = `npx create-next-app@latest ${destPath} --use-pnpm --example ${example} --example-path "${examplePath}"`;
+  const actions: InitializerActions = [];
 
-  await AnalyticsPlugin.init(answers.analytics);
-  await CMSPlugin.init(answers.cms);
+  const analytics = await AnalyticsPlugin.init(answers.analytics, {
+    cwd: destPath,
+  });
+  const cms = await CMSPlugin.init(answers.cms, { cwd: destPath });
 
   process.exit();
 
   await spinner("Installing", async () => {
+    // @see https://nextjs.org/docs/pages/api-reference/create-next-app
+    const example =
+      "https://github.com/01-studio/startupkit#feat/cli-and-base-template";
+    const examplePath = "template";
+    const cmd = `npx create-next-app@latest ${destPath} --use-pnpm --example ${example} --example-path "${examplePath}"`;
     await exec(cmd, {
       stdio: "inherit",
     });
