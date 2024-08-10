@@ -4,17 +4,18 @@ import {
   init as initAnalytics,
   type AnalyticsQuestionOptions,
 } from "@startupkit/analytics/init";
-// import {
-//   type CMSQuestionOptions,
-//   questions as cmsQuestions,
-// } from "@startupkit/cms";
+import {
+  type CMSQuestionOptions,
+  init as initCMS,
+  questions as cmsQuestions,
+} from "@startupkit/cms/init";
 import { spinner } from "../lib/spinner";
 import { exec } from "../lib/run";
 
 type Answers = {
   name: string;
   analytics: AnalyticsQuestionOptions;
-  // cms: CMSQuestionOptions;
+  cms: CMSQuestionOptions;
 };
 
 const questions: any[] = [
@@ -34,7 +35,7 @@ const questions: any[] = [
         .replace(/^-+|-+$/g, ""), // Remove starting and ending hyphens
   },
   ...analyticsQuestions,
-  // ...cmsQuestions,
+  ...cmsQuestions,
 ];
 
 export async function init() {
@@ -49,6 +50,7 @@ export async function init() {
   const cmd = `npx create-next-app@latest ${destPath} --use-pnpm --example ${example} --example-path "${examplePath}"`;
 
   await initAnalytics(answers.analytics);
+  await initCMS(answers.cms);
 
   process.exit();
 

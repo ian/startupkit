@@ -17,6 +17,10 @@
       "types": "./dist/types/index.d.ts",
       "import": "./dist/esm/index.js"
     },
+    "./init": {
+      "types": "./dist/types/init.d.ts",
+      "import": "./dist/esm/init.js"
+    },
     "./plugin": "./dist/cjs/plugin.js",
     "./mdx-config": "./dist/cjs/mdx-config.js"
   },
