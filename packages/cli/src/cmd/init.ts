@@ -1,14 +1,22 @@
-import inquirer from "inquirer"; // Updated to use ES module import
+import inquirer from "inquirer";
+import {
+  questions as analyticsQuestions,
+  type AnalyticsQuestionOptions,
+} from "@startupkit/analytics/init";
+// import {
+//   type CMSQuestionOptions,
+//   questions as cmsQuestions,
+// } from "@startupkit/cms";
 import { spinner } from "../lib/spinner";
 import { exec } from "../lib/run";
 
 type Answers = {
   name: string;
-  analytics: Array<string>;
-  authentication: string;
-  payments: string;
-  cms: string;
-  newsletter: string;
+  analytics: AnalyticsQuestionOptions;
+  // cms: CMSQuestionOptions;
+  // authentication: string;
+  // payments: string;
+  // newsletter: string;
 };
 
 export async function init() {
@@ -22,6 +30,9 @@ export async function init() {
   // @see https://nextjs.org/docs/pages/api-reference/create-next-app
   const cmd = `npx create-next-app@latest ${destPath} --use-pnpm --example ${example} --example-path "${examplePath}"`;
 
+  console.log(answers);
+  process.exit();
+
   await spinner("Installing", async () => {
     await exec(cmd, {
       stdio: "inherit",
@@ -32,7 +43,28 @@ export async function init() {
 function opener() {
   // generated via https://ascii-generator.site
   console.log(`
-  
+                        ▓▒░░░▒▓         
+                      ▓▒░░░░░░░▓        
+                    ▓▒░░░▒▒░░░░         
+                  ▓▒░░░▒▓▓░░░░          
+                ▓▒▒▒▒▒▓ ▓░░░░           
+              ▓▒▒▒▒▒   ▓░░░░            
+            ▓▒▒▒▒▓    ▓░░░░             
+          ▓▒▒▒▒▓      ░░░░              
+         ▓▒▒▒▒▓     ▓░░░░▓              
+          ▒▒▒▒▒▒▒▒▒▒░░░░▒▒▒▒▒▒▒▒▒▓      
+            ▓▓▓▓▓▓▓░░░▒▓▓▓▓▓▓▓▒▒▒▒      
+                 ▓░░░▒      ▓▒▒▒▒▓      
+                 ░░░▒     ▒▒▒▒▒▓        
+               ▓░░░▒    ▒▒▒▒▒▓          
+              ▓░░░▒  ▓▒▒▒▒▒▓            
+             ▓░░░▒ ▓▒░░░▒▓              
+            ▓░░░▒▓▒░░░▒▓                
+            ▒░░░░░░░▒▓                  
+             ▒░░░░▒▓                    
+               ▓▓                       
+                                        
+
   StartupKit - ${process.env.VERSION}
   Your startup kit for building, growing, and scaling your startup.
 `);
@@ -54,16 +86,8 @@ const questions: any[] = [
         .replace(/\-\-+/g, "-")
         .replace(/^-+|-+$/g, ""), // Remove starting and ending hyphens
   },
-  // {
-  //   type: "checkbox",
-  //   name: "analytics",
-  //   message: "Which analytics tools would you like to include?",
-  //   choices: [
-  //     { name: "Posthog", value: "posthog" },
-  //     { name: "Google Analytics", value: "googleAnalytics" },
-  //     { name: "Plausible", value: "plausible" },
-  //   ] as const,
-  // },
+  ...analyticsQuestions,
+  // ...cmsQuestions,
   // {
   //   type: "list",
   //   name: "authentication",
@@ -79,12 +103,6 @@ const questions: any[] = [
   //   name: "payments",
   //   message: "Which payment service would you like to use? (Pick one)",
   //   choices: [{ name: "Stripe", value: "stripe" }],
-  // },
-  // {
-  //   type: "list",
-  //   name: "cms",
-  //   message: "Which CMS would you like to use? (Pick one)",
-  //   choices: [{ name: "Built-in", value: "builtin" }],
   // },
   // {
   //   type: "list",

@@ -2,7 +2,7 @@ import type { Options } from "tsup";
 
 const config: Options = {
   entry: ["src/cli.ts"],
-  format: ["esm"],
+  format: ["cjs"],
   sourcemap: true,
   splitting: false,
   bundle: true,

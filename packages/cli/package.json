@@ -21,26 +21,33 @@
     "templates"
   ],
   "type": "module",
-  "main": "index.js",
+  "main": "dist/cli.js",
   "exports": {
     ".": {
-      "module": "./dist/cli.cjs",
       "default": "./dist/cli.js"
     },
     "./package.json": "./package.json"
   },
   "bin": {
-    "startupkit": "./index.js"
+    "startupkit": "./dist/cli.js"
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "tsup",
+    "build": "rollup -c",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@startupkit/analytics": "workspace:*",
+    "@startupkit/cms": "workspace:*",
+    "@types/commander": "^2.12.2",
+    "@types/node": "^22.2.0",
     "commander": "12.1.0",
-    "inquirer": "9.3.6",
     "ora": "^8.0.1",
     "validate-package-exports": "0.6.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "inquirer": "10.1.8"
   }
 }

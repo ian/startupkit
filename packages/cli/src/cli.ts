@@ -9,7 +9,6 @@ export function run() {
   program
     .name("startupkit")
     .description("The last startup framework you'll ever need")
-    .version(require("../package.json").version)
     .action(() => {
       // console.log("No command provided. Please specify a command.");
       init();
