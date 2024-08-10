@@ -1,44 +1,6 @@
 import { format } from "date-fns"; // Add this import
-import withMDX from "@next/mdx";
-import { NextConfig } from "next";
 import matter from "gray-matter";
-import path from "path";
-
-const DEFAULT_EXTENSIONS = ["js", "jsx", "ts", "tsx"];
-const MARKDOWN_EXTENSIONS = ["md", "mdx"];
-
-type CMSConfig = {
-  debug?: boolean;
-};
-
-export const startupkitCMS = (
-  cmsConfig: CMSConfig
-): ((nextConfig: NextConfig) => NextConfig) => {
-  return function withStartupKitCMS(nextConfig: NextConfig) {
-    const config = {
-      ...nextConfig,
-      pageExtensions: [
-        ...(nextConfig.pageExtensions || DEFAULT_EXTENSIONS),
-        ...MARKDOWN_EXTENSIONS,
-      ],
-    } satisfies NextConfig;
-
-    return withMDX({
-      options: {
-        remarkPlugins: [frontmatter],
-        rehypePlugins: [],
-        providerImportSource: "@startupkit/cms/mdx-config",
-      },
-    })(config);
-  };
-};
-
-const extractRoute = (filePath: string): string | null => {
-  const dir = path.dirname(filePath); // Get the directory name
-  const fileName = path.basename(filePath, path.extname(filePath)); // Get the file name without extension
-  const match = dir.match(/\/pages(\/.*)/); // Match the path segment
-  return match ? `${match[1]}/${fileName}` : null; // Return the matched route with the file name
-};
+import { extractRoute } from "./helpers";
 
 export const frontmatter = () => (tree: any, file: any) => {
   const { data } = matter(file.value);
@@ -248,5 +210,3 @@ export const frontmatter = () => (tree: any, file: any) => {
     },
   });
 };
-
-export default startupkitCMS;

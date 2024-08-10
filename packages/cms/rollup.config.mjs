@@ -10,11 +10,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const pkg = JSON.parse(
   readFileSync(resolve(__dirname, "package.json"), "utf-8")
-); // Read package.json
+);
 const external = Object.keys(pkg.dependencies || {}); // Make all dependencies external
 
 export default {
-  input: ["src/index.ts", "src/init.ts", "src/plugin.ts", "src/mdx-config.tsx"],
+  input: ["src/index.ts", "src/init.ts", "src/config.ts", "src/mdx.tsx"],
   output: [
     {
       dir: "dist/cjs",
@@ -28,24 +28,17 @@ export default {
   external,
   plugins: [
     esbuild({
-      include: /\.[jt]sx?$/, // default, inferred from `loaders` option
-      exclude: /node_modules/, // default
-      sourceMap: true, // default
+      include: /\.[jt]sx?$/,
+      exclude: /node_modules/,
+      sourceMap: true,
       minify: process.env.NODE_ENV === "production",
-      target: "esnext", // default, or 'es20XX', 'esnext'
-      jsx: "transform", // default, or 'preserve'
+      target: "esnext",
+      jsx: "transform",
       jsxFactory: "React.createElement",
       jsxFragment: "React.Fragment",
-      // define: {
-      //   __VERSION__: pkg.version,
-      // },
-      tsconfig: "tsconfig.json", // default
+      tsconfig: "tsconfig.json",
       loaders: {
-        // Add .json files support
-        // require @rollup/plugin-commonjs
         ".json": "json",
-        // Enable JSX in .js files too
-        ".js": "jsx",
       },
     }),
     preserveDirectives(),

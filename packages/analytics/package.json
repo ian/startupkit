@@ -20,6 +20,7 @@
       "require": "./dist/cjs/init.js",
       "types": "./dist/types/init.d.ts"
     },
+    "./config": "./dist/cjs/config.js",
     "./ga": {
       "import": "./dist/esm/ga.js",
       "require": "./dist/cjs/ga.js",

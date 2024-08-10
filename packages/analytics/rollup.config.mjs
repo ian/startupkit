@@ -17,6 +17,7 @@ export default {
   input: [
     "src/index.ts",
     "src/init.ts",
+    "src/config.ts",
     "src/ext/ga.ts",
     "src/ext/plausible.ts",
     "src/ext/posthog.ts",

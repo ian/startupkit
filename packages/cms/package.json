@@ -21,8 +21,8 @@
       "types": "./dist/types/init.d.ts",
       "import": "./dist/esm/init.js"
     },
-    "./plugin": "./dist/cjs/plugin.js",
-    "./mdx-config": "./dist/cjs/mdx-config.js"
+    "./config": "./dist/cjs/config.js",
+    "./mdx": "./dist/cjs/mdx.js"
   },
   "scripts": {
     "clean": "rm -rf ./dist ./.turbo",
