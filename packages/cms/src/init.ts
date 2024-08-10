@@ -1,6 +1,6 @@
-export type CMSQuestionOptions = true | false;
+import type { Initializer, InitializerQuestion } from "@startupkit/utils";
 
-export const questions = [
+const questions: InitializerQuestion[] = [
   {
     type: "confirm",
     name: "cms",
@@ -9,6 +9,13 @@ export const questions = [
   },
 ];
 
-export const init = async (cms: CMSQuestionOptions) => {
+type Answer = true | false;
+
+const init = async (cms: Answer) => {
   console.log("Installing CMS", cms);
 };
+
+export default {
+  questions,
+  init,
+} satisfies Initializer;

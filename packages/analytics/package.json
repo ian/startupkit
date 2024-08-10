@@ -56,6 +56,7 @@
     "react": "^18.2.0"
   },
   "devDependencies": {
+    "@startupkit/utils": "workspace:*",
     "@types/mdast": "^4.0.4",
     "@types/mdx": "^2.0.13",
     "@types/next": "9",

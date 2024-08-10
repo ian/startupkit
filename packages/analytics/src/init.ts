@@ -1,10 +1,6 @@
-export type AnalyticsQuestionOptions = (
-  | "posthog"
-  | "googleAnalytics"
-  | "plausible"
-)[];
+import type { Initializer, InitializerQuestion } from "@startupkit/utils";
 
-export const questions = [
+const questions: InitializerQuestion[] = [
   {
     type: "checkbox",
     name: "analytics",
@@ -17,6 +13,13 @@ export const questions = [
   },
 ];
 
-export const init = async (analytics: AnalyticsQuestionOptions) => {
+type Answers = ("posthog" | "googleAnalytics" | "plausible")[];
+
+const init = async (analytics: Answers) => {
   console.log("Installing Analytics", analytics);
 };
+
+export default {
+  questions,
+  init,
+} satisfies Initializer;
