@@ -17,10 +17,6 @@
       "types": "./dist/types/index.d.ts",
       "import": "./dist/esm/index.js"
     },
-    "./init": {
-      "types": "./dist/types/init.d.ts",
-      "import": "./dist/esm/init.js"
-    },
     "./config": "./dist/cjs/config.js",
     "./mdx": "./dist/cjs/mdx.js"
   },
@@ -46,7 +42,6 @@
     "react": "^18.2.0"
   },
   "devDependencies": {
-    "@startupkit/utils": "workspace:*",
     "@types/mdast": "^4.0.4",
     "@types/mdx": "^2.0.13",
     "@types/next": "9",

@@ -16,7 +16,6 @@ const external = Object.keys(pkg.dependencies || {}); // Make all dependencies e
 export default {
   input: [
     "src/index.ts",
-    "src/init.ts",
     "src/config.ts",
     "src/ext/ga.ts",
     "src/ext/plausible.ts",

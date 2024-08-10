@@ -15,11 +15,6 @@
       "require": "./dist/cjs/index.js",
       "types": "./dist/types/index.d.ts"
     },
-    "./init": {
-      "import": "./dist/esm/init.js",
-      "require": "./dist/cjs/init.js",
-      "types": "./dist/types/init.d.ts"
-    },
     "./config": "./dist/cjs/config.js",
     "./ga": {
       "import": "./dist/esm/ga.js",
@@ -57,7 +52,6 @@
     "react": "^18.2.0"
   },
   "devDependencies": {
-    "@startupkit/utils": "workspace:*",
     "@types/mdast": "^4.0.4",
     "@types/mdx": "^2.0.13",
     "@types/next": "9",

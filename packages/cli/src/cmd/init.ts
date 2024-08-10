@@ -1,10 +1,7 @@
 import inquirer from "inquirer";
 
-import AnalyticsPlugin from "@startupkit/analytics/init";
-import CMSPlugin from "@startupkit/cms/init";
-
 import { spinner } from "../lib/spinner";
-import { exec, InitializerActions } from "../../../utils/src";
+import { exec } from "../lib/system";
 
 type Answers = {
   name: string;
@@ -26,8 +23,6 @@ const questions: any[] = [
         .replace(/\-\-+/g, "-")
         .replace(/^-+|-+$/g, ""), // Remove starting and ending hyphens
   },
-  ...AnalyticsPlugin.questions,
-  ...CMSPlugin.questions,
 ];
 
 export async function init() {
@@ -35,12 +30,6 @@ export async function init() {
 
   const answers: Answers = await inquirer.prompt(questions);
   const destPath = (process.env.SK_DIR ?? process.cwd()) + "/" + answers.name;
-  const actions: InitializerActions = [];
-
-  const analytics = await AnalyticsPlugin.init(answers.analytics, {
-    cwd: destPath,
-  });
-  const cms = await CMSPlugin.init(answers.cms, { cwd: destPath });
 
   process.exit();
 
@@ -50,6 +39,7 @@ export async function init() {
       "https://github.com/01-studio/startupkit#feat/cli-and-base-template";
     const examplePath = "template";
     const cmd = `npx create-next-app@latest ${destPath} --use-pnpm --example ${example} --example-path "${examplePath}"`;
+
     await exec(cmd, {
       stdio: "inherit",
     });

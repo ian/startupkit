@@ -1,8 +1,6 @@
 import child from "child_process";
 import fs from "fs";
 
-export * from "./types";
-
 export async function writeFile(path: string, data: string) {
   return fs.writeFileSync(path, data);
 }

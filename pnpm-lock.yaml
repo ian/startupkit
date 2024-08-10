@@ -60,9 +60,6 @@ importers:
         specifier: ^3.3.1
         version: 3.3.1(prop-types@15.8.1)(react@18.2.0)
     devDependencies:
-      '@startupkit/utils':
-        specifier: workspace:*
-        version: link:../utils
       '@types/mdast':
         specifier: ^4.0.4
         version: 4.0.4
@@ -93,9 +90,6 @@ importers:
       '@startupkit/cms':
         specifier: workspace:*
         version: link:../cms
-      '@startupkit/utils':
-        specifier: workspace:*
-        version: link:../utils
       '@types/commander':
         specifier: ^2.12.2
         version: 2.12.2
@@ -149,9 +143,6 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0
     devDependencies:
-      '@startupkit/utils':
-        specifier: workspace:*
-        version: link:../utils
       '@types/mdast':
         specifier: ^4.0.4
         version: 4.0.4
@@ -173,8 +164,6 @@ importers:
       react:
         specifier: ^18.2.0
         version: 18.2.0
-
-  packages/utils: {}
 
 packages:
 
