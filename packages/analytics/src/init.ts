@@ -1,7 +1,8 @@
-export type AnalyticsQuestionOptions =
+export type AnalyticsQuestionOptions = (
   | "posthog"
   | "googleAnalytics"
-  | "plausible";
+  | "plausible"
+)[];
 
 export const questions = [
   {
@@ -15,3 +16,7 @@ export const questions = [
     ] as const,
   },
 ];
+
+export const init = async (analytics: AnalyticsQuestionOptions) => {
+  console.log("Installing Analytics", analytics);
+};
