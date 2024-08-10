@@ -1,7 +1,9 @@
 import inquirer from "inquirer"; // Updated to use ES module import
 import { spinner } from "../lib/spinner";
+import { exec } from "../lib/run";
 
 type Answers = {
+  name: string;
   analytics: Array<string>;
   authentication: string;
   payments: string;
@@ -13,11 +15,17 @@ export async function init() {
   opener();
 
   const answers: Answers = await inquirer.prompt(questions);
-  console.log("Your selected features:");
-  console.log(JSON.stringify(answers, null, 2));
+  const example =
+    "https://github.com/01-studio/startupkit#feat/cli-and-base-template";
+  const examplePath = "template";
+  const destPath = (process.env.SK_DIR ?? process.cwd()) + "/" + answers.name;
+  // @see https://nextjs.org/docs/pages/api-reference/create-next-app
+  const cmd = `npx create-next-app@latest ${destPath} --use-pnpm --example ${example} --example-path "${examplePath}"`;
 
   await spinner("Installing", async () => {
-    await pause(3000);
+    await exec(cmd, {
+      stdio: "inherit",
+    });
   });
 }
 
@@ -27,52 +35,66 @@ function opener() {
   
   StartupKit - ${process.env.VERSION}
   Your startup kit for building, growing, and scaling your startup.
-
 `);
 }
 
 const questions: any[] = [
   {
-    type: "checkbox",
-    name: "analytics",
-    message: "Which analytics tools would you like to include?",
-    choices: [
-      { name: "Posthog", value: "posthog" },
-      { name: "Google Analytics", value: "googleAnalytics" },
-      { name: "Plausible", value: "plausible" },
-    ] as const,
+    type: "input",
+    name: "name",
+    message: "What is the name of your startup?",
+    validate: (input: string) => {
+      return input ? true : "Name is required"; // Ensure valid input
+    },
+    filter: (input: string) =>
+      input
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[^\w\-]+/g, "")
+        .replace(/\-\-+/g, "-")
+        .replace(/^-+|-+$/g, ""), // Remove starting and ending hyphens
   },
-  {
-    type: "list",
-    name: "authentication",
-    message: "Which authentication service would you like to use? (Pick one)",
+  // {
+  //   type: "checkbox",
+  //   name: "analytics",
+  //   message: "Which analytics tools would you like to include?",
+  //   choices: [
+  //     { name: "Posthog", value: "posthog" },
+  //     { name: "Google Analytics", value: "googleAnalytics" },
+  //     { name: "Plausible", value: "plausible" },
+  //   ] as const,
+  // },
+  // {
+  //   type: "list",
+  //   name: "authentication",
+  //   message: "Which authentication service would you like to use? (Pick one)",
 
-    choices: [
-      { name: "NextAuth", value: "nextAuth" },
-      { name: "WorkOS", value: "workOS" },
-    ],
-  },
-  {
-    type: "list",
-    name: "payments",
-    message: "Which payment service would you like to use? (Pick one)",
-    choices: [{ name: "Stripe", value: "stripe" }],
-  },
-  {
-    type: "list",
-    name: "cms",
-    message: "Which CMS would you like to use? (Pick one)",
-    choices: [{ name: "Built-in", value: "builtin" }],
-  },
-  {
-    type: "list",
-    name: "newsletter",
-    message: "Which newsletter service would you like to use? (Pick one)",
-    choices: [
-      { name: "ConvertKit", value: "convertKit" },
-      { name: "Loops", value: "loops" },
-    ],
-  },
+  //   choices: [
+  //     { name: "NextAuth", value: "nextAuth" },
+  //     { name: "WorkOS", value: "workOS" },
+  //   ],
+  // },
+  // {
+  //   type: "list",
+  //   name: "payments",
+  //   message: "Which payment service would you like to use? (Pick one)",
+  //   choices: [{ name: "Stripe", value: "stripe" }],
+  // },
+  // {
+  //   type: "list",
+  //   name: "cms",
+  //   message: "Which CMS would you like to use? (Pick one)",
+  //   choices: [{ name: "Built-in", value: "builtin" }],
+  // },
+  // {
+  //   type: "list",
+  //   name: "newsletter",
+  //   message: "Which newsletter service would you like to use? (Pick one)",
+  //   choices: [
+  //     { name: "ConvertKit", value: "convertKit" },
+  //     { name: "Loops", value: "loops" },
+  //   ],
+  // },
 ];
 
 export function pause(ms: number): Promise<void> {

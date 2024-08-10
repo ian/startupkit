@@ -49,21 +49,15 @@ type ExecOpts = {
 
 export async function exec(cmd: string, opts: ExecOpts = {}) {
   const { cwd, stdio = "ignore" } = opts;
-  // return child.execSync(cmd, { cwd, stdio })
-  return new Promise((resolve, reject) => {
-    child.exec(
-      cmd,
-      {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const res = child.execSync(cmd, {
         cwd,
-        // stdio
-      },
-      (error: child.ExecException, stdout: string, stderr: string) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(stdout);
-        }
-      }
-    );
+        stdio,
+      });
+      resolve(res);
+    } catch (error) {
+      reject(error);
+    }
   });
 }
