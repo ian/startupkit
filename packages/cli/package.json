@@ -16,14 +16,31 @@
     "analytics",
     "auth"
   ],
+  "files": [
+    "dist",
+    "templates"
+  ],
+  "type": "module",
   "main": "index.js",
+  "exports": {
+    ".": {
+      "module": "./dist/cli.cjs",
+      "default": "./dist/cli.js"
+    },
+    "./package.json": "./package.json"
+  },
   "bin": {
     "startupkit": "./index.js"
   },
   "scripts": {
+    "clean": "rm -rf dist",
+    "build": "tsup",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "commander": "^12.1.0",
+    "inquirer": "^10.1.8",
+    "ora": "^8.0.1",
     "validate-package-exports": "^0.6.0"
   }
 }
