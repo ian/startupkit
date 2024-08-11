@@ -1,0 +1,28 @@
+{
+  "name": "@startupkit/payments",
+  "version": "0.2.0",
+  "author": "Ian Hunter <ian@01.studio>",
+  "license": "ISC",
+  "description": "Payments package for StartupKit",
+  "homepage": "https://startupkit.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/01-studio/startupkit"
+  },
+  "scripts": {
+    "clean": "rm -rf ./dist ./.turbo",
+    "build": "rollup -c && tsc --emitDeclarationOnly",
+    "build:watch": "npx chokidar-cli \"src/**/*\" -c \"pnpm run build\" --initial",
+    "oldpostbuild": "validate-package-exports --check --verify",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@stripe/react-stripe-js": "^2.5.1",
+    "@stripe/stripe-js": "^3.0.6",
+    "stripe": "^14.19.0"
+  },
+  "peerDependencies": {
+    "next": "^14",
+    "react": "^18.2.0"
+  }
+}

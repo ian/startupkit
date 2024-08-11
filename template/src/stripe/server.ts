@@ -2,7 +2,7 @@ import {
   calculateTrialEndUnixTimestamp,
   createOrRetrieveCustomer,
 } from "@/app/api/stripe/helpers";
-import { getSession } from "@/auth/server";
+import { getSession } from "@startupkit/auth/server";
 import { getErrorRedirect, getURL } from "@/utils/url";
 import { Price, PricingType } from "@prisma/client";
 

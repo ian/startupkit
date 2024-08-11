@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSession } from "../../../auth/server";
-import { getClientId, workos } from "@/auth/client";
+import { getSession } from "@startupkit/auth/server";
+import { getClientId, workos } from "@startupkit/auth";
 import { prisma } from "prisma/client";
 
 export async function GET(request: NextRequest) {

@@ -7,7 +7,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useState } from "react";
 import { Price, Product, Subscription, User } from "@prisma/client";
 import { getErrorRedirect } from "@/lib/url";
-import { getAuthorizationUrl } from "@/auth/client";
+import { getAuthorizationUrl } from "@startupkit/auth";
 
 interface ProductWithPrices extends Product {
   prices: Price[];

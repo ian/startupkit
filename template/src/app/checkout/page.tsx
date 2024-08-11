@@ -1,5 +1,5 @@
-import { getSession } from "@/auth/server";
-import { Pricing } from "../../components/home/Pricing";
+import { getSession } from "@startupkit/auth/server";
+import { Pricing } from "@/components/home/Pricing";
 import { prisma } from "prisma/client";
 
 export default async function PricingPage() {

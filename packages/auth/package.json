@@ -1,0 +1,42 @@
+{
+  "name": "@startupkit/auth",
+  "version": "0.2.0",
+  "author": "Ian Hunter <ian@01.studio>",
+  "license": "ISC",
+  "description": "Auth package for StartupKit",
+  "homepage": "https://startupkit.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/01-studio/startupkit"
+  },
+  "main": "./dist/esm/client.js",
+  "module": "./dist/esm/client.js",
+  "types": "./dist/types/client.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/client.d.ts",
+      "import": "./dist/esm/client.js",
+      "require": "./dist/cjs/client.js"
+    },
+    "./server": {
+      "types": "./dist/types/server.d.ts",
+      "import": "./dist/esm/server.js",
+      "require": "./dist/cjs/server.js"
+    }
+  },
+  "scripts": {
+    "clean": "rm -rf ./dist ./.turbo",
+    "build": "rollup -c && tsc --emitDeclarationOnly",
+    "build:watch": "npx chokidar-cli \"src/**/*\" -c \"pnpm run build\" --initial",
+    "oldpostbuild": "validate-package-exports --check --verify",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@workos-inc/node": "^5.0.0",
+    "iron-session": "^8.0.1"
+  },
+  "peerDependencies": {
+    "next": "^14",
+    "react": "^18.2.0"
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "name": "startupkit",
+  "name": "__project__",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -18,20 +18,17 @@
   "dependencies": {
     "@prisma/client": "5.10.2",
     "@startupkit/analytics": "workspace:*",
+    "@startupkit/auth": "workspace:*",
     "@startupkit/cms": "workspace:*",
-    "@stripe/react-stripe-js": "^2.5.1",
-    "@stripe/stripe-js": "^3.0.6",
-    "@workos-inc/node": "^5.0.0",
+    "@startupkit/payments": "workspace:*",
     "clsx": "^2.1.1",
     "framer-motion": "^11.3.24",
-    "iron-session": "^8.0.1",
     "lucide-react": "^0.427.0",
     "next": "14.0.1",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.52.2",
     "react-hot-toast": "^2.4.1",
-    "stripe": "^14.19.0",
     "tailwind-merge": "^2.4.0"
   },
   "devDependencies": {

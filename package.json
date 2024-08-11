@@ -6,10 +6,10 @@
   "private": true,
   "scripts": {
     "clean": "pnpm -r run clean",
-    "build": "turbo run build",
+    "build": "pnpm -r --filter  \"./packages/**\" run build",
     "build:watch": "pnpm -r build:watch",
-    "dev": "turbo run dev",
-    "type-check": "turbo run type-check",
+    "dev": "pnpm -r run dev",
+    "type-check": "pnpm -r run type-check",
     "bump": "./scripts/bump",
     "release": "pnpm recursive --filter  \"./packages/**\" exec -- npm publish --access public"
   },
