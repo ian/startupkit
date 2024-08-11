@@ -11,6 +11,7 @@ const baseConfig = {
   },
 };
 
+/** Combine all the plugins into a single configuration */
 const combine = (...plugins) => {
   return plugins.reduce((acc, plugin) => plugin(acc), baseConfig);
 };
