@@ -5,25 +5,6 @@ export interface SessionData {
   createdAt: string;
 }
 
-// Check for required WorkOS environment variables
-function checkRequiredEnvVars() {
-  const requiredVars = [
-    "WORKOS_API_KEY",
-    "WORKOS_CLIENT_ID",
-    "WORKOS_REDIRECT_URI",
-  ];
-
-  for (const varName of requiredVars) {
-    if (!process.env[varName]) {
-      throw new Error(`${varName} is not set`);
-    }
-  }
-}
-
-// Call the check function
-checkRequiredEnvVars();
-
-// Initialize the WorkOS client
 export const workos = new WorkOS(process.env.WORKOS_API_KEY!);
 
 export function getClientId(): string {

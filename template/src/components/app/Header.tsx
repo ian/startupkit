@@ -3,16 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 
-import {
-  Menu,
-  Calendar,
-  ChartPie,
-  DownloadCloud,
-  Folder,
-  Home,
-  Users,
-  X,
-} from "lucide-react";
+import { Menu, X } from "lucide-react";
 import clsx from "clsx";
 import { Sidebar } from "./Sidebar";
 

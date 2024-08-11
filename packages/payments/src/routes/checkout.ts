@@ -6,7 +6,7 @@ export async function handler(request: Request) {
 
   const { errorRedirect, sessionId } = await checkoutWithStripe(
     price,
-    redirectTo || "/",
+    redirectTo || "/subscription",
   );
 
   return Response.json(
