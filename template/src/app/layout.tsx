@@ -1,7 +1,7 @@
 import "./styles.css";
 
 import type { Metadata } from "next";
-import { Header } from "@/components/Header";
+import { Header } from "@/components/app/Header";
 
 export const metadata: Metadata = {
   title: "Example AuthKit Authenticated App",

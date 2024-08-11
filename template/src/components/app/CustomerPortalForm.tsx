@@ -1,6 +1,6 @@
 "use client";
 
-import Button from "@/ui/Button";
+import { Button } from "@/ui/button";
 import { useRouter, usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
 import Link from "next/link";
@@ -50,11 +50,7 @@ export function CustomerPortalForm({ subscription }: Props) {
   const footer = subscription ? (
     <div className="flex flex-col items-start justify-between sm:flex-row sm:items-center">
       <p className="pb-4 sm:pb-0">Manage your subscription on Stripe.</p>
-      <Button
-        variant="slim"
-        onClick={handleStripePortalRequest}
-        loading={isSubmitting}
-      >
+      <Button onClick={handleStripePortalRequest} loading={isSubmitting}>
         Open customer portal
       </Button>
     </div>

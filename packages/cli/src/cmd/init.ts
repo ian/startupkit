@@ -1,7 +1,7 @@
 import inquirer from "inquirer";
 
 import { spinner } from "../lib/spinner";
-import { exec } from "../lib/system";
+import { exec, writeFile } from "../lib/system";
 
 type Answers = {
   name: string;
@@ -29,19 +29,44 @@ export async function init() {
   opener();
 
   const answers: Answers = await inquirer.prompt(questions);
-  const destPath = (process.env.SK_DIR ?? process.cwd()) + "/" + answers.name;
+  const baseDir = process.env.SK_DIR ?? process.cwd();
+  const destPath = baseDir + "/" + answers.name;
 
-  process.exit();
-
-  await spinner("Installing", async () => {
+  await spinner("Initializing Project", async () => {
     // @see https://nextjs.org/docs/pages/api-reference/create-next-app
     const example =
       "https://github.com/01-studio/startupkit#feat/cli-and-base-template";
     const examplePath = "template";
-    const cmd = `npx create-next-app@latest ${destPath} --use-pnpm --example ${example} --example-path "${examplePath}"`;
+    const installCmd = `npx create-next-app@latest ${destPath} --use-pnpm --example ${example} --example-path "${examplePath}"`;
 
-    await exec(cmd, {
+    await exec(installCmd, {
       stdio: "inherit",
+    });
+
+    await writeFile(
+      `${destPath}/.env.local`,
+      `
+AUTH_SECRET=FAKE1234567890123456789012345678901234567890
+DATABASE_URL="postgresql://localhost:5432/startupkit?schema=public"
+# Analytics
+GOOGLE_ANALYTICS_ID=
+PLAUSIBLE_DOMAIN=
+POSTHOG_TOKEN=
+# Payments
+STRIPE_PUBLISHABLE_KEY=
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+# Auth
+WORKOS_CLIENT_ID=
+WORKOS_API_KEY=
+WORKOS_REDIRECT_URI=`
+    );
+  });
+
+  await spinner("Adding StartupKit", async () => {
+    await exec(`pnpm add @startupkit/analytics@latest @startupkit/cms@latest`, {
+      stdio: "inherit",
+      cwd: destPath,
     });
   });
 }
@@ -74,8 +99,4 @@ function opener() {
   StartupKit - ${process.env.VERSION}
   Your startup kit for building, growing, and scaling your startup.
 `);
-}
-
-export function pause(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }

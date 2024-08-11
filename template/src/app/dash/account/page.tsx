@@ -1,5 +1,5 @@
 import { getSession } from "@/auth/server";
-import { CustomerPortalForm } from "@/components/CustomerPortalForm";
+import { CustomerPortalForm } from "@/components/app/CustomerPortalForm";
 import { redirect } from "next/navigation";
 import { prisma } from "prisma/client";
 

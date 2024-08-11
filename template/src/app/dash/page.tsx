@@ -1,6 +1,6 @@
 import NextLink from "next/link";
-import { SignInButton } from "../components/SignInButton";
-import { getUser } from "../auth/server";
+import { SignInButton } from "@/components/app/SignInButton";
+import { getUser } from "@/auth/server";
 
 export default async function HomePage() {
   const { isAuthenticated, user } = await getUser();

@@ -15,22 +15,7 @@
       "require": "./dist/cjs/index.js",
       "types": "./dist/types/index.d.ts"
     },
-    "./config": "./dist/cjs/config.js",
-    "./ga": {
-      "import": "./dist/esm/ga.js",
-      "require": "./dist/cjs/ga.js",
-      "types": "./dist/types/ext/ga.d.js"
-    },
-    "./plausible": {
-      "import": "./dist/esm/plausible.js",
-      "require": "./dist/cjs/plausible.js",
-      "types": "./dist/types/ext/plausible.d.ts"
-    },
-    "./posthog": {
-      "import": "./dist/esm/posthog.js",
-      "require": "./dist/cjs/posthog.js",
-      "types": "./dist/types/ext/posthog.d.ts"
-    }
+    "./config": "./dist/cjs/config.js"
   },
   "scripts": {
     "clean": "rm -rf ./dist ./.turbo",

@@ -1,5 +1,5 @@
 import { getAuthorizationUrl } from "@/auth/client";
-import { clearSession, getUser } from "../auth/server";
+import { clearSession, getUser } from "../../auth/server";
 
 export async function SignInButton() {
   const { isAuthenticated } = await getUser();
