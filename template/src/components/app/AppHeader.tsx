@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+
 import {
   Menu,
   Calendar,
@@ -12,8 +13,39 @@ import {
   Users,
   X,
 } from "lucide-react";
-import Image from "next/image";
-import { AppHeader } from "@/components/app/AppHeader";
+import clsx from "clsx";
+
+export const AppHeader = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  return (
+    <>
+      <div className="sticky top-0 z-40 flex items-center px-4 py-4 bg-white shadow-sm gap-x-6 sm:px-6 lg:hidden">
+        <button
+          type="button"
+          onClick={() => setSidebarOpen(true)}
+          className="-m-2.5 p-2.5 text-gray-700 lg:hidden"
+        >
+          <span className="sr-only">Open sidebar</span>
+          <Menu aria-hidden="true" className="w-6 h-6" />
+        </button>
+        <div className="flex-1 text-sm font-semibold leading-6 text-gray-900">
+          Dashboard
+        </div>
+        <a href="#">
+          <span className="sr-only">Your profile</span>
+          <img
+            alt=""
+            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+            className="w-8 h-8 rounded-full bg-gray-50"
+          />
+        </a>
+      </div>
+
+      <MobileSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+    </>
+  );
+};
 
 const navigation = [
   { name: "Dashboard", href: "#", icon: Home, current: true },
@@ -23,31 +55,58 @@ const navigation = [
   { name: "Documents", href: "#", icon: DownloadCloud, current: false },
   { name: "Reports", href: "#", icon: ChartPie, current: false },
 ];
+
 const teams = [
   { id: 1, name: "Heroicons", href: "#", initial: "H", current: false },
   { id: 2, name: "Tailwind Labs", href: "#", initial: "T", current: false },
   { id: 3, name: "Workcation", href: "#", initial: "W", current: false },
 ];
 
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
-}
-
-export default function Layout({ children }: { children: React.ReactNode }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
+export const MobileSidebar = ({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) => {
   return (
-    <>
-      <div>
-        <div className="hidden sm:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-          <div className="flex flex-col px-6 overflow-y-auto bg-white border-r border-gray-200 grow gap-y-5">
+    <div className={open ? "block" : "hidden"}>
+      <motion.div
+        initial={{ opacity: 0, x: -100 }}
+        animate={{
+          opacity: open ? 1 : 0,
+          x: open ? 0 : -100,
+        }}
+        transition={{ duration: 0.25, ease: [0.25, 1, 0.5, 1] }} // Speed increased by 50%
+        className={`fixed inset-0 flex`}
+      >
+        <div
+          className="fixed inset-0 bg-gray-900/80"
+          onClick={() => onClose()}
+          // onClick={console.log}
+        />
+        <motion.div
+          className="relative flex flex-1 w-full max-w-xs mr-16 transform bg-white"
+          initial={{ x: "-100%" }}
+          animate={{ x: open ? 0 : "-100%" }}
+          transition={{ duration: 0.25, ease: [0.25, 1, 0.5, 1] }} // Speed increased by 50%
+        >
+          <div className="absolute top-0 flex justify-center w-16 pt-5 left-full">
+            <button
+              type="button"
+              onClick={() => onClose()}
+              className="-m-2.5 p-2.5"
+            >
+              <span className="sr-only">Close sidebar</span>
+              <X aria-hidden="true" className="w-6 h-6 text-white" />
+            </button>
+          </div>
+          <div className="flex flex-col px-6 pb-2 overflow-y-auto grow gap-y-5">
             <div className="flex items-center h-16 shrink-0">
-              <Image
-                alt="StartupKit"
-                src="/startupkit-logo.svg"
-                className="w-auto h-12 -ml-3"
-                width={100}
-                height={100}
+              <img
+                alt="Your Company"
+                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+                className="w-auto h-8"
               />
             </div>
             <nav className="flex flex-col flex-1">
@@ -58,7 +117,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       <li key={item.name}>
                         <a
                           href={item.href}
-                          className={classNames(
+                          className={clsx(
                             item.current
                               ? "bg-gray-50 text-indigo-600"
                               : "text-gray-700 hover:bg-gray-50 hover:text-indigo-600",
@@ -67,7 +126,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                         >
                           <item.icon
                             aria-hidden="true"
-                            className={classNames(
+                            className={clsx(
                               item.current
                                 ? "text-indigo-600"
                                 : "text-gray-400 group-hover:text-indigo-600",
@@ -89,7 +148,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       <li key={team.name}>
                         <a
                           href={team.href}
-                          className={classNames(
+                          className={clsx(
                             team.current
                               ? "bg-gray-50 text-indigo-600"
                               : "text-gray-700 hover:bg-gray-50 hover:text-indigo-600",
@@ -97,7 +156,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                           )}
                         >
                           <span
-                            className={classNames(
+                            className={clsx(
                               team.current
                                 ? "border-indigo-600 text-indigo-600"
                                 : "border-gray-200 text-gray-400 group-hover:border-indigo-600 group-hover:text-indigo-600",
@@ -112,31 +171,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     ))}
                   </ul>
                 </li>
-                <li className="mt-auto -mx-6">
-                  <a
-                    href="#"
-                    className="flex items-center px-6 py-3 text-sm font-semibold leading-6 text-gray-900 gap-x-4 hover:bg-gray-50"
-                  >
-                    <img
-                      alt=""
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                      className="w-8 h-8 rounded-full bg-gray-50"
-                    />
-                    <span className="sr-only">Your profile</span>
-                    <span aria-hidden="true">Tom Cook</span>
-                  </a>
-                </li>
               </ul>
             </nav>
           </div>
-        </div>
-
-        <AppHeader />
-
-        <main className="h-screen py-10 lg:pl-72 bg-gray-50">
-          <div className="px-4 sm:px-6 lg:px-8">{children}</div>
-        </main>
-      </div>
-    </>
+        </motion.div>
+      </motion.div>
+    </div>
   );
-}
+};
