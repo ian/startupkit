@@ -1,7 +1,6 @@
-import "./styles.css";
+import "@/styles/app.css";
 
 import type { Metadata } from "next";
-import { Header } from "@/components/app/Header";
 
 export const metadata: Metadata = {
   title: "Example AuthKit Authenticated App",
@@ -16,7 +15,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body style={{ padding: 0, margin: 0 }}>
-        <Header />
         <main className="p-5">{children}</main>
       </body>
     </html>

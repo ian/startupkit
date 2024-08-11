@@ -14,7 +14,6 @@ export default function Home() {
         <link rel="canonical" href="https://startupkit.com" />
       </Head>
       <Hero />
-      <Footer />
     </>
   );
 }

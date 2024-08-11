@@ -9,6 +9,7 @@ import {
   Noto_Sans as FontSans,
   Noto_Sans_Mono as FontMono,
 } from "next/font/google";
+import { Footer } from "@/components/home/Footer";
 
 const fontSerif = FontSerif({
   weight: "400",
@@ -34,10 +35,18 @@ const fontMono = FontMono({
 export default function App({ Component, pageProps, ...rest }: AppProps) {
   return (
     <main
-      className={cn(fontSans.variable, fontSerif.variable, fontMono.variable)}
+      className={cn(
+        fontSans.variable,
+        fontSerif.variable,
+        fontMono.variable,
+        "justify-between flex flex-col w-full",
+      )}
     >
       <Header />
-      <Component {...pageProps} />
+      <main className="px-4 mx-auto lg:px-6 md:max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl">
+        <Component {...pageProps} />
+      </main>
+      <Footer />
     </main>
   );
 }
