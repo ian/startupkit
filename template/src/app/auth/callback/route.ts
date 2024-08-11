@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
 
       const url = request.nextUrl.clone();
       url.searchParams.delete("code");
-      url.pathname = "/";
+      url.pathname = "/dash";
 
       return NextResponse.redirect(url);
     } catch (error) {

@@ -19,6 +19,7 @@ export default async function PricingPage() {
   });
 
   let subscription;
+
   if (user) {
     subscription = await prisma.subscription.findFirst({
       where: {

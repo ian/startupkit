@@ -1,13 +1,13 @@
 "use client";
 
-import { getStripe } from "@/stripe/get-stripe";
+import { getStripe } from "@startupkit/payments";
 
 import classNames from "clsx";
 import { useRouter, usePathname } from "next/navigation";
 import { useState } from "react";
-import { Price, Product, Subscription, User } from "@prisma/client";
+import { Price, Product, Subscription } from "@prisma/client";
 import { getErrorRedirect } from "@/lib/url";
-import { getAuthorizationUrl } from "@startupkit/auth";
+import { getAuthorizationUrl, SessionData } from "@startupkit/auth";
 
 interface ProductWithPrices extends Product {
   prices: Price[];
@@ -20,7 +20,7 @@ interface SubscriptionWithProduct extends Subscription {
 }
 
 interface Props {
-  user: User | null | undefined;
+  user: SessionData["user"] | null | undefined;
   products: ProductWithPrices[];
   subscription: SubscriptionWithProduct | null | undefined;
 }
@@ -52,7 +52,7 @@ export function Pricing({ user, products, subscription }: Props) {
       return router.push(authorizationUrl);
     }
 
-    const { errorRedirect, sessionId } = await fetch("/api/stripe/checkout", {
+    const { errorRedirect, sessionId } = await fetch("/api/payments/checkout", {
       method: "POST",
       body: JSON.stringify({ price }),
       headers: {

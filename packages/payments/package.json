@@ -9,6 +9,18 @@
     "type": "git",
     "url": "https://github.com/01-studio/startupkit"
   },
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    },
+    "./routes": {
+      "types": "./dist/types/routes.d.ts",
+      "import": "./dist/esm/routes.js",
+      "require": "./dist/cjs/routes.js"
+    }
+  },
   "scripts": {
     "clean": "rm -rf ./dist ./.turbo",
     "build": "rollup -c && tsc --emitDeclarationOnly",
@@ -17,6 +29,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@prisma/client": "5.10.2",
     "@stripe/react-stripe-js": "^2.5.1",
     "@stripe/stripe-js": "^3.0.6",
     "stripe": "^14.19.0"

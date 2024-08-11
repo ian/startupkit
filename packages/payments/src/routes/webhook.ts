@@ -1,12 +1,12 @@
 import Stripe from "stripe";
-import { stripe } from "@/stripe/server";
+import { stripe } from "../server";
 import {
   deletePriceRecord,
   deleteProductRecord,
   manageSubscriptionStatusChange,
   upsertPriceRecord,
   upsertProductRecord,
-} from "../helpers";
+} from "../../src/helpers";
 
 const relevantEvents = new Set([
   "product.created",
@@ -21,7 +21,7 @@ const relevantEvents = new Set([
   "customer.subscription.deleted",
 ]);
 
-export async function POST(req: Request) {
+export async function handler(req: Request) {
   const body = await req.text();
   const sig = req.headers.get("stripe-signature") as string;
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;

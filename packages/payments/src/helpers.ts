@@ -1,5 +1,5 @@
-import { TRIAL_PERIOD_DAYS } from "@/stripe/config";
-import { stripe } from "@/stripe/server";
+import { TRIAL_PERIOD_DAYS } from "./config";
+import { stripe } from "./server";
 import Stripe from "stripe";
 
 import { PricingType, PrismaClient } from "@prisma/client";

@@ -12,8 +12,8 @@
     "prettier": "prettier .",
     "prettier:fix": "prettier --write .",
     "stripe:login": "stripe login",
-    "stripe:listen": "stripe listen --forward-to=localhost:3000/api/stripe/webhook",
-    "stripe:fixtures": "stripe fixtures src/stripe/fixtures.json"
+    "stripe:listen": "stripe listen --forward-to=localhost:3000/api/payments/webhook",
+    "stripe:fixtures": "stripe fixtures src/stripe.json"
   },
   "dependencies": {
     "@prisma/client": "5.10.2",

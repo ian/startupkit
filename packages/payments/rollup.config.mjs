@@ -14,7 +14,7 @@ const pkg = JSON.parse(
 const external = Object.keys(pkg.dependencies || {}); // Make all dependencies external
 
 export default {
-  input: ["src/index.ts"],
+  input: ["src/index.ts", "src/routes.ts"],
   output: [
     {
       dir: "dist/cjs",
