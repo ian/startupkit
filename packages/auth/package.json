@@ -22,6 +22,11 @@
       "types": "./dist/types/server.d.ts",
       "import": "./dist/esm/server.js",
       "require": "./dist/cjs/server.js"
+    },
+    "./routes": {
+      "types": "./dist/types/routes.d.ts",
+      "import": "./dist/esm/routes.js",
+      "require": "./dist/cjs/routes.js"
     }
   },
   "scripts": {
@@ -32,6 +37,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@prisma/client": "5.10.2",
     "@workos-inc/node": "^5.0.0",
     "iron-session": "^8.0.1"
   },

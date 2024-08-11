@@ -1,9 +1,9 @@
-// TODO: make this dynamic
-const PREFIX = "/api/payments";
-
 import { handler as checkoutHandler } from "./routes/checkout";
 import { handler as portalHandler } from "./routes/portal";
 import { handler as webhookHandler } from "./routes/webhook";
+
+// TODO: make this dynamic
+const PREFIX = "/payments";
 
 // Define a generic handler for all methods
 async function handleRequest(request: Request, method: string) {

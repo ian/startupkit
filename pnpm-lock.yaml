@@ -84,6 +84,9 @@ importers:
 
   packages/auth:
     dependencies:
+      '@prisma/client':
+        specifier: 5.10.2
+        version: 5.10.2(prisma@5.18.0)
       '@workos-inc/node':
         specifier: ^5.0.0
         version: 5.2.0

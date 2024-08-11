@@ -35,7 +35,7 @@ export function CustomerPortalForm({ subscription }: Props) {
   const handleStripePortalRequest = async () => {
     setSubmitting(true);
 
-    const { redirectUrl } = await fetch("/api/payments/portal", {
+    const { redirectUrl } = await fetch("/payments/portal", {
       method: "POST",
       body: JSON.stringify({ redirectTo: currentPath }),
       headers: {
@@ -70,7 +70,7 @@ export function CustomerPortalForm({ subscription }: Props) {
         {subscription ? (
           `${subscriptionPrice}/${subscription?.price?.interval}`
         ) : (
-          <Link href="/checkout">Choose your plan</Link>
+          <Link href="/payments">Choose your plan</Link>
         )}
       </div>
     </Card>

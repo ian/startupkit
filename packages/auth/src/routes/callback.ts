@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSession } from "@startupkit/auth/server";
-import { getClientId, workos } from "@startupkit/auth";
-import { prisma } from "prisma/client";
+import { getSession } from "../server";
+import { getClientId, workos } from "../client";
+import { PrismaClient } from "@prisma/client";
 
-export async function GET(request: NextRequest) {
+const prisma = new PrismaClient();
+
+export async function handler(request: NextRequest) {
   const code = request.nextUrl.searchParams.get("code");
 
   if (code) {
