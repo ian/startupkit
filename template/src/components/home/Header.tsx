@@ -31,7 +31,7 @@ export function Header() {
             className="w-auto h-10"
           />
         </Link>
-        <div className="flex lg:hidden">
+        <div className="flex sm:hidden">
           <button
             type="button"
             onClick={() => setMobileMenuOpen(true)}
@@ -41,7 +41,7 @@ export function Header() {
             <Menu aria-hidden="true" className="w-6 h-6" />
           </button>
         </div>
-        <div className="hidden lg:flex lg:gap-x-12">
+        <div className="hidden gap-4 sm:flex lg:gap-x-12">
           {navigation.map((item) => (
             <a
               key={item.name}
@@ -51,7 +51,10 @@ export function Header() {
               {item.name}
             </a>
           ))}
-          <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
+          <a
+            href="/dash"
+            className="text-sm font-semibold leading-6 text-gray-900"
+          >
             Log in <span aria-hidden="true">&rarr;</span>
           </a>
         </div>
