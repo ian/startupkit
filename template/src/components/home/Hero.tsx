@@ -26,11 +26,11 @@ export function Hero() {
             className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
           />
         </div>
-        <div className="py-24 sm:py-32 lg:pb-40">
+        <div className="pb-40">
           <div className="px-6 mx-auto max-w-7xl lg:px-8">
-            <div className="max-w-2xl mx-auto text-center">
-              <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-                Data to enrich your online business
+            <div className="max-w-3xl mx-auto text-center">
+              <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-6xl">
+                The Fastest Way to Launch a SaaS Company
               </h1>
               <p className="mt-6 text-lg leading-8 text-gray-600">
                 Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui

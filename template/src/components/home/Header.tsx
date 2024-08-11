@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Menu } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 const navigation = [
   { name: "Product", href: "#" },
@@ -22,10 +23,12 @@ export function Header() {
       >
         <Link href="/" className="-m-1.5 p-1.5">
           <span className="sr-only">Your Company</span>
-          <img
+          <Image
             alt=""
-            src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-            className="w-auto h-8"
+            src="/startupkit-light.svg"
+            width={363}
+            height={100}
+            className="w-auto h-10"
           />
         </Link>
         <div className="flex lg:hidden">
