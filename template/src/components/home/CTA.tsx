@@ -10,6 +10,7 @@ import { Input } from "@/ui/input";
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { Button } from "@/ui/button";
 
 const LOOPS_ENDPOINT =
   "https://app.loops.so/api/newsletter-form/clz5hkgyu02i26fk0jxvvjhot";

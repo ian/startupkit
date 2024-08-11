@@ -3,7 +3,7 @@ import {
   createOrRetrieveCustomer,
 } from "@/app/api/stripe/helpers";
 import { getSession } from "@startupkit/auth/server";
-import { getErrorRedirect, getURL } from "@/utils/url";
+import { getErrorRedirect, getURL } from "@/lib/url";
 import { Price, PricingType } from "@prisma/client";
 
 import Stripe from "stripe";

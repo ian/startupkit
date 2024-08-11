@@ -1,5 +1,4 @@
-import "@/styles/globals.css";
-import "@/styles/static.css";
+import "@/styles/pages.css";
 
 import type { AppProps } from "next/app";
 import { Header } from "@/components/home/Header";

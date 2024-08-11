@@ -2,9 +2,9 @@
 
 import { Button } from "@/ui/button";
 import { useRouter, usePathname } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import Card from "@/ui/Card";
+import { Card } from "@/ui/card";
 import { Price, Product, Subscription } from "@prisma/client";
 
 type SubscriptionWithPriceAndProduct = Subscription & {
