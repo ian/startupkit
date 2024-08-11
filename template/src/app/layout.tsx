@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body style={{ padding: 0, margin: 0 }}>
-        <main className="p-5">{children}</main>
+        <main>{children}</main>
       </body>
     </html>
   );

@@ -16,7 +16,7 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="bg-white">
+    <header className="relative z-50 w-full">
       <nav
         aria-label="Global"
         className="flex items-center justify-between p-6 mx-auto max-w-7xl lg:px-8"
