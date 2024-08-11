@@ -12,12 +12,12 @@ import clsx from "clsx";
 import Image from "next/image";
 
 const navigation = [
-  { name: "Dashboard", href: "#", icon: Home, current: true },
-  { name: "Team", href: "#", icon: Users, current: false },
-  { name: "Projects", href: "#", icon: Folder, current: false },
-  { name: "Calendar", href: "#", icon: Calendar, current: false },
-  { name: "Documents", href: "#", icon: DownloadCloud, current: false },
-  { name: "Reports", href: "#", icon: ChartPie, current: false },
+  { name: "Dashboard", href: "/dash", icon: Home, current: true },
+  { name: "Account", href: "/account", icon: Users, current: false },
+  // { name: "Projects", href: "#", icon: Folder, current: false },
+  // { name: "Calendar", href: "#", icon: Calendar, current: false },
+  // { name: "Documents", href: "#", icon: DownloadCloud, current: false },
+  // { name: "Reports", href: "#", icon: ChartPie, current: false },
 ];
 
 const teams = [
@@ -68,7 +68,8 @@ export const Sidebar = () => {
               ))}
             </ul>
           </li>
-          <li>
+
+          {/* <li>
             <div className="text-xs font-semibold leading-6 text-gray-400">
               Your teams
             </div>
@@ -99,7 +100,7 @@ export const Sidebar = () => {
                 </li>
               ))}
             </ul>
-          </li>
+          </li> */}
         </ul>
       </nav>
     </div>
