@@ -35,7 +35,7 @@ export function CustomerPortalForm({ subscription }: Props) {
   const handleStripePortalRequest = async () => {
     setSubmitting(true);
 
-    const { redirectUrl } = await fetch("/payments/portal", {
+    const { redirectUrl } = await fetch("/api/payments/portal", {
       method: "POST",
       body: JSON.stringify({ redirectTo: currentPath }),
       headers: {

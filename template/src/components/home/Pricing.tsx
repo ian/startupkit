@@ -52,7 +52,7 @@ export function Pricing({ user, products, subscription }: Props) {
       return router.push(authorizationUrl);
     }
 
-    const { errorRedirect, sessionId } = await fetch("/payments/checkout", {
+    const { errorRedirect, sessionId } = await fetch("/api/payments/checkout", {
       method: "POST",
       body: JSON.stringify({ price }),
       headers: {

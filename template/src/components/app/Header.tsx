@@ -9,7 +9,7 @@ export const Header = () => {
         <NextLink href="/account">Account</NextLink>
       </div>
 
-      {/* <SignInButton /> */}
+      <SignInButton />
     </header>
   );
 };

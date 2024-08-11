@@ -22,4 +22,5 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_mtemplate/src/app/payments/[...payments]/route.ts
+  "exclude": ["node_modules"]
+}

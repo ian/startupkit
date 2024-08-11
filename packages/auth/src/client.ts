@@ -5,25 +5,33 @@ export interface SessionData {
   createdAt: string;
 }
 
-// Initialize the WorkOS client
-export const workos = new WorkOS(process.env.WORKOS_API_KEY);
+// Check for required WorkOS environment variables
+function checkRequiredEnvVars() {
+  const requiredVars = [
+    "WORKOS_API_KEY",
+    "WORKOS_CLIENT_ID",
+    "WORKOS_REDIRECT_URI",
+  ];
 
-export function getClientId() {
-  const clientId = process.env.WORKOS_CLIENT_ID;
-
-  if (!clientId) {
-    throw new Error("WORKOS_CLIENT_ID is not set");
+  for (const varName of requiredVars) {
+    if (!process.env[varName]) {
+      throw new Error(`${varName} is not set`);
+    }
   }
-
-  return clientId;
 }
 
-export function getAuthorizationUrl() {
-  const redirectUri = process.env.WORKOS_REDIRECT_URI;
+// Call the check function
+checkRequiredEnvVars();
 
-  if (!redirectUri) {
-    throw new Error("WORKOS_REDIRECT_URI is not set");
-  }
+// Initialize the WorkOS client
+export const workos = new WorkOS(process.env.WORKOS_API_KEY!);
+
+export function getClientId(): string {
+  return process.env.WORKOS_CLIENT_ID!;
+}
+
+export function getAuthorizationUrl(): string {
+  const redirectUri = process.env.WORKOS_REDIRECT_URI!;
 
   const authorizationUrl = workos.userManagement.getAuthorizationUrl({
     provider: "authkit",

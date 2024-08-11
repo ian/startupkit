@@ -3,7 +3,7 @@ import { handler as callbackHandler } from "./routes/callback";
 import { handler as loginHandler } from "./routes/login";
 
 // TODO: make this dynamic
-const PREFIX = "/auth";
+const PREFIX = "/api/auth";
 
 // Define a generic handler for all methods
 async function handleRequest(request: NextRequest, method: string) {
