@@ -3,7 +3,7 @@
 import cn from "clsx";
 import React, { forwardRef, ButtonHTMLAttributes } from "react";
 
-import { LoadingDots } from "@/ui/loading";
+import { LoadingDots } from "@/components/ui/loading";
 
 import styles from "./Button.module.css";
 

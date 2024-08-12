@@ -6,11 +6,11 @@ import {
   CircleSlash,
   Handshake,
 } from "lucide-react";
-import { Input } from "@/ui/input";
+import { Input } from "@/components/ui/input";
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Button } from "@/ui/button";
+import { Button } from "@/components/home/button";
 
 const LOOPS_ENDPOINT =
   "https://app.loops.so/api/newsletter-form/clz5hkgyu02i26fk0jxvvjhot";

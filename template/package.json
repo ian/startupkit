@@ -17,10 +17,14 @@
   },
   "dependencies": {
     "@prisma/client": "5.10.2",
+    "@radix-ui/react-dialog": "^1.1.1",
+    "@radix-ui/react-dropdown-menu": "^2.1.1",
+    "@radix-ui/react-slot": "^1.1.0",
     "@startupkit/analytics": "workspace:*",
     "@startupkit/auth": "workspace:*",
     "@startupkit/cms": "workspace:*",
     "@startupkit/payments": "workspace:*",
+    "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "framer-motion": "^11.3.24",
     "lucide-react": "^0.427.0",
@@ -29,7 +33,8 @@
     "react-dom": "^18",
     "react-hook-form": "^7.52.2",
     "react-hot-toast": "^2.4.1",
-    "tailwind-merge": "^2.4.0"
+    "tailwind-merge": "^2.4.0",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@types/node": "^20",

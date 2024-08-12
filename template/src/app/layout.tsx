@@ -3,8 +3,8 @@ import "@/styles/app.css";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Example AuthKit Authenticated App",
-  description: "Example Next.js application demonstrating how to use AuthKit.",
+  title: "New StartupKit App",
+  description: "The SaaS Framework: https://startupkit.com",
 };
 
 export default function RootLayout({

@@ -2,7 +2,7 @@ import "@/styles/pages.css";
 
 import type { AppProps } from "next/app";
 import { Header } from "@/components/home/Header";
-import { cn } from "@/ui/utils";
+import { cn } from "@/components/ui/utils";
 import {
   Bricolage_Grotesque as FontSerif,
   Noto_Sans as FontSans,
