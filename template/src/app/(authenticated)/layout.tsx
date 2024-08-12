@@ -1,7 +1,19 @@
 import { Header } from "@/components/app/Header";
 import { Sidebar } from "@/components/app/Sidebar";
+import { getUser } from "@startupkit/auth/server";
+import { redirect } from "next/navigation";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default async function Layout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const { isAuthenticated } = await getUser();
+
+  if (!isAuthenticated) {
+    redirect("/");
+  }
+
   return (
     <>
       <main>
