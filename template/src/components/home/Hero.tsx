@@ -1,5 +1,7 @@
 import { useState } from "react";
 import {} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
 const navigation = [
   { name: "Product", href: "#" },
@@ -38,12 +40,12 @@ export function Hero() {
                 fugiat aliqua.
               </p>
               <div className="flex items-center justify-center mt-10 gap-x-6">
-                <a
-                  href="#"
+                <Link
+                  href="/dash"
                   className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
                   Get started
-                </a>
+                </Link>
                 <a
                   href="#"
                   className="text-sm font-semibold leading-6 text-gray-900"
@@ -54,9 +56,9 @@ export function Hero() {
             </div>
             <div className="flow-root mt-16 sm:mt-24">
               <div className="p-2 -m-2 rounded-xl bg-gray-900/5 ring-1 ring-inset ring-gray-900/10 lg:-m-4 lg:rounded-2xl lg:p-4">
-                <img
+                <Image
                   alt="App screenshot"
-                  src="https://tailwindui.com/img/component-images/project-app-screenshot.png"
+                  src="/project-app-screenshot.png"
                   width={2432}
                   height={1442}
                   className="rounded-md shadow-2xl ring-1 ring-gray-900/10"
