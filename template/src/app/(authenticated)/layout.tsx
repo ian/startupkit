@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { Bell, CircleUser, Menu, Search } from "lucide-react";
-
+import { Bell } from "lucide-react";
+import Image from "next/image";
 import { redirect } from "next/navigation";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,19 +11,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import Image from "next/image";
-import { clearSession, getUser } from "@startupkit/auth/server";
+import { getUser } from "@startupkit/auth/server";
 import { Sidebar } from "@/components/app/sidebar";
+import { Header } from "@/components/app/header";
 
 export default async function Layout({
   children,
@@ -76,76 +67,7 @@ export default async function Layout({
         </div>
       </div>
       <div className="flex flex-col">
-        <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="shrink-0 md:hidden"
-              >
-                <Menu className="w-5 h-5" />
-                <span className="sr-only">Toggle navigation menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="flex flex-col">
-              <Sidebar className="text-lg font-medium" />
-              <div className="mt-auto">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Upgrade to Pro</CardTitle>
-                    <CardDescription>
-                      Unlock all features and get unlimited access to our
-                      support team.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Button size="sm" className="w-full">
-                      Upgrade
-                    </Button>
-                  </CardContent>
-                </Card>
-              </div>
-            </SheetContent>
-          </Sheet>
-          <div className="flex-1 w-full">
-            <form>
-              <div className="relative">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  type="search"
-                  placeholder="Search products..."
-                  className="w-full pl-8 shadow-none appearance-none md:w-2/3 lg:w-1/3"
-                />
-              </div>
-            </form>
-          </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="secondary" size="icon" className="rounded-full">
-                <CircleUser className="w-5 h-5" />
-                <span className="sr-only">Toggle user menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <form
-                  action={async () => {
-                    "use server";
-                    await clearSession();
-                  }}
-                >
-                  <button type="submit">Sign Out</button>
-                </form>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </header>
+        <Header />
         <main className="flex items-center justify-center grow bg-gray-50">
           {children}
         </main>

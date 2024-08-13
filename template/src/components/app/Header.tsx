@@ -1,83 +1,106 @@
-"use client";
+import { Menu, Search } from "lucide-react";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { clearSession, getUser } from "@startupkit/auth/server";
+import { Sidebar } from "@/components/app/sidebar";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { User } from "@prisma/client";
 
-import { Menu, X } from "lucide-react";
-import clsx from "clsx";
-import { Sidebar } from "./sidebar";
-import Link from "next/link";
-
-export const Header = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+export const Header = async () => {
+  const { user } = await getUser();
 
   return (
-    <>
-      <header className="fixed top-0 z-40 flex items-center w-full px-4 py-4 bg-white shadow-sm gap-x-6 sm:px-6 lg:hidden">
-        <button
-          type="button"
-          onClick={() => setSidebarOpen(true)}
-          className="-m-2.5 p-2.5 text-gray-700 lg:hidden"
-        >
-          <span className="sr-only">Open sidebar</span>
-          <Menu aria-hidden="true" className="w-6 h-6" />
-        </button>
-        <div className="flex-1 text-sm font-semibold leading-6 text-gray-900">
-          Dashboard
-        </div>
-        <Link href="/account">
-          <span className="sr-only">Your profile</span>
-          <img
-            alt=""
-            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-            className="w-8 h-8 rounded-full bg-gray-50"
-          />
-        </Link>
-      </header>
-
-      <MobileSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-    </>
+    <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button variant="outline" size="icon" className="shrink-0 md:hidden">
+            <Menu className="w-5 h-5" />
+            <span className="sr-only">Toggle navigation menu</span>
+          </Button>
+        </SheetTrigger>
+        <SheetContent side="left" className="flex flex-col">
+          <Sidebar className="text-lg font-medium" />
+          <div className="mt-auto">
+            <Card>
+              <CardHeader>
+                <CardTitle>Upgrade to Pro</CardTitle>
+                <CardDescription>
+                  Unlock all features and get unlimited access to our support
+                  team.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button size="sm" className="w-full">
+                  Upgrade
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </SheetContent>
+      </Sheet>
+      <div className="flex-1 w-full">
+        <form>
+          <div className="relative">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search products..."
+              className="w-full pl-8 shadow-none appearance-none md:w-2/3 lg:w-1/3"
+            />
+          </div>
+        </form>
+      </div>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="secondary" size="icon" className="rounded-full">
+            <Avatar>
+              <AvatarImage src={user?.avatarUrl ?? undefined} />
+              <AvatarFallback>{getInitials(user)}</AvatarFallback>
+            </Avatar>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>Settings</DropdownMenuItem>
+          <DropdownMenuItem>Support</DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>
+            <form
+              action={async () => {
+                "use server";
+                await clearSession();
+              }}
+            >
+              <button type="submit">Sign Out</button>
+            </form>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </header>
   );
 };
 
-export const MobileSidebar = ({
-  open,
-  onClose,
-}: {
-  open: boolean;
-  onClose: () => void;
-}) => {
-  return (
-    <div className={clsx(open ? "block" : "hidden", "fixed h-full")}>
-      <motion.div
-        initial={{ opacity: 0, x: -100 }}
-        animate={{
-          opacity: open ? 1 : 0,
-          x: open ? 0 : -100,
-        }}
-        transition={{ duration: 0.25, ease: [0.25, 1, 0.5, 1] }}
-        className="relative z-50 flex flex-1 w-full h-full max-w-xs mr-16 transform"
-      >
-        <div className="absolute top-0 flex justify-center w-16 pt-5 left-full">
-          <button
-            type="button"
-            onClick={() => onClose()}
-            className="-m-2.5 p-2.5"
-          >
-            <span className="sr-only">Close sidebar</span>
-            <X aria-hidden="true" className="w-6 h-6 text-white" />
-          </button>
-        </div>
-
-        <Sidebar />
-      </motion.div>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: open ? 1 : 0 }}
-        transition={{ duration: 0.25 }}
-        className="fixed inset-0 bg-gray-900/80"
-        onClick={() => onClose()}
-      />
-    </div>
-  );
-};
+function getInitials(user: User | null): string {
+  if (!user) return "";
+  const firstInitial = user.firstName?.charAt(0).toUpperCase();
+  const lastInitial = user.lastName?.charAt(0).toUpperCase();
+  return [firstInitial, lastInitial].join("");
+}
