@@ -11,14 +11,19 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/types/index.d.ts",
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js"
+      "types": "./dist/types/client.d.ts",
+      "import": "./dist/esm/client.js",
+      "require": "./dist/cjs/client.js"
     },
     "./routes": {
       "types": "./dist/types/routes.d.ts",
       "import": "./dist/esm/routes.js",
       "require": "./dist/cjs/routes.js"
+    },
+    "./server": {
+      "types": "./dist/types/server.d.ts",
+      "import": "./dist/esm/server.js",
+      "require": "./dist/cjs/server.js"
     }
   },
   "scripts": {

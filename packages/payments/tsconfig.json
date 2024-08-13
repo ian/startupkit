@@ -17,6 +17,6 @@
     "outDir": "./dist",
     "rootDir": "./src"
   },
-  "include": ["src/**/*", "routes.old"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.old"]
 }

@@ -1,5 +1,5 @@
 import Stripe from "stripe";
-import { stripe } from "../server";
+import { stripe } from "../lib/stripe";
 import {
   deletePriceRecord,
   deleteProductRecord,

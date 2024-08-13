@@ -1,10 +1,10 @@
-import { createStripePortal } from "../server";
+import { getPortalLink } from "../server/getPortalLink";
 
 export async function handler(req: Request) {
   const body = await req.json();
   const { redirectTo } = body;
 
-  const redirectUrl = await createStripePortal(redirectTo || "/subscription");
+  const redirectUrl = await getPortalLink(redirectTo || "/subscription");
 
   return Response.json(
     {
