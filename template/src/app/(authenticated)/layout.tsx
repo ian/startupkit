@@ -1,19 +1,7 @@
 import Link from "next/link";
-import {
-  Bell,
-  CircleUser,
-  Home,
-  LineChart,
-  Menu,
-  Package,
-  Package2,
-  Search,
-  ShoppingCart,
-  Users,
-} from "lucide-react";
+import { Bell, CircleUser, Menu, Search } from "lucide-react";
 
 import { redirect } from "next/navigation";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -34,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Image from "next/image";
 import { clearSession, getUser } from "@startupkit/auth/server";
+import { Sidebar } from "@/components/app/sidebar";
 
 export default async function Layout({
   children,
@@ -52,8 +41,6 @@ export default async function Layout({
         <div className="flex flex-col h-full max-h-screen gap-2">
           <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
             <Link href="/" className="flex items-center gap-2 font-semibold">
-              {/* <Package2 className="w-6 h-6" />
-              <span className="">Acme Inc</span> */}
               <Image
                 alt="StartupKit"
                 src="/startupkit-light.svg"
@@ -68,46 +55,7 @@ export default async function Layout({
             </Button>
           </div>
           <div className="flex-1">
-            <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-              <Link
-                href="#"
-                className="flex items-center gap-3 px-3 py-2 transition-all rounded-lg text-muted-foreground hover:text-primary"
-              >
-                <Home className="w-4 h-4" />
-                Dashboard
-              </Link>
-              <Link
-                href="#"
-                className="flex items-center gap-3 px-3 py-2 transition-all rounded-lg text-muted-foreground hover:text-primary"
-              >
-                <ShoppingCart className="w-4 h-4" />
-                Orders
-                <Badge className="flex items-center justify-center w-6 h-6 ml-auto rounded-full shrink-0">
-                  6
-                </Badge>
-              </Link>
-              <Link
-                href="#"
-                className="flex items-center gap-3 px-3 py-2 transition-all rounded-lg bg-muted text-primary hover:text-primary"
-              >
-                <Package className="w-4 h-4" />
-                Products{" "}
-              </Link>
-              <Link
-                href="#"
-                className="flex items-center gap-3 px-3 py-2 transition-all rounded-lg text-muted-foreground hover:text-primary"
-              >
-                <Users className="w-4 h-4" />
-                Customers
-              </Link>
-              <Link
-                href="#"
-                className="flex items-center gap-3 px-3 py-2 transition-all rounded-lg text-muted-foreground hover:text-primary"
-              >
-                <LineChart className="w-4 h-4" />
-                Analytics
-              </Link>
-            </nav>
+            <Sidebar className="text-sm font-medium px-3" />
           </div>
           <div className="p-4 mt-auto">
             <Card x-chunk="dashboard-02-chunk-0">
@@ -141,53 +89,7 @@ export default async function Layout({
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="flex flex-col">
-              <nav className="grid gap-2 text-lg font-medium">
-                <Link
-                  href="#"
-                  className="flex items-center gap-2 text-lg font-semibold"
-                >
-                  <Package2 className="w-6 h-6" />
-                  <span className="sr-only">Acme Inc</span>
-                </Link>
-                <Link
-                  href="#"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                >
-                  <Home className="w-5 h-5" />
-                  Dashboard
-                </Link>
-                <Link
-                  href="#"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl bg-muted px-3 py-2 text-foreground hover:text-foreground"
-                >
-                  <ShoppingCart className="w-5 h-5" />
-                  Orders
-                  <Badge className="flex items-center justify-center w-6 h-6 ml-auto rounded-full shrink-0">
-                    6
-                  </Badge>
-                </Link>
-                <Link
-                  href="#"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                >
-                  <Package className="w-5 h-5" />
-                  Products
-                </Link>
-                <Link
-                  href="#"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                >
-                  <Users className="w-5 h-5" />
-                  Customers
-                </Link>
-                <Link
-                  href="#"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                >
-                  <LineChart className="w-5 h-5" />
-                  Analytics
-                </Link>
-              </nav>
+              <Sidebar className="text-lg font-medium" />
               <div className="mt-auto">
                 <Card>
                   <CardHeader>
@@ -251,36 +153,3 @@ export default async function Layout({
     </div>
   );
 }
-
-// import { Header } from "@/components/app/Header";
-// import { Sidebar } from "@/components/app/Sidebar";
-// import { getUser } from "@startupkit/auth/server";
-// import { redirect } from "next/navigation";
-
-// export default async function Layout({
-//   children,
-// }: {
-//   children: React.ReactNode;
-// }) {
-//   const { isAuthenticated } = await getUser();
-
-//   if (!isAuthenticated) {
-//     redirect("/");
-//   }
-
-//   return (
-//     <>
-//       <main>
-//         <div className="hidden sm:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-//           <Sidebar />
-//         </div>
-
-//         <Header />
-
-//         <div className="flex items-center justify-center h-screen pt-16 lg:pl-72 bg-gray-50">
-//           <div className="px-4 sm:px-6 lg:px-8">{children}</div>
-//         </div>
-//       </main>
-//     </>
-//   );
-// }

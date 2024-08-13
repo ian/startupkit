@@ -1,5 +1,5 @@
 import { getSession } from "@startupkit/auth/server";
-import { CustomerPortalForm } from "@/components/app/CustomerPortalForm";
+import { CustomerPortalForm } from "@/components/app/customer-portal";
 import { redirect } from "next/navigation";
 import { prisma } from "prisma/client";
 

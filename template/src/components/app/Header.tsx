@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 import { Menu, X } from "lucide-react";
 import clsx from "clsx";
-import { Sidebar } from "./Sidebar";
+import { Sidebar } from "./sidebar";
 import Link from "next/link";
 
 export const Header = () => {

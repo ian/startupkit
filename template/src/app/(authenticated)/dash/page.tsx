@@ -1,5 +1,5 @@
 import NextLink from "next/link";
-import { SignInButton } from "@/components/app/SignInButton";
+import { SignInButton } from "@/components/app/signin-button";
 import { getUser } from "@startupkit/auth/server";
 
 export default async function HomePage() {
