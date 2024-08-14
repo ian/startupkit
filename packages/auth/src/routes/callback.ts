@@ -18,7 +18,7 @@ export async function handler(request: NextRequest) {
         });
 
       const props = {
-        workOSId: wosUser.id,
+        wosId: wosUser.id,
         avatarUrl: wosUser.profilePictureUrl,
         email: wosUser.email,
         firstName: wosUser.firstName,
@@ -27,7 +27,7 @@ export async function handler(request: NextRequest) {
 
       const user = await prisma.user.upsert({
         where: {
-          workOSId: wosUser.id,
+          wosId: wosUser.id,
         },
         create: props,
         update: {},

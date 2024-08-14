@@ -11,6 +11,10 @@
     "typecheck": "tsc",
     "prettier": "prettier .",
     "prettier:fix": "prettier --write .",
+    "db:reset": "dotenv -e .env.local -- prisma migrate reset",
+    "db:migrate": "dotenv -e .env.local -- prisma migrate dev",
+    "db:push": "dotenv -e .env.local -- prisma db push",
+    "db:studio": "dotenv -e .env.local -- prisma studio",
     "stripe:login": "stripe login",
     "stripe:listen": "stripe listen --forward-to=localhost:3000/api/payments/webhook",
     "stripe:fixtures": "stripe fixtures src/stripe.json"
@@ -42,6 +46,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.4.18",
+    "dotenv-cli": "^7.4.2",
     "eslint": "^8",
     "eslint-config-next": "14.0.1",
     "postcss": "^8.4.35",

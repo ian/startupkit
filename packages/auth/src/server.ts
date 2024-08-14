@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { IronSession, getIronSession } from "iron-session";
-import { User } from "@workos-inc/node";
+import { type User } from "@prisma/client";
 
 export interface SessionData {
   user: User;
