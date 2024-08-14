@@ -30,7 +30,8 @@
     ".next/types/**/*.ts",
     "src/components/app/Header.tsx.old",
     "src/components/ui/card.tsx.old",
-    "src/components/ui/input.tsx.old"
+    "src/components/ui/input.tsx.old",
+    "tailwind.config.ts.old"
   ],
   "exclude": ["node_modules"]
 }
