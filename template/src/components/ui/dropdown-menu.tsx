@@ -94,19 +94,19 @@ const DropdownMenuItem = React.forwardRef<
 DropdownMenuItem.displayName = DropdownMenuPrimitive.Item.displayName;
 
 const DropdownMenuLink = React.forwardRef<
-  React.ElementRef<typeof DropdownMenuItem>,
+  React.ElementRef<typeof Link>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuItem> & LinkProps
 >(({ children, className, href, inset, ...props }, ref) => (
-  <DropdownMenuPrimitive.Item
-    ref={ref}
-    className={cn(
-      "relative flex cursor-default select-none items-center rounded-sm text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 p-0",
-      inset && "pl-8",
-      className,
-    )}
-    {...props}
-  >
-    <Link href={href} className="px-2 py-1.5">
+  <DropdownMenuPrimitive.Item asChild {...props}>
+    <Link
+      href={href}
+      ref={ref}
+      className={cn(
+        "px-2 py-1.5 relative flex cursor-default select-none items-center rounded-sm text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 cursor-pointer",
+        inset && "pl-8",
+        className,
+      )}
+    >
       {children}
     </Link>
   </DropdownMenuPrimitive.Item>
