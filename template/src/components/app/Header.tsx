@@ -1,4 +1,4 @@
-import { Menu, Search } from "lucide-react";
+import { Menu, Router, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +12,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
+  DropdownMenuLink,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -22,6 +22,7 @@ import { clearSession, getUser } from "@startupkit/auth/server";
 import { Sidebar } from "@/components/app/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { User } from "@prisma/client";
+import Link from "next/link";
 
 export const Header = async () => {
   const { user } = await getUser();
@@ -77,10 +78,11 @@ export const Header = async () => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuLink href="/account">
+            <Link href="/account">My Account</Link>
+          </DropdownMenuLink>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Settings</DropdownMenuItem>
-          <DropdownMenuItem>Support</DropdownMenuItem>
+          <DropdownMenuLink href="/billing">Billing</DropdownMenuLink>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
             <form
