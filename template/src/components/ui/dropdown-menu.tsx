@@ -102,7 +102,7 @@ const DropdownMenuLink = React.forwardRef<
       href={href}
       ref={ref}
       className={cn(
-        "px-2 py-1.5 relative flex cursor-default select-none items-center rounded-sm text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 cursor-pointer",
+        "px-2 py-1.5 relative flex select-none items-center rounded-sm text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 cursor-pointer",
         inset && "pl-8",
         className,
       )}
