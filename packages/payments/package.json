@@ -38,10 +38,14 @@
     "@startupkit/auth": "workspace:*",
     "@stripe/react-stripe-js": "^2.5.1",
     "@stripe/stripe-js": "^3.0.6",
-    "stripe": "^14.19.0"
+    "stripe": "^14.19.0",
+    "swr": "^2.2.5"
   },
   "peerDependencies": {
     "next": "^14",
     "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0"
   }
 }

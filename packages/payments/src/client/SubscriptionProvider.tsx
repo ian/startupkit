@@ -2,20 +2,20 @@
 
 import { ReactNode } from "react";
 import { SWRConfig } from "swr";
-import { SessionData } from "../types";
+import { type Subscription } from "@prisma/client";
 
-export function AuthProvider({
+export function SubscriptionProvider({
   children,
-  session,
+  subscription,
 }: {
   children: ReactNode;
-  session?: SessionData;
+  subscription?: Subscription | null;
 }) {
   return (
     <SWRConfig
       value={{
         fallback: {
-          "/api/auth/session": session,
+          "/api/payments/subscription": subscription,
         },
       }}
     >

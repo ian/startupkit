@@ -1,9 +1,22 @@
+"use client";
+
 import Link from "next/link";
 import { Home, LineChart, Package, ShoppingCart, Users } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import clsx from "clsx";
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button, ButtonLink } from "../ui/button";
+import { useSubscription } from "@startupkit/payments";
+import { usePathname } from "next/navigation";
 
 const LINKS = [
   {
@@ -35,37 +48,62 @@ const LINKS = [
 ];
 
 export const Sidebar = ({ className }: { className?: string }) => {
-  return (
-    <nav className={clsx("grid gap-2", className)}>
-      <Link
-        href="/"
-        className="flex items-center gap-2 text-lg font-semibold sm:hidden"
-      >
-        <Image
-          alt="StartupKit"
-          src="/startupkit-logo.svg"
-          className="w-auto h-10 -ml-2"
-          width={100}
-          height={100}
-        />
-        <span className="sr-only">StartupKit</span>
-      </Link>
+  const pathname = usePathname();
+  const { subscription } = useSubscription();
 
-      {LINKS.map((link) => (
+  return (
+    <section
+      className={clsx("flex flex-col justify-between h-full", className)}
+    >
+      <nav className={clsx("grid gap-2")}>
         <Link
-          key={link.label}
-          href={link.href}
-          className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-slate-50"
+          href="/"
+          className="flex items-center gap-2 text-lg font-semibold sm:hidden"
         >
-          <link.icon className="w-5 h-5" />
-          {link.label}
-          {link.badge ? (
-            <Badge className="flex items-center justify-center w-6 h-6 ml-auto rounded-full shrink-0">
-              {link.badge}
-            </Badge>
-          ) : null}
+          <Image
+            alt="StartupKit"
+            src="/startupkit-logo.svg"
+            className="w-auto h-10 -ml-2"
+            width={100}
+            height={100}
+          />
+          <span className="sr-only">StartupKit</span>
         </Link>
-      ))}
-    </nav>
+
+        {LINKS.map((link) => (
+          <Link
+            key={link.label}
+            href={link.href}
+            className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-slate-50"
+          >
+            <link.icon className="w-5 h-5" />
+            {link.label}
+            {link.badge ? (
+              <Badge className="flex items-center justify-center w-6 h-6 ml-auto rounded-full shrink-0">
+                {link.badge}
+              </Badge>
+            ) : null}
+          </Link>
+        ))}
+      </nav>
+      {pathname !== "/billing" && !subscription ? (
+        <div className="mt-auto">
+          <Card>
+            <CardHeader>
+              <CardTitle>Upgrade to Pro</CardTitle>
+              <CardDescription>
+                Unlock all features and get unlimited access to our support
+                team.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ButtonLink size="sm" className="w-full" href="/billing">
+                Upgrade
+              </ButtonLink>
+            </CardContent>
+          </Card>
+        </div>
+      ) : null}
+    </section>
   );
 };

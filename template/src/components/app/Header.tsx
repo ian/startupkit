@@ -38,22 +38,6 @@ export const Header = async () => {
         </SheetTrigger>
         <SheetContent side="left" className="flex flex-col">
           <Sidebar className="text-lg font-medium" />
-          <div className="mt-auto">
-            <Card>
-              <CardHeader>
-                <CardTitle>Upgrade to Pro</CardTitle>
-                <CardDescription>
-                  Unlock all features and get unlimited access to our support
-                  team.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button size="sm" className="w-full">
-                  Upgrade
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
         </SheetContent>
       </Sheet>
       <div className="flex-1 w-full">

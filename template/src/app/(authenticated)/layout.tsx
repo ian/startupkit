@@ -4,13 +4,6 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { getUser } from "@startupkit/auth/server";
 import { Sidebar } from "@/components/app/sidebar";
 import { Header } from "@/components/app/header";
@@ -45,25 +38,7 @@ export default async function Layout({
               <span className="sr-only">Toggle notifications</span>
             </Button>
           </div>
-          <div className="flex-1">
-            <Sidebar className="text-sm font-medium px-3" />
-          </div>
-          <div className="p-4 mt-auto">
-            <Card x-chunk="dashboard-02-chunk-0">
-              <CardHeader className="p-2 pt-0 md:p-4">
-                <CardTitle>Upgrade to Pro</CardTitle>
-                <CardDescription>
-                  Unlock all features and get unlimited access to our support
-                  team.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-2 pt-0 md:p-4 md:pt-0">
-                <Button size="sm" className="w-full">
-                  Upgrade
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
+          <Sidebar className="text-sm font-medium px-3 flex-1 pb-3" />
         </div>
       </div>
       <div className="flex flex-col">

@@ -4,7 +4,7 @@ import classNames from "clsx";
 import { useState } from "react";
 import { $Enums, Price, Product, Subscription } from "@prisma/client";
 import { useAuth } from "@startupkit/auth";
-import { useSubscription } from "@startupkit/payments";
+import { useCheckout, useSubscription } from "@startupkit/payments";
 import {
   Dialog,
   DialogContent,
@@ -20,22 +20,21 @@ interface ProductWithPrices extends Product {
 interface PriceWithProduct extends Price {
   product: Product | null;
 }
-interface SubscriptionWithProduct extends Subscription {
-  price: PriceWithProduct | null;
-}
 
 interface Props {
   products: ProductWithPrices[];
-  subscription: SubscriptionWithProduct | null | undefined;
 }
 
-export function Pricing({ products, subscription }: Props) {
+export function Pricing({ products }: Props) {
   const { user, login } = useAuth();
-  const { checkout } = useSubscription();
+  const { checkout } = useCheckout();
+  const { subscription } = useSubscription();
 
   const [billingInterval, setBillingInterval] =
     useState<$Enums.PricingPlanInterval>("month");
   const [priceIdLoading, setPriceIdLoading] = useState<string>();
+
+  console.log({ subscription });
 
   const intervals = Array.from(
     new Set(
@@ -67,7 +66,7 @@ export function Pricing({ products, subscription }: Props) {
 
   return (
     <section className="">
-      <div className="max-w-6xl px-4 py-8 mx-auto sm:py-24 sm:px-6 lg:px-8">
+      <div className="max-w-6xl px-4 py-8 mx-auto sm:px-6 lg:px-8">
         <BillingInterval
           selected={billingInterval}
           intervals={intervals}
@@ -97,23 +96,24 @@ export function Pricing({ products, subscription }: Props) {
                       ? product.name === subscription?.price?.product?.name
                       : product.name === "Freelancer",
                   },
-                  "p-6 justify-between flex-1 basis-1/3 max-w-xs",
+                  "p-6 justify-between flex-1  max-w-xs",
                 )}
               >
-                <div>
+                <div className="basis-1/3">
                   <h2 className="text-2xl font-semibold leading-6 text-black">
                     {product.name}
                   </h2>
                   <p className="mt-4 text-zinc-500">{product.description}</p>
-                  <p className="mt-8">
-                    <span className="text-5xl font-extrabold text-black">
-                      {priceString}
-                    </span>
-                    <span className="text-base font-medium text-zinc-100">
-                      /{billingInterval}
-                    </span>
-                  </p>
                 </div>
+
+                <p className="mt-8 basis-1/3">
+                  <span className="text-5xl font-extrabold text-black">
+                    {priceString}
+                  </span>
+                  <span className="text-base font-medium text-zinc-100">
+                    /{billingInterval}
+                  </span>
+                </p>
 
                 <Button
                   // disabled={priceIdLoading === price.id}
