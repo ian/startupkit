@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useContext } from "react";
-import { AuthContext } from "../providers/AuthProvider";
+import { AuthContext } from "../providers/AuthProviderClient";
 
 export const useAuth = () => {
   const { user, mutateUser } = useContext(AuthContext);
