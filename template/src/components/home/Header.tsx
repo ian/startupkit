@@ -51,12 +51,12 @@ export function Header() {
               {item.name}
             </a>
           ))}
-          <a
-            href="/dash"
+          <Link
+            href="/api/auth/login"
             className="text-sm font-semibold leading-6 text-gray-900"
           >
             Log in <span aria-hidden="true">&rarr;</span>
-          </a>
+          </Link>
         </div>
       </nav>
     </header>

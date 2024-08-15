@@ -17,7 +17,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const session = await getSession();
-  const subscription = await getSubscription(session?.user.id);
+  const subscription = await getSubscription(session?.user?.id);
 
   return (
     <html lang="en">

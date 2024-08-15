@@ -16,7 +16,7 @@ export default async function Layout({
   const { isAuthenticated } = await getUser();
 
   if (!isAuthenticated) {
-    redirect("/api/auth/login");
+    redirect("/");
   }
 
   return (
