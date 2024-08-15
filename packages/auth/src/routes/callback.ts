@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "../server";
-import { getClientId, workos } from "../client";
+import { getClientId, workos } from "../lib/workos";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();

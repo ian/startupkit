@@ -7,11 +7,5 @@ export default async function PricingPage() {
   const subscription = await getSubscription(user.id);
   const products = await getProducts();
 
-  return (
-    <Pricing
-      products={products ?? []}
-      subscription={subscription}
-      user={user}
-    />
-  );
+  return <Pricing products={products ?? []} subscription={subscription} />;
 }

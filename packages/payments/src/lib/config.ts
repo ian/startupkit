@@ -1,3 +1,5 @@
+// TODO: Move to configuration for payments init
+
 // Change to control trial period length
 export const TRIAL_PERIOD_DAYS = 0;
 

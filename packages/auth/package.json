@@ -39,10 +39,14 @@
   "dependencies": {
     "@prisma/client": "5.10.2",
     "@workos-inc/node": "^5.0.0",
-    "iron-session": "^8.0.1"
+    "iron-session": "^8.0.1",
+    "swr": "^2.2.5"
   },
   "peerDependencies": {
     "next": "^14",
     "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0"
   }
 }

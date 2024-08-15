@@ -2,7 +2,7 @@ import Stripe from "stripe";
 import {
   calculateTrialEndUnixTimestamp,
   createOrRetrieveCustomer,
-} from "../helpers";
+} from "../lib/helpers";
 import { getErrorRedirect, getURL } from "../lib/url";
 import { type Price, PricingType } from "@prisma/client";
 import { stripe } from "../lib/stripe";

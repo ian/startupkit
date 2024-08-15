@@ -6,7 +6,7 @@ import {
   manageSubscriptionStatusChange,
   upsertPriceRecord,
   upsertProductRecord,
-} from "../../src/helpers";
+} from "../lib/helpers";
 
 const relevantEvents = new Set([
   "product.created",

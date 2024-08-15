@@ -1,11 +1,9 @@
 import { cookies } from "next/headers";
 import { IronSession, getIronSession } from "iron-session";
 import { type User } from "@prisma/client";
+import { SessionData } from "./types";
 
-export interface SessionData {
-  user: User;
-  createdAt: string;
-}
+export * from "./types";
 
 export async function getSession(): Promise<IronSession<SessionData>> {
   return getIronSession<SessionData>(cookies(), {

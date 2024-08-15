@@ -44,7 +44,6 @@
   "devDependencies": {
     "@types/mdast": "^4.0.4",
     "@types/mdx": "^2.0.13",
-    "@types/next": "9",
     "@types/react": "^18.2.0",
     "@types/vfile": "^4.0.0",
     "next": "^14",
