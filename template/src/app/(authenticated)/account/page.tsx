@@ -1,27 +1,10 @@
 import { getSession } from "@startupkit/auth/server";
+import { getSubscription } from "@startupkit/payments/server";
 import { CustomerPortalForm } from "@/components/app/customer-portal";
-import { redirect } from "next/navigation";
-import { prisma } from "prisma/client";
 
 export default async function Account() {
   const { user } = await getSession();
-
-  if (!user) {
-    return redirect("/");
-  }
-
-  const subscription = await prisma.subscription.findFirst({
-    where: {
-      userId: user.id,
-    },
-    include: {
-      price: {
-        include: {
-          product: true,
-        },
-      },
-    },
-  });
+  const subscription = await getSubscription(user.id);
 
   return (
     <section className="mb-32">

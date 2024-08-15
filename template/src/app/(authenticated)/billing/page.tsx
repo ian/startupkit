@@ -1,42 +1,11 @@
 import { getSession } from "@startupkit/auth/server";
-import { Pricing } from "@/components/home/Pricing";
-import { prisma } from "prisma/client";
+import { Pricing } from "@/components/home/pricing";
+import { getProducts, getSubscription } from "@startupkit/payments/server";
 
 export default async function PricingPage() {
   const { user } = await getSession();
-
-  const products = await prisma.product.findMany({
-    where: {
-      active: true,
-    },
-    include: {
-      prices: {
-        where: {
-          active: true,
-        },
-      },
-    },
-  });
-
-  let subscription;
-
-  if (user) {
-    subscription = await prisma.subscription.findFirst({
-      where: {
-        userId: user.id,
-        status: {
-          in: ["trialing", "active"],
-        },
-      },
-      include: {
-        price: {
-          include: {
-            product: true,
-          },
-        },
-      },
-    });
-  }
+  const subscription = await getSubscription(user.id);
+  const products = await getProducts();
 
   return (
     <Pricing
