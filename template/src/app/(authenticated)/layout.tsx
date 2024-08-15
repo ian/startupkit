@@ -23,7 +23,7 @@ export default async function Layout({
   const { isAuthenticated } = await getUser();
 
   if (!isAuthenticated) {
-    redirect("/");
+    redirect("/api/auth/login");
   }
 
   return (

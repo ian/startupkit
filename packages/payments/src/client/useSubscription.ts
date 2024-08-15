@@ -7,10 +7,15 @@ export const useSubscription = () => {
   const router = useRouter();
   const currentPath = usePathname();
 
-  const checkout = async (price: Price) => {
+  const checkout = async (
+    price: Price,
+    opts: { redirectTo?: string } = {
+      redirectTo: currentPath,
+    },
+  ) => {
     const { errorRedirect, sessionId } = await fetch("/api/payments/checkout", {
       method: "POST",
-      body: JSON.stringify({ price }),
+      body: JSON.stringify({ price, ...opts }),
       headers: {
         "Content-Type": "application/json",
       },
@@ -31,7 +36,8 @@ export const useSubscription = () => {
     }
 
     const stripe = await getStripe();
-    stripe?.redirectToCheckout({ sessionId, cancelUrl: currentPath });
+
+    stripe?.redirectToCheckout({ sessionId });
   };
 
   return { checkout };

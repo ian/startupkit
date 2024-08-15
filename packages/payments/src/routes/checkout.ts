@@ -6,11 +6,11 @@ export async function handler(request: Request) {
   const { price, redirectTo } = body;
   const { user } = await getSession();
 
-  const { errorRedirect, sessionId } = await checkoutWithStripe(
-    user,
-    price,
-    redirectTo || "/subscription",
-  );
+  const { errorRedirect, sessionId } = await checkoutWithStripe(user, price, {
+    // TODO: redirect to the right path
+    successPath: redirectTo,
+    errorPath: redirectTo,
+  });
 
   return Response.json(
     {

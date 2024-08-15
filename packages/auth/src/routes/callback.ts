@@ -31,6 +31,13 @@ export async function handler(request: NextRequest) {
         },
         create: props,
         update: {},
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          avatarUrl: true,
+        },
       });
 
       const session = await getSession();

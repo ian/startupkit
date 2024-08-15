@@ -8,15 +8,19 @@ import { type Price, PricingType } from "@prisma/client";
 import { stripe } from "../lib/stripe";
 
 type CheckoutResponse = {
-  errorRedirect?: string;
   sessionId?: string;
+  errorRedirect?: string;
 };
 
 export async function checkoutWithStripe(
   user: { id: string; email: string },
   price: Price,
-  redirectPath: string = "/account",
+  opts: {
+    successPath?: string;
+    errorPath?: string;
+  },
 ): Promise<CheckoutResponse> {
+  const { successPath = "/billing", errorPath = "/billing" } = opts;
   try {
     if (!user) {
       throw new Error("Could not get user session.");
@@ -47,8 +51,8 @@ export async function checkoutWithStripe(
           quantity: 1,
         },
       ],
-      cancel_url: getURL(),
-      success_url: getURL(redirectPath),
+      cancel_url: getURL(errorPath),
+      success_url: getURL(successPath),
     };
 
     console.log(
@@ -89,7 +93,7 @@ export async function checkoutWithStripe(
     if (error instanceof Error) {
       return {
         errorRedirect: getErrorRedirect(
-          redirectPath,
+          errorPath,
           error.message,
           "Please try again later or contact a system administrator.",
         ),
@@ -97,7 +101,7 @@ export async function checkoutWithStripe(
     } else {
       return {
         errorRedirect: getErrorRedirect(
-          redirectPath,
+          errorPath,
           "An unknown error occurred.",
           "Please try again later or contact a system administrator.",
         ),

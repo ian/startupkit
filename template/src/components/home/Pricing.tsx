@@ -45,10 +45,6 @@ export function Pricing({ products, subscription }: Props) {
     ),
   );
 
-  console.log({
-    user,
-  });
-
   const handleStripeCheckout = async (price: Price) => {
     setPriceIdLoading(price.id);
 
@@ -120,7 +116,7 @@ export function Pricing({ products, subscription }: Props) {
                 </div>
 
                 <Button
-                  disabled={priceIdLoading === price.id}
+                  // disabled={priceIdLoading === price.id}
                   onClick={() => handleStripeCheckout(price)}
                   // className="block w-full py-2 mt-8 text-sm font-semibold text-center text-white rounded-md hover:bg-zinc-900"
                   className="mt-8 w-full"

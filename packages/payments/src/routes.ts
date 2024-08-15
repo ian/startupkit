@@ -1,5 +1,6 @@
 import { handler as checkoutHandler } from "./routes/checkout";
 import { handler as portalHandler } from "./routes/portal";
+import { handler as subscriptionHandler } from "./routes/subscription";
 import { handler as webhookHandler } from "./routes/webhook";
 
 // TODO: make this dynamic
@@ -17,6 +18,8 @@ async function handleRequest(request: Request, method: string) {
       return checkoutHandler(request);
     case "/portal":
       return portalHandler(request);
+    case "/subscription":
+      return subscriptionHandler(request);
     case "/webhook":
       return webhookHandler(request);
     default:
@@ -24,7 +27,6 @@ async function handleRequest(request: Request, method: string) {
   }
 }
 
-// Export individual methods using the generic handler
 export async function GET(request: Request) {
   return handleRequest(request, "GET");
 }

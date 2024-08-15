@@ -1,20 +1,19 @@
 import { cookies } from "next/headers";
 import { IronSession, getIronSession } from "iron-session";
-import { type User } from "@prisma/client";
-import { SessionData } from "./types";
+import { type SessionData, type SessionUser } from "./types";
 
 export * from "./types";
 
 export async function getSession(): Promise<IronSession<SessionData>> {
   return getIronSession<SessionData>(cookies(), {
     password: process.env.AUTH_SECRET!,
-    cookieName: "_a",
+    cookieName: "_auth",
   });
 }
 
 export async function getUser(): Promise<{
   isAuthenticated: boolean;
-  user?: User | null;
+  user?: SessionUser | null;
 }> {
   const session = await getSession();
 

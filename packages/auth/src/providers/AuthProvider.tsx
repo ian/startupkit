@@ -1,22 +1,24 @@
-"use server";
-
 import { ReactNode } from "react";
 import { SWRConfig } from "swr";
-import { getUser } from "../server";
-import { AuthProviderClient } from "./AuthProviderClient";
+import { SessionData } from "../types";
+// import { getSession } from "../server";
 
-export async function AuthProvider({ children }: { children: ReactNode }) {
-  const user = await getUser();
-
+export function AuthProvider({
+  children,
+  session,
+}: {
+  children: ReactNode;
+  session?: SessionData;
+}) {
   return (
     <SWRConfig
       value={{
         fallback: {
-          "/api/auth/user": user,
+          "/api/auth/session": session,
         },
       }}
     >
-      <AuthProviderClient>{children}</AuthProviderClient>
+      {children}
     </SWRConfig>
   );
 }
