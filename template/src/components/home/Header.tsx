@@ -6,10 +6,9 @@ import Link from "next/link";
 import Image from "next/image";
 
 const navigation = [
-  { name: "Product", href: "#" },
-  { name: "Features", href: "#" },
-  { name: "Marketplace", href: "#" },
-  { name: "Company", href: "#" },
+  { name: "Product", href: "/#product" },
+  { name: "Features", href: "/#features" },
+  { name: "Blog", href: "/blog" },
 ];
 
 export function Header() {
@@ -41,7 +40,7 @@ export function Header() {
             <Menu aria-hidden="true" className="w-6 h-6" />
           </button>
         </div>
-        <div className="hidden gap-4 sm:flex lg:gap-x-12">
+        <div className="hidden gap-6 sm:flex">
           {navigation.map((item) => (
             <a
               key={item.name}
