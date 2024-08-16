@@ -1,18 +1,11 @@
+"use client";
+
 import { useState } from "react";
 import {} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-const navigation = [
-  { name: "Product", href: "#" },
-  { name: "Features", href: "#" },
-  { name: "Marketplace", href: "#" },
-  { name: "Company", href: "#" },
-];
-
 export function Hero() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   return (
     <div className="bg-white">
       <div className="relative isolate pt-14">

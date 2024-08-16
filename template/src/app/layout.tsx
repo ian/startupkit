@@ -1,7 +1,6 @@
+import { ClientProviders } from "@/components/ClientProviders";
 import "@/styles/app.css";
-import { AuthProvider } from "@startupkit/auth";
 import { getSession } from "@startupkit/auth/server";
-import { SubscriptionProvider } from "@startupkit/payments";
 import { getSubscription } from "@startupkit/payments/server";
 
 import type { Metadata } from "next";
@@ -22,11 +21,9 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body style={{ padding: 0, margin: 0 }}>
-        <AuthProvider session={session}>
-          <SubscriptionProvider subscription={subscription}>
-            {children}
-          </SubscriptionProvider>
-        </AuthProvider>
+        <ClientProviders session={session} subscription={subscription}>
+          {children}
+        </ClientProviders>
       </body>
     </html>
   );

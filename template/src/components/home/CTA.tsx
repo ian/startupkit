@@ -1,3 +1,5 @@
+"use client";
+
 import { useAnalytics } from "@startupkit/analytics";
 import {
   BadgeCheck,
@@ -42,14 +44,14 @@ export default function CTA() {
   };
 
   return (
-    <div className="relative py-16 overflow-hidden isolate sm:py-24 lg:py-32">
+    <div className="relative py-16 sm:py-24 lg:py-32">
       <div id="newsletter">
         <div className="grid grid-cols-1 mx-auto gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-2">
           <div className="max-w-xl lg:max-w-lg">
-            <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
               Subscribe to our newsletter.
             </h2>
-            <p className="mt-4 text-lg leading-8 text-gray-300">
+            <p className="mt-4 text-lg leading-8 text-gray-400">
               Want to sidestep rookie mistakes and skyrocket your startup? Join
               the StartupKit community for insider tips you won&apos;t find in
               textbooks. Here&apos;s why you should subscribe:
@@ -61,10 +63,7 @@ export default function CTA() {
                   be in touch soon.
                 </p>
               ) : (
-                <form
-                  className="flex w-full gap-2"
-                  onSubmit={handleSubmit(sendToLoops)}
-                >
+                <form className="" onSubmit={handleSubmit(sendToLoops)}>
                   <Input
                     {...register("email")}
                     required
