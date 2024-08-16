@@ -17,9 +17,6 @@ import { Button } from "../ui/button";
 interface ProductWithPrices extends Product {
   prices: Price[];
 }
-interface PriceWithProduct extends Price {
-  product: Product | null;
-}
 
 interface Props {
   products: ProductWithPrices[];
@@ -34,15 +31,11 @@ export function Pricing({ products }: Props) {
     useState<$Enums.PricingPlanInterval>("month");
   const [priceIdLoading, setPriceIdLoading] = useState<string>();
 
-  console.log({ subscription });
-
-  const intervals = Array.from(
-    new Set(
-      products.flatMap((product) =>
-        product?.prices?.map((price) => price?.interval),
-      ),
-    ),
-  );
+  // TODO: edit these values to match your plan intervals
+  const intervals = {
+    month: "Monthly",
+    year: "Yearly (save 30%)",
+  } as Record<$Enums.PricingPlanInterval, string>;
 
   const handleStripeCheckout = async (price: Price) => {
     setPriceIdLoading(price.id);
@@ -86,39 +79,45 @@ export function Pricing({ products }: Props) {
               minimumFractionDigits: 0,
             }).format(((price?.unitAmount as number) || 0) / 100);
 
+            const isCurrent =
+              product.name === subscription?.price?.product?.name;
+
             return (
               <div
                 key={product.id}
                 className={classNames(
-                  "border-4 flex flex-col rounded-lg shadow-sm divide-y divide-zinc-600 bg-zinc-100",
-                  {
-                    "border-primary": subscription
-                      ? product.name === subscription?.price?.product?.name
-                      : product.name === "Freelancer",
-                  },
-                  "p-6 justify-between flex-1  max-w-xs",
+                  isCurrent
+                    ? "border-primary bg-primary/20"
+                    : "border-gray-100 bg-secondary",
+                  "text-black flex flex-col rounded-lg border-4 ",
+                  "p-6 justify-between flex-1 max-w-xs relative",
                 )}
               >
+                {isCurrent ? (
+                  <div className="flex justify-center w-full absolute left-0 -top-3">
+                    <p className="shrink w-auto bg-primary text-white px-5 py-1 rounded text-xs">
+                      Current Plan
+                    </p>
+                  </div>
+                ) : null}
                 <div className="basis-1/3">
-                  <h2 className="text-2xl font-semibold leading-6 text-black">
+                  <h2 className="text-2xl font-semibold leading-6 ">
                     {product.name}
                   </h2>
-                  <p className="mt-4 text-zinc-500">{product.description}</p>
+                  <p className="mt-4">{product.description}</p>
                 </div>
 
                 <p className="mt-8 basis-1/3">
-                  <span className="text-5xl font-extrabold text-black">
+                  <span className="text-5xl font-extrabold ">
                     {priceString}
                   </span>
-                  <span className="text-base font-medium text-zinc-100">
+                  <span className="text-base font-medium">
                     /{billingInterval}
                   </span>
                 </p>
 
                 <Button
-                  // disabled={priceIdLoading === price.id}
                   onClick={() => handleStripeCheckout(price)}
-                  // className="block w-full py-2 mt-8 text-sm font-semibold text-center text-white rounded-md hover:bg-zinc-900"
                   className="mt-8 w-full"
                 >
                   {subscription ? "Manage" : "Subscribe"}
@@ -137,39 +136,27 @@ const BillingInterval = ({
   onChange,
   selected,
 }: {
-  intervals: $Enums.PricingPlanInterval[];
+  intervals: Record<$Enums.PricingPlanInterval, string>;
   onChange: (interval: $Enums.PricingPlanInterval) => void;
   selected: $Enums.PricingPlanInterval;
 }) => {
   return (
     <div className="sm:flex sm:flex-col sm:align-center">
-      <div className="relative self-center mt-6 bg-zinc-900 rounded-lg p-0.5 flex sm:mt-8 border border-zinc-800">
-        {intervals.includes("month") && (
+      <div className="relative self-center mt-6 bg-gray-100 rounded-lg p-0.5 flex sm:mt-8">
+        {Object.entries(intervals).map(([val, label]) => (
           <button
-            onClick={() => onChange("month")}
+            key={val}
+            onClick={() => onChange(val as $Enums.PricingPlanInterval)}
             type="button"
             className={`${
-              selected === "month"
-                ? "relative w-1/2 bg-zinc-700 border-zinc-800 shadow-sm text-white"
-                : "ml-0.5 relative w-1/2 border border-transparent text-zinc-400"
-            } rounded-md m-1 py-2 text-sm font-medium whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-opacity-50 focus:z-10 sm:w-auto sm:px-8`}
+              selected === val
+                ? "relative w-1/2 bg-primary text-white"
+                : "ml-0.5 relative w-1/2"
+            } rounded-md m-1 py-2 text-sm font-medium whitespace-nowrap focus:outline-none focus:z-10 sm:w-auto sm:px-8`}
           >
-            Monthly
+            {label}
           </button>
-        )}
-        {intervals.includes("year") && (
-          <button
-            onClick={() => onChange("year")}
-            type="button"
-            className={`${
-              selected === "year"
-                ? "relative w-1/2 bg-zinc-700 border-zinc-800 shadow-sm text-white"
-                : "ml-0.5 relative w-1/2 border border-transparent text-zinc-400"
-            } rounded-md m-1 py-2 text-sm font-medium whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-opacity-50 focus:z-10 sm:w-auto sm:px-8`}
-          >
-            Yearly (save 30%)
-          </button>
-        )}
+        ))}
       </div>
     </div>
   );
