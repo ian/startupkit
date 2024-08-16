@@ -59,7 +59,7 @@ export function Pricing({ products }: Props) {
 
   return (
     <section className="">
-      <div className="max-w-6xl px-4 py-8 mx-auto sm:px-6 lg:px-8">
+      <div className="max-w-6xl">
         <BillingInterval
           selected={billingInterval}
           intervals={intervals}
@@ -142,7 +142,7 @@ const BillingInterval = ({
 }) => {
   return (
     <div className="sm:flex sm:flex-col sm:align-center">
-      <div className="relative self-center mt-6 bg-gray-100 rounded-lg p-0.5 flex sm:mt-8">
+      <div className="relative self-center bg-gray-100 rounded-lg flex">
         {Object.entries(intervals).map(([val, label]) => (
           <button
             key={val}
