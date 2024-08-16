@@ -1,16 +1,43 @@
-import { getSession } from "@startupkit/auth/server";
-import { getSubscription } from "@startupkit/payments/server";
-import { CustomerPortalForm } from "@/components/app/customer-portal";
+"use client";
 
-export default async function Account() {
-  const { user } = await getSession();
-  const subscription = await getSubscription(user.id);
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useAuth } from "@startupkit/auth";
+import React from "react";
+import { useForm } from "react-hook-form";
+
+interface AccountForm {
+  firstName?: string;
+  lastName?: string;
+  email: string;
+  avatarUrl?: string;
+}
+
+const Account: React.FC = () => {
+  const { user } = useAuth();
+  const { register, handleSubmit } = useForm<AccountForm>({
+    defaultValues: {
+      firstName: user?.firstName ?? undefined,
+      lastName: user?.lastName ?? undefined,
+      email: user?.email || "",
+    },
+  });
+
+  const onSubmit = (data: AccountForm) => {
+    // Handle form submission (e.g., API call)
+  };
 
   return (
-    <section className="mb-32">
-      <div className="max-w-2xl p-4 mx-auto">
-        <CustomerPortalForm subscription={subscription} />
-      </div>
-    </section>
+    <div className="space-y-4">
+      <h1 className="text-xl font-medium">Account Settings</h1>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
+        <Input {...register("firstName")} placeholder="First Name" />
+        <Input {...register("lastName")} placeholder="Last Name" />
+        <Input {...register("email")} placeholder="Email" required />
+        <Button type="submit">Save Changes</Button>
+      </form>
+    </div>
   );
-}
+};
+
+export default Account;

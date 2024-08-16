@@ -43,9 +43,7 @@ export default async function Layout({
       </div>
       <div className="flex flex-col">
         <Header />
-        <main className="flex items-center justify-center grow bg-gray-50">
-          {children}
-        </main>
+        <main className="p-4 justify-center grow bg-gray-50">{children}</main>
       </div>
     </div>
   );

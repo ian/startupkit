@@ -10,7 +10,7 @@ export const useAuth = () => {
   const router = useRouter();
   const {
     data: session,
-    error,
+    // error,
     mutate,
   } = useSWR<SessionData>("/api/auth/session", fetcher);
 

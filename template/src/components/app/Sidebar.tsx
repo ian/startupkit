@@ -21,7 +21,7 @@ import { usePathname } from "next/navigation";
 const LINKS = [
   {
     label: "Dashboard",
-    href: "#",
+    href: "/dash",
     icon: Home,
   },
   {

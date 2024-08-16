@@ -6,7 +6,7 @@ export default async function HomePage() {
   const { user } = await getUser();
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="h-full flex flex-col items-center justify-center">
       <>
         <h2 className="text-2xl font-bold">
           Welcome back{user?.firstName && `, ${user?.firstName}`}
