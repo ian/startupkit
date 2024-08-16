@@ -57,7 +57,7 @@ export const Sidebar = ({ className }: { className?: string }) => {
     >
       <nav className={clsx("grid gap-2")}>
         <Link
-          href="/"
+          href="/dash"
           className="flex items-center gap-2 text-lg font-semibold sm:hidden"
         >
           <Image
