@@ -1,16 +1,15 @@
 import { getErrorRedirect } from "../lib/url";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { getStripe } from "./get-stripe";
 import { Price } from "@prisma/client";
 
-export const useCheckout = () => {
+export const useCheckout = ({ redirectTo }: { redirectTo?: string }) => {
   const router = useRouter();
-  const currentPath = usePathname();
 
   const checkout = async (
     price: Price,
     opts: { redirectTo?: string } = {
-      redirectTo: currentPath,
+      redirectTo,
     },
   ) => {
     const { errorRedirect, sessionId } = await fetch("/api/payments/checkout", {
@@ -28,7 +27,7 @@ export const useCheckout = () => {
     if (!sessionId) {
       return router.push(
         getErrorRedirect(
-          currentPath,
+          redirectTo || "/billing",
           "An unknown error occurred.",
           "Please try again later or contact a system administrator.",
         ),

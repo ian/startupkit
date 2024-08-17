@@ -1,21 +1,20 @@
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 
-export const usePortal = () => {
+export const usePortal = ({ redirectTo }: { redirectTo?: string }) => {
   const router = useRouter();
-  const currentPath = usePathname();
 
   const redirectToPortal = useCallback(async () => {
-    const { redirectUrl } = await fetch("/api/payments/portal", {
+    const { redirectUrl: portalUrl } = await fetch("/api/payments/portal", {
       method: "POST",
-      body: JSON.stringify({ redirectTo: currentPath }),
+      body: JSON.stringify({ redirectTo }),
       headers: {
         "Content-Type": "application/json",
       },
     }).then((res) => res.json());
 
-    router.push(redirectUrl);
-  }, [currentPath, router]);
+    router.push(portalUrl);
+  }, [router, redirectTo]);
 
   return { redirectToPortal };
 };
