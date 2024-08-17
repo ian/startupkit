@@ -24,7 +24,7 @@ export const useCheckout = ({ redirectTo }: { redirectTo?: string } = {}) => {
     ).then((res) => res.json());
 
     if (status === "error") {
-      return router.push(errorRedirect);
+      router.push(errorRedirect);
     }
 
     if (status === "redirect" && sessionId) {
