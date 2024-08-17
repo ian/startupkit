@@ -1,6 +1,6 @@
 {
   "name": "startupkit",
-  "version": "0.3.0",
+  "version": "0.3.4",
   "author": "Ian Hunter <ian@01.studio>",
   "license": "ISC",
   "description": "The NextJS framework with everything you need to launch a SaaS product.",
@@ -33,13 +33,11 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "rollup -c",
+    "build": "rollup -c && chmod +x dist/cli.js",
     "cli": "node dist/cli.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@startupkit/analytics": "workspace:*",
-    "@startupkit/cms": "workspace:*",
     "@types/commander": "^2.12.2",
     "@types/node": "^22.2.0",
     "commander": "12.1.0",
