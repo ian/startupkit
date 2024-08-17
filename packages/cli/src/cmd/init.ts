@@ -1,7 +1,6 @@
 import inquirer from "inquirer";
-
 import { spinner } from "../lib/spinner";
-import { exec, writeFile } from "../lib/system";
+import { exec, readFile, writeFile } from "../lib/system";
 
 type Answers = {
   name: string;
@@ -31,6 +30,7 @@ export async function init() {
   const answers: Answers = await inquirer.prompt(questions);
   const baseDir = process.env.SK_DIR ?? process.cwd();
   const destPath = baseDir + "/" + answers.name;
+  const version = process.env.VERSION;
 
   await spinner("Initializing Project", async () => {
     // @see https://nextjs.org/docs/pages/api-reference/create-next-app
@@ -46,25 +46,31 @@ export async function init() {
     await writeFile(
       `${destPath}/.env.local`,
       `
-AUTH_SECRET=FAKE1234567890123456789012345678901234567890
 DATABASE_URL="postgresql://localhost:5432/${answers.name}?schema=public"
+
+# Auth
+AUTH_SECRET=FAKE1234567890123456789012345678901234567890
+WORKOS_CLIENT_ID=
+WORKOS_API_KEY=
+WORKOS_REDIRECT_URI=
+
 # Analytics
 GOOGLE_ANALYTICS_ID=
 PLAUSIBLE_DOMAIN=
 POSTHOG_TOKEN=
+
 # Payments
 STRIPE_PUBLISHABLE_KEY=
 STRIPE_SECRET_KEY=
 STRIPE_WEBHOOK_SECRET=
-# Auth
-WORKOS_CLIENT_ID=
-WORKOS_API_KEY=
-WORKOS_REDIRECT_URI=`,
+`,
     );
   });
 
   await spinner("Adding StartupKit", async () => {
-    await exec(`pnpm add @startupkit/analytics@latest @startupkit/cms@latest`, {
+    const packages = ["analytics", "auth", "cms", "payments"];
+    const installCmd = `pnpm add @startupkit/${packages.join(`@${version} `)}`;
+    await exec(installCmd, {
       stdio: "inherit",
       cwd: destPath,
     });
