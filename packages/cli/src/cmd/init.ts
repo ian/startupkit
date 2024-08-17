@@ -69,7 +69,7 @@ STRIPE_WEBHOOK_SECRET=
 
   await spinner("Adding StartupKit", async () => {
     const packages = ["analytics", "auth", "cms", "payments"];
-    const installCmd = `pnpm add @startupkit/${packages.join(`@${version} `)}`;
+    const installCmd = `pnpm add ${packages.map((p) => `@startupkit/${p}@${version}`).join(" ")}`;
     await exec(installCmd, {
       stdio: "inherit",
       cwd: destPath,
