@@ -1,6 +1,6 @@
 {
   "name": "startupkit",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "author": "Ian Hunter <ian@01.studio>",
   "license": "ISC",
   "description": "The NextJS framework with everything you need to launch a SaaS product.",
