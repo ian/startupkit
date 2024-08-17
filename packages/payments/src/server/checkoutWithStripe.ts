@@ -141,26 +141,18 @@ export async function checkoutWithStripe(
       }
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
 
-    if (error instanceof Error) {
-      return {
-        status: "error",
-        errorRedirect: getErrorRedirect(
-          errorPath,
-          error.message,
-          "Please try again later or contact a system administrator.",
-        ),
-      };
-    } else {
-      return {
-        status: "error",
-        errorRedirect: getErrorRedirect(
-          errorPath,
-          "An unknown error occurred.",
-          "Please try again later or contact a system administrator.",
-        ),
-      };
-    }
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+
+    return {
+      status: "error",
+      errorRedirect: getErrorRedirect(
+        errorPath,
+        errorMessage,
+        "Please try again later or contact a system administrator.",
+      ),
+    };
   }
 }

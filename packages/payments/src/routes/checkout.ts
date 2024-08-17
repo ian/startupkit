@@ -10,14 +10,18 @@ export async function handler(request: Request) {
     throw new Error("Authentication required");
   }
 
-  const { errorRedirect, sessionId } = await checkoutWithStripe(user, price, {
-    // TODO: redirect to the right path
-    successPath: redirectTo,
-    errorPath: redirectTo,
-  });
+  const { status, errorRedirect, sessionId } = await checkoutWithStripe(
+    user,
+    price,
+    {
+      successPath: redirectTo,
+      errorPath: redirectTo,
+    },
+  );
 
   return Response.json(
     {
+      status,
       errorRedirect,
       sessionId,
     },

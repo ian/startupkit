@@ -15,6 +15,7 @@ import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { getProducts } from "@startupkit/payments/server";
 import { pause } from "@/lib/utils";
+import toast from "react-hot-toast";
 
 type Products = Awaited<ReturnType<typeof getProducts>>;
 
@@ -47,11 +48,18 @@ export function Pricing({ className, products }: PricingProps) {
     }
 
     try {
-      await checkout(price);
+      const { status } = await checkout(price);
 
-      // Set 1s pause to wait for the webhook
-      await pause(1000);
-      await refetch();
+      console.log({ status });
+
+      // upgraded
+      if (status === "success") {
+        // Set 1s pause to wait for the webhook
+        await pause(1000);
+        await refetch();
+        toast.success("Subscription Upgraded");
+      }
+
       setPriceLoading(undefined);
     } catch (err) {
       console.error(err);

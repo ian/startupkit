@@ -12,30 +12,27 @@ export const useCheckout = ({ redirectTo }: { redirectTo?: string } = {}) => {
       redirectTo,
     },
   ) => {
-    const { errorRedirect, sessionId } = await fetch("/api/payments/checkout", {
-      method: "POST",
-      body: JSON.stringify({ price, ...opts }),
-      headers: {
-        "Content-Type": "application/json",
+    const { status, errorRedirect, sessionId } = await fetch(
+      "/api/payments/checkout",
+      {
+        method: "POST",
+        body: JSON.stringify({ price, ...opts }),
+        headers: {
+          "Content-Type": "application/json",
+        },
       },
-    }).then((res) => res.json());
+    ).then((res) => res.json());
 
-    if (errorRedirect) {
+    if (status === "error") {
       return router.push(errorRedirect);
     }
 
-    if (!sessionId) {
-      return router.push(
-        getErrorRedirect(
-          redirectTo || "/billing",
-          "An unknown error occurred.",
-          "Please try again later or contact a system administrator.",
-        ),
-      );
+    if (status === "redirect" && sessionId) {
+      const stripe = await getStripe();
+      stripe?.redirectToCheckout({ sessionId });
     }
 
-    const stripe = await getStripe();
-    stripe?.redirectToCheckout({ sessionId });
+    return { status };
   };
 
   return { checkout };
