@@ -9,7 +9,7 @@ export const frontmatter = () => (tree: any, file: any) => {
   // Remove frontmatter from the content
   if (tree.children[0].type === "thematicBreak") {
     const firstHeadingIndex = tree.children.findIndex(
-      (t: any) => t.type === "heading"
+      (t: any) => t.type === "heading",
     );
     if (firstHeadingIndex !== -1) {
       tree.children.splice(0, firstHeadingIndex + 1);
@@ -108,7 +108,7 @@ export const frontmatter = () => (tree: any, file: any) => {
         { type: "mdxJsxAttribute", name: "content", value: data.keywords },
       ],
     },
-    data.ogImage && {
+    (data.ogImage || data.imageUrl) && {
       type: "mdxJsxFlowElement",
       name: "meta",
       attributes: [

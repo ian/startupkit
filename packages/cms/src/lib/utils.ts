@@ -29,20 +29,20 @@ export const readStatic = (dir: string): Array<Meta> => {
         href: `/blog/${filename.replace(/\.mdx$/, "")}`,
         title: data.title,
         description: data.description,
-        imageUrl: data.ogImage,
+        imageUrl: data.imageUrl || data.ogImage,
         date: new Date(data.date).toISOString(), // Convert to ISO string
         lastUpdated: new Date(data.date).toISOString(), // Convert to ISO string
         category: data.category,
         author: {
           name: data.author,
           role: "Author",
-          imageUrl: data.ogImage,
+          // imageUrl: data.ogImage,
         },
       } as Meta;
     });
 
   records.sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
   );
 
   return records;

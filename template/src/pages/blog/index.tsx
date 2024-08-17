@@ -27,7 +27,7 @@ export default function BlogPage({ posts }: { posts: Meta[] }) {
             <Link
               key={post.id}
               href={post.href}
-              className="flex flex-col items-start justify-between transition-all duration-150 group hover:scale-101"
+              className="flex flex-col items-start justify-between transition-all duration-150 group hover:scale-[101%] duration-250"
             >
               <div className="relative w-full">
                 <img
@@ -42,16 +42,18 @@ export default function BlogPage({ posts }: { posts: Meta[] }) {
                   <time dateTime={post.datetime} className="">
                     {new Date(post.date).toLocaleDateString()}
                   </time>
-                  <span className="relative z-10 rounded-full bg-gray-700 text-white px-3 py-1.5 font-medium text-3ray-600">
-                    {post.category}
-                  </span>
+                  {post.category && (
+                    <span className="relative z-10 rounded-full bg-gray-700 text-white px-3 py-1.5 font-medium text-3ray-600">
+                      {post.category}
+                    </span>
+                  )}
                 </div>
                 <div className="relative">
-                  <h3 className="mt-3 text-lg font-semibold leading-6 text-gray-300 transition-all group-hover:text-white duration-250">
+                  <h3 className="mt-3 text-lg font-semibold leading-6 text-black group-hover:text-opacity-70">
                     <span className="absolute inset-0" />
                     {post.title}
                   </h3>
-                  <p className="mt-5 text-sm leading-6 text-gray-300 transition-all line-clamp-3 group-hover:text-white duration-250">
+                  <p className="mt-5 text-sm leading-6 text-gray-400 transition-all line-clamp-3 group-hover:text-opacity-70 duration-250">
                     {post.description}
                   </p>
                 </div>
