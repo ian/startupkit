@@ -8,6 +8,7 @@ import { type Price, PricingType } from "@prisma/client";
 import { stripe } from "../lib/stripe";
 
 type CheckoutResponse = {
+  status: "success" | "redirect" | "error";
   sessionId?: string;
   errorRedirect?: string;
 };
@@ -21,6 +22,7 @@ export async function checkoutWithStripe(
   },
 ): Promise<CheckoutResponse> {
   const { successPath = "/billing", errorPath = "/billing" } = opts;
+
   try {
     if (!user) {
       throw new Error("Could not get user session.");
@@ -38,60 +40,112 @@ export async function checkoutWithStripe(
       throw new Error("Unable to access customer record.");
     }
 
-    let params: Stripe.Checkout.SessionCreateParams = {
-      allow_promotion_codes: true,
-      billing_address_collection: "required",
-      customer,
-      customer_update: {
-        address: "auto",
-      },
-      line_items: [
-        {
-          price: price.id,
-          quantity: 1,
-        },
-      ],
-      cancel_url: getURL(errorPath),
-      success_url: getURL(successPath),
-    };
+    let subscription: Stripe.Subscription | undefined;
 
-    console.log(
-      "Trial end:",
-      calculateTrialEndUnixTimestamp(price.trialPeriodDays),
-    );
-    if (price.type === PricingType.RECURRING) {
-      params = {
-        ...params,
-        mode: "subscription",
-        subscription_data: {
-          trial_end: calculateTrialEndUnixTimestamp(price.trialPeriodDays),
-        },
-      };
-    } else if (price.type === PricingType.ONE_TIME) {
-      params = {
-        ...params,
-        mode: "payment",
-      };
-    }
-
-    // Create a checkout session in Stripe
-    let session;
+    // Retrieve the existing subscription if it exists
     try {
-      session = await stripe.checkout.sessions.create(params);
+      const subscriptions = await stripe.subscriptions.list({
+        customer,
+        status: "active",
+      });
+      if (subscriptions.data.length > 0) {
+        subscription = subscriptions.data[0];
+      }
     } catch (err) {
       console.error(err);
-      throw new Error("Unable to create checkout session.");
+      throw new Error("Unable to retrieve subscriptions.");
     }
 
-    // Instead of returning a Response, just return the data or error.
-    if (session) {
-      return { sessionId: session.id };
+    // Create or update the checkout session based on whether a subscription exists
+    if (subscription) {
+      let params: Stripe.SubscriptionUpdateParams = {
+        items: [
+          {
+            id: subscription.items.data[0].id,
+            price: price.id,
+          },
+        ],
+        proration_behavior: "create_prorations",
+        trial_end: calculateTrialEndUnixTimestamp(price.trialPeriodDays),
+      };
+
+      try {
+        await stripe.subscriptions.update(subscription.id, params);
+
+        return {
+          status: "success",
+        };
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error";
+        console.error(error);
+
+        return {
+          status: "error",
+          errorRedirect: getErrorRedirect(
+            errorPath,
+            errorMessage,
+            "Please try again later or contact a system administrator.",
+          ),
+        };
+      }
     } else {
-      throw new Error("Unable to create checkout session.");
+      let params: Stripe.Checkout.SessionCreateParams = {
+        allow_promotion_codes: true,
+        billing_address_collection: "required",
+        customer,
+        customer_update: {
+          address: "auto",
+        },
+        line_items: [
+          {
+            price: price.id,
+            quantity: 1,
+          },
+        ],
+        cancel_url: getURL(errorPath),
+        success_url: getURL(successPath),
+      };
+
+      if (price.type === PricingType.ONE_TIME) {
+        // Process one-time payment
+        params = {
+          ...params,
+          mode: "payment",
+        };
+      } else {
+        // Create a new subscription
+        params = {
+          ...params,
+          mode: "subscription",
+          subscription_data: {
+            trial_end: calculateTrialEndUnixTimestamp(price.trialPeriodDays),
+          },
+        };
+      }
+
+      // Create a checkout session in Stripe
+      let session;
+      try {
+        session = await stripe.checkout.sessions.create(params);
+      } catch (err) {
+        console.error(err);
+        throw new Error("Unable to create checkout session.");
+      }
+
+      // Instead of returning a Response, just return the data or error.
+      if (session) {
+        return { status: "redirect", sessionId: session.id };
+      } else {
+        throw new Error("Unable to create checkout session.");
+      }
     }
   } catch (error) {
+    console.log(error);
+
     if (error instanceof Error) {
       return {
+        status: "error",
         errorRedirect: getErrorRedirect(
           errorPath,
           error.message,
@@ -100,6 +154,7 @@ export async function checkoutWithStripe(
       };
     } else {
       return {
+        status: "error",
         errorRedirect: getErrorRedirect(
           errorPath,
           "An unknown error occurred.",

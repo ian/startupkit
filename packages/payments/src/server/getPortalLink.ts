@@ -1,4 +1,3 @@
-import { getSession } from "@startupkit/auth/server";
 import { createOrRetrieveCustomer } from "../lib/helpers";
 import { stripe } from "../lib/stripe";
 import { getErrorRedirect, getURL } from "../lib/url";

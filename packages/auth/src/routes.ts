@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { handler as callbackHandler } from "./routes/callback";
 import { handler as loginHandler } from "./routes/login";
+import { handler as sessionHandler } from "./routes/session";
 
 // TODO: make this dynamic
 const PREFIX = "/api/auth";
@@ -17,6 +18,8 @@ async function handleRequest(request: NextRequest, method: string) {
       return callbackHandler(request);
     case "/login":
       return loginHandler(request);
+    case "/session":
+      return sessionHandler(request);
     default:
       return new Response("Not found", { status: 404 });
   }

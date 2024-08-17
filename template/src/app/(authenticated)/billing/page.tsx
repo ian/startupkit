@@ -10,25 +10,23 @@ import {
 import { getUser } from "@startupkit/auth/server";
 import { getProducts, getSubscription } from "@startupkit/payments/server";
 
-// Define the type for the subscription
-type SubscriptionType = Awaited<ReturnType<typeof getSubscription>>;
-
 export default async function PricingPage() {
   const { user } = await getUser();
   const subscription = await getSubscription(user?.id as string);
   const products = await getProducts();
 
-  return subscription ? (
-    <Subscription subscription={subscription} />
-  ) : (
-    <Pricing products={products ?? []} />
+  return (
+    <div className="space-y-5">
+      {subscription && <Subscription subscription={subscription} />}
+      <Pricing products={products ?? []} subscription={subscription} />
+    </div>
   );
 }
 
 const Subscription = ({
   subscription,
 }: {
-  subscription: NonNullable<SubscriptionType>;
+  subscription: NonNullable<Awaited<ReturnType<typeof getSubscription>>>;
 }) => {
   const subscriptionPrice =
     subscription &&

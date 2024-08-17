@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { $Enums, Price, Product } from "@prisma/client";
 import { useAuth } from "@startupkit/auth";
 import { useCheckout, useSubscription } from "@startupkit/payments";
@@ -13,20 +13,17 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
-
-interface ProductWithPrices extends Product {
-  prices: Price[];
-}
+import { getProducts, getSubscription } from "@startupkit/payments/server";
 
 interface Props {
   className?: string;
-  products: ProductWithPrices[];
+  products: Awaited<ReturnType<typeof getProducts>>;
+  subscription: Awaited<ReturnType<typeof getSubscription>>;
 }
 
-export function Pricing({ className, products }: Props) {
+export function Pricing({ className, products, subscription }: Props) {
   const { user, login } = useAuth();
   const { checkout } = useCheckout();
-  const { subscription } = useSubscription();
 
   const [billingInterval, setBillingInterval] =
     useState<$Enums.PricingPlanInterval>("month");
@@ -47,9 +44,9 @@ export function Pricing({ className, products }: Props) {
 
     try {
       await checkout(price);
+      setPriceLoading(undefined);
     } catch (err) {
       console.error(err);
-    } finally {
       setPriceLoading(undefined);
     }
   };
