@@ -1,6 +1,6 @@
 {
   "name": "@startupkit/payments",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": "Ian Hunter <ian@01.studio>",
   "license": "ISC",
   "description": "Payments package for StartupKit",
