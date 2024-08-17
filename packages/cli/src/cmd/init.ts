@@ -48,7 +48,7 @@ export async function init() {
     await writeFile(
       `${destPath}/.env.local`,
       `
-DATABASE_URL="postgresql://localhost:5432/${answers.name}?schema=public"
+DATABASE_URL="postgresql://postgres@localhost:5432/${answers.name}?schema=public"
 
 # Auth
 AUTH_SECRET=FAKE1234567890123456789012345678901234567890
