@@ -13,7 +13,7 @@ import { env } from "process";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const pkg = JSON.parse(
-  readFileSync(pathResolve(__dirname, "package.json"), "utf-8")
+  readFileSync(pathResolve(__dirname, "package.json"), "utf-8"),
 ); // Read package.json
 const external = Object.keys(pkg.dependencies, pkg.devDependencies);
 
@@ -43,9 +43,7 @@ export default {
         ".json": "json",
       },
       define: {
-        VERSION: JSON.stringify(
-          process.env.npm_package_version?.toString() || "0.0.0"
-        ),
+        "process.env.VERSION": JSON.stringify(pkg.version),
       },
     }),
     preserveDirectives(),

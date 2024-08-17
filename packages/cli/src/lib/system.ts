@@ -1,6 +1,10 @@
 import child from "child_process";
 import fs from "fs";
 
+export async function readFile(path: string) {
+  return fs.readFileSync(path).toString();
+}
+
 export async function writeFile(path: string, data: string) {
   return fs.writeFileSync(path, data);
 }
@@ -19,7 +23,7 @@ export function spawn(
   args: string[],
   opts: SpawnOpts = {
     encoding: "utf8",
-  }
+  },
 ) {
   const install = child.spawn(cmd, args, opts);
 
