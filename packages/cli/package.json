@@ -33,7 +33,7 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "rollup -c",
+    "build": "rollup -c && chmod +x dist/cli.js",
     "cli": "node dist/cli.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
