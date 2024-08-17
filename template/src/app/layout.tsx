@@ -4,6 +4,7 @@ import { getSession } from "@startupkit/auth/server";
 import { getSubscription } from "@startupkit/payments/server";
 
 import type { Metadata } from "next";
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "New StartupKit App",
@@ -23,6 +24,7 @@ export default async function RootLayout({
       <body style={{ padding: 0, margin: 0 }}>
         <ClientProviders session={session} subscription={subscription}>
           {children}
+          <Toaster />
         </ClientProviders>
       </body>
     </html>

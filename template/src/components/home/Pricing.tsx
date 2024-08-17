@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useState } from "react";
-import { $Enums, Price, Product } from "@prisma/client";
+import { useState } from "react";
+import { $Enums, Price } from "@prisma/client";
 import { useAuth } from "@startupkit/auth";
 import { useCheckout, useSubscription } from "@startupkit/payments";
 import {
@@ -13,27 +13,31 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
-import { getProducts, getSubscription } from "@startupkit/payments/server";
+import { getProducts } from "@startupkit/payments/server";
+import { pause } from "@/lib/utils";
 
-interface Props {
+type Products = Awaited<ReturnType<typeof getProducts>>;
+
+// TODO: edit these values to match your plan intervals
+const intervals = {
+  month: "Monthly",
+  year: "Yearly (save 30%)",
+} as Record<$Enums.PricingPlanInterval, string>;
+
+interface PricingProps {
   className?: string;
-  products: Awaited<ReturnType<typeof getProducts>>;
-  subscription: Awaited<ReturnType<typeof getSubscription>>;
+  products: Products;
 }
 
-export function Pricing({ className, products, subscription }: Props) {
+export function Pricing({ className, products }: PricingProps) {
   const { user, login } = useAuth();
   const { checkout } = useCheckout();
+  const { subscription, refetch } = useSubscription();
 
   const [billingInterval, setBillingInterval] =
     useState<$Enums.PricingPlanInterval>("month");
-  const [priceLoading, setPriceLoading] = useState<string>();
 
-  // TODO: edit these values to match your plan intervals
-  const intervals = {
-    month: "Monthly",
-    year: "Yearly (save 30%)",
-  } as Record<$Enums.PricingPlanInterval, string>;
+  const [priceLoading, setPriceLoading] = useState<string>();
 
   const handleStripeCheckout = async (price: Price) => {
     setPriceLoading(price.id);
@@ -44,6 +48,10 @@ export function Pricing({ className, products, subscription }: Props) {
 
     try {
       await checkout(price);
+
+      // Set 1s pause to wait for the webhook
+      await pause(1000);
+      await refetch();
       setPriceLoading(undefined);
     } catch (err) {
       console.error(err);

@@ -18,8 +18,6 @@ export function CustomerPortalButton(props: ButtonProps) {
       {...props}
       onClick={handleStripePortalRequest}
       loading={isSubmitting}
-    >
-      Manage subscription
-    </Button>
+    />
   );
 }

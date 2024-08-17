@@ -1,4 +1,5 @@
 import { CustomerPortalButton } from "@/components/app/customer-portal-button";
+import { SearchParamsError } from "@/components/app/search-params-error";
 import { Pricing } from "@/components/home/pricing";
 import {
   Card,
@@ -10,20 +11,21 @@ import {
 import { getUser } from "@startupkit/auth/server";
 import { getProducts, getSubscription } from "@startupkit/payments/server";
 
-export default async function PricingPage() {
+export default async function BillingPage() {
   const { user } = await getUser();
   const subscription = await getSubscription(user?.id as string);
   const products = await getProducts();
 
   return (
-    <div className="space-y-5">
-      {subscription && <Subscription subscription={subscription} />}
-      <Pricing products={products ?? []} subscription={subscription} />
+    <div className="space-y-20">
+      <SearchParamsError />
+      {subscription && <CurrentSubscription subscription={subscription} />}
+      <Pricing products={products ?? []} />
     </div>
   );
 }
 
-const Subscription = ({
+const CurrentSubscription = ({
   subscription,
 }: {
   subscription: NonNullable<Awaited<ReturnType<typeof getSubscription>>>;
@@ -43,7 +45,7 @@ const Subscription = ({
         <CardDescription>Manage your subscription</CardDescription>
       </CardHeader>
 
-      <CardContent className="space-y-4">
+      <CardContent className="flex justify-between items-center">
         <p>
           You are currently on the{" "}
           <strong>{subscription.price?.product?.name}</strong> plan for{" "}
@@ -52,7 +54,9 @@ const Subscription = ({
           </strong>
         </p>
 
-        <CustomerPortalButton />
+        <CustomerPortalButton variant="destructive">
+          Cancel Subscription
+        </CustomerPortalButton>
       </CardContent>
     </Card>
   );
