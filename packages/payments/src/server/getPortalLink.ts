@@ -3,14 +3,15 @@ import { createOrRetrieveCustomer } from "../lib/helpers";
 import { stripe } from "../lib/stripe";
 import { getErrorRedirect, getURL } from "../lib/url";
 
-export async function getPortalLink(currentPath: string) {
+export async function getPortalLink(
+  user: { id: string; email: string },
+  opts: {
+    successPath?: string;
+    errorPath?: string;
+  },
+) {
+  const { successPath = "/billing", errorPath = "/billing" } = opts;
   try {
-    const { user } = await getSession();
-
-    if (!user) {
-      throw new Error("Could not get user session.");
-    }
-
     let customer;
     try {
       customer = await createOrRetrieveCustomer({
@@ -29,7 +30,7 @@ export async function getPortalLink(currentPath: string) {
     try {
       const { url } = await stripe.billingPortal.sessions.create({
         customer,
-        return_url: getURL("/account"),
+        return_url: getURL(successPath),
       });
       if (!url) {
         throw new Error("Could not create billing portal");
@@ -43,13 +44,13 @@ export async function getPortalLink(currentPath: string) {
     if (error instanceof Error) {
       console.error(error);
       return getErrorRedirect(
-        currentPath,
+        errorPath,
         error.message,
         "Please try again later or contact a system administrator.",
       );
     } else {
       return getErrorRedirect(
-        currentPath,
+        errorPath,
         "An unknown error occurred.",
         "Please try again later or contact a system administrator.",
       );

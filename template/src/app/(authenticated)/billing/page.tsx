@@ -1,4 +1,4 @@
-import { CustomerPortalButton } from "@/components/app/customer-portal";
+import { CustomerPortalButton } from "@/components/app/customer-portal-button";
 import { Pricing } from "@/components/home/pricing";
 import {
   Card,
@@ -53,6 +53,7 @@ const Subscription = ({
             {subscriptionPrice}/{subscription?.price?.interval}
           </strong>
         </p>
+
         <CustomerPortalButton />
       </CardContent>
     </Card>

@@ -6,6 +6,10 @@ export async function handler(request: Request) {
   const { price, redirectTo } = body;
   const { user } = await getSession();
 
+  if (!user) {
+    throw new Error("Authentication required");
+  }
+
   const { errorRedirect, sessionId } = await checkoutWithStripe(user, price, {
     // TODO: redirect to the right path
     successPath: redirectTo,
