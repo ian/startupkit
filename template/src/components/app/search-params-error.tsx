@@ -1,11 +1,12 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useLayoutEffect } from "react";
 import toast from "react-hot-toast";
 
 export const SearchParamsError = () => {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
 
   useLayoutEffect(() => {
@@ -24,8 +25,11 @@ export const SearchParamsError = () => {
 
       toast.error(error);
 
-      console.log(new URLSearchParams(params).toString());
-      // router.replace(new URLSearchParams(params).toString()); // Update the router without the error param
+      const url = [pathname, new URLSearchParams(params).toString()]
+        .filter((f) => f !== "")
+        .join("?");
+
+      router.replace(url);
     }
   });
 
