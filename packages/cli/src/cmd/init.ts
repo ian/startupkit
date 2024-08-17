@@ -35,7 +35,7 @@ export async function init() {
   await spinner("Initializing Project", async () => {
     // @see https://nextjs.org/docs/pages/api-reference/create-next-app
     const example =
-      "https://github.com/01-studio/startupkit#feat/cli-and-base-template";
+      process.env.EXAMPLE ?? "https://github.com/01-studio/startupkit";
     const examplePath = "template";
     const installCmd = `npx create-next-app@latest ${destPath} --use-pnpm --example ${example} --example-path "${examplePath}"`;
 
@@ -47,7 +47,7 @@ export async function init() {
       `${destPath}/.env.local`,
       `
 AUTH_SECRET=FAKE1234567890123456789012345678901234567890
-DATABASE_URL="postgresql://localhost:5432/startupkit?schema=public"
+DATABASE_URL="postgresql://localhost:5432/${answers.name}?schema=public"
 # Analytics
 GOOGLE_ANALYTICS_ID=
 PLAUSIBLE_DOMAIN=
@@ -59,7 +59,7 @@ STRIPE_WEBHOOK_SECRET=
 # Auth
 WORKOS_CLIENT_ID=
 WORKOS_API_KEY=
-WORKOS_REDIRECT_URI=`
+WORKOS_REDIRECT_URI=`,
     );
   });
 
