@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import { getStripe } from "./get-stripe";
 import { Price } from "@prisma/client";
 
-export const useCheckout = ({ redirectTo }: { redirectTo?: string }) => {
+export const useCheckout = ({ redirectTo }: { redirectTo?: string } = {}) => {
   const router = useRouter();
 
   const checkout = async (

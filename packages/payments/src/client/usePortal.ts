@@ -1,7 +1,7 @@
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 
-export const usePortal = ({ redirectTo }: { redirectTo?: string }) => {
+export const usePortal = ({ redirectTo }: { redirectTo?: string } = {}) => {
   const router = useRouter();
 
   const redirectToPortal = useCallback(async () => {
