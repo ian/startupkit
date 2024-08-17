@@ -4,6 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { LoadingDots } from "./loading";
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
@@ -38,17 +39,34 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
+  loading?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  (
+    { className, variant, size, asChild = false, children, loading, ...props },
+    ref,
+  ) => {
     const Comp = asChild ? Slot : "button";
     return (
       <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={cn(buttonVariants({ variant, size, className }), "relative")}
         ref={ref}
+        disabled={loading}
         {...props}
-      />
+      >
+        {loading ? (
+          <span
+            className={cn(
+              buttonVariants({ variant }),
+              "absolute w-full h-full flex items-center justify-center",
+            )}
+          >
+            <LoadingDots />
+          </span>
+        ) : null}
+        {children}
+      </Comp>
     );
   },
 );
@@ -59,17 +77,42 @@ export interface ButtonLinkProps
   extends React.AnchorHTMLAttributes<HTMLAnchorElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
+  loading?: boolean;
 }
 
 const ButtonLink = React.forwardRef<HTMLAnchorElement, ButtonLinkProps>(
-  ({ className, variant, size, href, asChild = false, ...props }, ref) => {
+  (
+    {
+      className,
+      variant,
+      size,
+      href,
+      asChild = false,
+      children,
+      loading,
+      ...props
+    },
+    ref,
+  ) => {
     return (
       <Link
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={cn(buttonVariants({ variant, size, className }), "relative")}
         ref={ref}
         href={href as string}
         {...props}
-      />
+      >
+        {loading ? (
+          <span
+            className={cn(
+              buttonVariants({ variant }),
+              "absolute w-full h-full flex items-center justify-center",
+            )}
+          >
+            <LoadingDots />
+          </span>
+        ) : null}
+        {children}
+      </Link>
     );
   },
 );
