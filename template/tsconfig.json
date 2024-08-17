@@ -31,7 +31,8 @@
     "src/components/app/Header.tsx.old",
     "src/components/ui/card.tsx.old",
     "src/components/ui/input.tsx.old",
-    "tailwind.config.ts.old"
+    "tailwind.config.ts.old",
+    "src/components/home/cta.tsx.old"
   ],
   "exclude": ["node_modules"]
 }

@@ -1,8 +1,7 @@
 "use client";
 
-import classNames from "clsx";
 import { useState } from "react";
-import { $Enums, Price, Product, Subscription } from "@prisma/client";
+import { $Enums, Price, Product } from "@prisma/client";
 import { useAuth } from "@startupkit/auth";
 import { useCheckout, useSubscription } from "@startupkit/payments";
 import {
@@ -13,23 +12,25 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
+import { cn } from "@/lib/utils";
 
 interface ProductWithPrices extends Product {
   prices: Price[];
 }
 
 interface Props {
+  className?: string;
   products: ProductWithPrices[];
 }
 
-export function Pricing({ products }: Props) {
+export function Pricing({ className, products }: Props) {
   const { user, login } = useAuth();
   const { checkout } = useCheckout();
   const { subscription } = useSubscription();
 
   const [billingInterval, setBillingInterval] =
     useState<$Enums.PricingPlanInterval>("month");
-  const [priceIdLoading, setPriceIdLoading] = useState<string>();
+  const [priceLoading, setPriceLoading] = useState<string>();
 
   // TODO: edit these values to match your plan intervals
   const intervals = {
@@ -38,7 +39,7 @@ export function Pricing({ products }: Props) {
   } as Record<$Enums.PricingPlanInterval, string>;
 
   const handleStripeCheckout = async (price: Price) => {
-    setPriceIdLoading(price.id);
+    setPriceLoading(price.id);
 
     if (!user) {
       login();
@@ -49,7 +50,7 @@ export function Pricing({ products }: Props) {
     } catch (err) {
       console.error(err);
     } finally {
-      setPriceIdLoading(undefined);
+      setPriceLoading(undefined);
     }
   };
 
@@ -58,7 +59,7 @@ export function Pricing({ products }: Props) {
   }
 
   return (
-    <section className="">
+    <section className={cn(className)}>
       <div className="max-w-6xl">
         <BillingInterval
           selected={billingInterval}
@@ -80,12 +81,13 @@ export function Pricing({ products }: Props) {
             }).format(((price?.unitAmount as number) || 0) / 100);
 
             const isCurrent =
-              product.name === subscription?.price?.product?.name;
+              product.name === subscription?.price?.product?.name &&
+              subscription?.price.interval === billingInterval;
 
             return (
               <div
                 key={product.id}
-                className={classNames(
+                className={cn(
                   isCurrent
                     ? "border-primary bg-primary/20"
                     : "border-gray-100 bg-secondary",
@@ -100,6 +102,7 @@ export function Pricing({ products }: Props) {
                     </p>
                   </div>
                 ) : null}
+
                 <div className="basis-1/3">
                   <h2 className="text-2xl font-semibold leading-6 ">
                     {product.name}
@@ -119,8 +122,14 @@ export function Pricing({ products }: Props) {
                 <Button
                   onClick={() => handleStripeCheckout(price)}
                   className="mt-8 w-full"
+                  loading={priceLoading === price.id}
+                  disabled={isCurrent}
                 >
-                  {subscription ? "Manage" : "Subscribe"}
+                  {isCurrent
+                    ? "Current Plan"
+                    : subscription
+                      ? "Switch to Plan"
+                      : "Subscribe"}
                 </Button>
               </div>
             );

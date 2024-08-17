@@ -27,7 +27,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "template/tailwind.config.ts.old",
-    "packages/auth/src/providers/AuthProviderClient.tsx.old"
+    "packages/auth/src/providers/AuthProviderClient.tsx.old",
+    "template/src/components/home/cta.tsx.old"
   ],
   "exclude": ["node_modules"]
 }
