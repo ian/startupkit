@@ -1,30 +1,30 @@
-import NextLink from "next/link";
-import { SignInButton } from "../components/SignInButton";
-import { getUser } from "../auth/server";
+import { Hero } from "@/components/home/hero";
+import { Header } from "@/components/home/header";
+import { Footer } from "@/components/home/footer";
+import { Pricing } from "@/components/home/pricing";
+import { getProducts } from "@startupkit/payments/server";
 
-export default async function HomePage() {
-  const { isAuthenticated, user } = await getUser();
+export default async function Home() {
+  const products = await getProducts();
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      {isAuthenticated ? (
-        <>
-          <h2 className="text-2xl font-bold">
-            Welcome back{user?.firstName && `, ${user?.firstName}`}
-          </h2>
-          <p>You are now authenticated into the application</p>
-          <div className="flex space-x-2">
-            <NextLink href="/account">View account</NextLink>
-            <SignInButton />
+    <>
+      <Header />
+      <main>
+        <Hero />
+        <div className="px-4 my-40">
+          <div className="text-center mb-4 max-w-2xl mx-auto">
+            <h2 className="text-2xl md:text-4xl font-bold mb-2">Pricing</h2>
+            <p>
+              Choose from our range of products tailored to fit your needs. Each
+              product offers unique features and pricing options.
+            </p>
           </div>
-        </>
-      ) : (
-        <>
-          <h2 className="text-2xl font-bold">Welcome to Startupkit</h2>
-          <p>Sign in to view your account details</p>
-          <SignInButton />
-        </>
-      )}
-    </div>
+
+          <Pricing products={products} />
+        </div>
+        <Footer />
+      </main>
+    </>
   );
 }

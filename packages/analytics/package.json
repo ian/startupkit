@@ -9,26 +9,18 @@
     "type": "git",
     "url": "https://github.com/01-studio/startupkit"
   },
-  "main": "./dist/cjs/index.js",
-  "module": "./dist/esm/index.js",
-  "types": "./dist/types/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/types/index.d.ts",
-      "import": "./dist/esm/index.js"
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js",
+      "types": "./dist/types/index.d.ts"
     },
-    "./ga": {
-      "types": "./dist/types/ext/ga.d.js",
-      "import": "./dist/esm/ga.js"
+    "./plugins": {
+      "import": "./dist/esm/plugins.js",
+      "require": "./dist/cjs/plugins.js",
+      "types": "./dist/types/plugins.d.ts"
     },
-    "./plausible": {
-      "types": "./dist/types/ext/plausible.d.ts",
-      "import": "./dist/esm/plausible.js"
-    },
-    "./posthog": {
-      "types": "./dist/types/ext/posthog.d.ts",
-      "import": "./dist/esm/posthog.js"
-    }
+    "./config": "./dist/cjs/config.js"
   },
   "scripts": {
     "clean": "rm -rf ./dist ./.turbo",
@@ -52,7 +44,6 @@
   "devDependencies": {
     "@types/mdast": "^4.0.4",
     "@types/mdx": "^2.0.13",
-    "@types/next": "9",
     "@types/react": "^18.2.0",
     "@types/vfile": "^4.0.0",
     "next": "^14",

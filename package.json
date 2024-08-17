@@ -5,17 +5,19 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "clean": "pnpm -r run clean",
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "type-check": "turbo run type-check",
+    "clean": "pnpm --stream -r run clean",
+    "build": "pnpm --stream -r --filter \"./packages/**\" run build",
+    "build:watch": "pnpm --stream -r run build:watch",
+    "dev": "pnpm --stream -r run dev",
+    "type-check": "pnpm --stream -r run type-check",
     "bump": "./scripts/bump",
-    "release": "pnpm recursive --filter  \"./packages/**\" exec -- npm publish --access public"
+    "release": "pnpm --stream recursive --filter \"./packages/**\" exec -- npm publish --access public"
   },
   "packageManager": "pnpm@9.6.0",
   "author": "Ian Hunter <ian@01.studio>",
   "license": "ISC",
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^26.0.1",
     "@rollup/plugin-swc": "^0.3.1",
     "@swc/core": "^1.7.6",
     "rollup": "^4.20.0",

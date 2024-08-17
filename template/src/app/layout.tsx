@@ -1,23 +1,31 @@
-import "./styles.css";
+import { ClientProviders } from "@/components/ClientProviders";
+import "@/styles/app.css";
+import { getSession } from "@startupkit/auth/server";
+import { getSubscription } from "@startupkit/payments/server";
 
 import type { Metadata } from "next";
-import { Header } from "@/components/Header";
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
-  title: "Example AuthKit Authenticated App",
-  description: "Example Next.js application demonstrating how to use AuthKit.",
+  title: "New StartupKit App",
+  description: "The SaaS Framework: https://startupkit.com",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await getSession();
+  const subscription = await getSubscription(session?.user?.id);
+
   return (
     <html lang="en">
       <body style={{ padding: 0, margin: 0 }}>
-        <Header />
-        <main className="p-5">{children}</main>
+        <ClientProviders session={session} subscription={subscription}>
+          {children}
+          <Toaster />
+        </ClientProviders>
       </body>
     </html>
   );
