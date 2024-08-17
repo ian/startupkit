@@ -11,7 +11,7 @@
     "dev": "pnpm --stream -r run dev",
     "type-check": "pnpm --stream -r run type-check",
     "bump": "./scripts/bump",
-    "release": "pnpm --stream recursive --filter \"./packages/**\" exec -- npm publish --access public"
+    "release": "pnpm build && pnpm --stream recursive --filter \"./packages/**\" exec -- npm publish --access public"
   },
   "packageManager": "pnpm@9.6.0",
   "author": "Ian Hunter <ian@01.studio>",
