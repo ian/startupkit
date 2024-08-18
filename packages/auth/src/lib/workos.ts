@@ -11,7 +11,7 @@ const redirectUri =
   process.env.NEXT_PUBLIC_WORKOS_REDIRECT_URI ||
   process.env.WORKOS_REDIRECT_URI;
 
-export const workos = new WorkOS(key!);
+export const getClient = () => new WorkOS(key!);
 
 export function getClientId(): string {
   return clientId!;

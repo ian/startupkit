@@ -1,4 +1,4 @@
-import { getClientId, workos } from "../lib/workos";
+import { getClient, getClientId } from "../lib/workos";
 import { NextResponse } from "next/server";
 
 /**
@@ -8,7 +8,7 @@ import { NextResponse } from "next/server";
  */
 export async function handler(request: Request) {
   const redirectUri = process.env.WORKOS_REDIRECT_URI!;
-  const authorizationUrl = workos.userManagement.getAuthorizationUrl({
+  const authorizationUrl = getClient().userManagement.getAuthorizationUrl({
     provider: "authkit",
     clientId: getClientId(),
     redirectUri,
