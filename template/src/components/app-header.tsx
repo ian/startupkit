@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { clearSession, getUser } from "@startupkit/auth/server";
+import { clearSession, getUser, SessionUser } from "@startupkit/auth/server";
 import { Sidebar } from "@/components/app-sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { User } from "@prisma/client";
@@ -77,7 +77,7 @@ export const Header = async () => {
   );
 };
 
-function getInitials(user: User | null): string {
+function getInitials(user: SessionUser | null): string {
   if (!user) return "";
   const firstInitial = user.firstName?.charAt(0).toUpperCase();
   const lastInitial = user.lastName?.charAt(0).toUpperCase();
