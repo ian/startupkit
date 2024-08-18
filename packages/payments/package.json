@@ -36,6 +36,7 @@
   "dependencies": {
     "@prisma/client": "5.10.2",
     "@startupkit/auth": "workspace:*",
+    "@startupkit/utils": "workspace:*",
     "@stripe/react-stripe-js": "^2.5.1",
     "@stripe/stripe-js": "^3.0.6",
     "stripe": "^14.19.0",
@@ -46,6 +47,7 @@
     "react": "^18.2.0"
   },
   "devDependencies": {
+    "@types/node": "^22.4.0",
     "@types/react": "^18.2.0"
   }
 }

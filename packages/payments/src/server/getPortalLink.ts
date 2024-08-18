@@ -1,6 +1,6 @@
 import { createOrRetrieveCustomer } from "../lib/helpers";
 import { stripe } from "../lib/stripe";
-import { getErrorRedirect, getURL } from "../lib/url";
+import { getErrorRedirect, getURL } from "@startupkit/utils";
 
 export async function getPortalLink(
   user: { id: string; email: string },

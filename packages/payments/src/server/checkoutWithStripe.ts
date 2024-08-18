@@ -3,7 +3,7 @@ import {
   calculateTrialEndUnixTimestamp,
   createOrRetrieveCustomer,
 } from "../lib/helpers";
-import { getErrorRedirect, getURL } from "../lib/url";
+import { getErrorRedirect, getURL } from "@startupkit/utils";
 import { type Price, PricingType } from "@prisma/client";
 import { stripe } from "../lib/stripe";
 

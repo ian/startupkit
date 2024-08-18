@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "@prisma/client": "5.10.2",
+    "@startupkit/utils": "workspace:*",
     "@workos-inc/node": "^5.0.0",
     "iron-session": "^8.0.1",
     "swr": "^2.2.5"
@@ -47,6 +48,7 @@
     "react": "^18.2.0"
   },
   "devDependencies": {
+    "@types/node": "^22.4.0",
     "@types/react": "^18.2.0"
   }
 }
