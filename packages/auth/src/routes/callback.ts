@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "../server";
-import { getClientId, workos } from "../lib/workos";
+import { getClient, getClientId } from "../lib/workos";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -12,7 +12,7 @@ export async function handler(request: NextRequest) {
     try {
       // Use the code returned to us by AuthKit and authenticate the user with WorkOS
       const { user: wosUser } =
-        await workos.userManagement.authenticateWithCode({
+        await getClient().userManagement.authenticateWithCode({
           clientId: getClientId(),
           code,
         });

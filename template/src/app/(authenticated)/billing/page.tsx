@@ -1,6 +1,6 @@
-import { CustomerPortalButton } from "@/components/app/customer-portal-button";
-import { SearchParamsError } from "@/components/app/search-params-error";
-import { Pricing } from "@/components/home/pricing";
+import { CustomerPortalButton } from "@/components/customer-portal-button";
+import { SearchParamsError } from "@/components/search-params-error";
+import { Pricing } from "@/components/pricing";
 import {
   Card,
   CardContent,

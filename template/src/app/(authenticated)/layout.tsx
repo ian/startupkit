@@ -5,8 +5,8 @@ import { redirect } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { getUser } from "@startupkit/auth/server";
-import { Sidebar } from "@/components/app/sidebar";
-import { Header } from "@/components/app/header";
+import { Sidebar } from "@/components/app-sidebar";
+import { Header } from "@/components/app-header";
 
 export default async function Layout({
   children,

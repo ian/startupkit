@@ -13,7 +13,7 @@ export async function getSession(): Promise<IronSession<SessionData>> {
 
 export async function getUser(): Promise<{
   isAuthenticated: boolean;
-  user?: SessionUser | null;
+  user: SessionUser | null;
 }> {
   const session = await getSession();
 
@@ -24,7 +24,7 @@ export async function getUser(): Promise<{
     };
   }
 
-  return { isAuthenticated: false };
+  return { user: null, isAuthenticated: false };
 }
 
 export async function clearSession() {

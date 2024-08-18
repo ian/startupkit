@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { usePortal } from "@startupkit/payments";
-import { Button, type ButtonProps } from "../ui/button";
+import { Button, type ButtonProps } from "./ui/button";
 
 export function CustomerPortalButton(props: ButtonProps) {
   const [isSubmitting, setSubmitting] = useState(false);
