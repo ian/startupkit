@@ -14,7 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button, ButtonLink } from "../ui/button";
+import { Button, ButtonLink } from "./ui/button";
 import { useSubscription } from "@startupkit/payments";
 import { usePathname } from "next/navigation";
 

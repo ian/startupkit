@@ -1,7 +1,7 @@
-import { Hero } from "@/components/home/hero";
-import { Header } from "@/components/home/header";
-import { Footer } from "@/components/home/footer";
-import { Pricing } from "@/components/home/pricing";
+import { Hero } from "@/components/home-hero";
+import { Header } from "@/components/home-header";
+import { Footer } from "@/components/home-footer";
+import { Pricing } from "@/components/pricing";
 import { getProducts } from "@startupkit/payments/server";
 
 export default async function Home() {

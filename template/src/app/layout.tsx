@@ -1,4 +1,4 @@
-import { ClientProviders } from "@/components/ClientProviders";
+import { ClientProviders } from "@/components/client-providers";
 import "@/styles/app.css";
 import { getSession } from "@startupkit/auth/server";
 import { getSubscription } from "@startupkit/payments/server";

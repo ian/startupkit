@@ -3,15 +3,15 @@
 import "@/styles/pages.css";
 
 import type { AppProps } from "next/app";
-import { Header } from "@/components/home/header";
+import { Header } from "@/components/home-header";
 import { cn } from "@/components/ui/utils";
 import {
   Bricolage_Grotesque as FontSerif,
   Noto_Sans as FontSans,
   Noto_Sans_Mono as FontMono,
 } from "next/font/google";
-import { Footer } from "@/components/home/footer";
-import { ClientProviders } from "@/components/ClientProviders";
+import { Footer } from "@/components/home-footer";
+import { ClientProviders } from "@/components/client-providers";
 import Head from "next/head";
 
 const fontSerif = FontSerif({

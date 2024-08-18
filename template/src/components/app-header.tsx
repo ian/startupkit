@@ -12,8 +12,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { clearSession, getUser } from "@startupkit/auth/server";
-import { Sidebar } from "@/components/app/sidebar";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Sidebar } from "@/components/app-sidebar";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { User } from "@prisma/client";
 import Link from "next/link";
 
