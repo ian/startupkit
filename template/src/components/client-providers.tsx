@@ -1,17 +1,28 @@
 "use client";
 
-import { useMemo } from "react";
 import { Subscription } from "@prisma/client";
-import { AnalyticsProvider } from "@startupkit/analytics";
-import {
-  AnalyticsPlugin,
-  googleAnalyticsPlugin,
-  plausiblePlugin,
-  posthogPlugin,
-} from "@startupkit/analytics/plugins";
+import { AnalyticsPlugins, AnalyticsProvider } from "@startupkit/analytics";
 import { AuthProvider } from "@startupkit/auth";
 import { SessionData } from "@startupkit/auth/server";
 import { SubscriptionProvider } from "@startupkit/payments";
+
+const analyticsPlugins = {
+  googleAnalytics: {
+    measurementIds: [process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID!],
+  },
+  plausible: {
+    domain: "startup.example",
+    trackLocalhost: true,
+  },
+  posthog: {
+    token: process.env.NEXT_PUBLIC_POSTHOG_TOKEN!,
+    enabled: true,
+    options: {
+      persistence: "memory",
+      disable_cookie: true,
+    },
+  },
+} satisfies AnalyticsPlugins;
 
 export const ClientProviders = ({
   children,
@@ -22,31 +33,6 @@ export const ClientProviders = ({
   session?: SessionData;
   subscription?: Subscription | null;
 }) => {
-  const analyticsPlugins: AnalyticsPlugin[] = useMemo(() => {
-    /**
-     * Add your custom Analytics plugins here.
-     * You can use any plugins from the npm `analytics` package:
-     * https://github.com/DavidWells/analytics?tab=readme-ov-file#analytic-plugins
-     */
-    return [
-      googleAnalyticsPlugin({
-        measurementIds: [process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID],
-      }),
-      plausiblePlugin({
-        domain: "startup.example",
-        trackLocalhost: true,
-      }),
-      posthogPlugin({
-        token: process.env.NEXT_PUBLIC_POSTHOG_TOKEN!,
-        enabled: true,
-        options: {
-          persistence: "memory",
-          disable_cookie: true,
-        },
-      }),
-    ];
-  }, []);
-
   return (
     <AnalyticsProvider plugins={analyticsPlugins}>
       <AuthProvider session={session}>
