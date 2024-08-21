@@ -37,7 +37,7 @@ const fontMono = FontMono({
 
 export default function StaticPages({ Component, pageProps }: AppProps) {
   return (
-    <ClientProviders>
+    <>
       <Head>
         <title>StartupKit - Everything you need to launch a SaaS product</title>
         <meta
@@ -72,12 +72,14 @@ export default function StaticPages({ Component, pageProps }: AppProps) {
           "justify-between flex flex-col w-full",
         )}
       >
-        <Header />
-        <main className="px-4 mx-auto lg:px-6 md:max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl">
-          <Component {...pageProps} />
-        </main>
-        <Footer />
+        <ClientProviders>
+          <Header />
+          <main className="px-4 mx-auto lg:px-6 md:max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl">
+            <Component {...pageProps} />
+          </main>
+          <Footer />
+        </ClientProviders>
       </main>
-    </ClientProviders>
+    </>
   );
 }

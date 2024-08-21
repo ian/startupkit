@@ -1,5 +1,9 @@
-export type AnalyticsPlugin = any;
+import { type GoogleAnalyticsConfig } from "./plugins/ga";
+import { type PlausibleConfig } from "./plugins/plausible";
+import { type PosthogConfig } from "./plugins/posthog";
 
-export { default as googleAnalyticsPlugin } from "./plugins/ga";
-export { default as posthogPlugin } from "./plugins/posthog";
-export { default as plausiblePlugin } from "./plugins/plausible";
+export type AnalyticsPlugins = {
+  googleAnalytics: GoogleAnalyticsConfig;
+  posthog: PosthogConfig;
+  plausible: PlausibleConfig;
+};

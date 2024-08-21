@@ -1,2 +1,3 @@
 import { default as plausiblePlugin } from "analytics-plugin-plausible";
-export default plausiblePlugin
+export { plausiblePlugin };
+export type PlausibleConfig = Parameters<typeof plausiblePlugin>[0];

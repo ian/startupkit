@@ -1,6 +1,6 @@
 {
   "name": "@startupkit/analytics",
-  "version": "0.3.7",
+  "version": "0.3.9",
   "author": "Ian Hunter <ian@01.studio>",
   "license": "ISC",
   "description": "Analytics package for StartupKit",
@@ -14,11 +14,6 @@
       "import": "./dist/esm/index.js",
       "require": "./dist/cjs/index.js",
       "types": "./dist/types/index.d.ts"
-    },
-    "./plugins": {
-      "import": "./dist/esm/plugins.js",
-      "require": "./dist/cjs/plugins.js",
-      "types": "./dist/types/plugins.d.ts"
     },
     "./config": "./dist/cjs/config.js"
   },
