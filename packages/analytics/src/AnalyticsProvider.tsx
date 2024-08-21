@@ -38,6 +38,8 @@ export const AnalyticsProvider = ({
         const { posthogPlugin } = await import("./plugins/posthog");
         _plugins.push(posthogPlugin(plugins.posthog));
       }
+
+      setAnalyticsPlugins(_plugins);
     })();
   }, [plugins]);
 

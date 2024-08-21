@@ -8,7 +8,7 @@ export function run() {
 
   program
     .name("startupkit")
-    .description("The last startup framework you'll ever need")
+    .description("The Zero to One Startup Framework")
     .action(() => {
       // console.log("No command provided. Please specify a command.");
       init();
