@@ -11,7 +11,7 @@ const analyticsPlugins = {
     measurementIds: [process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID!],
   },
   plausible: {
-    domain: "startup.example",
+    domain: process.env.PLAUSIBLE_DOMAIN!,
     trackLocalhost: true,
   },
   posthog: {
