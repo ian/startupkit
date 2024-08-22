@@ -2,6 +2,7 @@
 
 import { Command } from "commander";
 import { init } from "./cmd/init";
+import { update } from "./cmd/update";
 
 export function run() {
   const program = new Command();
@@ -12,6 +13,15 @@ export function run() {
     .action(() => {
       // console.log("No command provided. Please specify a command.");
       init();
+    });
+
+  program
+    .command("up")
+    .alias("update")
+    .alias("upgrade")
+    .description("Update all startupkit packages to the latest version")
+    .action(() => {
+      update();
     });
 
   program
