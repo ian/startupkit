@@ -1,11 +1,8 @@
 "use client";
 
-import * as SWR from "swr";
+import useSWR from "swr";
 import { useRouter } from "next/navigation";
 import { SessionData } from "../types";
-
-// Hack because SWR default export isn't working
-const useSWR = SWR.default;
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
