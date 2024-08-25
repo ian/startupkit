@@ -36,7 +36,6 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@prisma/client": "5.10.2",
     "@startupkit/utils": "workspace:*",
     "@workos-inc/node": "^5.0.0",
     "iron-session": "^8.0.1",

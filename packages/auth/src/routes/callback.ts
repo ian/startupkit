@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSession } from "../server";
+import { getSession, SessionUser } from "../server";
 import { getClient, getClientId } from "../lib/workos";
-import { PrismaClient } from "@prisma/client";
 import { getURL } from "@startupkit/utils";
-
-const prisma = new PrismaClient();
 
 export async function handler(request: NextRequest) {
   const code = request.nextUrl.searchParams.get("code");
@@ -18,32 +15,18 @@ export async function handler(request: NextRequest) {
           code,
         });
 
-      const props = {
-        wosId: wosUser.id,
-        avatarUrl: wosUser.profilePictureUrl,
+      const user: SessionUser = {
+        id: wosUser.id,
         email: wosUser.email,
         firstName: wosUser.firstName,
         lastName: wosUser.lastName,
+        avatarUrl: wosUser.profilePictureUrl,
       };
-
-      const user = await prisma.user.upsert({
-        where: {
-          wosId: wosUser.id,
-        },
-        create: props,
-        update: {},
-        select: {
-          id: true,
-          email: true,
-          firstName: true,
-          lastName: true,
-          avatarUrl: true,
-        },
-      });
 
       const session = await getSession();
       session.user = user;
       session.createdAt = new Date().toISOString();
+
       await session.save();
 
       const url = getURL("/dash");
@@ -54,9 +37,9 @@ export async function handler(request: NextRequest) {
         error: error instanceof Error ? error.message : String(error),
       };
       console.error(errorRes);
-      return NextResponse.redirect(new URL("/error", request.url));
+      return NextResponse.redirect(getURL("/error"));
     }
   }
 
-  return NextResponse.redirect(new URL("/error", request.url));
+  return NextResponse.redirect(getURL("/error"));
 }

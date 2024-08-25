@@ -84,9 +84,6 @@ importers:
 
   packages/auth:
     dependencies:
-      '@prisma/client':
-        specifier: 5.10.2
-        version: 5.10.2(prisma@5.18.0)
       '@startupkit/utils':
         specifier: workspace:*
         version: link:../utils
@@ -7251,7 +7248,7 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 22.2.0
+      '@types/node': 22.4.0
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
