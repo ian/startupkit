@@ -3,7 +3,6 @@ import { getSession } from "../server";
 
 export async function handler(request: Request) {
   const session = await getSession();
-
   session.destroy();
 
   return NextResponse.json(
