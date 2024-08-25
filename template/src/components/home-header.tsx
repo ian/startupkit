@@ -7,7 +7,6 @@ import Link from "next/link";
 import clsx from "clsx";
 import { Logo } from "./logo";
 import { useAuth } from "@startupkit/auth";
-import { Button } from "./ui/button";
 
 const navigation = [
   { name: "Product", href: "/#product" },

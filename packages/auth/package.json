@@ -1,6 +1,6 @@
 {
   "name": "@startupkit/auth",
-  "version": "0.3.11",
+  "version": "0.3.12",
   "author": "Ian Hunter <ian@01.studio>",
   "license": "ISC",
   "description": "Auth package for StartupKit",
