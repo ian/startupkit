@@ -11,3 +11,10 @@ fi
 
 # Execute the bump command
 pnpm recursive --filter "./packages/**" exec -- npm version "$VERSION_TYPE"
+
+# Get the bumped version number
+BUMPED_VERSION=$(pnpm recursive --filter "./packages/**" exec -- node -p "require('./package.json').version" | uniq) 
+git ci -am"chore: bump version to $BUMPED_VERSION"
+
+echo ""
+echo "Bumped version to $BUMPED_VERSION"
