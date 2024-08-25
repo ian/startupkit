@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "../server";
 import { getClient, getClientId } from "../lib/workos";
 import { PrismaClient } from "@prisma/client";
+import { getURL } from "@startupkit/utils";
 
 const prisma = new PrismaClient();
 
@@ -45,9 +46,7 @@ export async function handler(request: NextRequest) {
       session.createdAt = new Date().toISOString();
       await session.save();
 
-      const url = request.nextUrl.clone();
-      url.searchParams.delete("code");
-      url.pathname = "/dash";
+      const url = getURL("/dash");
 
       return NextResponse.redirect(url);
     } catch (error) {
