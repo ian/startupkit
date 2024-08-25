@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Menu } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
+import { Logo } from "./logo";
 
 const navigation = [
   { name: "Product", href: "/#product" },
@@ -22,13 +22,7 @@ export function Header() {
       >
         <Link href="/" className="-m-1.5 p-1.5">
           <span className="sr-only">Your Company</span>
-          <Image
-            alt=""
-            src="/startupkit-light.svg"
-            width={363}
-            height={100}
-            className="w-auto h-10"
-          />
+          <Logo />
         </Link>
         <div className="flex sm:hidden">
           <button
