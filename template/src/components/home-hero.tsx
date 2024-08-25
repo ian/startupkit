@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export function Hero() {
   return (
-    <div className="bg-white">
+    <div className="">
       <div className="relative isolate pt-14">
         <div
           aria-hidden="true"
