@@ -4,9 +4,9 @@ type AnalyticsConfig = {
   debug?: boolean;
 };
 
-export let config: AnalyticsConfig = {};
+let config: AnalyticsConfig = {};
 
-const withAnalytics = (
+export const withAnalytics = (
   pluginConfig: AnalyticsConfig,
 ): ((nextConfig: NextConfig) => NextConfig) => {
   config = pluginConfig;
