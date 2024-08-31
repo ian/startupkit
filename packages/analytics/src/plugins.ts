@@ -3,7 +3,7 @@ import { type PlausibleConfig } from "./plugins/plausible";
 import { type PosthogConfig } from "./plugins/posthog";
 
 export type AnalyticsPlugins = {
-  googleAnalytics: GoogleAnalyticsConfig;
-  posthog: PosthogConfig;
-  plausible: PlausibleConfig;
+  googleAnalytics?: GoogleAnalyticsConfig;
+  posthog?: PosthogConfig;
+  plausible?: PlausibleConfig;
 };
