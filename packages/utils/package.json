@@ -1,6 +1,6 @@
 {
   "name": "@startupkit/utils",
-  "version": "0.3.16",
+  "version": "0.3.17",
   "author": "Ian Hunter <ian@01.studio>",
   "license": "ISC",
   "description": "Utils package for StartupKit",
