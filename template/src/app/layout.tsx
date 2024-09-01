@@ -1,10 +1,11 @@
-import { ClientProviders } from "@/components/client-providers";
-import "@/styles/app.css";
-import { getSession } from "@startupkit/auth/server";
-import { getSubscription } from "@startupkit/payments/server";
+import "./globals.css";
 
 import type { Metadata } from "next";
 import { Toaster } from "react-hot-toast";
+import { getSession } from "@startupkit/auth/server";
+import { getSubscription } from "@startupkit/payments/server";
+
+import { Providers } from "@/components/providers";
 
 export const metadata: Metadata = {
   title: "New StartupKit App",
@@ -22,10 +23,10 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body style={{ padding: 0, margin: 0 }}>
-        <ClientProviders session={session} subscription={subscription}>
+        <Providers session={session} subscription={subscription}>
           {children}
           <Toaster />
-        </ClientProviders>
+        </Providers>
       </body>
     </html>
   );

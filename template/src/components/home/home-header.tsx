@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Menu, XIcon } from "lucide-react";
 import Link from "next/link";
 import clsx from "clsx";
-import { Logo } from "./logo";
+import { Logo } from "../logo";
 import { useAuth } from "@startupkit/auth";
 
 const navigation = [

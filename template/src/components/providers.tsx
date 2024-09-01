@@ -24,7 +24,7 @@ const analyticsPlugins = {
   },
 } satisfies AnalyticsPlugins;
 
-export const ClientProviders = ({
+export const Providers = ({
   children,
   session,
   subscription,

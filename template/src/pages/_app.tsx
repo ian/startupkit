@@ -2,17 +2,20 @@
 
 import "@/styles/pages.css";
 
+import { NextPage } from "next";
 import type { AppProps } from "next/app";
-import { Header } from "@/components/home-header";
-import { cn } from "@/components/ui/utils";
+import Head from "next/head";
 import {
   Bricolage_Grotesque as FontSerif,
   Noto_Sans as FontSans,
   Noto_Sans_Mono as FontMono,
 } from "next/font/google";
-import { Footer } from "@/components/home-footer";
-import { ClientProviders } from "@/components/client-providers";
-import Head from "next/head";
+
+import { Header } from "@/components/home/home-header";
+import { cn } from "@/components/ui/utils";
+import { Footer } from "@/components/home/home-footer";
+import { Container } from "@/components/container";
+import { Providers } from "@/components/providers";
 
 const fontSerif = FontSerif({
   weight: "400",
@@ -35,16 +38,41 @@ const fontMono = FontMono({
   variable: "--font-mono",
 });
 
-export default function StaticPages({ Component, pageProps }: AppProps) {
+export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
+  getLayout?: (page: React.ReactElement) => React.ReactNode;
+};
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
+
+export default function StaticApp({
+  Component,
+  pageProps,
+}: AppPropsWithLayout) {
+  const getLayout =
+    Component.getLayout ??
+    ((page) => (
+      <>
+        <Header />
+        <Container>
+          <main>{page}</main>
+        </Container>
+        <Footer />
+      </>
+    ));
+
+  const content = getLayout(<Component {...pageProps} />);
+
   return (
     <>
       <Head>
-        <title>StartupKit - Everything you need to launch a SaaS product</title>
+        <title>Inboxy - Open Source Communications API</title>
         <meta
           name="description"
-          content="Built using modern open-source frameworks and packed full of integrations, StartupKit provides everything you need to build, grow, and scale your startup."
+          content="Easily add an inbox to any application. Sync Gmail calendar, contacts, and email from one API."
         />
-        <link rel="canonical" href="https://startupkit.com" />
+        <link rel="canonical" href="https://inboxy.dev" />
         <link rel="manifest" href="/site.webmanifest" />
         <link
           rel="apple-touch-icon"
@@ -69,16 +97,10 @@ export default function StaticPages({ Component, pageProps }: AppProps) {
           fontSans.variable,
           fontSerif.variable,
           fontMono.variable,
-          "justify-between flex flex-col w-full",
+          "justify-between flex flex-col w-full min-h-screen font-sans antialiased mx-auto overflow-x-hidden",
         )}
       >
-        <ClientProviders>
-          <Header />
-          <main className="px-4 mx-auto lg:px-6 md:max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl">
-            <Component {...pageProps} />
-          </main>
-          <Footer />
-        </ClientProviders>
+        <Providers>{content}</Providers>
       </main>
     </>
   );

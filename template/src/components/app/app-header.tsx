@@ -12,9 +12,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { clearSession, getUser, SessionUser } from "@startupkit/auth/server";
-import { Sidebar } from "@/components/app-sidebar";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { User } from "@prisma/client";
+import { Sidebar } from "@/components/app/app-sidebar";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import Link from "next/link";
 
 export const Header = async () => {
