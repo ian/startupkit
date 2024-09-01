@@ -50,8 +50,6 @@ export function Pricing({ className, products }: PricingProps) {
 		try {
 			const { status } = await checkout(price);
 
-			console.log({ status });
-
 			// upgraded
 			if (status === "success") {
 				// Set 1s pause to wait for the webhook
