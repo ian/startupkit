@@ -38,7 +38,7 @@ const fontMono = FontMono({
 	variable: "--font-mono",
 });
 
-export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
+export type NextPageWithLayout<P = unknown, IP = P> = NextPage<P, IP> & {
 	getLayout?: (page: React.ReactElement) => React.ReactNode;
 };
 

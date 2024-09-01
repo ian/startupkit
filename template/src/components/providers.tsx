@@ -1,9 +1,12 @@
 "use client";
 
-import { Subscription } from "@prisma/client";
-import { AnalyticsPlugins, AnalyticsProvider } from "@startupkit/analytics";
+import type { Subscription } from "@prisma/client";
+import {
+	type AnalyticsPlugins,
+	AnalyticsProvider,
+} from "@startupkit/analytics";
 import { AuthProvider } from "@startupkit/auth";
-import { SessionData } from "@startupkit/auth/server";
+import type { SessionData } from "@startupkit/auth/server";
 import { SubscriptionProvider } from "@startupkit/payments";
 
 const analyticsPlugins = {
