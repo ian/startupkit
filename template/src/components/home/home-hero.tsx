@@ -14,10 +14,38 @@ export function Hero() {
 								<h1 className="text-4xl font-bold tracking-tight text-gray-900">
 									Welcome to <Logo className="inline h-16 ml-4" />
 								</h1>
-								<p className="mx-auto max-w-[700px] md:text-xl text-gray-500">
-									StartupKit is Next.js but with all the addons a startup will
-									need to launch. Out of the box you get auth, analytics, cms,
-									payments, and more.
+								<p className="mx-auto md:text-xl text-gray-500">
+									StartupKit is not another boilerplate / framework; it's your
+									startup-in-a-box. Packed with all the essential necessities
+									for any startup, you can focus on building.
+								</p>
+								<p className="mx-auto md:text-xl text-gray-500">
+									Leverage the power of{" "}
+									<Link
+										href="https://nextjs.org"
+										target="_blank"
+										className="text-black font-semibold underline"
+									>
+										Next.js
+									</Link>
+									,{" "}
+									<Link
+										href="https://v0.dev"
+										target="_blank"
+										className="text-black font-semibold underline"
+									>
+										v0
+									</Link>
+									, and{" "}
+									<Link
+										href="https://cursor.so"
+										target="_blank"
+										className="text-black font-semibold underline"
+									>
+										Cursor
+									</Link>{" "}
+									to rapidly develop innovative solutions, while StartupKit
+									provides the essential infrastructure to support your growth.
 								</p>
 							</div>
 							<div className="w-full space-y-2">
