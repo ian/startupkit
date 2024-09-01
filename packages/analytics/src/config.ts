@@ -7,12 +7,10 @@ type AnalyticsConfig = {
 let config: AnalyticsConfig = {};
 
 export const withAnalytics = (
-  pluginConfig: AnalyticsConfig,
+  pluginConfig: AnalyticsConfig
 ): ((nextConfig: NextConfig) => NextConfig) => {
   config = pluginConfig;
   return function withAnalytics(nextConfig: NextConfig) {
     return nextConfig;
   };
 };
-
-export default withAnalytics;

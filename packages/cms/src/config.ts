@@ -9,10 +9,10 @@ type CMSConfig = {
   debug?: boolean;
 };
 
-const startupkitCMS = (
+export const withCMS = (
   cmsConfig: CMSConfig
 ): ((nextConfig: NextConfig) => NextConfig) => {
-  return function withStartupKitCMS(nextConfig: NextConfig) {
+  return function withCMS(nextConfig: NextConfig) {
     const config = {
       ...nextConfig,
       pageExtensions: [
@@ -30,5 +30,3 @@ const startupkitCMS = (
     })(config);
   };
 };
-
-export default startupkitCMS;

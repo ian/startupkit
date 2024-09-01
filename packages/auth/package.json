@@ -26,7 +26,8 @@
       "types": "./dist/types/routes.d.ts",
       "import": "./dist/esm/routes.js",
       "require": "./dist/cjs/routes.js"
-    }
+    },
+    "./config": "./dist/cjs/config.js"
   },
   "scripts": {
     "clean": "rm -rf ./dist ./.turbo",

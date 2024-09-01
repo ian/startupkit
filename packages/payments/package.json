@@ -23,7 +23,8 @@
       "types": "./dist/types/server.d.ts",
       "import": "./dist/esm/server.js",
       "require": "./dist/cjs/server.js"
-    }
+    },
+    "./config": "./dist/cjs/config.js"
   },
   "scripts": {
     "clean": "rm -rf ./dist ./.turbo",

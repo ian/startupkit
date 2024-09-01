@@ -9,12 +9,12 @@ import { dirname } from "path";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const pkg = JSON.parse(
-  readFileSync(resolve(__dirname, "package.json"), "utf-8"),
+  readFileSync(resolve(__dirname, "package.json"), "utf-8")
 );
 const external = Object.keys(pkg.dependencies || {}); // Make all dependencies external
 
 export default {
-  input: ["src/client.ts", "src/routes.ts", "src/server.ts"],
+  input: ["src/client.ts", "src/routes.ts", "src/server.ts", "src/config.ts"],
   output: [
     {
       dir: "dist/cjs",
