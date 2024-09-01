@@ -1,13 +1,13 @@
 "use client";
 
+import { Container } from "@/components/container";
+import { Logo } from "@/components/logo";
 import { useAuth } from "@startupkit/auth";
 import clsx from "clsx";
 import { motion } from "framer-motion";
 import { Menu, XIcon } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { Container } from "../container";
-import { Logo } from "../logo";
 
 const navigation = [
 	{ name: "Home", href: "/" },

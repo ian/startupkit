@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import clsx from "clsx";
 import Image from "next/image";
 
+import { Button, ButtonLink } from "@/components/ui/button";
 import {
 	Card,
 	CardContent,
@@ -16,7 +17,6 @@ import {
 } from "@/components/ui/card";
 import { useSubscription } from "@startupkit/payments";
 import { usePathname } from "next/navigation";
-import { Button, ButtonLink } from "../ui/button";
 
 const LINKS = [
 	{

@@ -2,22 +2,22 @@
 
 import { usePortal } from "@startupkit/payments";
 import { useState } from "react";
-import { Button, type ButtonProps } from "./ui/button";
+import { Button, type ButtonProps } from "@/components/ui/button";
 
 export function CustomerPortalButton(props: ButtonProps) {
-	const [isSubmitting, setSubmitting] = useState(false);
-	const { redirectToPortal } = usePortal();
+  const [isSubmitting, setSubmitting] = useState(false);
+  const { redirectToPortal } = usePortal();
 
-	const handleStripePortalRequest = async () => {
-		setSubmitting(true);
-		redirectToPortal();
-	};
+  const handleStripePortalRequest = async () => {
+    setSubmitting(true);
+    redirectToPortal();
+  };
 
-	return (
-		<Button
-			{...props}
-			onClick={handleStripePortalRequest}
-			loading={isSubmitting}
-		/>
-	);
+  return (
+    <Button
+      {...props}
+      onClick={handleStripePortalRequest}
+      loading={isSubmitting}
+    />
+  );
 }
