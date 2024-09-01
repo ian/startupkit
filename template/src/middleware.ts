@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
-import { clearSession, getSession } from "@startupkit/auth/server";
+import { NextResponse } from "next/server"
+import { clearSession, getSession } from "@startupkit/auth/server"
 // import { getAuthorizationUrl } from "@startupkit/auth";
 
 export async function middleware() {
@@ -12,8 +12,8 @@ export async function middleware() {
   //   return NextResponse.redirect(authorizationUrl);
   // }
 
-  return NextResponse.next();
+  return NextResponse.next()
 }
 
 // Match against the account page
-export const config = { matcher: ["/account/:path*"] };
+export const config = { matcher: ["/account/:path*"] }

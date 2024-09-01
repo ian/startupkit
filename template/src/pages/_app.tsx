@@ -68,11 +68,8 @@ export default function StaticApp({
     <>
       <Head>
         <title>Inboxy - Open Source Communications API</title>
-        <meta
-          name="description"
-          content="Easily add an inbox to any application. Sync Gmail calendar, contacts, and email from one API."
-        />
-        <link rel="canonical" href="https://inboxy.dev" />
+        <meta name="description" content="TODO - ADD META DESCRIPTION" />
+        <link rel="canonical" href="https://startupkit.com" />
         <link rel="manifest" href="/site.webmanifest" />
         <link
           rel="apple-touch-icon"
