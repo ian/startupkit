@@ -1,5 +1,6 @@
 import { Menu, Search } from "lucide-react";
 
+import { Sidebar } from "@/components/app/app-sidebar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,10 +12,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { clearSession, getUser, SessionUser } from "@startupkit/auth/server";
-import { Sidebar } from "@/components/app/app-sidebar";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import {
+  type SessionUser,
+  clearSession,
+  getUser,
+} from "@startupkit/auth/server";
 import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export const Header = async () => {
   const { user } = await getUser();

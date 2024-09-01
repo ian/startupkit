@@ -1,9 +1,5 @@
 "use client";
 
-import { useState } from "react";
-import { $Enums, Price } from "@prisma/client";
-import { useAuth } from "@startupkit/auth";
-import { useCheckout, useSubscription } from "@startupkit/payments";
 import {
   Dialog,
   DialogContent,
@@ -11,11 +7,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
-import { getProducts } from "@startupkit/payments/server";
 import { pause } from "@/lib/utils";
+import type { $Enums, Price } from "@prisma/client";
+import { useAuth } from "@startupkit/auth";
+import { useCheckout, useSubscription } from "@startupkit/payments";
+import type { getProducts } from "@startupkit/payments/server";
+import { useState } from "react";
 import toast from "react-hot-toast";
+import { Button } from "@/components/ui/button";
 
 type Products = Awaited<ReturnType<typeof getProducts>>;
 
@@ -50,8 +50,6 @@ export function Pricing({ className, products }: PricingProps) {
     try {
       const { status } = await checkout(price);
 
-      console.log({ status });
-
       // upgraded
       if (status === "success") {
         // Set 1s pause to wait for the webhook
@@ -82,14 +80,14 @@ export function Pricing({ className, products }: PricingProps) {
         <div className="flex flex-wrap justify-center gap-6 mt-12 space-y-4 sm:mt-16 sm:space-y-0 lg:max-w-4xl lg:mx-auto xl:max-w-none xl:mx-0">
           {products.map((product) => {
             const price = product?.prices?.find(
-              (price) => price.interval === billingInterval,
+              (price) => price.interval === billingInterval
             );
 
             if (!price) return null;
 
             const priceString = new Intl.NumberFormat("en-US", {
               style: "currency",
-              currency: price.currency!,
+              currency: price.currency,
               minimumFractionDigits: 0,
             }).format(((price?.unitAmount as number) || 0) / 100);
 
@@ -105,7 +103,7 @@ export function Pricing({ className, products }: PricingProps) {
                     ? "border-primary bg-primary/20"
                     : "border-gray-100 bg-secondary",
                   "text-black flex flex-col rounded-lg border-4 ",
-                  "p-6 justify-between flex-1 max-w-xs relative",
+                  "p-6 justify-between flex-1 max-w-xs relative"
                 )}
               >
                 {isCurrent ? (
@@ -141,8 +139,8 @@ export function Pricing({ className, products }: PricingProps) {
                   {isCurrent
                     ? "Current Plan"
                     : subscription
-                      ? "Switch to Plan"
-                      : "Subscribe"}
+                    ? "Switch to Plan"
+                    : "Subscribe"}
                 </Button>
               </div>
             );

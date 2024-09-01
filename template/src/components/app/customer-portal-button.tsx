@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { usePortal } from "@startupkit/payments";
-import { Button, type ButtonProps } from "./ui/button";
+import { useState } from "react";
+import { Button, type ButtonProps } from "@/components/ui/button";
 
 export function CustomerPortalButton(props: ButtonProps) {
   const [isSubmitting, setSubmitting] = useState(false);

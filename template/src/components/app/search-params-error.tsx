@@ -5,33 +5,33 @@ import { useLayoutEffect } from "react";
 import toast from "react-hot-toast";
 
 export const SearchParamsError = () => {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+	const router = useRouter();
+	const pathname = usePathname();
+	const searchParams = useSearchParams();
 
-  useLayoutEffect(() => {
-    if (!searchParams) {
-      return;
-    }
+	useLayoutEffect(() => {
+		if (!searchParams) {
+			return;
+		}
 
-    const error = searchParams?.get("error");
+		const error = searchParams?.get("error");
 
-    if (error) {
-      const {
-        error: _,
-        error_description: __,
-        ...params
-      } = Object.fromEntries(searchParams); // Destructure to remove error
+		if (error) {
+			const {
+				error: _,
+				error_description: __,
+				...params
+			} = Object.fromEntries(searchParams); // Destructure to remove error
 
-      toast.error(error);
+			toast.error(error);
 
-      const url = [pathname, new URLSearchParams(params).toString()]
-        .filter((f) => f !== "")
-        .join("?");
+			const url = [pathname, new URLSearchParams(params).toString()]
+				.filter((f) => f !== "")
+				.join("?");
 
-      router.replace(url);
-    }
-  });
+			router.replace(url);
+		}
+	});
 
-  return null;
+	return null;
 };
