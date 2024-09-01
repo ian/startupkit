@@ -89,7 +89,7 @@ export function Pricing({ className, products }: PricingProps) {
 
 						const priceString = new Intl.NumberFormat("en-US", {
 							style: "currency",
-							currency: price.currency!,
+							currency: price.currency,
 							minimumFractionDigits: 0,
 						}).format(((price?.unitAmount as number) || 0) / 100);
 

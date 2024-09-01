@@ -9,22 +9,25 @@ import { AuthProvider } from "@startupkit/auth";
 import type { SessionData } from "@startupkit/auth/server";
 import { SubscriptionProvider } from "@startupkit/payments";
 
+/**
+ * TODO: Customize these to your project's analytics config.
+ */
 const analyticsPlugins = {
-	googleAnalytics: {
-		measurementIds: [process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID!],
-	},
-	plausible: {
-		domain: process.env.PLAUSIBLE_DOMAIN!,
-		trackLocalhost: true,
-	},
-	posthog: {
-		token: process.env.NEXT_PUBLIC_POSTHOG_TOKEN!,
-		enabled: true,
-		options: {
-			persistence: "memory",
-			disable_cookie: true,
-		},
-	},
+	// googleAnalytics: {
+	// 	measurementIds: ["YOUR ANALYTICS ID"],
+	// },
+	// plausible: {
+	// 	domain: "YOUR DOMAIN",
+	// 	trackLocalhost: true,
+	// },
+	// posthog: {
+	// 	token: "YOUR TOKEN",
+	// 	enabled: true,
+	// 	options: {
+	// 		persistence: "memory",
+	// 		disable_cookie: true,
+	// 	},
+	// },
 } satisfies AnalyticsPlugins;
 
 export const Providers = ({

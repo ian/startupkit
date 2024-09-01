@@ -67,7 +67,7 @@ export default function BlogPage({ posts }: { posts: Meta[] }) {
 }
 
 export async function getStaticProps() {
-	const posts = await readStatic(process.cwd() + "/src/pages/blog");
+	const posts = await readStatic(`${process.cwd()}/src/pages/blog`);
 	return {
 		props: {
 			posts,

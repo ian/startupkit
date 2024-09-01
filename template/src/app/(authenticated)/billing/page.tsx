@@ -34,7 +34,7 @@ const CurrentSubscription = ({
 		subscription &&
 		new Intl.NumberFormat("en-US", {
 			style: "currency",
-			currency: subscription?.price?.currency!,
+			currency: subscription?.price?.currency,
 			minimumFractionDigits: 0,
 		}).format((subscription?.price?.unitAmount || 0) / 100);
 

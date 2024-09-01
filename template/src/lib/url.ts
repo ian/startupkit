@@ -16,10 +16,10 @@ export const getURL = (path = "") => {
 	// Make sure to include `https://` when not localhost.
 	url = url.includes("http") ? url : `https://${url}`;
 	// Ensure path starts without a slash to avoid double slashes in the final URL.
-	path = path.replace(/^\/+/, "");
+	const _path = path.replace(/^\/+/, "");
 
 	// Concatenate the URL and the path.
-	return path ? `${url}/${path}` : url;
+	return _path ? `${url}/${_path}` : url;
 };
 
 const toastKeyMap: { [key: string]: string[] } = {
@@ -44,7 +44,7 @@ const getToastRedirect = (
 	}
 
 	if (disableButton) {
-		redirectPath += `&disable_button=true`;
+		redirectPath += "&disable_button=true";
 	}
 
 	if (arbitraryParams) {
