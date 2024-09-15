@@ -1,14 +1,10 @@
-export const getURL = (path: string = "") => {
-  // Check if NEXT_PUBLIC_SITE_URL is set and non-empty. Set this to your site URL in production env.
-  let url =
-    prunedURL(process?.env?.NEXT_PUBLIC_SITE_URL) ??
-    prunedURL(process?.env?.NEXT_PUBLIC_VERCEL_URL) ??
-    prunedURL(process?.env?.RENDER_EXTERNAL_URL);
+export const getURL = (path = "") => {
+  let url = "http://localhost:3000/";
 
-  if (!url) {
-    throw new Error(
-      "Unable to determine site URL, please set NEXT_PUBLIC_SITE_URL",
-    );
+  if (process.env.NEXT_PUBLIC_SITE_URL?.trim()) {
+    url = process.env.NEXT_PUBLIC_SITE_URL;
+  } else if (process.env.NEXT_PUBLIC_VERCEL_URL?.trim()) {
+    url = process.env.NEXT_PUBLIC_VERCEL_URL;
   }
 
   // Trim the URL and remove trailing slash if exists.
@@ -16,21 +12,13 @@ export const getURL = (path: string = "") => {
   // Make sure to include `https://` when not localhost.
   url = url.includes("http") ? url : `https://${url}`;
   // Ensure path starts without a slash to avoid double slashes in the final URL.
-  path = path.replace(/^\/+/, "");
+  const _path = path.replace(/^\/+/, "");
 
   // Concatenate the URL and the path.
-  return path ? `${url}/${path}` : url;
+  return _path ? `${url}/${_path}` : url;
 };
 
-const prunedURL = (url: string | undefined) => {
-  if (!url || url.trim() === "") {
-    return undefined;
-  }
-
-  return url;
-};
-
-const toastKeyMap: { [key: string]: string[] } = {
+const toastKeyMap: Record<string, string[]> = {
   status: ["status", "status_description"],
   error: ["error", "error_description"],
 };
@@ -39,20 +27,22 @@ const getToastRedirect = (
   path: string,
   toastType: string,
   toastName: string,
-  toastDescription: string = "",
-  disableButton: boolean = false,
-  arbitraryParams: string = "",
+  toastDescription = "",
+  disableButton = false,
+  arbitraryParams = ""
 ): string => {
   const [nameKey, descriptionKey] = toastKeyMap[toastType];
 
   let redirectPath = `${path}?${nameKey}=${encodeURIComponent(toastName)}`;
 
   if (toastDescription) {
-    redirectPath += `&${descriptionKey}=${encodeURIComponent(toastDescription)}`;
+    redirectPath += `&${descriptionKey}=${encodeURIComponent(
+      toastDescription
+    )}`;
   }
 
   if (disableButton) {
-    redirectPath += `&disable_button=true`;
+    redirectPath += "&disable_button=true";
   }
 
   if (arbitraryParams) {
@@ -65,9 +55,9 @@ const getToastRedirect = (
 export const getStatusRedirect = (
   path: string,
   statusName: string,
-  statusDescription: string = "",
-  disableButton: boolean = false,
-  arbitraryParams: string = "",
+  statusDescription = "",
+  disableButton = false,
+  arbitraryParams = ""
 ) =>
   getToastRedirect(
     path,
@@ -75,15 +65,15 @@ export const getStatusRedirect = (
     statusName,
     statusDescription,
     disableButton,
-    arbitraryParams,
+    arbitraryParams
   );
 
 export const getErrorRedirect = (
   path: string,
   errorName: string,
-  errorDescription: string = "",
-  disableButton: boolean = false,
-  arbitraryParams: string = "",
+  errorDescription = "",
+  disableButton = false,
+  arbitraryParams = ""
 ) =>
   getToastRedirect(
     path,
@@ -91,5 +81,5 @@ export const getErrorRedirect = (
     errorName,
     errorDescription,
     disableButton,
-    arbitraryParams,
+    arbitraryParams
   );
