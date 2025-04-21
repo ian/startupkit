@@ -1,0 +1,42 @@
+{
+	"name": "@local/analytics",
+	"private": true,
+	"type": "module",
+	"exports": {
+		"./client": {
+			"types": "./src/react.ts",
+			"default": "./src/react.ts"
+		},
+		"./server": {
+			"types": "./src/server.ts",
+			"default": "./src/server.ts"
+		}
+	},
+	"scripts": {
+		"lint": "biome lint --unsafe",
+		"lint:fix": "biome lint --write --unsafe",
+		"typecheck": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@local/db": "workspace:*",
+		"@local/utils": "workspace:*",
+		"@rudderstack/analytics-js": "3.14.0",
+		"@rudderstack/rudder-sdk-node": "2.1.1",
+		"posthog-js": "^1.235.5"
+	},
+	"peerDependencies": {
+		"next": "catalog:stack",
+		"react": "catalog:react19",
+		"react-dom": "catalog:react19"
+	},
+	"devDependencies": {
+		"@local/biome": "workspace:*",
+		"@local/tsconfig": "workspace:*",
+		"@types/node": "catalog:stack",
+		"@types/react": "catalog:react19",
+		"@types/react-dom": "catalog:react19",
+		"next": "catalog:stack",
+		"react": "catalog:react19",
+		"react-dom": "catalog:react19"
+	}
+}

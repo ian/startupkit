@@ -1,0 +1,31 @@
+@import "./colors.css";
+
+@tailwind base;
+@tailwind utilities;
+
+@layer utilities {
+	::-webkit-scrollbar {
+		width: 8px;
+		height: 8px;
+	}
+
+	::-webkit-scrollbar-track {
+		background: transparent;
+	}
+
+	::-webkit-scrollbar-thumb {
+		background: hsl(var(--muted-foreground) / 0.2);
+		border-radius: 9999px;
+		transition: background-color 150ms;
+	}
+
+	::-webkit-scrollbar-thumb:hover {
+		background: hsl(var(--muted-foreground) / 0.4);
+	}
+
+	/* Firefox */
+	* {
+		scrollbar-width: thin;
+		scrollbar-color: hsl(var(--muted-foreground) / 0.2) transparent;
+	}
+}

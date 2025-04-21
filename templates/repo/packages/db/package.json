@@ -1,0 +1,38 @@
+{
+	"name": "@local/db",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/index.ts",
+			"default": "./src/index.ts"
+		},
+		"./queries": {
+			"types": "./dist/queries.ts",
+			"default": "./src/queries.ts"
+		}
+	},
+	"scripts": {
+		"lint": "biome lint --unsafe",
+		"lint:fix": "biome lint --write --unsafe",
+		"typecheck": "tsc --noEmit",
+		"prisma": "npx prisma",
+		"generate": "npx prisma generate",
+		"migrate": "npx prisma migrate dev",
+		"deploy": "npx prisma migrate deploy",
+		"postinstall": "prisma generate",
+		"backup": "./scripts/backup.sh",
+		"restore": "sh ./scripts/restore.sh \"$DATABASE_URL\""
+	},
+	"dependencies": {
+		"@prisma/client": "6.5.0",
+		"bcrypt-ts": "5.0.2",
+		"zod": "3.24.1"
+	},
+	"devDependencies": {
+		"@local/biome": "workspace:*",
+		"@local/tsconfig": "workspace:*",
+		"@types/node": "catalog:react19",
+		"prisma": "6.5.0"
+	}
+}

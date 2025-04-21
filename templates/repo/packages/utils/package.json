@@ -1,0 +1,45 @@
+{
+	"name": "@local/utils",
+	"private": true,
+	"description": "",
+	"type": "module",
+	"exports": {
+		".": {
+			"default": "./src/index.ts"
+		},
+		"./example": {
+			"default": "./src/vendor/example.ts"
+		}
+	},
+	"scripts": {
+		"lint": "biome lint --unsafe",
+		"lint:fix": "biome lint --write --unsafe",
+		"typecheck": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@aws-sdk/client-s3": "3.723.0",
+		"@aws-sdk/s3-request-presigner": "3.723.0",
+		"@rudderstack/rudder-sdk-node": "^2.1.1",
+		"@slack/types": "2.14.0",
+		"@slack/web-api": "7.7.0",
+		"@vapi-ai/server-sdk": "0.5.2",
+		"@vercel/blob": "0.24.1",
+		"@workos-inc/authkit-nextjs": "catalog:auth",
+		"@workos-inc/node": "catalog:auth",
+		"@workos-inc/widgets": "catalog:auth",
+		"date-fns": "4.1.0",
+		"langfuse": "3.36.0",
+		"langfuse-vercel": "3.36.0",
+		"mime-types": "2.1.35",
+		"ragie": "1.5.0",
+		"remark": "^15.0.1",
+		"strip-markdown": "^6.0.0",
+		"telnyx": "2.0.0"
+	},
+	"devDependencies": {
+		"@local/biome": "workspace:*",
+		"@local/tsconfig": "workspace:*",
+		"@types/mime-types": "2.1.4",
+		"@types/node": "catalog:react19"
+	}
+}

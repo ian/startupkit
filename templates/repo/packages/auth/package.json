@@ -1,0 +1,35 @@
+{
+	"name": "@local/auth",
+	"private": true,
+	"scripts": {
+		"typecheck": "tsc --noEmit",
+		"lint": "biome check",
+		"lint:fix": "biome check --write"
+	},
+	"type": "module",
+	"main": "./src/node.ts",
+	"exports": {
+		"./client": "./src/client.ts",
+		"./server": "./src/server.ts"
+	},
+	"dependencies": {
+		"@local/analytics": "workspace:*",
+		"@local/db": "workspace:*",
+		"@local/emails": "workspace:*",
+		"@local/ui": "workspace:*",
+		"@local/utils": "workspace:*",
+		"better-auth": "1.2.5",
+		"swr": "2.2.5"
+	},
+	"devDependencies": {
+		"@local/biome": "workspace:*",
+		"@local/tsconfig": "workspace:*",
+		"@types/node": "catalog:react19",
+		"@types/react": "catalog:react19",
+		"@types/react-dom": "catalog:react19",
+		"next": "^15"
+	},
+	"peerDependencies": {
+		"next": "^15"
+	}
+}

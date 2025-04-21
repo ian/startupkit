@@ -1,0 +1,15 @@
+{
+  "watch": [
+    "**/*.ts",
+    "**/*.json"
+  ],
+  "ext": "ts,json",
+  "ignore": [
+    "node_modules",
+    ".git",
+    "dist"
+  ],
+  "exec": "npx concurrently --kill-others --prefix-colors \"red,green\" npm:dev:*",
+  "verbose": true,
+  "restartable": "rs"
+}

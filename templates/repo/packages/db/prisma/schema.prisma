@@ -1,0 +1,116 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ----------------------------------------------------------------------------
+// Auth
+// ---------------------------------------------------------------------------- 
+
+model Account {
+  id                    String    @id @default(cuid())
+  userId                String
+  accountId             String
+  providerId            String
+  accessToken           String?
+  refreshToken          String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  idToken               String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @default(now()) @updatedAt
+
+  user User @relation(references: [id], fields: [userId], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([providerId, accountId])
+}
+
+model Session {
+  id             String   @id @default(cuid())
+  userId         String
+  token          String
+  expiresAt      DateTime
+  ipAddress      String?
+  userAgent      String?
+  impersonatedBy String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now()) @updatedAt
+
+  user User @relation(references: [id], fields: [userId], onDelete: Cascade)
+
+  @@unique([token])
+}
+
+model Team {
+  id        String    @id @default(uuid())
+  name      String    @db.VarChar(64)
+  slug      String    @unique
+  enabled   Boolean   @default(false)
+  workosId  String?   @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+
+  members TeamMember[]
+
+  @@index([slug])
+  @@index([workosId])
+}
+
+enum TeamRole {
+  owner
+  team_leader
+  member
+}
+
+model TeamMember {
+  teamId    String
+  userId    String
+  role      TeamRole  @default(member)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+  joinedAt  DateTime?
+
+  team Team @relation(fields: [teamId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([teamId, userId])
+  @@index([teamId])
+  @@index([userId])
+}
+
+model User {
+  id            String    @id @default(cuid())
+  firstName     String?
+  lastName      String?
+  name          String?
+  image         String?
+  email         String?   @unique
+  emailVerified Boolean   @default(false)
+  phone         String?   @unique
+  role          String    @default("user")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now()) @updatedAt
+  lastSeenAt    DateTime?
+
+  accounts    Account[]
+  memberships TeamMember[]
+  sessions    Session[]
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+
+  @@index([identifier, value])
+}

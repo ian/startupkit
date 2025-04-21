@@ -1,0 +1,8 @@
+export const RUDDERSTACK_WRITE_KEY = process.env
+	.RUDDERSTACK_WRITE_KEY as string;
+export const RUDDERSTACK_DATA_PLANE_URL = process.env
+	.RUDDERSTACK_DATA_PLANE_URL as string;
+
+export const RUDDERSTACK_ENABLED = Boolean(
+	RUDDERSTACK_WRITE_KEY && RUDDERSTACK_DATA_PLANE_URL,
+);
