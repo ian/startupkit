@@ -1,0 +1,29 @@
+{
+	"name": "@repo/emails",
+	"private": true,
+	"main": "src/index.tsx",
+	"scripts": {
+		"clean": "rm -rf .turbo .react-email",
+		"build": "email build -d ./src/templates",
+		"dev": "email dev -p 5001 -d ./src/templates",
+		"typecheck": "tsc --noEmit"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"@react-email/components": "0.0.35",
+		"@react-email/render": "1.0.5",
+		"react": "catalog:react19",
+		"react-dom": "catalog:react19",
+		"resend": "^4.5.0"
+	},
+	"devDependencies": {
+		"@repo/biome": "workspace:*",
+		"@repo/tsconfig": "workspace:*",
+		"@types/node": "catalog:stack",
+		"@types/react": "catalog:react19",
+		"@types/react-dom": "catalog:react19",
+		"react-email": "4.0.3"
+	}
+}
