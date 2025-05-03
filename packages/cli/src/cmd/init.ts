@@ -64,7 +64,7 @@ export async function init() {
 
   // --- USE DEGit TO CLONE ONLY THE SUBDIRECTORY ---
   // const repoSubdir = "ian/startupkit/templates/repo";
-  const repoSubdir = "ian/startupkit/template";
+  const repoSubdir = "ian/startupkit/templates/repo#startup-156-template-generation";
   const destDir = path.resolve(process.cwd(), key);
 
   await spinner(`Cloning template into ${destDir}`, async () => {

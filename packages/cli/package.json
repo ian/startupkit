@@ -22,14 +22,14 @@
   ],
   "type": "module",
   "main": "dist/cli.js",
+  "bin": {
+    "startupkit": "./dist/cli.js"
+  },
   "exports": {
     ".": {
       "default": "./dist/cli.js"
     },
     "./package.json": "./package.json"
-  },
-  "bin": {
-    "startupkit": "./dist/cli.js"
   },
   "scripts": {
     "clean": "rm -rf dist",
