@@ -1,0 +1,50 @@
+{
+	"name": "brokerbot",
+	"author": "Ian Hunter <ian@repo.net>",
+	"license": "ISC",
+	"description": "AI teammates for your real-estate brokerage.",
+	"private": true,
+	"engines": {
+		"node": "22"
+	},
+	"packageManager": "pnpm@9.15.5",
+	"scripts": {
+		"build": "turbo run build --ui stream",
+		"build:packages": "turbo run build --ui stream --filter=./packages/jobs",
+		"clean": "pnpm -r clean",
+		"dev": "pnpm with-env pnpm -r --parallel --stream run dev",
+		"dev:ssl": "pnpm with-env pnpm -r --parallel --stream run dev:ssl",
+		"dev:turbo": "turbo watch dev --continue",
+		"dev:next": "turbo watch dev -F web...",
+		"test": "pnpm with-test-env turbo run test --ui stream",
+		"storybook": "pnpm --filter @repo/ui storybook",
+		"format": "turbo run format --continue --ui stream",
+		"format:fix": "turbo run format --continue --ui stream",
+		"lint": "turbo run lint --continue --ui stream",
+		"lint:fix": "turbo run lint --continue --ui stream",
+		"typecheck": "turbo run typecheck --ui stream",
+		"tunnel": "pnpm with-env sh -c 'ngrok http --url=$TUNNEL_URL 3000'",
+		"prisma": "pnpm --filter ./packages/db prisma",
+		"shadcn": "sh ./packages/ui/shadcn.sh",
+		"scripts": "pnpm --filter scripts run runner $2",
+		"with-env": "dotenv -e .env.local --",
+		"with-test-env": "dotenv -e .env.test --"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"dotenv-cli": "7.4.4",
+		"postcss": "8",
+		"tsx": "4.19.3",
+		"turbo": "2.5.0",
+		"typescript": "5.8.3"
+	},
+	"pnpm": {
+		"overrides": {
+			"@libsql/client": "0.15.4",
+			"@opentelemetry/sdk-trace-base": "2.0.0"
+		}
+	},
+	"prisma": {
+		"schema": "packages/db/prisma/schema.prisma"
+	}
+}
