@@ -1,0 +1,27 @@
+{
+	"name": "@repo/db",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/index.ts",
+			"default": "./src/index.ts"
+		}
+	},
+	"scripts": {
+		"lint": "biome lint --unsafe",
+		"lint:fix": "biome lint --write --unsafe",
+		"typecheck": "tsc --noEmit",
+		"prisma": "npx prisma",
+		"postinstall": "prisma generate"
+	},
+	"dependencies": {
+		"@prisma/client": "6.5.0"
+	},
+	"devDependencies": {
+		"@repo/biome": "workspace:*",
+		"@repo/tsconfig": "workspace:*",
+		"@types/node": "catalog:stack",
+		"prisma": "6.5.0"
+	}
+}
