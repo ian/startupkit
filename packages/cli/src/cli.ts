@@ -9,9 +9,12 @@ export function run() {
 
   program
     .name("startupkit")
-    .description("The Zero to One Startup Framework")
+    .description("The Zero to One Startup Framework");
+
+  program
+    .command("init")
+    .description("Initialize a new project or setup")
     .action(() => {
-      // console.log("No command provided. Please specify a command.");
       init();
     });
 
@@ -26,10 +29,16 @@ export function run() {
 
   program
     .command("help")
-    .description("...")
+    .description("Show help information")
     .action(() => {
-      // build();
+      program.help();
     });
+
+  // Show help if no command is provided
+  if (!process.argv.slice(2).length) {
+    program.outputHelp();
+    process.exit(0);
+  }
 
   program.parse();
 }
