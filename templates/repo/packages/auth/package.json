@@ -1,0 +1,36 @@
+{
+	"name": "@repo/auth",
+	"private": true,
+	"scripts": {
+		"typecheck": "tsc --noEmit",
+		"lint": "biome check",
+		"lint:fix": "biome check --write"
+	},
+	"type": "module",
+	"main": "./src/node.ts",
+	"exports": {
+		".": "./src/index.ts",
+		"./server": "./src/server.ts"
+	},
+	"dependencies": {
+		"@repo/analytics": "workspace:*",
+		"@repo/db": "workspace:*",
+		"@repo/emails": "workspace:*",
+		"@repo/utils": "workspace:*",
+		"better-auth": "1.2.5",
+		"swr": "2.2.5"
+	},
+	"peerDependencies": {
+		"next": "catalog:stack",
+		"react": "catalog:react19",
+		"react-dom": "catalog:react19"
+	},
+	"devDependencies": {
+		"@repo/biome": "workspace:*",
+		"@repo/tsconfig": "workspace:*",
+		"@types/node": "catalog:stack",
+		"@types/react": "catalog:react19",
+		"@types/react-dom": "catalog:react19",
+		"next": "catalog:stack"
+	}
+}
