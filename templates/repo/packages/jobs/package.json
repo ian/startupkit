@@ -16,7 +16,6 @@
 		"lint:fix": "biome lint --write --unsafe"
 	},
 	"dependencies": {
-		"@repo/ai": "workspace:*",
 		"@repo/analytics": "workspace:*",
 		"@repo/db": "workspace:*",
 		"@repo/utils": "workspace:*",
