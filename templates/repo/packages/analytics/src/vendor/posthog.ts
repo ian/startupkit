@@ -3,10 +3,9 @@ const POSTHOG_API_KEY = process.env.POSTHOG_API_KEY
 
 export const DISTINCT_ID_COOKIE_NAME = "distinct_id"
 
+// Match these to the flags in PostHog
 export type Flags = {
-	"20250121-rag-ingestion"?: "llamaparse" | "ragie" | "extend" | undefined
-	"20250410-hotline-manager"?: true | false | undefined
-	"20250426-brokerbot-agent-beta"?: true | false | undefined
+	"secret-flag"?: true | false | undefined
 }
 
 // export type FlagValue = boolean | string | undefined;

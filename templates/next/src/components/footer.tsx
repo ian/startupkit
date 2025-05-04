@@ -1,6 +1,6 @@
 import { Mail, Phone, MapPin } from "lucide-react";
 import { Container } from "@/components/container";
-import { Logo } from "@brokerbot/ui/components/logo";
+import { Logo } from "@repo/ui/components/logo";
 
 export default function Footer() {
   return (
@@ -11,23 +11,23 @@ export default function Footer() {
             <div className="mb-6">
               <Logo className="h-12" />
             </div>
-            {/* <div className="flex gap-4">
-              <a href="https://facebook.com/brokerbot" aria-label="Facebook">
+            <div className="flex gap-4">
+              <a href="https://facebook.com/startupkit" aria-label="Facebook">
                 <Facebook size={24} />
               </a>
-              <a href="https://twitter.com/brokerbot" aria-label="Twitter">
+              <a href="https://twitter.com/startupkit" aria-label="Twitter">
                 <Twitter size={24} />
               </a>
-              <a href="https://instagram.com/brokerbot" aria-label="Instagram">
+              <a href="https://instagram.com/startupkit" aria-label="Instagram">
                 <Instagram size={24} />
               </a>
-              <a href="https://linkedin.com/company/brokerbot" aria-label="LinkedIn">
+              <a href="https://linkedin.com/company/startupkit" aria-label="LinkedIn">
                 <Linkedin size={24} />
               </a>
-              <a href="https://youtube.com/brokerbot" aria-label="YouTube">
+              <a href="https://youtube.com/startupkit" aria-label="YouTube">
                 <Youtube size={24} />
               </a>
-            </div> */}
+            </div>
           </div>
 
           {/* Quick links */}
@@ -49,8 +49,8 @@ export default function Footer() {
             <div className="flex flex-col space-y-3">
               <div className="flex items-center">
                 <Mail size={18} className="mr-2 text-gray-500" />
-                <a href="mailto:support@brokerbot.net" className="text-gray-600 hover:text-gray-900">
-                  support@brokerbot.net
+                <a href="mailto:support@repo.net" className="text-gray-600 hover:text-gray-900">
+                  support@repo.net
                 </a>
               </div>
               <div className="flex items-center">
@@ -62,11 +62,11 @@ export default function Footer() {
               <div className="flex items-start">
                 <MapPin size={18} className="mr-2 mt-1 text-gray-500 flex-shrink-0" />
                 <address className="text-gray-600 not-italic">
-                  2121 E Lohmans Crossing
+                  1234 Somewhere Rd.
                   <br />
-                  Suite 504-702
+                  Suite ABC-123
                   <br />
-                  Lakeway, TX 78734
+                  Nashville, TN 37201
                 </address>
               </div>
             </div>
@@ -75,7 +75,7 @@ export default function Footer() {
 
         {/* Copyright */}
         <div className="border-t pt-6 flex flex-col items-center md:flex-row md:items-center md:justify-between text-sm text-gray-500">
-          <div> {new Date().getFullYear()} BrokerBot. All rights reserved.</div>
+          <div> {new Date().getFullYear()} StartupKit. All rights reserved.</div>
         </div>
       </Container>
     </footer>

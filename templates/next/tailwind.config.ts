@@ -1,1 +1,1 @@
-export * from "@brokerbot/ui/tailwind.config";
+export * from "@repo/ui/tailwind.config";

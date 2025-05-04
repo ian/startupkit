@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Urbanist } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/app/providers";
-import { withAuth } from "@brokerbot/auth/server";
-import { getFeatureFlags } from "@brokerbot/analytics/server";
+import { withAuth } from "@repo/auth/server";
+import { getFeatureFlags } from "@repo/analytics/server";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
-import { getWebUrl } from "@brokerbot/utils";
+import { getWebUrl } from "@repo/utils";
 
 const geistSans = Geist({
   variable: "--font-sans",

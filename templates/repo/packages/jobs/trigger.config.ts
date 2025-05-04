@@ -17,8 +17,8 @@ if (process.env.SENTRY_AUTH_TOKEN) {
 	extensions.push(
 		esbuildPlugin(
 			sentryEsbuildPlugin({
-				org: "my-hotsheet",
-				project: "brokerbot-jobs",
+				org: "PROJECT",
+				project: "PROJECT-jobs",
 				authToken: process.env.SENTRY_AUTH_TOKEN,
 				sourcemaps: {
 					assets: [".trigger/**.map"]
@@ -37,7 +37,7 @@ if (process.env.SENTRY_AUTH_TOKEN) {
 }
 
 export default defineConfig({
-	project: "proj_gohusdnfngnrmtcgfguh",
+	project: "PROJECT",
 	runtime: "node",
 	logLevel: "log",
 	dirs: ["src/trigger"],

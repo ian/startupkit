@@ -1,5 +1,5 @@
 import React from "react";
-import { cn } from "@brokerbot/ui/utils";
+import { cn } from "@repo/ui/utils";
 
 interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;

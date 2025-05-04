@@ -2,11 +2,11 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo } from "react";
-import { UIProvider } from "@brokerbot/ui/providers"
-import { AnalyticsProvider } from "@brokerbot/analytics/react";
-import type { Flags } from "@brokerbot/analytics/server";
-import { toast } from "@brokerbot/ui/components/toast"
-import { AuthProvider, User } from "@brokerbot/auth/client";
+import { UIProvider } from "@repo/ui/providers"
+import { AnalyticsProvider } from "@repo/analytics/react";
+import type { Flags } from "@repo/analytics/server";
+import { toast } from "@repo/ui/components/toast"
+import { AuthProvider, User } from "@repo/auth/client";
 
 export function Providers({
 	children,

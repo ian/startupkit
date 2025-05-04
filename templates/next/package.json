@@ -13,11 +13,11 @@
 		"scripts": "node ./scripts/runner.js $2"
 	},
 	"dependencies": {
-		"@brokerbot/analytics": "workspace:*",
-		"@brokerbot/auth": "workspace:*",
-		"@brokerbot/db": "workspace:*",
-		"@brokerbot/ui": "workspace:*",
-		"@brokerbot/utils": "workspace:*",
+		"@repo/analytics": "workspace:*",
+		"@repo/auth": "workspace:*",
+		"@repo/db": "workspace:*",
+		"@repo/ui": "workspace:*",
+		"@repo/utils": "workspace:*",
 		"framer-motion": "catalog:ui",
 		"lucide-react": "catalog:ui",
 		"next": "catalog:stack",
@@ -25,8 +25,8 @@
 		"react-dom": "catalog:react19"
 	},
 	"devDependencies": {
-		"@brokerbot/biome": "workspace:*",
-		"@brokerbot/tsconfig": "workspace:*",
+		"@repo/biome": "workspace:*",
+		"@repo/tsconfig": "workspace:*",
 		"@types/node": "catalog:stack",
 		"@types/react": "catalog:react19",
 		"@types/react-dom": "catalog:react19"

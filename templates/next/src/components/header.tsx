@@ -2,10 +2,10 @@
 
 import { useState } from "react"
 import { Container } from "@/components/container"
-import { Logo } from "@brokerbot/ui/components/logo"
-import { ButtonLink } from "@brokerbot/ui/components/button"
-import { useAuth } from "@brokerbot/auth/client"
-import { getUrl, getWebUrl } from "@brokerbot/utils"
+import { Logo } from "@repo/ui/components/logo"
+import { ButtonLink } from "@repo/ui/components/button"
+import { useAuth } from "@repo/auth/client"
+import { getUrl, getWebUrl } from "@repo/utils"
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -30,7 +30,7 @@ export default function Header() {
           ) : (
             <ButtonLink
               variant="secondary"
-              href="https://cal.com/jt-hotsheet/brokerbot-demo" target="_blank"
+              href={getUrl("/")} target="_blank"
             >
               Get Started
             </ButtonLink>
@@ -68,7 +68,7 @@ export default function Header() {
               </ButtonLink>
             ) : (
               <ButtonLink
-                href="https://cal.com/jt-hotsheet/brokerbot-demo" target="_blank"
+                href={getUrl("/")} target="_blank"
               >
                 Get Started
               </ButtonLink>

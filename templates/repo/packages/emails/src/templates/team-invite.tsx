@@ -73,7 +73,7 @@ export const TeamInviteEmail = ({
 
 						<Section className="mt-[32px] border-t border-solid border-[#e6e6e6] pt-[32px]">
 							<Text className="m-0 text-[12px] leading-[20px] text-[#8a8a8a]">
-								© {new Date().getFullYear()} BrokerBot. All rights reserved.
+								© {new Date().getFullYear()} StartupKit. All rights reserved.
 							</Text>
 							<Text className="m-0 text-[12px] leading-[20px] text-[#8a8a8a]">
 								2121 E Lohmans Crossing, Suite 504-702, Lakeway, TX 78734
