@@ -23,23 +23,26 @@ jobs:
         run: pnpm install
         working-directory: ./templates/repo
 
+      - name: Add working directory
+        run: mkdir -p ./tmp
+
       - name: Install repo (with branch)
         run: |
-          node $GITHUB_WORKSPACE/packages/cli/dist/cli.js init --name web --repo "ian/startupkit/templates/next#${GITHUB_REF_NAME}"
+          node $GITHUB_WORKSPACE/packages/cli/dist/cli.js init --name repo --repo "ian/startupkit/templates/repo#${GITHUB_REF_NAME}"
         working-directory: ./tmp
 
       - name: Verify Install
         run: |
           node $GITHUB_WORKSPACE/packages/cli/dist/post-install-check.js --mode repo
-        working-directory: ./tmp
+        working-directory: ./tmp/repo
 
       - name: Lint
         run: pnpm run lint
-        working-directory: ./tmp/web
+        working-directory: ./tmp/repo
 
       - name: Typecheck
         run: pnpm run typecheck
-        working-directory: ./tmp/web
+        working-directory: ./tmp/repo
 
   build-next-template:
     runs-on: ubuntu-latest
@@ -53,24 +56,32 @@ jobs:
       - name: Build packages
         run: pnpm --filter ./packages/cli build
 
+      - name: Add working directory
+        run: mkdir -p ./tmp
+
+      - name: Install repo (with branch)
+        run: |
+          node $GITHUB_WORKSPACE/packages/cli/dist/cli.js init --name repo --repo "ian/startupkit/templates/repo#${GITHUB_REF_NAME}"
+        working-directory: ./tmp
+
       - name: Install app (with branch)
         run: |
-          node $GITHUB_WORKSPACE/packages/cli/dist/cli.js add next --name web --repo "ian/startupkit/templates/next#${GITHUB_REF_NAME}"
-        working-directory: ./templates/repo
+          node $GITHUB_WORKSPACE/packages/cli/dist/cli.js add next --name next --repo "ian/startupkit/templates/next#${GITHUB_REF_NAME}"
+        working-directory: ./tmp/repo
 
       - name: Verify Install
         run: |
-          node $GITHUB_WORKSPACE/packages/cli/dist/post-install-check.js --mode app
-        working-directory: ./templates/repo
+          node $GITHUB_WORKSPACE/packages/cli/dist/post-install-check.js --mode next
+        working-directory: ./tmp/repo/next
 
       - name: Install template dependencies
         run: pnpm install
-        working-directory: ./templates/repo/apps/web
+        working-directory: ./tmp/repo/next
 
       - name: Lint
         run: pnpm run lint
-        working-directory: ./templates/repo/apps/web
+        working-directory: ./tmp/repo/next
 
       - name: Typecheck
         run: pnpm run typecheck
-        working-directory: ./templates/repo/apps/web
+        working-directory: ./tmp/repo/next
