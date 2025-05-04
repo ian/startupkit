@@ -1,4 +1,4 @@
-name: 'Common Setup'
+name: 'Setup'
 description: 'Shared setup steps for all jobs'
 runs:
   using: 'composite'
