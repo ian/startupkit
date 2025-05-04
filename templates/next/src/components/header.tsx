@@ -4,8 +4,8 @@ import { useState } from "react"
 import { Container } from "@/components/container"
 import { Logo } from "@repo/ui/components/logo"
 import { ButtonLink } from "@repo/ui/components/button"
-import { useAuth } from "@repo/auth/client"
-import { getUrl, getWebUrl } from "@repo/utils"
+import { useAuth } from "@repo/auth"
+import { getUrl } from "@repo/utils"
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -42,7 +42,7 @@ export default function Header() {
       {/* Mobile Header */}
       <Container className="md:hidden flex justify-center md:justify-between items-center">
         <a href="/" className="flex items-center">
-          <Logo className="w-36 h-10" mark />
+          <Logo className="w-36 h-10" />
         </a>
 
         {/* For now there's no nav so no need for a sidebar on mobile */}
@@ -62,7 +62,7 @@ export default function Header() {
           <div className="flex flex-col p-4">
             {isAuthenticated ? (
               <ButtonLink
-                href={getWebUrl("/")}
+                href={getUrl("/")}
               >
                 Go to App
               </ButtonLink>

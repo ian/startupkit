@@ -3,10 +3,10 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import { UIProvider } from "@repo/ui/providers"
-import { AnalyticsProvider } from "@repo/analytics/react";
+import { AnalyticsProvider } from "@repo/analytics";
 import type { Flags } from "@repo/analytics/server";
 import { toast } from "@repo/ui/components/toast"
-import { AuthProvider, User } from "@repo/auth/client";
+import { AuthProvider, User } from "@repo/auth";
 
 export function Providers({
 	children,
