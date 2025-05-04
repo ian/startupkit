@@ -75,10 +75,10 @@ async function addApp(type?: string, nameArg?: string, repoArg?: string) {
     process.exit(1);
   }
 
-  await spinner(`Cloning Next.js template into ${destDir}`, async () => {
-    const emitter = degit(repoSubdir, { cache: false, force: true, verbose: false });
-    await emitter.clone(destDir);
-  });
+  const emitter = degit(repoSubdir, { cache: false, force: true, verbose: false });
+  await emitter.clone(destDir);
+
+  console.log(path.join(destDir, '**/*'))
 
   // Recursively replace all instances of PROJECT with slug in the cloned repo
   await replaceInFile({
