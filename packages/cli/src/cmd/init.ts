@@ -3,6 +3,7 @@ import { spinner } from "../lib/spinner";
 import replace from 'replace-in-file';
 import path from "path";
 import degit from "degit";
+import { exec } from "../lib/system";
 
 type Answers = {
   name: string;
@@ -76,6 +77,11 @@ export async function init(repoArg?: string) {
     from: /PROJECT/g,
     to: slug,
     ignore: ['**/node_modules/**', '**/.git/**']
+  });
+
+  // Install dependencies
+  await spinner(`Installing dependencies`, async () => {
+    await exec('pnpm install', { cwd: destDir });
   });
 
   console.log(`\nProject initialized at: ${destDir}`);

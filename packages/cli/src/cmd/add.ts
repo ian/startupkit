@@ -4,6 +4,7 @@ import { spinner } from "../lib/spinner";
 import path from "path";
 import degit from "degit";
 import fs from "fs";
+import { exec } from '../lib/system';
 
 const APP_TYPES = [
   { name: "Next.js", value: "next" },
@@ -80,12 +81,17 @@ async function addApp(type?: string, nameArg?: string, repoArg?: string) {
   });
 
   // Recursively replace all instances of PROJECT with slug in the cloned repo
-    await replace({
-      files: path.join(destDir, '**/*'),
-      from: /PROJECT/g,
-      to: appSlug,
-      ignore: ['**/node_modules/**', '**/.git/**']
-    });
+  await replace({
+    files: path.join(destDir, '**/*'),
+    from: /PROJECT/g,
+    to: appSlug,
+    ignore: ['**/node_modules/**', '**/.git/**']
+  });
+
+  // Install dependencies
+  await spinner(`Installing dependencies`, async () => {
+    await exec('pnpm install', { cwd: destDir });
+  });
 
   console.log(`\nNext.js app added at: ${destDir}`);
 }
