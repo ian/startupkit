@@ -2,8 +2,10 @@ import { startupkitCMS } from "@startupkit/cms/plugin";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // output: "export",
-  // images: { unoptimized: true },
+  eslint: {
+		// We use biome for linting, so we can ignore ESLint errors during builds
+		ignoreDuringBuilds: true
+	},
   rewrites: () => [
     {
       "source": "/docs",
