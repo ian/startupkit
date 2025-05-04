@@ -103,25 +103,25 @@ async function addApp(props: {
   });
 
   // Install dependencies
-  // await spinner(`Installing dependencies`, async () => {
-  //   await exec('pnpm install', { cwd: destDir });
-  // });
-  
-  const exec = promisify(execCb);
-
   await spinner(`Installing dependencies`, async () => {
-    try {
-      const { stdout, stderr } = await exec('pnpm install', { cwd: destDir });
-      if (stdout) process.stdout.write(stdout);
-      if (stderr) process.stderr.write(stderr);
-    } catch (err: any) {
-      if (err.stdout) process.stdout.write(err.stdout);
-      if (err.stderr) process.stderr.write(err.stderr);
-      // Print the error message itself for context
-      console.error('Install failed:', err.message || err);
-      throw err;
-    }
+    await exec('pnpm install --no-frozen-lockfile', { cwd: destDir });
   });
+  
+  // const exec = promisify(execCb);
+
+  // await spinner(`Installing dependencies`, async () => {
+  //   try {
+  //     const { stdout, stderr } = await exec('pnpm install', { cwd: destDir });
+  //     if (stdout) process.stdout.write(stdout);
+  //     if (stderr) process.stderr.write(stderr);
+  //   } catch (err: any) {
+  //     if (err.stdout) process.stdout.write(err.stdout);
+  //     if (err.stderr) process.stderr.write(err.stderr);
+  //     // Print the error message itself for context
+  //     console.error('Install failed:', err.message || err);
+  //     throw err;
+  //   }
+  // });
 
   console.log(`\nNext.js app added at: ${destDir}`);
 

@@ -89,7 +89,7 @@ export async function init(props: {
 
   // Install dependencies
   await spinner(`Installing dependencies`, async () => {
-    await exec('pnpm install', { cwd: destDir });
+    await exec('pnpm install --no-frozen-lockfile', { cwd: destDir });
   });
 
   console.log(`\nProject initialized at: ${destDir}`);
