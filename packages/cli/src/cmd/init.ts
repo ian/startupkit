@@ -1,6 +1,6 @@
 import inquirer from "inquirer";
 import { spinner } from "../lib/spinner";
-import replace from 'replace-in-file';
+import { replaceInFile } from 'replace-in-file';
 import path from "path";
 import degit from "degit";
 import { exec } from "../lib/system";
@@ -72,7 +72,7 @@ export async function init(repoArg?: string) {
   });
 
   // Recursively replace all instances of PROJECT with slug in the cloned repo
-  await replace({
+  await replaceInFile({
     files: path.join(destDir, '**/*'),
     from: /PROJECT/g,
     to: slug,

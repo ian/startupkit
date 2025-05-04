@@ -1,4 +1,4 @@
-import replace from 'replace-in-file';
+import { replaceInFile } from 'replace-in-file';
 import inquirer from "inquirer";
 import { spinner } from "../lib/spinner";
 import path from "path";
@@ -81,7 +81,7 @@ async function addApp(type?: string, nameArg?: string, repoArg?: string) {
   });
 
   // Recursively replace all instances of PROJECT with slug in the cloned repo
-  await replace({
+  await replaceInFile({
     files: path.join(destDir, '**/*'),
     from: /PROJECT/g,
     to: appSlug,
