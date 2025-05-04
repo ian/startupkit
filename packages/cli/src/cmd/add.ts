@@ -5,6 +5,8 @@ import path from "path";
 import degit from "degit";
 import fs from "fs";
 import { exec } from '../lib/system';
+import { exec as execCb } from 'child_process';
+import { promisify } from 'util';
 
 const APP_TYPES = [
   { name: "Next.js", value: "next" },
@@ -101,8 +103,24 @@ async function addApp(props: {
   });
 
   // Install dependencies
+  // await spinner(`Installing dependencies`, async () => {
+  //   await exec('pnpm install', { cwd: destDir });
+  // });
+  
+  const exec = promisify(execCb);
+
   await spinner(`Installing dependencies`, async () => {
-    await exec('pnpm install', { cwd: destDir });
+    try {
+      const { stdout, stderr } = await exec('pnpm install', { cwd: destDir });
+      if (stdout) process.stdout.write(stdout);
+      if (stderr) process.stderr.write(stderr);
+    } catch (err: any) {
+      if (err.stdout) process.stdout.write(err.stdout);
+      if (err.stderr) process.stderr.write(err.stderr);
+      // Print the error message itself for context
+      console.error('Install failed:', err.message || err);
+      throw err;
+    }
   });
 
   console.log(`\nNext.js app added at: ${destDir}`);
