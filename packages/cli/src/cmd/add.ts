@@ -31,7 +31,11 @@ function printComingSoon(type: string) {
   console.log(`\n${type} support coming soon, we've recorded your vote!`);
 }
 
-async function addApp(type?: string, nameArg?: string, repoArg?: string) {
+async function addApp(props: {
+  type?: string, nameArg?: string, repoArg?: string
+}) {
+  const { type, nameArg, repoArg } = props;
+  
   // If no type specified, show interactive select
   let appType = type;
   if (!appType) {

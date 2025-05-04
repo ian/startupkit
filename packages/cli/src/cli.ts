@@ -2,7 +2,7 @@
 
 import { Command } from "commander";
 import { init } from "./cmd/init";
-import { update } from "./cmd/update";
+// import { update } from "./cmd/update";
 import { add } from "./cmd/add";
 
 export function run() {
@@ -15,9 +15,10 @@ export function run() {
   program
     .command("init")
     .description("Initialize a new project or setup")
+    .option("--name <name>", "Name of the app")
     .option("--repo <repo>", "Template repo to use")
     .action((options) => {
-      init(options.repo);
+      init({ name: options.name, repoArg: options.repo });
     });
 
   program
@@ -25,8 +26,8 @@ export function run() {
     .description("Add a new app to the apps/ folder")
     .option("--name <name>", "Name of the app")
     .option("--repo <repo>", "Template repo to use")
-    .action((type, options) => {
-      add(type, options.name, options.repo);
+    .action((options) => {
+      add({ type: options.type, nameArg: options.name, repoArg: options.repo });
     });
 
   // program

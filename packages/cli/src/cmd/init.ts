@@ -20,20 +20,26 @@ function slugify(input: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-export async function init(repoArg?: string) {
+export async function init(props: {
+  name?: string, repoArg?: string
+}) {
   opener();
 
-  // Step 1: Ask for project name
-  const { name } = await inquirer.prompt([
-    {
-      type: "input",
-      name: "name",
-      message: "What is the name of your project?",
-      validate: (input: string) => input ? true : "Project name is required",
-    },
-  ]);
+  // Step 1: Use provided name or prompt for project name
+  let projectName = props.name;
+  if (!projectName) {
+    const answer = await inquirer.prompt([
+      {
+        type: "input",
+        name: "name",
+        message: "What is the name of your project?",
+        validate: (input: string) => input ? true : "Project name is required",
+      },
+    ]);
+    projectName = answer.name;
+  }
 
-  const slug = slugify(name);
+  const slug = slugify(projectName);
 
   // Step 2: Ask if user wants to customize project key
   const { customizeKey } = await inquirer.prompt([
@@ -59,11 +65,11 @@ export async function init(repoArg?: string) {
   }
 
   // Show the collected attributes
-  const attrs = { name, customizeKey, key };
+  const attrs = { name: projectName, customizeKey, key };
   console.log("\nCollected attributes:", attrs);
 
   // --- USE DEGit TO CLONE ONLY THE SUBDIRECTORY ---
-  const repoSubdir = repoArg || "ian/startupkit/templates/repo#startup-156-template-generation";
+  const repoSubdir = props.repoArg || "ian/startupkit/templates/repo#startup-156-template-generation";
   const destDir = path.resolve(process.cwd(), key);
 
   await spinner(`Cloning template into ${destDir}`, async () => {
