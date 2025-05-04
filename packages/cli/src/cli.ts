@@ -15,6 +15,7 @@ export function run() {
   program
     .command("init")
     .description("Initialize a new project or setup")
+
     .option("--name <name>", "Name of the app")
     .option("--repo <repo>", "Template repo to use")
     .action((options) => {
@@ -26,8 +27,8 @@ export function run() {
     .description("Add a new app to the apps/ folder")
     .option("--name <name>", "Name of the app")
     .option("--repo <repo>", "Template repo to use")
-    .action((options) => {
-      add({ type: options.type, nameArg: options.name, repoArg: options.repo });
+    .action((type, options) => {
+      add({ type, nameArg: options.name, repoArg: options.repo });
     });
 
   // program

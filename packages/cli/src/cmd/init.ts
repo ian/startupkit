@@ -69,10 +69,9 @@ export async function init(props: {
 
   // Show the collected attributes
   const attrs = { name: projectName, key };
-  console.log("\nCollected attributes:", attrs);
-
+  
   // --- USE DEGit TO CLONE ONLY THE SUBDIRECTORY ---
-  const repoSubdir = props.repoArg || "ian/startupkit/templates/repo#startup-156-template-generation";
+  const repoSubdir = props.repoArg || "ian/startupkit/templates/repo";
   const destDir = path.resolve(process.cwd(), key);
 
   await spinner(`Cloning template into ${destDir}`, async () => {

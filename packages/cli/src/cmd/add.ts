@@ -72,7 +72,7 @@ async function addApp(props: {
 
   // For next, clone template into apps/<appSlug>
   const destDir = path.resolve(process.cwd(), "apps", appSlug);
-  const repoSubdir = repoArg || "ian/startupkit/templates/next#startup-156-template-generation";
+  const repoSubdir = repoArg || "ian/startupkit/templates/next";
 
   if (fs.existsSync(destDir)) {
     console.error(`\nError: apps/${appSlug} already exists. Please remove it or choose a different app name.`);
