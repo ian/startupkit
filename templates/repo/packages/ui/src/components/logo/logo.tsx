@@ -2,15 +2,6 @@ export type LogoProps = React.SVGProps<SVGSVGElement> & {
 	dark?: boolean
 }
 
-/**
- * Renders the BrokerBot logo as an SVG, displaying either the full logo or a simplified mark based on the `mark` prop.
- *
- * If `mark` is true, a compact square version of the logo is rendered; otherwise, the full rectangular logo is shown.
- *
- * @param props - Component properties, including an optional `mark` flag to select the logo variant.
- *
- * @returns The SVG element representing the BrokerBot logo.
- */
 export function Logo(props: LogoProps) {
 	const { dark, ...rest } = props
 
