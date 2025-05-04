@@ -6,7 +6,7 @@ import { withAuth } from "@repo/auth/server";
 import { getFeatureFlags } from "@repo/analytics/server";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
-import { getWebUrl } from "@repo/utils";
+import { getUrl } from "@repo/utils";
 
 const geistSans = Geist({
   variable: "--font-sans",
@@ -26,11 +26,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "StartupKit Next Template",
   description: "",
-  metadataBase: new URL(getWebUrl()),
+  metadataBase: new URL(getUrl()),
   openGraph: {
     title: "StartupKit Next Template",
     description: "",
-    url: getWebUrl(),
+    url: getUrl(),
     siteName: 'StartupKit Next Template',
     images: [
       {
