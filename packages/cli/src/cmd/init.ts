@@ -1,8 +1,7 @@
 import inquirer from "inquirer";
 import { spinner } from "../lib/spinner";
-import { exec, readFile, writeFile } from "../lib/system";
+import replace from 'replace-in-file';
 import path from "path";
-import fs from "fs";
 import degit from "degit";
 
 type Answers = {
@@ -69,6 +68,14 @@ export async function init(repoArg?: string) {
   await spinner(`Cloning template into ${destDir}`, async () => {
     const emitter = degit(repoSubdir, { cache: false, force: true, verbose: false });
     await emitter.clone(destDir);
+  });
+
+  // Recursively replace all instances of PROJECT with slug in the cloned repo
+  await replace({
+    files: path.join(destDir, '**/*'),
+    from: /PROJECT/g,
+    to: slug,
+    ignore: ['**/node_modules/**', '**/.git/**']
   });
 
   console.log(`\nProject initialized at: ${destDir}`);

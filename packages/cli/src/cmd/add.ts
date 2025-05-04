@@ -1,3 +1,4 @@
+import replace from 'replace-in-file';
 import inquirer from "inquirer";
 import { spinner } from "../lib/spinner";
 import path from "path";
@@ -77,6 +78,14 @@ async function addApp(type?: string, nameArg?: string, repoArg?: string) {
     const emitter = degit(repoSubdir, { cache: false, force: true, verbose: false });
     await emitter.clone(destDir);
   });
+
+  // Recursively replace all instances of PROJECT with slug in the cloned repo
+    await replace({
+      files: path.join(destDir, '**/*'),
+      from: /PROJECT/g,
+      to: appSlug,
+      ignore: ['**/node_modules/**', '**/.git/**']
+    });
 
   console.log(`\nNext.js app added at: ${destDir}`);
 }
