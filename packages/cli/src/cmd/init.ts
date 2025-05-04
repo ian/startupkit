@@ -20,50 +20,58 @@ function slugify(input: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-export async function init(repoArg?: string) {
+export async function init(props: {
+  name?: string, repoArg?: string
+}) {
   opener();
 
-  // Step 1: Ask for project name
-  const { name } = await inquirer.prompt([
-    {
-      type: "input",
-      name: "name",
-      message: "What is the name of your project?",
-      validate: (input: string) => input ? true : "Project name is required",
-    },
-  ]);
+  // Step 1: Use provided name or prompt for project name
+  let projectName = props.name;
+  let promptedForName = false;
+  if (!projectName) {
+    const answer = await inquirer.prompt([
+      {
+        type: "input",
+        name: "name",
+        message: "What is the name of your project?",
+        validate: (input: string) => input ? true : "Project name is required",
+      },
+    ]);
+    projectName = answer.name;
+    promptedForName = true;
+  }
 
-  const slug = slugify(name);
-
-  // Step 2: Ask if user wants to customize project key
-  const { customizeKey } = await inquirer.prompt([
-    {
-      type: "confirm",
-      name: "customizeKey",
-      message: `Customize project key (${slug})?`,
-      default: false,
-    },
-  ]);
+  const slug = slugify(projectName);
 
   let key = slug;
-  if (customizeKey) {
-    const keyAnswer = await inquirer.prompt({
-      type: "input",
-      name: "key",
-      message: "Enter your project key:",
-      default: slug,
-      filter: (input: string) => slugify(input),
-      transformer: (input: string) => slugify(input),
-    });
-    key = slugify(keyAnswer.key);
+  if (promptedForName) {
+    // Only prompt to customize key if name was prompted
+    const { customizeKey } = await inquirer.prompt([
+      {
+        type: "confirm",
+        name: "customizeKey",
+        message: `Customize project key (${slug})?`,
+        default: false,
+      },
+    ]);
+    if (customizeKey) {
+      const keyAnswer = await inquirer.prompt({
+        type: "input",
+        name: "key",
+        message: "Enter your project key:",
+        default: slug,
+        filter: (input: string) => slugify(input),
+        transformer: (input: string) => slugify(input),
+      });
+      key = slugify(keyAnswer.key);
+    }
   }
 
   // Show the collected attributes
-  const attrs = { name, customizeKey, key };
-  console.log("\nCollected attributes:", attrs);
-
+  const attrs = { name: projectName, key };
+  
   // --- USE DEGit TO CLONE ONLY THE SUBDIRECTORY ---
-  const repoSubdir = repoArg || "ian/startupkit/templates/repo#startup-156-template-generation";
+  const repoSubdir = props.repoArg || "ian/startupkit/templates/repo";
   const destDir = path.resolve(process.cwd(), key);
 
   await spinner(`Cloning template into ${destDir}`, async () => {
@@ -81,7 +89,7 @@ export async function init(repoArg?: string) {
 
   // Install dependencies
   await spinner(`Installing dependencies`, async () => {
-    await exec('pnpm install', { cwd: destDir });
+    await exec('pnpm install --no-frozen-lockfile', { cwd: destDir });
   });
 
   console.log(`\nProject initialized at: ${destDir}`);

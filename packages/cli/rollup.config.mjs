@@ -18,7 +18,7 @@ const pkg = JSON.parse(
 const external = Object.keys(pkg.dependencies, pkg.devDependencies);
 
 export default {
-  input: ["src/cli.ts"],
+  input: ["src/cli.ts", "src/post-install-check.ts"],
   output: [
     {
       dir: "dist/",

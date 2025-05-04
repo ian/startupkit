@@ -32,3 +32,4 @@ next-env.d.ts
 
 # old folder dumping grounds
 old/
+tmp/
