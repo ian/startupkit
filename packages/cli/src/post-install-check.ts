@@ -2,6 +2,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import { Command } from 'commander';
 
 /**
  * Recursively walk a directory and return all files matching the given extensions,
@@ -73,15 +74,41 @@ function runPostInstallCheck({ dir, mode }: { dir: string, mode: 'repo' | 'app' 
       console.error(`[post-install-check] Total issues found: ${issues.length}`);
       process.exit(1);
     }
+  } else if (mode === 'app') {
+    const issues = checkProjectReferences(dir);
+    if (issues.length === 0) {
+      console.log(' All PROJECT references replaced.');
+    } else {
+      console.error(' Unreplaced PROJECT references found:');
+      for (const issue of issues) {
+        console.error(`  ${issue.file}:${issue.line}  ${issue.content}`);
+      }
+      console.error(`[post-install-check] Total issues found: ${issues.length}`);
+      process.exit(1);
+    }
+    // TODO: Add more app mode checks
   } else {
-    // TODO: Implement app mode checks
-    console.log('App mode checks not implemented yet.');
+    console.error(`[post-install-check] Invalid mode: ${mode}`);
+    process.exit(1);
   }
 }
 
-// CLI usage: node post-install-check.js <dir> <mode>
+// CLI usage: post-install-check [options]
+function main() {
+  const program = new Command();
+  program
+    .name('post-install-check')
+    .description('Check for unreplaced PROJECT references in the codebase')
+    .option('-d, --dir <directory>', 'Directory to scan', '.')
+    .option('-m, --mode <mode>', 'Mode to run in (repo or app)', 'repo')
+    .action((options) => {
+      runPostInstallCheck({ dir: options.dir, mode: options.mode });
+    });
+
+  program.parse(process.argv);
+}
+
 if (import.meta.url === `file://${process.argv[1]}` || import.meta.url === process.argv[1]) {
   console.log('[post-install-check] Script running as main entrypoint.');
-  const [,, dir = '.', mode = 'repo'] = process.argv;
-  runPostInstallCheck({ dir, mode: mode as 'repo' | 'app' });
+  main();
 }
