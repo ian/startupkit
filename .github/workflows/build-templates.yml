@@ -50,8 +50,7 @@ jobs:
       - name: Install app (with branch)
         run: |
           branch=$(git rev-parse --abbrev-ref HEAD)
-          alias startupkit='node $GITHUB_WORKSPACE/packages/cli/dist/cli.js'
-          startupkit add next --name web --repo "ian/startupkit/templates/next#${branch}"
+          node $GITHUB_WORKSPACE/packages/cli/dist/cli.js add next --name web --repo "ian/startupkit/templates/next#${branch}"
 
       - name: Install dependencies
         run: pnpm install
