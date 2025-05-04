@@ -23,12 +23,12 @@ jobs:
         run: pnpm install
         working-directory: ./templates/repo
 
-      - name: Lint template
+      - name: Lint
         run: pnpm run lint
         working-directory: ./templates/repo
 
-      - name: Build template
-        run: pnpm run build
+      - name: Typecheck
+        run: pnpm run typecheck
         working-directory: ./templates/repo
 
   build-next-template:
@@ -57,10 +57,10 @@ jobs:
         run: pnpm install
         working-directory: ./templates/repo/apps/web
 
-      - name: Lint template
+      - name: Lint
         run: pnpm run lint
         working-directory: ./templates/repo/apps/web
 
-      - name: Build template
-        run: pnpm run build
+      - name: Typecheck
+        run: pnpm run typecheck
         working-directory: ./templates/repo/apps/web
