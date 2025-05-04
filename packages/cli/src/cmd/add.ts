@@ -78,6 +78,16 @@ async function addApp(type?: string, nameArg?: string, repoArg?: string) {
   const emitter = degit(repoSubdir, { cache: false, force: true, verbose: false });
   await emitter.clone(destDir);
 
+  
+  function listFiles(dir: string, prefix = '') {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const fullPath = path.join(dir, entry.name);
+      console.log(prefix + entry.name + (entry.isDirectory() ? '/' : ''));
+      if (entry.isDirectory()) listFiles(fullPath, prefix + '  ');
+    }
+  }
+  listFiles(destDir);
+
   console.log(path.join(destDir, '**/*'))
 
   // Recursively replace all instances of PROJECT with slug in the cloned repo
