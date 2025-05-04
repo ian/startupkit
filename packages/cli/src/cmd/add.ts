@@ -75,7 +75,7 @@ async function addApp(type?: string, nameArg?: string, repoArg?: string) {
     process.exit(1);
   }
 
-  const emitter = degit(repoSubdir, { cache: false, force: true, verbose: false });
+  const emitter = degit(repoSubdir, { cache: false, force: true, verbose: true });
   await emitter.clone(destDir);
 
   
