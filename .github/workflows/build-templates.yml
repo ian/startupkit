@@ -12,23 +12,29 @@ on:
 jobs:
   build-repo-template:
     runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/workflows/setup.yml
+      
+      - name: Install dependencies
+        run: pnpm install
+        working-directory: ./templates/repo
+
+      - name: Lint template
+        run: pnpm run lint
+        working-directory: ./templates/repo
+
+      - name: Build template
+        run: pnpm run build
+        working-directory: ./templates/repo
+
+  build-next-template:
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [22]
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 9.6.0
+      - uses: ./.github/workflows/setup.yml
 
       - name: Install dependencies
         run: pnpm install
