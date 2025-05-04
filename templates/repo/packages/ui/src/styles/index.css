@@ -1,0 +1,18 @@
+@import "./colors.css";
+@import "./skeletons.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border font-sans;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  pre {
+    @apply font-mono;
+  }
+}
