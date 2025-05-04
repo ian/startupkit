@@ -29,7 +29,7 @@ function printComingSoon(type: string) {
   console.log(`\n${type} support coming soon, we've recorded your vote!`);
 }
 
-async function addApp(type?: string, nameArg?: string) {
+async function addApp(type?: string, nameArg?: string, repoArg?: string) {
   // If no type specified, show interactive select
   let appType = type;
   if (!appType) {
@@ -66,7 +66,7 @@ async function addApp(type?: string, nameArg?: string) {
 
   // For next, clone template into apps/<appSlug>
   const destDir = path.resolve(process.cwd(), "apps", appSlug);
-  const repoSubdir = "ian/startupkit/templates/next#startup-156-template-generation";
+  const repoSubdir = repoArg || "ian/startupkit/templates/next#startup-156-template-generation";
 
   if (fs.existsSync(destDir)) {
     console.error(`\nError: apps/${appSlug} already exists. Please remove it or choose a different app name.`);

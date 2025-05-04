@@ -15,16 +15,18 @@ export function run() {
   program
     .command("init")
     .description("Initialize a new project or setup")
-    .action(() => {
-      init();
+    .option("--repo <repo>", "Template repo to use")
+    .action((options) => {
+      init(options.repo);
     });
 
   program
     .command("add [type]")
     .description("Add a new app to the apps/ folder")
     .option("--name <name>", "Name of the app")
+    .option("--repo <repo>", "Template repo to use")
     .action((type, options) => {
-      add(type, options.name);
+      add(type, options.name, options.repo);
     });
 
   // program

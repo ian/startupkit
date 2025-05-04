@@ -20,7 +20,7 @@ function slugify(input: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-export async function init() {
+export async function init(repoArg?: string) {
   opener();
 
   // Step 1: Ask for project name
@@ -63,8 +63,7 @@ export async function init() {
   console.log("\nCollected attributes:", attrs);
 
   // --- USE DEGit TO CLONE ONLY THE SUBDIRECTORY ---
-  // const repoSubdir = "ian/startupkit/templates/repo";
-  const repoSubdir = "ian/startupkit/templates/repo#startup-156-template-generation";
+  const repoSubdir = repoArg || "ian/startupkit/templates/repo#startup-156-template-generation";
   const destDir = path.resolve(process.cwd(), key);
 
   await spinner(`Cloning template into ${destDir}`, async () => {
