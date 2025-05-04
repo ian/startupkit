@@ -1,5 +1,5 @@
 import { prisma } from "@repo/db"
-import { sendOTPEmail } from "@repo/emails"
+import { sendEmail } from "@repo/emails"
 import { betterAuth } from "better-auth"
 import { prismaAdapter } from "better-auth/adapters/prisma"
 import { nextCookies } from "better-auth/next-js"
@@ -86,18 +86,22 @@ export const auth = betterAuth({
  *
  * @param email - The recipient's email address.
  * @param otp - The OTP code to be sent.
- * @param type - The type of verification (e.g., sign-in, sign-up).
  */
 async function sendVerificationOTP({
 	email,
 	otp,
-	type
-}: { email: string; otp: string; type: string }) {
+}: { email: string; otp: string }) {
 	console.log("Sending email to", { email, otp })
 
-	await sendOTPEmail({
-		email,
-		otpCode: otp,
-		expiryTime: "10 minutes"
+	await sendEmail({
+		template: "VerifyCode",
+		from: "hello@startupkit.com",
+		to: email,
+		subject: "Verify your email",
+		props: {
+			email,
+			otpCode: otp,
+			expiryTime: "10 minutes"
+		}
 	})
 }

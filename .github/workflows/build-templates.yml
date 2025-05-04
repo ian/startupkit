@@ -19,7 +19,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Install dependencies
+      - name: Install template dependencies
         run: pnpm install
         working-directory: ./templates/repo
 
@@ -53,7 +53,7 @@ jobs:
           node $GITHUB_WORKSPACE/packages/cli/dist/cli.js add next --name web --repo "ian/startupkit/templates/next#${branch}"
         working-directory: ./templates/repo
 
-      - name: Install dependencies
+      - name: Install template dependencies
         run: pnpm install
         working-directory: ./templates/repo/apps/web
 

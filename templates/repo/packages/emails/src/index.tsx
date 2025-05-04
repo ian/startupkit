@@ -6,14 +6,22 @@ import TeamInviteEmail from "./templates/team-invite";
 const templates = {
 	TeamInvite: TeamInviteEmail,
 	VerifyCode: VerifyCodeEmail,
-}
+} as const
 
 export async function sendEmail<T extends keyof typeof templates>(
-	template: T,
-	from: string,
-	to: string,
-	subject: string,
-	props: Parameters<typeof templates[T]>[0]
+	{
+		template,
+		from,
+		to,
+		subject,
+		props
+	}: {
+		template: T,
+		from: string,
+		to: string,
+		subject: string,
+		props: Parameters<typeof templates[T]>[0]
+	}
 ) {
 	const resend = new Resend(process.env.RESEND_API_KEY);
 	const Template = templates[template] as React.ComponentType<typeof props>;
