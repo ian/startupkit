@@ -51,6 +51,7 @@ jobs:
         run: |
           branch=$(git rev-parse --abbrev-ref HEAD)
           node $GITHUB_WORKSPACE/packages/cli/dist/cli.js add next --name web --repo "ian/startupkit/templates/next#${branch}"
+        working-directory: ./templates/repo
 
       - name: Install dependencies
         run: pnpm install
