@@ -75,16 +75,16 @@ jobs:
       - name: Verify Install
         run: |
           node $GITHUB_WORKSPACE/packages/cli/dist/post-install-check.js --mode next
-        working-directory: ./tmp/repo/next
+        working-directory: ./tmp/repo/apps/next
 
       - name: Install template dependencies
         run: pnpm install
-        working-directory: ./tmp/repo/next
+        working-directory: ./tmp/repo/apps/next
 
       - name: Lint
         run: pnpm run lint
-        working-directory: ./tmp/repo/next
+        working-directory: ./tmp/repo/apps/next
 
       - name: Typecheck
         run: pnpm run typecheck
-        working-directory: ./tmp/repo/next
+        working-directory: ./tmp/repo/apps/next

@@ -70,12 +70,20 @@ async function addApp(props: {
   }
   const appSlug = slugify(appName);
 
-  // For next, clone template into apps/<appSlug>
-  const destDir = path.resolve(process.cwd(), "apps", appSlug);
+  // Determine where to place the new app directory
+  let destDir: string;
+  const cwd = process.cwd();
+  const cwdBase = path.basename(cwd);
+  if (cwdBase === "apps") {
+    destDir = path.resolve(cwd, appSlug);
+  } else {
+    destDir = path.resolve(cwd, "apps", appSlug);
+  }
+
   const repoSubdir = repoArg || "ian/startupkit/templates/next#startup-156-template-generation";
 
   if (fs.existsSync(destDir)) {
-    console.error(`\nError: apps/${appSlug} already exists. Please remove it or choose a different app name.`);
+    console.error(`\nError: ${destDir} already exists. Please remove it or choose a different app name.`);
     process.exit(1);
   }
 
