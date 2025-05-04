@@ -12,5 +12,6 @@ export function spinner<T>(label: string, fn: () => Promise<T>) {
     .catch((err) => {
       spinner?.fail(`${label}`);
       console.error(err);
-    });
+    })
+    .finally(() => spinner?.stop());
 }

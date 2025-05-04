@@ -106,6 +106,8 @@ async function addApp(props: {
   });
 
   console.log(`\nNext.js app added at: ${destDir}`);
+
+
 }
 
 export { addApp as add };
