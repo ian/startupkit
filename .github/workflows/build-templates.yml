@@ -47,16 +47,11 @@ jobs:
       - name: Build packages
         run: pnpm --filter ./packages/cli build
 
-      - name: Alias startupkit cli
-        run: alias startupkit='node $GITHUB_WORKSPACE/packages/cli/dist/cli.js'
-
-      - name: Get current branch
-        id: git_branch
-        run: echo "branch=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_OUTPUT
-
-      - name: Install app
+      - name: Install app (with branch)
         run: |
-          startupkit add next --name web --repo "ian/startupkit/templates/next#${{ steps.git_branch.outputs.branch }}"
+          branch=$(git rev-parse --abbrev-ref HEAD)
+          alias startupkit='node $GITHUB_WORKSPACE/packages/cli/dist/cli.js'
+          startupkit add next --name web --repo "ian/startupkit/templates/next#${branch}"
 
       - name: Install dependencies
         run: pnpm install
