@@ -1,0 +1,84 @@
+import inquirer from "inquirer";
+import { spinner } from "../lib/spinner";
+import path from "path";
+import degit from "degit";
+import fs from "fs";
+
+const APP_TYPES = [
+  { name: "Next.js", value: "next" },
+  { name: "Expo (maybe)", value: "expo" },
+  { name: "Capacitor Mobile", value: "capacitor" },
+  { name: "Electron", value: "electron" },
+  { name: "Vite (maybe)", value: "vite" },
+  { name: "Astro", value: "astro" },
+  { name: "Hono", value: "hono" },
+  { name: "Fastify", value: "fastify" },
+];
+
+// Slugify copied from init
+function slugify(input: string): string {
+  return input
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^\w\-]+/g, "")
+    .replace(/\-\-+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function printComingSoon(type: string) {
+  console.log(`\n${type} support coming soon, we've recorded your vote!`);
+}
+
+async function addApp(type?: string, nameArg?: string) {
+  // If no type specified, show interactive select
+  let appType = type;
+  if (!appType) {
+    const { selected } = await inquirer.prompt([
+      {
+        type: "list",
+        name: "selected",
+        message: "Which app type would you like to add?",
+        choices: APP_TYPES.map((t) => ({ name: t.name, value: t.value })),
+      },
+    ]);
+    appType = selected;
+  }
+
+  if (appType !== "next") {
+    printComingSoon(appType);
+    return;
+  }
+
+  // Ask for app name if not provided
+  let appName = nameArg;
+  if (!appName) {
+    const { inputName } = await inquirer.prompt([
+      {
+        type: "input",
+        name: "inputName",
+        message: "What is the name of your app?",
+        validate: (input: string) => input ? true : "App name is required",
+      },
+    ]);
+    appName = inputName;
+  }
+  const appSlug = slugify(appName);
+
+  // For next, clone template into apps/<appSlug>
+  const destDir = path.resolve(process.cwd(), "apps", appSlug);
+  const repoSubdir = "ian/startupkit/templates/next#startup-156-template-generation";
+
+  if (fs.existsSync(destDir)) {
+    console.error(`\nError: apps/${appSlug} already exists. Please remove it or choose a different app name.`);
+    process.exit(1);
+  }
+
+  await spinner(`Cloning Next.js template into ${destDir}`, async () => {
+    const emitter = degit(repoSubdir, { cache: false, force: true, verbose: false });
+    await emitter.clone(destDir);
+  });
+
+  console.log(`\nNext.js app added at: ${destDir}`);
+}
+
+export { addApp as add };

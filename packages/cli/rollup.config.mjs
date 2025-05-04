@@ -3,12 +3,12 @@ import commonjs from "@rollup/plugin-commonjs";
 import json from "@rollup/plugin-json";
 import resolve from "@rollup/plugin-node-resolve";
 import preserveDirectives from "rollup-preserve-directives";
+import commandPlugin from "rollup-plugin-command";
 
 import { readFileSync } from "fs"; // Import fs to read package.json
 import { resolve as pathResolve } from "path"; // Import path to resolve paths
 import { fileURLToPath } from "url";
 import { dirname } from "path";
-import { env } from "process";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -47,5 +47,6 @@ export default {
       },
     }),
     preserveDirectives(),
+    commandPlugin('chmod +x dist/cli.js')
   ],
 };

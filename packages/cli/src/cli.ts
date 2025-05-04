@@ -3,6 +3,7 @@
 import { Command } from "commander";
 import { init } from "./cmd/init";
 import { update } from "./cmd/update";
+import { add } from "./cmd/add";
 
 export function run() {
   const program = new Command();
@@ -25,6 +26,13 @@ export function run() {
     .description("Update all startupkit packages to the latest version")
     .action(() => {
       update();
+    });
+
+  program
+    .command("add [type] [name]")
+    .description("Add a new app to the apps/ folder")
+    .action((type, name) => {
+      add(type, name);
     });
 
   program
