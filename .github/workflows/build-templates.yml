@@ -38,14 +38,23 @@ jobs:
       - uses: actions/checkout@v2 
       - uses: ./.github/actions/setup
 
+      - name: Build packages
+        run: pnpm --filter ./packages/cli build
+
+      - name: Alias startupkit cli
+        run: alias startupkit='node $GITHUB_WORKSPACE/packages/cli/dist/cli.js'
+
+      - name: Install app
+        run: startupkit add next --name web
+
       - name: Install dependencies
         run: pnpm install
-        working-directory: ./templates/repo
+        working-directory: ./templates/repo/apps/web
 
       - name: Lint template
         run: pnpm run lint
-        working-directory: ./templates/repo
+        working-directory: ./templates/repo/apps/web
 
       - name: Build template
         run: pnpm run build
-        working-directory: ./templates/repo
+        working-directory: ./templates/repo/apps/web

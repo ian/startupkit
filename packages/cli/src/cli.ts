@@ -20,20 +20,21 @@ export function run() {
     });
 
   program
-    .command("up")
-    .alias("update")
-    .alias("upgrade")
-    .description("Update all startupkit packages to the latest version")
-    .action(() => {
-      update();
+    .command("add [type]")
+    .description("Add a new app to the apps/ folder")
+    .option("--name <name>", "Name of the app")
+    .action((type, options) => {
+      add(type, options.name);
     });
 
-  program
-    .command("add [type] [name]")
-    .description("Add a new app to the apps/ folder")
-    .action((type, name) => {
-      add(type, name);
-    });
+  // program
+  //   .command("up")
+  //   .alias("update")
+  //   .alias("upgrade")
+  //   .description("Update all startupkit packages to the latest version")
+  //   .action(() => {
+  //     update();
+  //   });
 
   program
     .command("help")
