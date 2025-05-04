@@ -22,32 +22,35 @@
   ],
   "type": "module",
   "main": "dist/cli.js",
+  "bin": {
+    "startupkit": "./dist/cli.js"
+  },
   "exports": {
     ".": {
       "default": "./dist/cli.js"
     },
     "./package.json": "./package.json"
   },
-  "bin": {
-    "startupkit": "./dist/cli.js"
-  },
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "rollup -c && chmod +x dist/cli.js",
+    "build": "rollup -c",
+    "build:watch": "rollup -c -w",
     "cli": "node dist/cli.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@types/commander": "^2.12.2",
-    "commander": "12.1.0",
-    "create-next-app": "^14.2.5",
-    "ora": "^8.0.1",
-    "validate-package-exports": "0.6.0"
+    "commander": "13.1.0",
+    "create-next-app": "15.3.1",
+    "degit": "^2.8.4",
+    "ora": "8.2.0",
+    "replace-in-file": "^8.3.0",
+    "validate-package-exports": "0.9.0"
   },
   "devDependencies": {
-    "@rollup/plugin-json": "^6.1.0",
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "@types/node": "^22.2.0",
-    "inquirer": "10.1.8"
+    "@rollup/plugin-json": "6.1.0",
+    "@rollup/plugin-node-resolve": "16.0.1",
+    "@types/node": "22.15.3",
+    "inquirer": "12.6.0",
+    "rollup-plugin-command": "^1.1.3"
   }
 }

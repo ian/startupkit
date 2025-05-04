@@ -1,0 +1,10 @@
+{
+  "name": "@repo/biome",
+  "private": true,
+  "exports": {
+    ".": {
+      "types": "./biome.jsonc",
+      "default": "./biome.jsonc"
+    }
+  }
+}

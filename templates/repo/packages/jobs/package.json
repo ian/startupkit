@@ -1,0 +1,34 @@
+{
+	"name": "@repo/jobs",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./src/index.ts",
+			"default": "./src/index.ts"
+		}
+	},
+	"scripts": {
+		"clean": "rm -rf .turbo",
+		"dev": "npx trigger.dev@v4-beta dev",
+		"typecheck": "tsc --noEmit",
+		"lint": "biome lint --unsafe",
+		"lint:fix": "biome lint --write --unsafe"
+	},
+	"dependencies": {
+		"@repo/analytics": "workspace:*",
+		"@repo/db": "workspace:*",
+		"@repo/utils": "workspace:*",
+		"@prisma/instrumentation": "catalog:instrumentation",
+		"@trigger.dev/sdk": "4.0.0-v4-beta.11",
+		"zod": "catalog:stack"
+	},
+	"devDependencies": {
+		"@repo/biome": "workspace:*",
+		"@repo/tsconfig": "workspace:*",
+		"@sentry/esbuild-plugin": "3.1.2",
+		"@sentry/node": "catalog:instrumentation",
+		"@trigger.dev/build": "4.0.0-v4-beta.11",
+		"@types/node": "catalog:stack"
+	}
+}

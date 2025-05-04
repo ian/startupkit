@@ -1,0 +1,34 @@
+{
+	"name": "PROJECT",
+	"private": true,
+	"scripts": {
+		"clean": "rm -rf .cache .next",
+		"build": "next build",
+		"start": "next start",
+		"dev": "next dev -p 2999 --turbo",
+		"lint": "biome lint --unsafe",
+		"lint:fix": "biome lint --write --unsafe",
+		"typecheck": "tsc --noEmit",
+		"format": "biome format --write",
+		"scripts": "node ./scripts/runner.js $2"
+	},
+	"dependencies": {
+		"@repo/analytics": "workspace:*",
+		"@repo/auth": "workspace:*",
+		"@repo/db": "workspace:*",
+		"@repo/ui": "workspace:*",
+		"@repo/utils": "workspace:*",
+		"framer-motion": "catalog:ui",
+		"lucide-react": "catalog:ui",
+		"next": "catalog:stack",
+		"react": "catalog:react19",
+		"react-dom": "catalog:react19"
+	},
+	"devDependencies": {
+		"@repo/biome": "workspace:*",
+		"@repo/tsconfig": "workspace:*",
+		"@types/node": "catalog:stack",
+		"@types/react": "catalog:react19",
+		"@types/react-dom": "catalog:react19"
+	}
+}

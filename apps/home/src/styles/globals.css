@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import "scrollbars.css";
+
+@layer base {
+  :root {
+    --background: 218.6, 41.2%, 13.3%;
+    --background-light: 211.8, 40.5%, 23.7%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 211.5, 40.7%, 47.6%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    --radius: 0.3rem;
+  }
+}
+
+html,
+body {
+  @apply bg-background text-foreground;
+}
+
+* {
+  @apply border-border font-sans;
+}
+
+.bg-gradient {
+  background: var(
+    --bg-gradient-fallback,
+    #141e30
+  ); /* fallback for old browsers */
+  background: -webkit-linear-gradient(
+    to bottom,
+    var(--bg-background-light, #243b55),
+    var(--bg-gradient-end, #141e30)
+  ); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(
+    to bottom,
+    var(--bg-background-light, #243b55),
+    var(--bg-gradient-end, #141e30)
+  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}

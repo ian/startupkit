@@ -10,11 +10,11 @@ on:
       - main
 
 jobs:
-  build:
+  build-packages:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18, 20]
+        node-version: [20, 22]
 
     steps:
       - name: Checkout code

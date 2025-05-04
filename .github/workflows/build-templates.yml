@@ -1,0 +1,61 @@
+name: Build Template
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+
+jobs:
+  build-repo-template:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2 
+      - uses: ./.github/actions/setup
+      
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Install template dependencies
+        run: pnpm install
+        working-directory: ./templates/repo
+
+      - name: Lint
+        run: pnpm run lint
+        working-directory: ./templates/repo
+
+      - name: Typecheck
+        run: pnpm run typecheck
+        working-directory: ./templates/repo
+
+  build-next-template:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2 
+      - uses: ./.github/actions/setup
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build packages
+        run: pnpm --filter ./packages/cli build
+
+      - name: Install app (with branch)
+        run: |
+          node $GITHUB_WORKSPACE/packages/cli/dist/cli.js add next --name web --repo "ian/startupkit/templates/next#${GITHUB_REF_NAME}"
+        working-directory: ./templates/repo
+
+      - name: Install template dependencies
+        run: pnpm install
+        working-directory: ./templates/repo/apps/web
+
+      - name: Lint
+        run: pnpm run lint
+        working-directory: ./templates/repo/apps/web
+
+      - name: Typecheck
+        run: pnpm run typecheck
+        working-directory: ./templates/repo/apps/web
