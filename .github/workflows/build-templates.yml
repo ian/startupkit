@@ -13,7 +13,7 @@ jobs:
   build-repo-template:
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/workflows/setup.yml
+      - uses: ./.github/actions/setup
       
       - name: Install dependencies
         run: pnpm install
@@ -34,7 +34,7 @@ jobs:
         node-version: [22]
 
     steps:
-      - uses: ./.github/workflows/setup.yml
+      - uses: ./.github/actions/setup
 
       - name: Install dependencies
         run: pnpm install
