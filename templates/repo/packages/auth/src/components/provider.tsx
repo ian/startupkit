@@ -1,9 +1,9 @@
 "use client"
 
 import { useAnalytics } from "@repo/analytics"
+import { useRouter } from "next/navigation"
 import type React from "react"
 import { useEffect } from "react"
-import { useRouter } from "next/navigation"
 import { authClient } from ".."
 import type { User } from "../types"
 import { AuthContext } from "./context"
