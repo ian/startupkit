@@ -89,7 +89,7 @@ export const auth = betterAuth({
  */
 async function sendVerificationOTP({
 	email,
-	otp,
+	otp
 }: { email: string; otp: string }) {
 	console.log("Sending email to", { email, otp })
 
