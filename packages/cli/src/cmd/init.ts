@@ -27,6 +27,7 @@ export async function init(props: {
 
   // Step 1: Use provided name or prompt for project name
   let projectName = props.name;
+  let promptedForName = false;
   if (!projectName) {
     const answer = await inquirer.prompt([
       {
@@ -37,35 +38,37 @@ export async function init(props: {
       },
     ]);
     projectName = answer.name;
+    promptedForName = true;
   }
 
   const slug = slugify(projectName);
 
-  // Step 2: Ask if user wants to customize project key
-  const { customizeKey } = await inquirer.prompt([
-    {
-      type: "confirm",
-      name: "customizeKey",
-      message: `Customize project key (${slug})?`,
-      default: false,
-    },
-  ]);
-
   let key = slug;
-  if (customizeKey) {
-    const keyAnswer = await inquirer.prompt({
-      type: "input",
-      name: "key",
-      message: "Enter your project key:",
-      default: slug,
-      filter: (input: string) => slugify(input),
-      transformer: (input: string) => slugify(input),
-    });
-    key = slugify(keyAnswer.key);
+  if (promptedForName) {
+    // Only prompt to customize key if name was prompted
+    const { customizeKey } = await inquirer.prompt([
+      {
+        type: "confirm",
+        name: "customizeKey",
+        message: `Customize project key (${slug})?`,
+        default: false,
+      },
+    ]);
+    if (customizeKey) {
+      const keyAnswer = await inquirer.prompt({
+        type: "input",
+        name: "key",
+        message: "Enter your project key:",
+        default: slug,
+        filter: (input: string) => slugify(input),
+        transformer: (input: string) => slugify(input),
+      });
+      key = slugify(keyAnswer.key);
+    }
   }
 
   // Show the collected attributes
-  const attrs = { name: projectName, customizeKey, key };
+  const attrs = { name: projectName, key };
   console.log("\nCollected attributes:", attrs);
 
   // --- USE DEGit TO CLONE ONLY THE SUBDIRECTORY ---
