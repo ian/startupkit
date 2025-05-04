@@ -80,7 +80,9 @@ async function addApp(type?: string, nameArg?: string, repoArg?: string) {
 
   
   function listFiles(dir: string, prefix = '') {
-    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const entries = fs.readdirSync(dir, { withFileTypes: true })
+    console.debug({entries})
+    for (const entry of entries) {
       const fullPath = path.join(dir, entry.name);
       console.log(prefix + entry.name + (entry.isDirectory() ? '/' : ''));
       if (entry.isDirectory()) listFiles(fullPath, prefix + '  ');
