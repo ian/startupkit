@@ -75,6 +75,8 @@ async function addApp(type?: string, nameArg?: string, repoArg?: string) {
     process.exit(1);
   }
 
+  console.log(`Cloning template into ${destDir}`);
+  console.log({repoArg})
   const emitter = degit(repoSubdir, { cache: false, force: true, verbose: true });
   await emitter.clone(destDir);
 
