@@ -1,0 +1,178 @@
+name: Publish to NPM
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_type:
+        description: 'Version increment type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+      dry_run:
+        description: 'Dry run (build and test without publishing)'
+        required: false
+        default: false
+        type: boolean
+      packages_filter:
+        description: 'Filter packages to publish (comma-separated, leave empty for all)'
+        required: false
+        type: string
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9.6.0
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Configure git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Increment version
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          # Get the version type from input, default to patch
+          VERSION_TYPE="${{ github.event.inputs.version_type || 'patch' }}"
+          
+          # Increment version for all packages
+          pnpm -r exec -- npm version $VERSION_TYPE --no-git-tag-version
+          
+          # Get the new version from the first package found
+          NEW_VERSION=$(find packages -name "package.json" -exec node -p "require('{}').version" \; | head -1)
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          
+          # Commit version changes
+          git add .
+          git commit -m "chore: bump version to $NEW_VERSION"
+          git tag "v$NEW_VERSION"
+          git push origin main --tags
+
+      - name: Extract version from tag
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+        run: |
+          NEW_VERSION=${GITHUB_REF#refs/tags/v}
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+
+      - name: Build packages
+        run: pnpm run build
+
+      - name: List packages to be published
+        run: |
+          echo "📦 Packages that will be published:"
+          if [ -n "${{ github.event.inputs.packages_filter }}" ]; then
+            echo "🔍 Filtering packages: ${{ github.event.inputs.packages_filter }}"
+            IFS=',' read -ra FILTERS <<< "${{ github.event.inputs.packages_filter }}"
+            for filter in "${FILTERS[@]}"; do
+              find packages -name "package.json" -path "*${filter}*" -exec node -e "
+                const pkg = require('{}');
+                if (!pkg.private) {
+                  console.log('✅ ' + pkg.name + '@' + pkg.version);
+                }
+              " \;
+            done
+          else
+            echo "📋 All non-private packages:"
+            find packages -name "package.json" -exec node -e "
+              const pkg = require('{}');
+              if (!pkg.private) {
+                console.log('✅ ' + pkg.name + '@' + pkg.version);
+              }
+            " \;
+          fi
+
+      - name: Dry run check
+        if: github.event.inputs.dry_run == 'true'
+        run: |
+          echo "🔍 DRY RUN MODE - No packages will be published"
+          echo "This would run: pnpm run release"
+          exit 0
+
+      - name: Publish to NPM
+        if: github.event.inputs.dry_run != 'true'
+        run: |
+          if [ -n "${{ github.event.inputs.packages_filter }}" ]; then
+            echo "🎯 Publishing filtered packages..."
+            IFS=',' read -ra FILTERS <<< "${{ github.event.inputs.packages_filter }}"
+            for filter in "${FILTERS[@]}"; do
+              echo "Publishing packages matching: ${filter}"
+              pnpm --filter "*${filter}*" publish --access public --no-git-checks
+            done
+          else
+            echo "🚀 Publishing all packages..."
+            pnpm run release
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Generate package list
+        if: env.NEW_VERSION && github.event.inputs.dry_run != 'true'
+        run: |
+          echo "PACKAGE_LIST<<EOF" >> $GITHUB_ENV
+          if [ -n "${{ github.event.inputs.packages_filter }}" ]; then
+            IFS=',' read -ra FILTERS <<< "${{ github.event.inputs.packages_filter }}"
+            for filter in "${FILTERS[@]}"; do
+              find packages -name "package.json" -path "*${filter}*" -exec node -e "
+                const pkg = require('{}');
+                if (!pkg.private) {
+                  console.log('- ' + pkg.name + '@' + pkg.version);
+                }
+              " \;
+            done
+          else
+            find packages -name "package.json" -exec node -e "
+              const pkg = require('{}');
+              if (!pkg.private) {
+                console.log('- ' + pkg.name + '@' + pkg.version);
+              }
+            " \;
+          fi
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        if: env.NEW_VERSION && github.event.inputs.dry_run != 'true'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ env.NEW_VERSION }}
+          release_name: Release v${{ env.NEW_VERSION }}
+          body: |
+            ## Changes in v${{ env.NEW_VERSION }}
+            
+            This release includes updates to packages in the workspace.
+            
+            ### Packages Published:
+            ${{ env.PACKAGE_LIST }}
+            
+            ### Trigger Information:
+            - **Version Type**: ${{ github.event.inputs.version_type || 'tag-based' }}
+            - **Packages Filter**: ${{ github.event.inputs.packages_filter || 'all packages' }}
+            - **Workflow**: ${{ github.event_name == 'workflow_dispatch' && 'Manual' || 'Tag Push' }}
+          draft: false
+          prerelease: false 
