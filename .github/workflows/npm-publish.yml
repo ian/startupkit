@@ -74,10 +74,55 @@ jobs:
           git push origin main --tags
 
       - name: Extract version from tag
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
         run: |
-          NEW_VERSION=${GITHUB_REF#refs/tags/v}
+          # Extract version from tag (remove 'refs/tags/' prefix and any 'v' prefix)
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          NEW_VERSION=${TAG_NAME#v}
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          echo "Extracted version: $NEW_VERSION from tag: $TAG_NAME"
+
+      - name: Update package versions from tag
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') && env.NEW_VERSION
+        run: |
+          echo "Updating all package versions to $NEW_VERSION"
+          
+          # Update all package.json files to the new version
+          find packages -name "package.json" -exec node -e "
+            const fs = require('fs');
+            const path = process.argv[1];
+            const pkg = JSON.parse(fs.readFileSync(path, 'utf8'));
+            pkg.version = '$NEW_VERSION';
+            fs.writeFileSync(path, JSON.stringify(pkg, null, 2) + '\n');
+            console.log('Updated ' + pkg.name + ' to version $NEW_VERSION');
+          " {} \;
+          
+          # Also update root package.json if it exists and has a version
+          if [ -f "package.json" ]; then
+            node -e "
+              const fs = require('fs');
+              const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+              if (pkg.version && pkg.version !== '0.0.0') {
+                pkg.version = '$NEW_VERSION';
+                fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+                console.log('Updated root package.json to version $NEW_VERSION');
+              }
+            "
+          fi
+
+      - name: Verify package versions
+        if: env.NEW_VERSION
+        run: |
+          echo "🔍 Verifying package versions were updated correctly..."
+          find packages -name "package.json" -exec node -e "
+            const pkg = require('{}');
+            const expectedVersion = '$NEW_VERSION';
+            if (pkg.version === expectedVersion) {
+              console.log('✅ ' + pkg.name + ' version is correct: ' + pkg.version);
+            } else {
+              console.log('❌ ' + pkg.name + ' version mismatch: expected ' + expectedVersion + ', got ' + pkg.version);
+            }
+          " \;
 
       - name: Build packages
         run: pnpm run build
@@ -85,6 +130,12 @@ jobs:
       - name: List packages to be published
         run: |
           echo "📦 Packages that will be published:"
+          echo "🔍 Trigger: ${{ github.event_name }}"
+          echo "🏷️  Ref: ${{ github.ref }}"
+          if [ -n "$NEW_VERSION" ]; then
+            echo "📌 Target version: $NEW_VERSION"
+          fi
+          
           if [ -n "${{ github.event.inputs.packages_filter }}" ]; then
             echo "🔍 Filtering packages: ${{ github.event.inputs.packages_filter }}"
             IFS=',' read -ra FILTERS <<< "${{ github.event.inputs.packages_filter }}"
