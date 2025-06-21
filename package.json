@@ -9,7 +9,7 @@
     "build": "pnpm --stream -r --filter \"./packages/**\" run build",
     "build:watch": "pnpm --stream -r run build:watch",
     "dev": "pnpm --stream -r run dev",
-    "type-check": "pnpm --stream -r run type-check",
+    "typecheck": "pnpm --stream -r run type-check",
     "bump": "./scripts/bump",
     "oldrelease": "pnpm --stream --filter \"./packages/**\" exec -- pnpm release --no-git-checks --access public",
     "release": "pnpm build && pnpm -r publish --access public --no-git-checks"
