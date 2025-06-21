@@ -12,11 +12,6 @@ on:
           - patch
           - minor
           - major
-      dry_run:
-        description: 'Dry run (build and test without publishing)'
-        required: false
-        default: false
-        type: boolean
       packages_filter:
         description: 'Filter packages to publish (comma-separated, leave empty for all)'
         required: false
@@ -157,15 +152,8 @@ jobs:
             " \;
           fi
 
-      - name: Dry run check
-        if: github.event.inputs.dry_run == 'true'
-        run: |
-          echo "🔍 DRY RUN MODE - No packages will be published"
-          echo "This would run: pnpm run release"
-          exit 0
-
       - name: Generate OTP code
-        if: github.event.inputs.dry_run != 'true' && vars.NPM_OTP_SECRET != ''
+        if: vars.NPM_OTP_SECRET != ''
         run: |
           echo "🔐 Generating OTP code for 2FA..."
           OTP_CODE=$(node -e "
@@ -213,7 +201,6 @@ jobs:
           echo "✅ OTP code generated"
 
       - name: Publish to NPM
-        if: github.event.inputs.dry_run != 'true'
         run: |
           # Prepare OTP flag if available
           OTP_FLAG=""
@@ -251,7 +238,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Generate package list
-        if: env.NEW_VERSION && github.event.inputs.dry_run != 'true'
+        if: env.NEW_VERSION
         run: |
           echo "PACKAGE_LIST<<EOF" >> $GITHUB_ENV
           if [ -n "${{ github.event.inputs.packages_filter }}" ]; then
@@ -275,7 +262,7 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
 
       - name: Create GitHub Release
-        if: env.NEW_VERSION && github.event.inputs.dry_run != 'true'
+        if: env.NEW_VERSION
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
