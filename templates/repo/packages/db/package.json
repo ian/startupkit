@@ -16,12 +16,12 @@
 		"postinstall": "prisma generate"
 	},
 	"dependencies": {
-		"@prisma/client": "6.5.0"
+		"@prisma/client": "6.10.1"
 	},
 	"devDependencies": {
 		"@repo/biome": "workspace:*",
 		"@repo/tsconfig": "workspace:*",
 		"@types/node": "catalog:stack",
-		"prisma": "6.5.0"
+		"prisma": "6.10.1"
 	}
 }
