@@ -164,19 +164,88 @@ jobs:
           echo "This would run: pnpm run release"
           exit 0
 
+      - name: Generate OTP code
+        if: github.event.inputs.dry_run != 'true' && vars.NPM_OTP_SECRET != ''
+        run: |
+          echo "🔐 Generating OTP code for 2FA..."
+          OTP_CODE=$(node -e "
+            const crypto = require('crypto');
+            
+            // Base32 decoder
+            function base32Decode(encoded) {
+              const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+              let bits = '';
+              let result = [];
+              
+              for (let i = 0; i < encoded.length; i++) {
+                const val = alphabet.indexOf(encoded.charAt(i).toUpperCase());
+                if (val >= 0) {
+                  bits += val.toString(2).padStart(5, '0');
+                }
+              }
+              
+              for (let i = 0; i + 8 <= bits.length; i += 8) {
+                result.push(parseInt(bits.substr(i, 8), 2));
+              }
+              
+              return Buffer.from(result);
+            }
+            
+            const secret = '${{ vars.NPM_OTP_SECRET }}';
+            const time = Math.floor(Date.now() / 1000 / 30);
+            const buffer = Buffer.alloc(8);
+            buffer.writeUInt32BE(time, 4);
+            
+            const secretBuffer = base32Decode(secret);
+            const hmac = crypto.createHmac('sha1', secretBuffer);
+            hmac.update(buffer);
+            const hash = hmac.digest();
+            
+            const offset = hash[hash.length - 1] & 0xf;
+            const code = ((hash[offset] & 0x7f) << 24) | 
+                        ((hash[offset + 1] & 0xff) << 16) | 
+                        ((hash[offset + 2] & 0xff) << 8) | 
+                        (hash[offset + 3] & 0xff);
+            
+            console.log(String(code % 1000000).padStart(6, '0'));
+          ")
+          echo "OTP_CODE=$OTP_CODE" >> $GITHUB_ENV
+          echo "✅ OTP code generated"
+
       - name: Publish to NPM
         if: github.event.inputs.dry_run != 'true'
         run: |
+          # Prepare OTP flag if available
+          OTP_FLAG=""
+          if [ -n "${{ vars.NPM_OTP_SECRET }}" ] && [ -n "$OTP_CODE" ]; then
+            OTP_FLAG="--otp $OTP_CODE"
+            echo "🔐 Using 2FA authentication"
+          fi
+          
           if [ -n "${{ github.event.inputs.packages_filter }}" ]; then
             echo "🎯 Publishing filtered packages..."
             IFS=',' read -ra FILTERS <<< "${{ github.event.inputs.packages_filter }}"
             for filter in "${FILTERS[@]}"; do
               echo "Publishing packages matching: ${filter}"
-              pnpm --filter "*${filter}*" publish --access public --no-git-checks
+              pnpm --filter "*${filter}*" publish --access public --no-git-checks $OTP_FLAG
             done
           else
             echo "🚀 Publishing all packages..."
-            pnpm run release
+            if [ -n "$OTP_FLAG" ]; then
+              # For 2FA, we need to publish each package individually with OTP
+              echo "Publishing packages individually with 2FA..."
+              find packages -name "package.json" -exec dirname {} \; | while read package_dir; do
+                package_name=$(node -p "require('./$package_dir/package.json').name")
+                if [ "$(node -p "require('./$package_dir/package.json').private || false")" != "true" ]; then
+                  echo "📦 Publishing $package_name..."
+                  cd "$package_dir"
+                  npm publish --access public $OTP_FLAG
+                  cd - > /dev/null
+                fi
+              done
+            else
+              pnpm run release
+            fi
           fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
