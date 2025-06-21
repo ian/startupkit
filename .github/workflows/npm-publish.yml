@@ -153,7 +153,7 @@ jobs:
           fi
 
       - name: Generate OTP code
-        if: vars.NPM_OTP_SECRET != ''
+        if: secrets.NPM_OTP_SECRET != ''
         run: |
           echo "🔐 Generating OTP code for 2FA..."
           OTP_CODE=$(node -e "
@@ -179,7 +179,7 @@ jobs:
               return Buffer.from(result);
             }
             
-            const secret = '${{ vars.NPM_OTP_SECRET }}';
+            const secret = '${{ secrets.NPM_OTP_SECRET }}';
             const time = Math.floor(Date.now() / 1000 / 30);
             const buffer = Buffer.alloc(8);
             buffer.writeUInt32BE(time, 4);
@@ -204,9 +204,9 @@ jobs:
         run: |
           # Prepare OTP flag if available
           OTP_FLAG=""
-          if [ -n "${{ vars.NPM_OTP_SECRET }}" ] && [ -n "$OTP_CODE" ]; then
+          if [ -n "${{ secrets.NPM_OTP_SECRET }}" ] && [ -n "$OTP_CODE" ]; then
             OTP_FLAG="--otp $OTP_CODE"
-            echo "🔐 Using 2FA authentication"
+            echo "🔐 Using 2FA authentication with OTP: $OTP_CODE"
           fi
           
           if [ -n "${{ github.event.inputs.packages_filter }}" ]; then
