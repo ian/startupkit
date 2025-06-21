@@ -153,7 +153,6 @@ jobs:
           fi
 
       - name: Generate OTP code
-        if: secrets.NPM_OTP_SECRET != ''
         run: |
           echo "🔐 Generating OTP code for 2FA..."
           OTP_CODE=$(node -e "
@@ -198,16 +197,13 @@ jobs:
             console.log(String(code % 1000000).padStart(6, '0'));
           ")
           echo "OTP_CODE=$OTP_CODE" >> $GITHUB_ENV
-          echo "✅ OTP code generated"
+          echo "✅ OTP code generated: $OTP_CODE"
 
       - name: Publish to NPM
         run: |
-          # Prepare OTP flag if available
-          OTP_FLAG=""
-          if [ -n "${{ secrets.NPM_OTP_SECRET }}" ] && [ -n "$OTP_CODE" ]; then
-            OTP_FLAG="--otp $OTP_CODE"
-            echo "🔐 Using 2FA authentication with OTP: $OTP_CODE"
-          fi
+          # Always use OTP for 2FA
+          OTP_FLAG="--otp $OTP_CODE"
+          echo "🔐 Using 2FA authentication with OTP: $OTP_CODE"
           
           if [ -n "${{ github.event.inputs.packages_filter }}" ]; then
             echo "🎯 Publishing filtered packages..."
