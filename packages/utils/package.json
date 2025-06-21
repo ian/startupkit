@@ -1,28 +1,30 @@
 {
   "name": "@startupkit/utils",
-  "version": "0.3.19",
+  "version": "0.1.0",
   "author": "Ian Hunter <ian@01.studio>",
   "license": "ISC",
-  "description": "Utils package for StartupKit",
+  "description": "Utility functions for StartupKit",
+  "homepage": "https://startupkit.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/01-studio/startupkit"
+  },
   "main": "./dist/esm/index.js",
   "module": "./dist/esm/index.js",
   "types": "./dist/types/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js"
+      "import": "./dist/esm/index.js"
     }
   },
   "scripts": {
     "clean": "rm -rf ./dist ./.turbo",
     "build": "rollup -c && tsc --emitDeclarationOnly",
     "build:watch": "npx chokidar-cli \"src/**/*\" -c \"pnpm run build\" --initial",
-    "oldpostbuild": "validate-package-exports --check --verify",
     "type-check": "tsc --noEmit"
   },
   "devDependencies": {
-    "@types/node": "^22.4.0",
-    "@types/react": "^18.2.0"
+    "@types/node": "^22.4.0"
   }
 }
