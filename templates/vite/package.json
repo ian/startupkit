@@ -1,0 +1,33 @@
+{
+	"name": "PROJECT",
+	"private": true,
+	"version": "0.0.0",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc && vite build",
+		"preview": "vite preview",
+		"lint": "biome lint --unsafe",
+		"lint:fix": "biome lint --write --unsafe",
+		"typecheck": "tsc --noEmit",
+		"format": "biome format --write"
+	},
+	"dependencies": {
+		"@repo/analytics": "workspace:*",
+		"@repo/auth": "workspace:*",
+		"@repo/db": "workspace:*",
+		"@repo/ui": "workspace:*",
+		"@repo/utils": "workspace:*",
+		"react": "catalog:react19",
+		"react-dom": "catalog:react19"
+	},
+	"devDependencies": {
+		"@repo/biome": "workspace:*",
+		"@repo/tsconfig": "workspace:*",
+		"@types/react": "catalog:react19",
+		"@types/react-dom": "catalog:react19",
+		"@vitejs/plugin-react": "^4.3.1",
+		"typescript": "catalog:stack",
+		"vite": "^5.4.10"
+	}
+}
