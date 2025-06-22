@@ -136,7 +136,7 @@ async function addApp(props: {
 
   // Install dependencies
   await spinner(`Installing dependencies`, async () => {
-    await exec('pnpm install --no-frozen-lockfile', { cwd: destDir });
+    await exec('pnpm install', { cwd: destDir });
   });
   
   // const exec = promisify(execCb);
