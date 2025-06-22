@@ -111,9 +111,9 @@ async function addApp(props: {
   if (appType === "next") {
     templatePath = repoArg || "ian/startupkit/templates/next#startup-156-template-generation";
   } else if (appType === "vite") {
-    templatePath = repoArg || "ian/startupkit/templates/vite";
+    templatePath = repoArg || "ian/startupkit/templates/vite#devin/STARTUP-177-1750604753";
   } else if (appType === "pkg") {
-    templatePath = repoArg || "ian/startupkit/templates/package";
+    templatePath = repoArg || "ian/startupkit/templates/package#devin/STARTUP-177-1750604753";
   }
 
   if (fs.existsSync(destDir)) {
