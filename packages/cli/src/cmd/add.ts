@@ -7,10 +7,6 @@ import fs from "fs";
 import { exec } from '../lib/system';
 import { exec as execCb } from 'child_process';
 import { promisify } from 'util';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const APP_TYPES = [
   { name: "Next.js", value: "next" },
@@ -41,21 +37,7 @@ function printComingSoon(type: string) {
   console.log(`\n${type} support coming soon, we've recorded your vote!`);
 }
 
-async function copyDirectory(src: string, dest: string) {
-  await fs.promises.mkdir(dest, { recursive: true });
-  const entries = await fs.promises.readdir(src, { withFileTypes: true });
-  
-  for (const entry of entries) {
-    const srcPath = path.join(src, entry.name);
-    const destPath = path.join(dest, entry.name);
-    
-    if (entry.isDirectory()) {
-      await copyDirectory(srcPath, destPath);
-    } else {
-      await fs.promises.copyFile(srcPath, destPath);
-    }
-  }
-}
+
 
 async function addApp(props: {
   type?: string, nameArg?: string, repoArg?: string
@@ -123,26 +105,15 @@ async function addApp(props: {
     }
   }
 
-  // Determine template path and whether it's local or remote
+  // Determine template path
   let templatePath;
-  let isLocalTemplate = false;
   
   if (appType === "next") {
     templatePath = repoArg || "ian/startupkit/templates/next#startup-156-template-generation";
   } else if (appType === "vite") {
-    if (repoArg) {
-      templatePath = repoArg;
-    } else {
-      templatePath = path.resolve(__dirname, "../../../templates/vite");
-      isLocalTemplate = true;
-    }
+    templatePath = repoArg || "ian/startupkit/templates/vite";
   } else if (appType === "pkg") {
-    if (repoArg) {
-      templatePath = repoArg;
-    } else {
-      templatePath = path.resolve(__dirname, "../../../templates/package");
-      isLocalTemplate = true;
-    }
+    templatePath = repoArg || "ian/startupkit/templates/package";
   }
 
   if (fs.existsSync(destDir)) {
@@ -151,13 +122,8 @@ async function addApp(props: {
   }
 
   await spinner(`Cloning template into ${destDir}`, async () => {
-    if (isLocalTemplate) {
-      // Copy local template directory
-      await copyDirectory(templatePath, destDir);
-    } else {
-      const emitter = degit(templatePath, { cache: false, force: true, verbose: true });
-      await emitter.clone(destDir);
-    }
+    const emitter = degit(templatePath, { cache: false, force: true, verbose: true });
+    await emitter.clone(destDir);
   })
 
   // Recursively replace all instances of PROJECT with slug in the cloned repo
