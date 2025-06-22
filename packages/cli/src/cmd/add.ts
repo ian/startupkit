@@ -7,16 +7,24 @@ import fs from "fs";
 import { exec } from '../lib/system';
 import { exec as execCb } from 'child_process';
 import { promisify } from 'util';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const APP_TYPES = [
   { name: "Next.js", value: "next" },
   { name: "Expo (maybe)", value: "expo" },
   { name: "Capacitor Mobile", value: "capacitor" },
   { name: "Electron", value: "electron" },
-  { name: "Vite (maybe)", value: "vite" },
+  { name: "Vite", value: "vite" },
   { name: "Astro", value: "astro" },
   { name: "Hono", value: "hono" },
   { name: "Fastify", value: "fastify" },
+];
+
+const PACKAGE_TYPES = [
+  { name: "Package", value: "pkg" },
 ];
 
 // Slugify copied from init
@@ -33,6 +41,22 @@ function printComingSoon(type: string) {
   console.log(`\n${type} support coming soon, we've recorded your vote!`);
 }
 
+async function copyDirectory(src: string, dest: string) {
+  await fs.promises.mkdir(dest, { recursive: true });
+  const entries = await fs.promises.readdir(src, { withFileTypes: true });
+  
+  for (const entry of entries) {
+    const srcPath = path.join(src, entry.name);
+    const destPath = path.join(dest, entry.name);
+    
+    if (entry.isDirectory()) {
+      await copyDirectory(srcPath, destPath);
+    } else {
+      await fs.promises.copyFile(srcPath, destPath);
+    }
+  }
+}
+
 async function addApp(props: {
   type?: string, nameArg?: string, repoArg?: string
 }) {
@@ -41,48 +65,85 @@ async function addApp(props: {
   // If no type specified, show interactive select
   let appType = type;
   if (!appType) {
+    const allTypes = [...APP_TYPES, ...PACKAGE_TYPES];
     const { selected } = await inquirer.prompt([
       {
         type: "list",
         name: "selected",
-        message: "Which app type would you like to add?",
-        choices: APP_TYPES.map((t) => ({ name: t.name, value: t.value })),
+        message: "Which type would you like to add?",
+        choices: allTypes.map((t) => ({ name: t.name, value: t.value })),
       },
     ]);
     appType = selected;
   }
 
-  if (appType !== "next") {
+  if (!["next", "vite", "pkg"].includes(appType)) {
     printComingSoon(appType);
     return;
   }
 
-  // Ask for app name if not provided
-  let appName = nameArg;
-  if (!appName) {
+  // Determine template type
+  let templateType = "app";
+  if (appType === "pkg") {
+    templateType = "package";
+  }
+
+  // Ask for name if not provided
+  let itemName = nameArg;
+  if (!itemName) {
+    const itemTypeLabel = templateType === "package" ? "package" : "app";
     const { inputName } = await inquirer.prompt([
       {
         type: "input",
         name: "inputName",
-        message: "What is the name of your app?",
-        validate: (input: string) => input ? true : "App name is required",
+        message: `What is the name of your ${itemTypeLabel}?`,
+        validate: (input: string) => input ? true : `${itemTypeLabel} name is required`,
       },
     ]);
-    appName = inputName;
+    itemName = inputName;
   }
-  const appSlug = slugify(appName);
+  const appSlug = slugify(itemName);
 
-  // Determine where to place the new app directory
+  // Determine where to place the new directory
   let destDir: string;
   const cwd = process.cwd();
   const cwdBase = path.basename(cwd);
-  if (cwdBase === "apps") {
-    destDir = path.resolve(cwd, appSlug);
+  
+  if (templateType === "package") {
+    if (cwdBase === "packages") {
+      destDir = path.resolve(cwd, appSlug);
+    } else {
+      destDir = path.resolve(cwd, "packages", appSlug);
+    }
   } else {
-    destDir = path.resolve(cwd, "apps", appSlug);
+    if (cwdBase === "apps") {
+      destDir = path.resolve(cwd, appSlug);
+    } else {
+      destDir = path.resolve(cwd, "apps", appSlug);
+    }
   }
 
-  const repoSubdir = repoArg || "ian/startupkit/templates/next#startup-156-template-generation";
+  // Determine template path and whether it's local or remote
+  let templatePath;
+  let isLocalTemplate = false;
+  
+  if (appType === "next") {
+    templatePath = repoArg || "ian/startupkit/templates/next#startup-156-template-generation";
+  } else if (appType === "vite") {
+    if (repoArg) {
+      templatePath = repoArg;
+    } else {
+      templatePath = path.resolve(__dirname, "../../../templates/vite");
+      isLocalTemplate = true;
+    }
+  } else if (appType === "pkg") {
+    if (repoArg) {
+      templatePath = repoArg;
+    } else {
+      templatePath = path.resolve(__dirname, "../../../templates/package");
+      isLocalTemplate = true;
+    }
+  }
 
   if (fs.existsSync(destDir)) {
     console.error(`\nError: ${destDir} already exists. Please remove it or choose a different app name.`);
@@ -90,8 +151,13 @@ async function addApp(props: {
   }
 
   await spinner(`Cloning template into ${destDir}`, async () => {
-    const emitter = degit(repoSubdir, { cache: false, force: true, verbose: true });
-    await emitter.clone(destDir);
+    if (isLocalTemplate) {
+      // Copy local template directory
+      await copyDirectory(templatePath, destDir);
+    } else {
+      const emitter = degit(templatePath, { cache: false, force: true, verbose: true });
+      await emitter.clone(destDir);
+    }
   })
 
   // Recursively replace all instances of PROJECT with slug in the cloned repo
@@ -123,7 +189,8 @@ async function addApp(props: {
   //   }
   // });
 
-  console.log(`\nNext.js app added at: ${destDir}`);
+  const itemTypeLabel = templateType === "package" ? "Package" : "App";
+  console.log(`\n${itemTypeLabel} added at: ${destDir}`);
 
 
 }
