@@ -8,6 +8,44 @@ import { exec } from '../lib/system';
 import { exec as execCb } from 'child_process';
 import { promisify } from 'util';
 
+function findWorkspaceRoot(startDir: string): string | null {
+  let currentDir = startDir;
+  
+  while (currentDir !== path.dirname(currentDir)) {
+    const packageJsonPath = path.join(currentDir, 'package.json');
+    
+    if (fs.existsSync(packageJsonPath)) {
+      try {
+        const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+        if (packageJson.workspaces || packageJson.name) {
+          return currentDir;
+        }
+      } catch (error) {
+      }
+    }
+    
+    currentDir = path.dirname(currentDir);
+  }
+  
+  return null;
+}
+
+function getProjectNamespace(workspaceRoot: string): string {
+  const packageJsonPath = path.join(workspaceRoot, 'package.json');
+  
+  if (fs.existsSync(packageJsonPath)) {
+    try {
+      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+      return packageJson.name || 'repo';
+    } catch (error) {
+      console.warn('Could not read workspace package.json, using default namespace "repo"');
+      return 'repo';
+    }
+  }
+  
+  return 'repo';
+}
+
 const APP_TYPES = [
   { name: "Next.js", value: "next" },
   { name: "Expo (maybe)", value: "expo" },
@@ -134,10 +172,13 @@ async function addApp(props: {
     ignore: ['**/node_modules/**', '**/.git/**']
   });
 
+  const workspaceRoot = findWorkspaceRoot(cwd);
+  const projectNamespace = workspaceRoot ? getProjectNamespace(workspaceRoot) : 'repo';
+
   await replaceInFile({
     files: path.join(destDir, '**/*'),
     from: /@repo\//g,
-    to: `@${appSlug}/`,
+    to: `@${projectNamespace}/`,
     ignore: ['**/node_modules/**', '**/.git/**']
   });
 
