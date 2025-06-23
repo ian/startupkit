@@ -138,22 +138,30 @@ async function addApp(props: {
   await spinner(`Installing dependencies`, async () => {
     await exec('pnpm install', { cwd: destDir });
   });
-  
-  // const exec = promisify(execCb);
 
-  // await spinner(`Installing dependencies`, async () => {
-  //   try {
-  //     const { stdout, stderr } = await exec('pnpm install', { cwd: destDir });
-  //     if (stdout) process.stdout.write(stdout);
-  //     if (stderr) process.stderr.write(stderr);
-  //   } catch (err: any) {
-  //     if (err.stdout) process.stdout.write(err.stdout);
-  //     if (err.stderr) process.stderr.write(err.stderr);
-  //     // Print the error message itself for context
-  //     console.error('Install failed:', err.message || err);
-  //     throw err;
-  //   }
-  // });
+  // Find workspace root and install workspace dependencies
+  await spinner(`Installing workspace dependencies`, async () => {
+    // Find the workspace root by looking for pnpm-workspace.yaml or package.json with workspaces
+    let workspaceRoot = destDir;
+    while (workspaceRoot !== path.dirname(workspaceRoot)) {
+      const parentDir = path.dirname(workspaceRoot);
+      const workspaceFile = path.join(parentDir, 'pnpm-workspace.yaml');
+      const packageFile = path.join(parentDir, 'package.json');
+      
+      if (fs.existsSync(workspaceFile) || 
+          (fs.existsSync(packageFile) && 
+           JSON.parse(fs.readFileSync(packageFile, 'utf8')).workspaces)) {
+        workspaceRoot = parentDir;
+        break;
+      }
+      workspaceRoot = parentDir;
+    }
+    
+    // Install at workspace root to resolve workspace dependencies
+    if (workspaceRoot !== destDir) {
+      await exec('pnpm install', { cwd: workspaceRoot });
+    }
+  });
 
   const itemTypeLabel = templateType === "package" ? "Package" : "App";
   console.log(`\n${itemTypeLabel} added at: ${destDir}`);
