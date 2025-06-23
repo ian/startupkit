@@ -136,24 +136,10 @@ async function addApp(props: {
 
   // Install dependencies
   await spinner(`Installing dependencies`, async () => {
-    await exec('pnpm install', { cwd: destDir });
+    await exec('pnpm install --no-frozen-lockfile', { cwd: destDir, stdio: 'inherit' });
   });
-  
-  // const exec = promisify(execCb);
 
-  // await spinner(`Installing dependencies`, async () => {
-  //   try {
-  //     const { stdout, stderr } = await exec('pnpm install', { cwd: destDir });
-  //     if (stdout) process.stdout.write(stdout);
-  //     if (stderr) process.stderr.write(stderr);
-  //   } catch (err: any) {
-  //     if (err.stdout) process.stdout.write(err.stdout);
-  //     if (err.stderr) process.stderr.write(err.stderr);
-  //     // Print the error message itself for context
-  //     console.error('Install failed:', err.message || err);
-  //     throw err;
-  //   }
-  // });
+  // Note: pnpm should automatically link workspace dependencies when installing in a workspace
 
   const itemTypeLabel = templateType === "package" ? "Package" : "App";
   console.log(`\n${itemTypeLabel} added at: ${destDir}`);
@@ -162,3 +148,4 @@ async function addApp(props: {
 }
 
 export { addApp as add };
+
