@@ -139,44 +139,7 @@ async function addApp(props: {
     await exec('pnpm install', { cwd: destDir });
   });
 
-  // Find workspace root and install workspace dependencies
-  await spinner(`Installing workspace dependencies`, async () => {
-    // Find the workspace root by looking for pnpm-workspace.yaml or package.json with workspaces
-    let currentDir = destDir;
-    let workspaceRoot = null;
-    
-    while (currentDir !== path.dirname(currentDir)) {
-      const workspaceFile = path.join(currentDir, 'pnpm-workspace.yaml');
-      const packageFile = path.join(currentDir, 'package.json');
-      
-      if (fs.existsSync(workspaceFile)) {
-        workspaceRoot = currentDir;
-        break;
-      }
-      
-      if (fs.existsSync(packageFile)) {
-        try {
-          const packageJson = JSON.parse(fs.readFileSync(packageFile, 'utf8'));
-          if (packageJson.workspaces) {
-            workspaceRoot = currentDir;
-            break;
-          }
-        } catch (e) {
-          // Ignore JSON parse errors
-        }
-      }
-      
-      currentDir = path.dirname(currentDir);
-    }
-    
-    // Install at workspace root to resolve workspace dependencies
-    if (workspaceRoot && workspaceRoot !== destDir) {
-      console.log(`Found workspace root at: ${workspaceRoot}`);
-      await exec('pnpm install', { cwd: workspaceRoot });
-    } else {
-      console.log('No workspace root found, skipping workspace install');
-    }
-  });
+  // Note: pnpm should automatically link workspace dependencies when installing in a workspace
 
   const itemTypeLabel = templateType === "package" ? "Package" : "App";
   console.log(`\n${itemTypeLabel} added at: ${destDir}`);
