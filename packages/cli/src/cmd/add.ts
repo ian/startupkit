@@ -142,24 +142,39 @@ async function addApp(props: {
   // Find workspace root and install workspace dependencies
   await spinner(`Installing workspace dependencies`, async () => {
     // Find the workspace root by looking for pnpm-workspace.yaml or package.json with workspaces
-    let workspaceRoot = destDir;
-    while (workspaceRoot !== path.dirname(workspaceRoot)) {
-      const parentDir = path.dirname(workspaceRoot);
-      const workspaceFile = path.join(parentDir, 'pnpm-workspace.yaml');
-      const packageFile = path.join(parentDir, 'package.json');
+    let currentDir = destDir;
+    let workspaceRoot = null;
+    
+    while (currentDir !== path.dirname(currentDir)) {
+      const workspaceFile = path.join(currentDir, 'pnpm-workspace.yaml');
+      const packageFile = path.join(currentDir, 'package.json');
       
-      if (fs.existsSync(workspaceFile) || 
-          (fs.existsSync(packageFile) && 
-           JSON.parse(fs.readFileSync(packageFile, 'utf8')).workspaces)) {
-        workspaceRoot = parentDir;
+      if (fs.existsSync(workspaceFile)) {
+        workspaceRoot = currentDir;
         break;
       }
-      workspaceRoot = parentDir;
+      
+      if (fs.existsSync(packageFile)) {
+        try {
+          const packageJson = JSON.parse(fs.readFileSync(packageFile, 'utf8'));
+          if (packageJson.workspaces) {
+            workspaceRoot = currentDir;
+            break;
+          }
+        } catch (e) {
+          // Ignore JSON parse errors
+        }
+      }
+      
+      currentDir = path.dirname(currentDir);
     }
     
     // Install at workspace root to resolve workspace dependencies
-    if (workspaceRoot !== destDir) {
+    if (workspaceRoot && workspaceRoot !== destDir) {
+      console.log(`Found workspace root at: ${workspaceRoot}`);
       await exec('pnpm install', { cwd: workspaceRoot });
+    } else {
+      console.log('No workspace root found, skipping workspace install');
     }
   });
 
@@ -170,3 +185,4 @@ async function addApp(props: {
 }
 
 export { addApp as add };
+

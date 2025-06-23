@@ -72,6 +72,21 @@ jobs:
           node $GITHUB_WORKSPACE/packages/cli/dist/cli.js add next --name next --repo "ian/startupkit/templates/next#${GITHUB_REF_NAME}"
         working-directory: ./tmp/repo
 
+      - name: Debug workspace structure
+        run: |
+          echo "=== Workspace structure ==="
+          find . -name "pnpm-workspace.yaml" -o -name "package.json" | head -10
+          echo "=== /tmp/repo contents ==="
+          ls -la /home/runner/work/startupkit/startupkit/tmp/repo/
+          echo "=== /tmp/repo/apps/next contents ==="
+          ls -la /home/runner/work/startupkit/startupkit/tmp/repo/apps/next/ || echo "next dir not found"
+          echo "=== Check for @repo/biome ==="
+          find /home/runner/work/startupkit/startupkit/tmp/repo -name "*biome*" -type f | head -5
+
+      - name: Manual workspace install
+        run: pnpm install
+        working-directory: ./tmp/repo
+
       - name: Verify Install
         run: |
           node $GITHUB_WORKSPACE/packages/cli/dist/post-install-check.js --mode app
