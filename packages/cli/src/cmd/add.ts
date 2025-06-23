@@ -136,10 +136,7 @@ async function addApp(props: {
 
   // Install dependencies
   await spinner(`Installing dependencies`, async () => {
-    console.log(`Installing dependencies in: ${destDir}`);
-    console.log(`Current working directory: ${process.cwd()}`);
-    console.log(`Directory contents: ${fs.readdirSync(destDir).join(', ')}`);
-    await exec('pnpm install', { cwd: destDir, stdio: 'inherit' });
+    await exec('pnpm install --no-frozen-lockfile', { cwd: destDir, stdio: 'inherit' });
   });
 
   // Note: pnpm should automatically link workspace dependencies when installing in a workspace
