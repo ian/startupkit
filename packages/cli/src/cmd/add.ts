@@ -109,11 +109,11 @@ async function addApp(props: {
   let templatePath;
   
   if (appType === "next") {
-    templatePath = repoArg || "ian/startupkit/templates/next#startup-156-template-generation";
+    templatePath = repoArg || "ian/startupkit/templates/next";
   } else if (appType === "vite") {
-    templatePath = repoArg || "ian/startupkit/templates/vite#devin/STARTUP-177-1750604753";
+    templatePath = repoArg || "ian/startupkit/templates/vite";
   } else if (appType === "pkg") {
-    templatePath = repoArg || "ian/startupkit/templates/package#devin/STARTUP-177-1750604753";
+    templatePath = repoArg || "ian/startupkit/templates/package";
   }
 
   if (fs.existsSync(destDir)) {
