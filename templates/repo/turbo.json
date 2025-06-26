@@ -27,9 +27,11 @@
 			"outputLogs": "new-only"
 		},
 		"lint": {
-			"dependsOn": [
-				"^build"
-			],
+			"outputs": [
+				".cache/.lint"
+			]
+		},
+		"lint:fix": {
 			"outputs": [
 				".cache/.lint"
 			]
