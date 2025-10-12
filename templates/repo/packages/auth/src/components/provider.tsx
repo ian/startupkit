@@ -1,78 +1,40 @@
 "use client"
 
 import { useAnalytics } from "@repo/analytics"
-import { useRouter } from "next/navigation"
+import { AuthProvider as BaseAuthProvider } from "@startupkit/auth"
 import type React from "react"
-import { useEffect } from "react"
 import { authClient } from ".."
 import type { User } from "../types"
-import { AuthContext } from "./context"
 
 export function AuthProvider({
-	children,
-	user: initialUser
+  children,
+  user: initialUser
 }: {
-	children: React.ReactNode
-	user?: User
+  children: React.ReactNode
+  user?: User
 }) {
-	const analytics = useAnalytics()
-	const router = useRouter()
-	const { data, refetch, isPending: isLoading } = authClient.useSession()
+  const analytics = useAnalytics()
 
-	const { user } = data ?? {
-		user: initialUser
-	}
+  const handleIdentify = (user: User) => {
+    analytics.identify(user.id, {
+      name: user.name,
+      email: user.email,
+      phone: user.phone ?? null
+    })
+  }
 
-	useEffect(() => {
-		if (user) {
-			analytics.identify(user.id, {
-				name: user.name,
-				email: user.email,
-				phone: user.phone ?? null
-			})
-		}
-	}, [user])
+  const handleReset = () => {
+    analytics.reset()
+  }
 
-	const sendAuthCode = async (email: string) => {
-		await authClient.emailOtp.sendVerificationOtp({
-			email,
-			type: "sign-in"
-		})
-	}
-
-	const verifyAuthCode = async (email: string, otp: string) => {
-		try {
-			await authClient.signIn.emailOtp({
-				email,
-				otp
-			})
-		} finally {
-			void refetch()
-		}
-	}
-
-	const googleAuth = async () => {
-		await authClient.signIn.social({
-			provider: "google"
-		})
-	}
-
-	const logout = async () => {
-		await authClient.signOut()
-		await refetch()
-		analytics.reset()
-		router.push("/")
-	}
-
-	const value = {
-		isLoading,
-		isAuthenticated: Boolean(user),
-		user,
-		logout,
-		sendAuthCode,
-		verifyAuthCode,
-		googleAuth
-	}
-
-	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  return (
+    <BaseAuthProvider
+      user={initialUser}
+      authClient={authClient}
+      onIdentify={handleIdentify}
+      onReset={handleReset}
+    >
+      {children}
+    </BaseAuthProvider>
+  )
 }

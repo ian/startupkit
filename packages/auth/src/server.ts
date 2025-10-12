@@ -1,33 +1,28 @@
-import { cookies } from "next/headers";
-import { IronSession, getIronSession } from "iron-session";
-import { type SessionData, type SessionUser } from "./types";
+import { toNextJsHandler } from "better-auth/next-js"
+import { headers } from "next/headers"
 
-export * from "./types";
+export * from "./types"
 
-export async function getSession(): Promise<IronSession<SessionData>> {
-  return getIronSession<SessionData>(cookies(), {
-    password: process.env.AUTH_SECRET!,
-    cookieName: "_auth",
-  });
-}
+export function createServerUtils(auth: ReturnType<typeof import("better-auth").betterAuth>) {
+  const withAuth = async () => {
+    const session = await auth.api.getSession({
+      headers: await headers()
+    })
 
-export async function getUser(): Promise<{
-  isAuthenticated: boolean;
-  user: SessionUser | null;
-}> {
-  const session = await getSession();
+    if (session) {
+      return {
+        ...session
+      }
+    }
 
-  if (session.user) {
-    return {
-      isAuthenticated: true,
-      user: session.user,
-    };
+    return { user: null, session: null }
   }
 
-  return { user: null, isAuthenticated: false };
-}
+  const handler = () => toNextJsHandler(auth.handler)
 
-export async function clearSession() {
-  const session = await getSession();
-  session?.destroy();
+  return {
+    auth,
+    withAuth,
+    handler
+  }
 }

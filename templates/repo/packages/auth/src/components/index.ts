@@ -1,3 +1,3 @@
-export * from "./context"
-export * from "./provider"
-export * from "./use-auth"
+export { useAuth } from "@startupkit/auth"
+export { AuthProvider } from "./provider"
+
