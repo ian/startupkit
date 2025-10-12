@@ -19,7 +19,9 @@ const defaultAdditionalFields = {
     }
 }
 
-export function createAuth(config: AuthConfig) {
+export function createAuth<TAdditionalFields extends Record<string, import("../types").AdditionalField> = Record<string, import("../types").AdditionalField>>(
+    config: AuthConfig<TAdditionalFields>
+) {
     const {
         prisma,
         sendEmail,
