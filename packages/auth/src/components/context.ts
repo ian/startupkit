@@ -1,12 +1,11 @@
 "use client"
 
 import { createContext } from "react"
-import type { User } from "../types"
 
-export interface AuthContextType {
+export interface AuthContextType<TUser = Record<string, unknown>> {
     isAuthenticated: boolean
     isLoading: boolean
-    user: User | null | undefined
+    user: TUser | null | undefined
     logout: () => Promise<void>
     sendAuthCode: (email: string) => Promise<void>
     verifyAuthCode: (email: string, code: string) => Promise<void>

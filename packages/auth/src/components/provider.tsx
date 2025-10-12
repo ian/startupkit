@@ -3,15 +3,14 @@
 import { useRouter } from "next/navigation"
 import type React from "react"
 import { useEffect } from "react"
-import type { User } from "../types"
 import { AuthContext } from "./context"
 
-interface AuthProviderProps {
+interface AuthProviderProps<TUser = Record<string, unknown>> {
   children: React.ReactNode
-  user?: User
+  user?: TUser
   authClient: {
     useSession: () => {
-      data?: { user?: User }
+      data?: { user?: TUser }
       isPending: boolean
       refetch: () => Promise<void>
     }
@@ -24,17 +23,17 @@ interface AuthProviderProps {
     }
     signOut: () => Promise<void>
   }
-  onIdentify?: (user: User) => void
+  onIdentify?: (user: TUser) => void
   onReset?: () => void
 }
 
-export function AuthProvider({
+export function AuthProvider<TUser = Record<string, unknown>>({
   children,
   user: initialUser,
   authClient,
   onIdentify,
   onReset
-}: AuthProviderProps) {
+}: AuthProviderProps<TUser>) {
   const router = useRouter()
   const { data, refetch, isPending: isLoading } = authClient.useSession()
 
@@ -89,6 +88,6 @@ export function AuthProvider({
     googleAuth
   }
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  return <AuthContext.Provider value={value as never}>{children}</AuthContext.Provider>
 }
 
