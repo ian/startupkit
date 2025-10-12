@@ -11,12 +11,6 @@ catalogs:
   analytics:
     "@rudderstack/analytics-js": 3.14.0
     "@vercel/analytics": 1.3.1
-    
-  auth:
-    "@workos-inc/authkit-nextjs": 1.2.0
-    "@workos-inc/authkit-react": 0.9.0
-    "@workos-inc/node": 7.37.1
-    "@workos-inc/widgets": 1.0.1
 
   react18:
     react: 18.3.1

@@ -31,7 +31,6 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@startupkit/utils": "workspace:*",
     "better-auth": "^1.2.5",
     "swr": "^2.2.5"
   },
