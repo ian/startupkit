@@ -17,4 +17,3 @@ export const authClient = createAuthClient({
 		inferAdditionalFields<typeof auth>()
 	]
 })
-
