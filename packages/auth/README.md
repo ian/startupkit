@@ -42,6 +42,10 @@ async function sendVerificationOTP({ email, otp }: { email: string; otp: string 
 export const auth = createAuth({
   prisma,
   sendEmail: sendVerificationOTP,
+  onUserSignup: async (userId) => {
+    // Optional: Track user signup
+    console.log("New user signed up:", userId)
+  },
   onUserLogin: async (userId) => {
     // Optional: Track user login
     console.log("User logged in:", userId)
@@ -228,15 +232,69 @@ interface AuthConfig {
   sendEmail?: (params: { email: string; otp: string }) => Promise<void>
   onUserLogin?: (userId: string) => Promise<void>
   onUserSignup?: (userId: string) => Promise<void>
+  additionalUserFields?: Record<string, AdditionalField>
+}
+
+interface AdditionalField {
+  type: "string" | "number" | "boolean" | "date"
+  required?: boolean
+  defaultValue?: string | number | boolean | Date
 }
 ```
 
+### Custom User Fields
+
+You can add custom fields to your user model by passing `additionalUserFields`:
+
+```ts
+export const auth = createAuth({
+  prisma,
+  sendEmail: sendVerificationOTP,
+  additionalUserFields: {
+    companyName: {
+      type: "string",
+      required: false
+    },
+    timezone: {
+      type: "string",
+      required: false
+    },
+    role: {
+      type: "string",
+      required: true,
+      defaultValue: "user"
+    }
+  }
+})
+```
+
+The package includes these default additional fields (which are always available):
+- `firstName` (string, optional)
+- `lastName` (string, optional)
+- `phone` (string, optional)
+
+Your custom fields will be merged with these defaults.
+
 ### Session Configuration
 
+Default session settings:
 - **Expiration**: 7 days (604,800 seconds)
 - **Update Age**: 24 hours (86,400 seconds)
 
 Sessions automatically refresh when the user is active.
+
+You can customize session duration:
+
+```ts
+export const auth = createAuth({
+  prisma,
+  sendEmail: sendVerificationOTP,
+  session: {
+    expiresIn: 60 * 60 * 24 * 30,  // 30 days
+    updateAge: 60 * 60 * 24 * 7     // 7 days
+  }
+})
+```
 
 ### Additional User Fields
 

@@ -23,5 +23,16 @@ async function sendVerificationOTP({
 
 export const auth = createAuth({
 	prisma,
-	sendEmail: sendVerificationOTP
+	sendEmail: sendVerificationOTP,
+	additionalUserFields: {
+		// Add custom fields here if needed, e.g.:
+		// companyName: {
+		// 	type: "string",
+		// 	required: false
+		// },
+		// timezone: {
+		// 	type: "string",
+		// 	required: false
+		// }
+	}
 })

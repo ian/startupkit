@@ -4,27 +4,41 @@ import { nextCookies } from "better-auth/next-js"
 import { admin, createAuthMiddleware, emailOTP } from "better-auth/plugins"
 import type { AuthConfig } from "../types"
 
-const additionalFields = {
-    user: {
-        additionalFields: {
-            firstName: {
-                type: "string" as const,
-                required: false
-            },
-            lastName: {
-                type: "string" as const,
-                required: false
-            },
-            phone: {
-                type: "string" as const,
-                required: false
-            }
-        }
+const defaultAdditionalFields = {
+    firstName: {
+        type: "string" as const,
+        required: false
+    },
+    lastName: {
+        type: "string" as const,
+        required: false
+    },
+    phone: {
+        type: "string" as const,
+        required: false
     }
-} as const
+}
 
 export function createAuth(config: AuthConfig) {
-    const { prisma, sendEmail, onUserLogin, onUserSignup } = config
+    const {
+        prisma,
+        sendEmail,
+        onUserLogin,
+        onUserSignup,
+        additionalUserFields,
+        session: sessionConfig
+    } = config
+
+    const mergedFields = {
+        ...defaultAdditionalFields,
+        ...additionalUserFields
+    }
+
+    const additionalFields = {
+        user: {
+            additionalFields: mergedFields
+        }
+    } as const
 
     const defaultSendEmail = async ({ email, otp }: { email: string; otp: string }) => {
         console.log(`[Auth] OTP for ${email}: ${otp}`)
@@ -43,7 +57,7 @@ export function createAuth(config: AuthConfig) {
         }),
         hooks: {
             after: createAuthMiddleware(async (ctx) => {
-                const { newSession } = ctx.context
+                const { newSession, newUser } = ctx.context
 
                 if (newSession) {
                     await prisma.user.update({
@@ -55,7 +69,9 @@ export function createAuth(config: AuthConfig) {
                         }
                     })
 
-                    if (onUserLogin) {
+                    if (newUser && onUserSignup) {
+                        await onUserSignup(newSession.user.id)
+                    } else if (onUserLogin) {
                         await onUserLogin(newSession.user.id)
                     }
                 }
@@ -69,8 +85,8 @@ export function createAuth(config: AuthConfig) {
             nextCookies()
         ],
         session: {
-            expiresIn: 60 * 60 * 24 * 7,
-            updateAge: 60 * 60 * 24
+            expiresIn: sessionConfig?.expiresIn ?? 60 * 60 * 24 * 7,
+            updateAge: sessionConfig?.updateAge ?? 60 * 60 * 24
         },
         socialProviders: {
             google: {

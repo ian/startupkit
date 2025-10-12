@@ -1,10 +1,21 @@
 import type { BetterAuthOptions } from "better-auth";
 
+export interface AdditionalField {
+  type: "string" | "number" | "boolean" | "date"
+  required?: boolean
+  defaultValue?: string | number | boolean | Date
+}
+
 export interface AuthConfig {
   prisma: BetterAuthOptions["database"]
   sendEmail?: (params: { email: string; otp: string }) => Promise<void>
   onUserLogin?: (userId: string) => Promise<void>
   onUserSignup?: (userId: string) => Promise<void>
+  additionalUserFields?: Record<string, AdditionalField>
+  session?: {
+    expiresIn?: number
+    updateAge?: number
+  }
 }
 
 export interface User {
