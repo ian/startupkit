@@ -40,10 +40,6 @@ export function createAuth(config: AuthConfig) {
         }
     } as const
 
-    const defaultSendEmail = async ({ email, otp }: { email: string; otp: string }) => {
-        console.log(`[Auth] OTP for ${email}: ${otp}`)
-    }
-
     return betterAuth({
         ...additionalFields,
         basePath: "/auth",
@@ -80,7 +76,7 @@ export function createAuth(config: AuthConfig) {
         plugins: [
             admin(),
             emailOTP({
-                sendVerificationOTP: sendEmail || defaultSendEmail
+                sendVerificationOTP: sendEmail
             }),
             nextCookies()
         ],

@@ -275,7 +275,7 @@ GOOGLE_CLIENT_SECRET=your_google_client_secret
 ```ts
 interface AuthConfig {
   prisma: PrismaClient
-  sendEmail?: (params: { email: string; otp: string }) => Promise<void>
+  sendEmail: (params: { email: string; otp: string }) => Promise<void>
   onUserLogin?: (userId: string) => Promise<void>
   onUserSignup?: (userId: string) => Promise<void>
   additionalUserFields?: Record<string, AdditionalField>
