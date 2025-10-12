@@ -17,7 +17,7 @@
 		"@repo/db": "workspace:*",
 		"@repo/emails": "workspace:*",
 		"@repo/utils": "workspace:*",
-		"@startupkit/auth": "^0.3.19",
+		"@startupkit/auth": "0.3.19",
 		"better-auth": "1.2.5",
 		"swr": "2.2.5"
 	},
