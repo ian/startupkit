@@ -7,34 +7,34 @@ import { authClient } from ".."
 import type { User } from "../types"
 
 export function AuthProvider({
-  children,
-  user: initialUser
+	children,
+	user: initialUser
 }: {
-  children: React.ReactNode
-  user?: User
+	children: React.ReactNode
+	user?: User
 }) {
-  const analytics = useAnalytics()
+	const analytics = useAnalytics()
 
-  const handleIdentify = (user: User) => {
-    analytics.identify(user.id, {
-      name: user.name,
-      email: user.email,
-      phone: user.phone ?? null
-    })
-  }
+	const handleIdentify = (user: User) => {
+		analytics.identify(user.id, {
+			name: user.name,
+			email: user.email,
+			phone: user.phone ?? null
+		})
+	}
 
-  const handleReset = () => {
-    analytics.reset()
-  }
+	const handleReset = () => {
+		analytics.reset()
+	}
 
-  return (
-    <BaseAuthProvider
-      user={initialUser}
-      authClient={authClient}
-      onIdentify={handleIdentify}
-      onReset={handleReset}
-    >
-      {children}
-    </BaseAuthProvider>
-  )
+	return (
+		<BaseAuthProvider
+			user={initialUser}
+			authClient={authClient}
+			onIdentify={handleIdentify}
+			onReset={handleReset}
+		>
+			{children}
+		</BaseAuthProvider>
+	)
 }

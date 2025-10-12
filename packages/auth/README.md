@@ -105,14 +105,35 @@ export default async function Layout({ children }) {
 
 ### Client Setup
 
-Wrap your application with the `AuthProvider`:
+Create your auth client with the plugins you need:
+
+```tsx
+// lib/auth-client.ts
+import {
+  adminClient,
+  createAuthClient,
+  emailOTPClient,
+  inferAdditionalFields
+} from "@startupkit/auth"
+import type { auth } from "./auth"
+
+export const authClient = createAuthClient({
+  basePath: "/auth",
+  plugins: [
+    adminClient(),
+    emailOTPClient(),
+    inferAdditionalFields<typeof auth>()
+  ]
+})
+```
+
+Then wrap your application with the `AuthProvider`:
 
 ```tsx
 "use client"
 
-import { AuthProvider, createBetterAuthClient } from "@startupkit/auth"
-
-const authClient = createBetterAuthClient()
+import { AuthProvider } from "@startupkit/auth"
+import { authClient } from "@/lib/auth-client"
 
 export function Providers({ children, user }) {
   return (
@@ -121,6 +142,31 @@ export function Providers({ children, user }) {
     </AuthProvider>
   )
 }
+```
+
+#### Customizing Plugins
+
+Add additional better-auth plugins to customize functionality:
+
+```tsx
+import {
+  adminClient,
+  createAuthClient,
+  emailOTPClient,
+  inferAdditionalFields
+} from "@startupkit/auth"
+import { twoFactor } from "better-auth/plugins"
+import type { auth } from "./auth"
+
+export const authClient = createAuthClient({
+  basePath: "/auth",
+  plugins: [
+    adminClient(),
+    emailOTPClient(),
+    inferAdditionalFields<typeof auth>(),
+    twoFactor()  // Add 2FA support
+  ]
+})
 ```
 
 ### Using Authentication in Components
