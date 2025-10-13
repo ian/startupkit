@@ -12,7 +12,8 @@ export {
     genericOAuthClient,
     getPasskeyActions,
     inferAdditionalFields,
-    inferOrgAdditionalFields, InferServerPlugin, jwtClient,
+    inferOrgAdditionalFields,
+    jwtClient,
     lastLoginMethodClient,
     magicLinkClient,
     multiSessionClient,
@@ -26,5 +27,6 @@ export {
     ssoClient,
     usernameClient
 } from "better-auth/client/plugins"
+export type { InferServerPlugin } from "better-auth/client/plugins"
 export { createAuthClient } from "better-auth/react"
 
