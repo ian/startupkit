@@ -36,12 +36,5 @@
 	},
 	"prisma": {
 		"schema": "packages/db/prisma/schema.prisma"
-	},
-	"pnpm": {
-		"overrides": {
-			"@startupkit/auth": "link:../../packages/auth",
-			"@startupkit/analytics": "link:../../packages/analytics",
-			"@startupkit/utils": "link:../../packages/utils"
-		}
 	}
 }
