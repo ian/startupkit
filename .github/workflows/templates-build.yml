@@ -24,7 +24,7 @@ jobs:
         working-directory: ./templates/repo
 
       - name: Build packages
-        run: pnpm --filter ./packages/cli build
+        run: pnpm --filter ./packages/* build
 
       - name: Add working directory
         run: mkdir -p ./tmp
@@ -33,6 +33,31 @@ jobs:
         run: |
           node $GITHUB_WORKSPACE/packages/cli/dist/cli.js init --name repo --repo "ian/startupkit/templates/repo#${GITHUB_REF_NAME}"
         working-directory: ./tmp
+
+      - name: Link local packages for testing
+        run: |
+          echo "Adding pnpm overrides to use local packages..."
+          node -e "
+          const fs = require('fs');
+          const workspace = process.env.GITHUB_WORKSPACE;
+          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          pkg.pnpm = pkg.pnpm || {};
+          pkg.pnpm.overrides = {
+            '@startupkit/auth': 'link:' + workspace + '/packages/auth',
+            '@startupkit/analytics': 'link:' + workspace + '/packages/analytics',
+            '@startupkit/utils': 'link:' + workspace + '/packages/utils'
+          };
+          fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
+          console.log('Overrides added:', pkg.pnpm.overrides);
+          "
+          cat package.json | grep -A 6 '"pnpm"'
+        working-directory: ./tmp/repo
+
+      - name: Reinstall with local packages
+        run: |
+          rm -rf node_modules pnpm-lock.yaml
+          pnpm install
+        working-directory: ./tmp/repo
 
       - name: Verify Install
         run: |
@@ -57,7 +82,7 @@ jobs:
         run: pnpm install
 
       - name: Build packages
-        run: pnpm --filter ./packages/cli build
+        run: pnpm --filter ./packages/* build
 
       - name: Add working directory
         run: mkdir -p ./tmp
@@ -66,6 +91,31 @@ jobs:
         run: |
           node $GITHUB_WORKSPACE/packages/cli/dist/cli.js init --name repo --repo "ian/startupkit/templates/repo#${GITHUB_REF_NAME}"
         working-directory: ./tmp
+
+      - name: Link local packages for testing
+        run: |
+          echo "Adding pnpm overrides to use local packages..."
+          node -e "
+          const fs = require('fs');
+          const workspace = process.env.GITHUB_WORKSPACE;
+          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          pkg.pnpm = pkg.pnpm || {};
+          pkg.pnpm.overrides = {
+            '@startupkit/auth': 'link:' + workspace + '/packages/auth',
+            '@startupkit/analytics': 'link:' + workspace + '/packages/analytics',
+            '@startupkit/utils': 'link:' + workspace + '/packages/utils'
+          };
+          fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
+          console.log('Overrides added:', pkg.pnpm.overrides);
+          "
+          cat package.json | grep -A 6 '"pnpm"'
+        working-directory: ./tmp/repo
+
+      - name: Reinstall with local packages
+        run: |
+          rm -rf node_modules pnpm-lock.yaml
+          pnpm install
+        working-directory: ./tmp/repo
 
       - name: Install app (with branch)
         run: |

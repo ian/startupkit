@@ -185,16 +185,33 @@ jobs:
           echo "✅ pnpm-workspace.yaml is correctly configured"
         working-directory: test-projects
 
+      - name: Link local packages for testing
+        run: |
+          echo "Adding pnpm overrides to use local packages..."
+          cd test-startup
+          node -e "
+          const fs = require('fs');
+          const workspace = process.env.GITHUB_WORKSPACE;
+          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          pkg.pnpm = pkg.pnpm || {};
+          pkg.pnpm.overrides = {
+            '@startupkit/auth': 'link:' + workspace + '/packages/auth',
+            '@startupkit/analytics': 'link:' + workspace + '/packages/analytics',
+            '@startupkit/utils': 'link:' + workspace + '/packages/utils'
+          };
+          fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
+          console.log('Overrides added:', pkg.pnpm.overrides);
+          "
+          cat package.json | grep -A 6 '"pnpm"'
+        working-directory: test-projects
+
       - name: Install dependencies in generated project
         run: |
           echo "📦 Installing dependencies in generated project..."
           cd test-startup
-          if ! pnpm install --frozen-lockfile; then
-            echo "⚠️ frozen-lockfile failed, trying without..."
-            if ! pnpm install; then
-              echo "❌ Failed to install dependencies"
-              exit 1
-            fi
+          if ! pnpm install; then
+            echo "❌ Failed to install dependencies"
+            exit 1
           fi
           echo "✅ Dependencies installed successfully"
         working-directory: test-projects
