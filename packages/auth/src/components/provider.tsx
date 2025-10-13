@@ -14,12 +14,12 @@ interface AuthProviderProps<TUser = Record<string, unknown>> {
       isPending: boolean
       refetch: () => Promise<void>
     }
-    emailOtp: {
-      sendVerificationOtp: (params: { email: string; type: string }) => Promise<void>
+    emailOtp?: {
+      sendVerificationOtp?: (params: { email: string; type: string }) => Promise<void>
     }
     signIn: {
-      emailOtp: (params: { email: string; otp: string }) => Promise<void>
-      social: (params: { provider: string }) => Promise<void>
+      emailOtp?: (params: { email: string; otp: string }) => Promise<void>
+      social?: (params: { provider: string }) => Promise<void>
     }
     signOut: () => Promise<void>
   }
@@ -46,6 +46,9 @@ export function AuthProvider<TUser = Record<string, unknown>>({
   }, [user, onIdentify])
 
   const sendAuthCode = async (email: string) => {
+    if (!authClient.emailOtp?.sendVerificationOtp) {
+      throw new Error("Email OTP is not configured")
+    }
     await authClient.emailOtp.sendVerificationOtp({
       email,
       type: "sign-in"
@@ -53,6 +56,9 @@ export function AuthProvider<TUser = Record<string, unknown>>({
   }
 
   const verifyAuthCode = async (email: string, otp: string) => {
+    if (!authClient.signIn.emailOtp) {
+      throw new Error("Email OTP sign-in is not configured")
+    }
     try {
       await authClient.signIn.emailOtp({
         email,
@@ -64,6 +70,9 @@ export function AuthProvider<TUser = Record<string, unknown>>({
   }
 
   const googleAuth = async () => {
+    if (!authClient.signIn.social) {
+      throw new Error("Social sign-in is not configured")
+    }
     await authClient.signIn.social({
       provider: "google"
     })
