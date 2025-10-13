@@ -140,8 +140,8 @@ importers:
         specifier: workspace:*
         version: link:../utils
       '@startupkit/auth':
-        specifier: 0.3.19
-        version: 0.3.19(next@15.3.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)
+        specifier: link:../../../../packages/auth
+        version: link:../../../../packages/auth
       better-auth:
         specifier: 1.2.5
         version: 1.2.5(typescript@5.8.3)
@@ -4850,15 +4850,6 @@ packages:
   '@standard-schema/spec@1.0.0':
     resolution: {integrity: sha512-m2bOd0f2RT9k8QJx1JN85cZYyH1RqFBdlwtkSlf4tBDYLCiiZnv1fIIwacK6cqwXavOydf0NPToMQgpKq+dVlA==}
 
-  '@startupkit/auth@0.3.19':
-    resolution: {integrity: sha512-datAY4UZC0i1nYPD897f0X3c+3cohgQafPAnchhppVz/+zvCHJyS8J3PFHz7dpdKhdOueqyGDEteRrw64d4++g==}
-    peerDependencies:
-      next: ^14
-      react: ^18.2.0
-
-  '@startupkit/utils@0.3.19':
-    resolution: {integrity: sha512-SoMIg9qepfYmk5CeNz52rSoZtDl59MPkNvr9MWQatkxiDcTpL9JGE0fMRhqfcaLRy7a0TTfWCREbCV5YafZWCA==}
-
   '@storybook/addon-actions@8.5.3':
     resolution: {integrity: sha512-7a+SD4EZdZocm+NG1Kx4yV6Aw7+YUlRIyGvKcxsGtYMOLaqrUewApqveXF83+FbYWMoezXcoZCLQFROtS/Z6Fw==}
     peerDependencies:
@@ -5448,9 +5439,6 @@ packages:
   '@webassemblyjs/wast-printer@1.14.1':
     resolution: {integrity: sha512-kPSSXE6De1XOR820C90RIo2ogvZG+c3KiHzqUoO/F34Y2shGzesfqv7o57xrxovZJH/MetF5UjroJ/R/3isoiw==}
 
-  '@workos-inc/node@5.2.0':
-    resolution: {integrity: sha512-dh1DDfciXm8nNaANDz7eKn57a9fqVjkq3VX27UoSx1S2a7d+F6fJ3JVb2PV6GZr8bjWJOHQAb3k60sCxRLPFEg==}
-
   '@xtuc/ieee754@1.2.0':
     resolution: {integrity: sha512-DX8nKgqcGwsc0eJSqYt5lwP4DH5FlHnmuWWBRy7X0NcaGR0ZtuyeESgMwTYVEtxmsNGY+qit4QYT/MIYTOTPeA==}
 
@@ -5633,9 +5621,6 @@ packages:
 
   axios@1.12.2:
     resolution: {integrity: sha512-vMJzPewAlRyOgxV2dU0Cuz2O8zzzx9VYtbJOaBgXFeLc4IV/Eg50n4LowmehOOR61S8ZMpc2K5Sa7g6A4jfkUw==}
-
-  axios@1.6.8:
-    resolution: {integrity: sha512-v/ZHtJDU39mDpyBoFVkETcd/uNdxrWRrg3bKpOKzXFA6Bvqopts6ALSMU3y6ijYxbw2B+wPrIv46egTzJXCLGQ==}
 
   axios@1.7.7:
     resolution: {integrity: sha512-S4kL7XrjgBmvdGut0sN3yJxqYzrDOnivkBiN0OFs6hLiUam3UPvswUo0kqGyhqUZGEOytHyumEdXsAkgCOUf3Q==}
@@ -6830,12 +6815,6 @@ packages:
     resolution: {integrity: sha512-Qho8TgIamqEPdgiMadJwzRMW3TudIg6vpg4YONokGDudy4eqRIJtDbVX72pfLBcWxvbn3qm/40TyGUObdW4tLQ==}
     engines: {node: '>=12.22.0'}
 
-  iron-session@8.0.4:
-    resolution: {integrity: sha512-9ivNnaKOd08osD0lJ3i6If23GFS2LsxyMU8Gf/uBUEgm8/8CC1hrrCHFDpMo3IFbpBgwoo/eairRsaD3c5itxA==}
-
-  iron-webcrypto@1.2.1:
-    resolution: {integrity: sha512-feOM6FaSr6rEABp/eDfVseKyTMDt+KGpeB35SkVn9Tyn0CqvVsY3EwI0v5i8nMHyJnzCIQf7nsy3p41TPkJZhg==}
-
   is-alphabetical@2.0.1:
     resolution: {integrity: sha512-FWyyY60MeTNyeSRpkM2Iry0G9hpr7/9kD40mD/cGQEuilcZYS4okz8SN2Q6rLCJ8gbCt6fN+rC+6tMGS99LaxQ==}
 
@@ -7850,10 +7829,6 @@ packages:
 
   pkg-types@1.3.1:
     resolution: {integrity: sha512-/Jm5M4RvtBFVkKWRu2BLUTNP8/M2a+UwuAX+ae4770q1qVGtfjG+WTCupoZixokjmHiry8uI+dlY8KXYV5HVVQ==}
-
-  pluralize@8.0.0:
-    resolution: {integrity: sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA==}
-    engines: {node: '>=4'}
 
   pnp-webpack-plugin@1.7.0:
     resolution: {integrity: sha512-2Rb3vm+EXble/sMXNSu6eoBx8e79gKqhNq9F5ZWW6ERNCTE/Q0wQNne5541tE5vKjfM8hpNCYL+LGc1YTfI0dg==}
@@ -14114,19 +14089,6 @@ snapshots:
 
   '@standard-schema/spec@1.0.0': {}
 
-  '@startupkit/auth@0.3.19(next@15.3.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)':
-    dependencies:
-      '@startupkit/utils': 0.3.19
-      '@workos-inc/node': 5.2.0
-      iron-session: 8.0.4
-      next: 15.3.0(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-      react: 19.0.0
-      swr: 2.2.5(react@19.0.0)
-    transitivePeerDependencies:
-      - debug
-
-  '@startupkit/utils@0.3.19': {}
-
   '@storybook/addon-actions@8.5.3(storybook@8.5.3(prettier@3.6.2))':
     dependencies:
       '@storybook/global': 5.0.0
@@ -15187,13 +15149,6 @@ snapshots:
       '@webassemblyjs/ast': 1.14.1
       '@xtuc/long': 4.2.2
 
-  '@workos-inc/node@5.2.0':
-    dependencies:
-      axios: 1.6.8
-      pluralize: 8.0.0
-    transitivePeerDependencies:
-      - debug
-
   '@xtuc/ieee754@1.2.0': {}
 
   '@xtuc/long@4.2.2': {}
@@ -15369,14 +15324,6 @@ snapshots:
       is-retry-allowed: 2.2.0
 
   axios@1.12.2:
-    dependencies:
-      follow-redirects: 1.15.11
-      form-data: 4.0.4
-      proxy-from-env: 1.1.0
-    transitivePeerDependencies:
-      - debug
-
-  axios@1.6.8:
     dependencies:
       follow-redirects: 1.15.11
       form-data: 4.0.4
@@ -16824,14 +16771,6 @@ snapshots:
       - supports-color
     optional: true
 
-  iron-session@8.0.4:
-    dependencies:
-      cookie: 0.7.2
-      iron-webcrypto: 1.2.1
-      uncrypto: 0.1.3
-
-  iron-webcrypto@1.2.1: {}
-
   is-alphabetical@2.0.1: {}
 
   is-alphanumerical@2.0.1:
@@ -18025,8 +17964,6 @@ snapshots:
       confbox: 0.1.8
       mlly: 1.8.0
       pathe: 2.0.3
-
-  pluralize@8.0.0: {}
 
   pnp-webpack-plugin@1.7.0(typescript@5.8.3):
     dependencies:

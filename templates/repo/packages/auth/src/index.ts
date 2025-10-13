@@ -1,9 +1,9 @@
 import {
-	adminClient,
 	createAuthClient,
 	emailOTPClient,
 	inferAdditionalFields
 } from "@startupkit/auth"
+import { adminClient } from "better-auth/client/plugins"
 import type { auth } from "./lib/auth"
 
 export * from "./components"

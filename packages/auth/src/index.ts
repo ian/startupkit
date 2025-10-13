@@ -3,7 +3,6 @@ export { createAuth } from "./lib/auth"
 export * from "./types"
 
 export {
-    adminClient,
     anonymousClient,
     apiKeyClient,
     clientSideHasPermission,

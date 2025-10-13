@@ -10,9 +10,9 @@ interface AuthProviderProps<TUser = Record<string, unknown>> {
   user?: TUser
   authClient: {
     useSession: () => {
-      data?: { user?: TUser }
+      data?: { user?: TUser } | null
       isPending: boolean
-      refetch: () => Promise<void>
+      refetch: () => void | Promise<void>
     }
     emailOtp?: {
       sendVerificationOtp?: (params: { email: string; type: string }) => Promise<void>

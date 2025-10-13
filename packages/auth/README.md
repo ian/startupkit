@@ -110,11 +110,11 @@ Create your auth client with the plugins you need:
 ```tsx
 // lib/auth-client.ts
 import {
-  adminClient,
   createAuthClient,
   emailOTPClient,
   inferAdditionalFields
 } from "@startupkit/auth"
+import { adminClient } from "better-auth/client/plugins"
 import type { auth } from "./auth"
 
 export const authClient = createAuthClient({
@@ -150,12 +150,11 @@ Add additional better-auth plugins to customize functionality:
 
 ```tsx
 import {
-  adminClient,
   createAuthClient,
   emailOTPClient,
   inferAdditionalFields
 } from "@startupkit/auth"
-import { twoFactor } from "better-auth/plugins"
+import { adminClient, twoFactor } from "better-auth/client/plugins"
 import type { auth } from "./auth"
 
 export const authClient = createAuthClient({
