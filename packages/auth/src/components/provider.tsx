@@ -15,7 +15,7 @@ interface AuthProviderProps<TUser = Record<string, unknown>> {
       refetch: () => void | Promise<void>
     }
     emailOtp?: {
-      sendVerificationOtp?: (params: { email: string; type: string }) => Promise<void>
+      sendVerificationOtp?: (params: { email: string; type: "sign-in" | "forget-password" | "email-verification" }) => Promise<void>
     }
     signIn: {
       emailOtp?: (params: { email: string; otp: string }) => Promise<void>
