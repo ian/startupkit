@@ -1,7 +1,6 @@
 import {
 	createAuthClient,
-	emailOTPClient,
-	inferAdditionalFields
+	emailOTPClient
 } from "@startupkit/auth"
 import { adminClient } from "better-auth/client/plugins"
 import type { auth } from "./lib/auth"
@@ -13,7 +12,6 @@ export const authClient = createAuthClient({
 	basePath: "/auth",
 	plugins: [
 		adminClient(),
-		emailOTPClient(),
-		inferAdditionalFields<typeof auth>()
+		emailOTPClient()
 	]
 })

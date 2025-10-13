@@ -111,8 +111,7 @@ Create your auth client with the plugins you need:
 // lib/auth-client.ts
 import {
   createAuthClient,
-  emailOTPClient,
-  inferAdditionalFields
+  emailOTPClient
 } from "@startupkit/auth"
 import { adminClient } from "better-auth/client/plugins"
 import type { auth } from "./auth"
@@ -121,8 +120,7 @@ export const authClient = createAuthClient({
   basePath: "/auth",
   plugins: [
     adminClient(),
-    emailOTPClient(),
-    inferAdditionalFields<typeof auth>()
+    emailOTPClient()
   ]
 })
 ```
@@ -151,8 +149,7 @@ Add additional better-auth plugins to customize functionality:
 ```tsx
 import {
   createAuthClient,
-  emailOTPClient,
-  inferAdditionalFields
+  emailOTPClient
 } from "@startupkit/auth"
 import { adminClient, twoFactor } from "better-auth/client/plugins"
 import type { auth } from "./auth"
@@ -162,7 +159,6 @@ export const authClient = createAuthClient({
   plugins: [
     adminClient(),
     emailOTPClient(),
-    inferAdditionalFields<typeof auth>(),
     twoFactor()  // Add 2FA support
   ]
 })
