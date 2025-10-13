@@ -15,13 +15,14 @@ interface AuthProviderProps<TUser = Record<string, unknown>> {
       refetch: () => void | Promise<void>
     }
     emailOtp?: {
-      sendVerificationOtp?: (params: { email: string; type: "sign-in" | "forget-password" | "email-verification" }) => Promise<void>
+      sendVerificationOtp?: (params: { email: string; type: "sign-in" | "forget-password" | "email-verification" }) => Promise<any>
+      [key: string]: any
     }
     signIn: {
-      emailOtp?: (params: { email: string; otp: string }) => Promise<void>
-      social?: (params: { provider: string }) => Promise<void>
+      emailOtp?: (params: { email: string; otp: string }) => Promise<any>
+      social?: (params: { provider: string }) => Promise<any>
     }
-    signOut: () => Promise<void>
+    signOut: () => Promise<any>
   }
   onIdentify?: (user: TUser) => void
   onReset?: () => void
