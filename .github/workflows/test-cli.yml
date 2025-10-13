@@ -209,6 +209,8 @@ jobs:
         run: |
           echo "📦 Installing dependencies in generated project..."
           cd test-startup
+          echo "Removing existing lockfile to regenerate with overrides..."
+          rm -rf node_modules pnpm-lock.yaml
           if ! pnpm install; then
             echo "❌ Failed to install dependencies"
             exit 1
