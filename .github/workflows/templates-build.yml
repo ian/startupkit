@@ -24,7 +24,7 @@ jobs:
         working-directory: ./templates/repo
 
       - name: Build packages
-        run: pnpm --filter ./packages/* build
+        run: pnpm --filter "./packages/**" build
 
       - name: Add working directory
         run: mkdir -p ./tmp
@@ -82,7 +82,7 @@ jobs:
         run: pnpm install
 
       - name: Build packages
-        run: pnpm --filter ./packages/* build
+        run: pnpm --filter "./packages/**" build
 
       - name: Add working directory
         run: mkdir -p ./tmp
