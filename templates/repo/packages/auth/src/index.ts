@@ -6,5 +6,5 @@ export * from "./types"
 
 export const authClient = createAuthClient({
 	basePath: "/auth",
-	plugins: [adminClient(), emailOTPClient()]
+	plugins: [adminClient() as any, emailOTPClient()]
 })
