@@ -1,0 +1,476 @@
+name: Test CLI
+
+on: 
+  push:
+    branches:
+      - main
+      - startup-90-remove-workos-switch-to-better-auth
+  pull_request:
+
+jobs:
+  test-cli:
+    name: Test StartupKit CLI Project Generator
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.6.0
+          run_install: false
+          
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build all packages
+        run: pnpm build
+
+      - name: Verify CLI binary exists
+        run: |
+          echo "🔍 Checking CLI binary..."
+          if [ ! -f "packages/cli/dist/cli.js" ]; then
+            echo "❌ CLI binary not found at packages/cli/dist/cli.js"
+            ls -la packages/cli/dist/
+            exit 1
+          fi
+          echo "✅ CLI binary exists"
+          ls -la packages/cli/dist/cli.js
+
+          echo "🔍 Testing CLI help command..."
+          if ! node packages/cli/dist/cli.js --help; then
+            echo "❌ CLI help command failed"
+            exit 1
+          fi
+          echo "✅ CLI help command successful"
+
+      - name: Create test directory
+        run: mkdir -p test-projects
+
+      - name: Test CLI help (no args)
+        run: |
+          echo "🔍 Testing CLI without arguments..."
+          if ! node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js"; then
+            echo "❌ CLI should show help when no arguments provided"
+            exit 1
+          fi
+          echo "✅ CLI help displayed successfully"
+        working-directory: test-projects
+
+      - name: Test project initialization with specific name
+        run: |
+          echo "🔍 Testing project initialization with name 'test-startup'..."
+          if ! node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" init --name "test-startup" --repo "ian/startupkit/templates/repo"; then
+            echo "❌ Project initialization failed"
+            exit 1
+          fi
+          echo "✅ Project created successfully"
+        working-directory: test-projects
+
+      - name: Verify project structure
+        run: |
+          echo "🔍 Verifying project structure for 'test-startup'..."
+
+          echo "📂 Checking project root directory..."
+          if [ ! -d "test-startup" ]; then
+            echo "❌ Project directory 'test-startup' not found"
+            ls -la
+            exit 1
+          fi
+          echo "✅ Project directory exists"
+          ls -la test-startup/
+
+          echo "📂 Checking packages directory..."
+          if [ ! -d "test-startup/packages" ]; then
+            echo "❌ packages directory not found"
+            ls -la test-startup/
+            exit 1
+          fi
+          echo "✅ packages directory exists"
+
+          echo "📄 Checking required files..."
+
+          required_files=(
+            "package.json"
+            "turbo.json"
+            "pnpm-workspace.yaml"
+            "biome.jsonc"
+            "packages/db/package.json"
+            "packages/auth/package.json"
+            "packages/ui/package.json"
+            "packages/utils/package.json"
+            "packages/analytics/package.json"
+            "packages/jobs/package.json"
+            "packages/emails/package.json"
+          )
+
+          missing_files=()
+
+          for file in "${required_files[@]}"; do
+            if [ ! -f "test-startup/$file" ]; then
+              missing_files+=("$file")
+              echo "❌ Missing: $file"
+            else
+              echo "✅ Found: $file"
+            fi
+          done
+
+          if [ ${#missing_files[@]} -gt 0 ]; then
+            echo "❌ Missing files: ${missing_files[*]}"
+            exit 1
+          fi
+
+          echo "✅ All required files are present"
+        working-directory: test-projects
+
+      - name: Verify package.json content and PROJECT replacement
+        run: |
+          echo "🔍 Verifying package.json content..."
+          cd test-startup
+
+          echo "📋 Checking package.json exists and is valid JSON..."
+          if ! cat package.json; then
+            echo "❌ Cannot read package.json"
+            exit 1
+          fi
+
+          if ! node -e "JSON.parse(require('fs').readFileSync('package.json', 'utf8'))"; then
+            echo "❌ package.json is not valid JSON"
+            exit 1
+          fi
+          echo "✅ package.json is valid JSON"
+
+          echo "🔍 Checking that PROJECT was replaced with test-startup..."
+
+          # Check name field in root package.json
+          if ! grep -q '"name": "test-startup"' package.json; then
+            echo "❌ Expected name field 'test-startup' not found in root package.json"
+            echo "Current name field:"
+            node -e "console.log(JSON.parse(require('fs').readFileSync('package.json', 'utf8')).name)"
+            exit 1
+          fi
+          echo "✅ Root package.json name is correct: test-startup"
+
+          # Verify PROJECT was replaced across all package.json files
+          echo "🔍 Checking all package.json files for PROJECT replacement..."
+          if grep -r "PROJECT" packages/*/package.json; then
+            echo "❌ Found unreplaced PROJECT in package.json files"
+            exit 1
+          fi
+          echo "✅ All PROJECT references have been replaced"
+        working-directory: test-projects
+
+      - name: Verify pnpm-workspace.yaml
+        run: |
+          echo "🔍 Verifying pnpm-workspace.yaml..."
+          cd test-startup
+
+          if [ ! -f "pnpm-workspace.yaml" ]; then
+            echo "❌ pnpm-workspace.yaml not found"
+            exit 1
+          fi
+
+          echo "📄 pnpm-workspace.yaml content:"
+          cat pnpm-workspace.yaml
+
+          if ! grep -q "packages:" pnpm-workspace.yaml; then
+            echo "❌ pnpm-workspace.yaml doesn't contain packages configuration"
+            exit 1
+          fi
+          echo "✅ pnpm-workspace.yaml is correctly configured"
+        working-directory: test-projects
+
+      - name: Link local packages for testing
+        run: |
+          echo "Adding pnpm overrides to use local packages..."
+          cd test-startup
+          node -e "
+          const fs = require('fs');
+          const workspace = process.env.GITHUB_WORKSPACE;
+          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          pkg.pnpm = pkg.pnpm || {};
+          pkg.pnpm.overrides = {
+            '@startupkit/auth': 'link:' + workspace + '/packages/auth',
+            '@startupkit/analytics': 'link:' + workspace + '/packages/analytics',
+            '@startupkit/utils': 'link:' + workspace + '/packages/utils'
+          };
+          fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
+          console.log('Overrides added:', pkg.pnpm.overrides);
+          "
+          cat package.json | grep -A 6 '"pnpm"'
+        working-directory: test-projects
+
+      - name: Install dependencies in generated project
+        run: |
+          echo "📦 Installing dependencies in generated project..."
+          cd test-startup
+          echo "Removing existing lockfile to regenerate with overrides..."
+          rm -rf node_modules pnpm-lock.yaml
+          if ! pnpm install; then
+            echo "❌ Failed to install dependencies"
+            exit 1
+          fi
+          echo "✅ Dependencies installed successfully"
+        working-directory: test-projects
+
+      - name: Test typecheck in generated project
+        run: |
+          echo "🔍 Running typecheck in generated project..."
+          cd test-startup
+          if ! pnpm typecheck; then
+            echo "❌ Typecheck failed"
+            exit 1
+          fi
+          echo "✅ Typecheck passed"
+        working-directory: test-projects
+
+      - name: Test build in generated project
+        run: |
+          echo "🏗️ Building generated project..."
+          cd test-startup
+          if ! pnpm build; then
+            echo "❌ Build failed"
+            exit 1
+          fi
+          echo "✅ Build successful"
+        working-directory: test-projects
+
+      - name: Test project with custom name and special characters
+        run: |
+          echo "🧪 Testing project creation with special characters..."
+          if ! node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" init --name "My Awesome Startup!" --repo "ian/startupkit/templates/repo"; then
+            echo "❌ Failed to create project with special characters"
+            exit 1
+          fi
+
+          if [ ! -d "my-awesome-startup" ]; then
+            echo "❌ Expected directory 'my-awesome-startup' not found"
+            ls -la | grep "^d"
+            exit 1
+          fi
+          echo "✅ Directory created with sanitized name"
+
+          echo "🔍 Checking package.json name field..."
+          if ! grep -q '"name": "my-awesome-startup"' my-awesome-startup/package.json; then
+            echo "❌ Package.json name not sanitized correctly"
+            echo "Current name:"
+            node -e "console.log(JSON.parse(require('fs').readFileSync('my-awesome-startup/package.json', 'utf8')).name)"
+            exit 1
+          fi
+          echo "✅ Package.json name correctly sanitized"
+        working-directory: test-projects
+
+      - name: Verify Prisma schema
+        run: |
+          echo "🔍 Verifying Prisma schema..."
+          cd test-startup
+
+          if [ ! -f "packages/db/prisma/schema.prisma" ]; then
+            echo "❌ Prisma schema not found"
+            exit 1
+          fi
+          echo "✅ Prisma schema exists"
+
+          echo "📄 Checking schema content..."
+          if ! grep -q "datasource" packages/db/prisma/schema.prisma; then
+            echo "❌ Prisma schema appears to be invalid"
+            exit 1
+          fi
+          echo "✅ Prisma schema is valid"
+        working-directory: test-projects
+
+      - name: Verify auth package structure
+        run: |
+          echo "🔍 Verifying auth package structure..."
+          cd test-startup
+
+          if [ ! -f "packages/auth/src/lib/auth.ts" ]; then
+            echo "❌ Auth library not found"
+            exit 1
+          fi
+          echo "✅ Auth library exists"
+
+          if [ ! -f "packages/auth/src/components/provider.tsx" ]; then
+            echo "❌ Auth provider not found"
+            exit 1
+          fi
+          echo "✅ Auth provider exists"
+        working-directory: test-projects
+
+      - name: Test add command (add Next.js app)
+        run: |
+          echo "🔍 Testing add command to add a new Next.js app..."
+          cd test-startup
+          
+          # Test adding a new Next.js app
+          if ! node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" add next --name "web"; then
+            echo "❌ Failed to add Next.js app"
+            exit 1
+          fi
+
+          if [ ! -d "apps/web" ]; then
+            echo "❌ apps/web directory not created"
+            ls -la apps/
+            exit 1
+          fi
+          echo "✅ Next.js app 'web' added successfully"
+
+          if [ ! -f "apps/web/package.json" ]; then
+            echo "❌ apps/web/package.json not found"
+            exit 1
+          fi
+          echo "✅ apps/web/package.json exists"
+        working-directory: test-projects
+
+      - name: Clean up test projects
+        if: always()
+        run: |
+          echo "🧹 Cleaning up test projects..."
+          rm -rf test-projects
+          echo "✅ Cleanup complete"
+
+  test-cli-comprehensive:
+    name: CLI Edge Cases and Validation
+    runs-on: ubuntu-latest
+    needs: test-cli
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.6.0
+          run_install: false
+          
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Install dependencies and build
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+
+      - name: Create test environment
+        run: mkdir -p /tmp/cli-edge-cases
+
+      - name: Test multiple projects in sequence
+        run: |
+          echo "🔍 Testing creation of multiple projects..."
+          
+          for project in "project-one" "project-two" "project-three"; do
+            echo "📝 Creating $project..."
+            if ! node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" init --name "$project" --repo "ian/startupkit/templates/repo"; then
+              echo "❌ Failed to create $project"
+              exit 1
+            fi
+            
+            if [ ! -d "$project" ]; then
+              echo "❌ Directory $project not found"
+              exit 1
+            fi
+            echo "✅ $project created successfully"
+          done
+          
+          echo "✅ All projects created successfully"
+        working-directory: /tmp/cli-edge-cases
+
+      - name: Test project names with various formats
+        run: |
+          echo "🔍 Testing various project name formats..."
+          
+          test_cases=(
+            "simple:simple"
+            "With Spaces:with-spaces"
+            "UPPERCASE:uppercase"
+            "kebab-case:kebab-case"
+            "snake_case:snake-case"
+            "123-numbers:123-numbers"
+          )
+          
+          for test_case in "${test_cases[@]}"; do
+            input="${test_case%%:*}"
+            expected="${test_case##*:}"
+            
+            echo "📝 Testing: '$input' -> '$expected'"
+            if ! node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" init --name "$input" --repo "ian/startupkit/templates/repo"; then
+              echo "❌ Failed to create project with name '$input'"
+              exit 1
+            fi
+            
+            if [ ! -d "$expected" ]; then
+              echo "❌ Expected directory '$expected' not found"
+              echo "Available directories:"
+              ls -la | grep "^d"
+              exit 1
+            fi
+            
+            echo "✅ Successfully created '$expected' from '$input'"
+          done
+        working-directory: /tmp/cli-edge-cases
+
+      - name: Verify no template artifacts remain
+        run: |
+          echo "🔍 Checking for unwanted template artifacts..."
+          cd simple
+          
+          # Check for any remaining template placeholders
+          if grep -r "PLACEHOLDER" . --exclude-dir=node_modules 2>/dev/null; then
+            echo "⚠️ Found PLACEHOLDER text in generated project"
+          fi
+          
+          # Check for .git directory (should not be copied)
+          if [ -d ".git" ]; then
+            echo "❌ .git directory should not be present in generated project"
+            exit 1
+          fi
+          echo "✅ No .git directory (correct)"
+          
+          echo "✅ No unwanted template artifacts found"
+        working-directory: /tmp/cli-edge-cases
+
+      - name: Test CLI version display
+        run: |
+          echo "🔍 Testing CLI version display..."
+          if ! node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" --help | grep -i "startupkit"; then
+            echo "⚠️ Version or name not displayed in help"
+          else
+            echo "✅ CLI displays name in help"
+          fi
+
+      - name: Clean up edge case tests
+        if: always()
+        run: |
+          echo "🧹 Cleaning up edge case tests..."
+          rm -rf /tmp/cli-edge-cases
+          echo "✅ Cleanup complete"
+
+  test-cli-summary:
+    name: CLI Testing Summary
+    runs-on: ubuntu-latest
+    needs: [test-cli, test-cli-comprehensive]
+    if: always()
+
+    steps:
+      - name: Display test summary
+        run: |
+          echo "🎉 CLI Testing Complete"
+          echo ""
+          echo "📊 Test Results Summary:"
+          echo "  - Basic CLI tests: ${{ needs.test-cli.result }}"
+          echo "  - Edge case tests: ${{ needs.test-cli-comprehensive.result }}"
+          echo ""
+          if [ "${{ needs.test-cli.result }}" = "success" ] && [ "${{ needs.test-cli-comprehensive.result }}" = "success" ]; then
+            echo "✅ All CLI tests passed successfully!"
+            exit 0
+          else
+            echo "❌ Some CLI tests failed. Please review the logs above."
+            exit 1
+          fi
+

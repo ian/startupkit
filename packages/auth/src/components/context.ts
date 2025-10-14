@@ -1,0 +1,24 @@
+"use client"
+
+import { createContext } from "react"
+
+export interface AuthContextType<TUser = Record<string, unknown>> {
+    isAuthenticated: boolean
+    isLoading: boolean
+    user: TUser | null | undefined
+    logout: () => Promise<void>
+    sendAuthCode: (email: string) => Promise<void>
+    verifyAuthCode: (email: string, code: string) => Promise<void>
+    googleAuth: () => Promise<void>
+}
+
+export const AuthContext = createContext<AuthContextType>({
+    isAuthenticated: false,
+    isLoading: true,
+    user: undefined,
+    logout: () => Promise.resolve(),
+    sendAuthCode: () => Promise.resolve(),
+    verifyAuthCode: () => Promise.resolve(),
+    googleAuth: () => Promise.resolve()
+})
+
