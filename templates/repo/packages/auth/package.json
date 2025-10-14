@@ -17,7 +17,7 @@
 		"@repo/db": "workspace:*",
 		"@repo/emails": "workspace:*",
 		"@repo/utils": "workspace:*",
-		"@startupkit/auth": "0.3.19",
+		"@startupkit/auth": "0.4.0",
 		"swr": "2.2.5"
 	},
 	"peerDependencies": {
