@@ -9,7 +9,7 @@
 
 ## What Changed
 
-### @startupkit/analytics - Now a Minimal Core
+### @startupkit/analytics - REMOVED!
 
 **Before** (Bundled Dependencies - BAD):
 ```json
@@ -24,23 +24,20 @@
 ```
 ❌ Problem: Projects stuck with bundled versions, can't upgrade
 
-**After** (Peer Dependencies - GOOD):
-```json
-{
-  "peerDependencies": {
-    "analytics": ">=0.8.0",
-    "posthog-js": ">=1.0.0"  // Projects control version!
-  },
-  "dependencies": {}  // Empty!
-}
+**After** (REMOVED ENTIRELY - BEST):
+```typescript
+// No @startupkit/analytics needed!
+// @repo/analytics imports directly:
+import posthog from "posthog-js";  // YOU control version
+import { RudderAnalytics } from "@rudderstack/analytics-js";  // YOU control version
 ```
-✅ Solution: Projects control all versions
+✅ Solution: No unnecessary abstraction, direct imports only
 
-**What's Included**:
-- Orchestration utilities (`createAnalyticsOrchestrator`)
-- Helper functions (`pruneEmpty`, `stringifyValues`, `debounce`)
-- Type definitions for multi-provider setups
-- No heavy dependencies
+**Why Removed?**
+- Wasn't providing real value
+- Multi-provider coordination is trivial without a framework
+- Utilities like `pruneEmpty` belong in `@repo/utils`
+- Following shadcn principle: only create wrappers when they add substantial value
 
 ### @startupkit/auth - Now Uses Peer Dependencies
 
@@ -69,18 +66,16 @@
 - AuthProvider component
 - Pre-configured plugins setup
 
-### @repo/analytics - Now Imports Directly
+### @repo/analytics - Imports Directly (No Wrapper!)
 
 **Key Changes**:
 ```typescript
 // Direct imports from upstream (YOU control versions)
 import posthog from "posthog-js";
 import { RudderAnalytics } from "@rudderstack/analytics-js";
+import { pruneEmpty } from "@repo/utils";  // Utilities from your utils package
 
-// Optional utilities from @startupkit/analytics
-import { pruneEmpty } from "@startupkit/analytics";  // If helpful
-
-// Your implementation
+// Your implementation - no wrapper needed!
 export const analytics = {
   track: (event, props) => {
     posthog.capture(event, pruneEmpty(props));
@@ -88,6 +83,8 @@ export const analytics = {
   }
 };
 ```
+
+This is the **pure shadcn approach** - no centralized package at all!
 
 ### @repo/auth - Now Imports Directly
 
@@ -130,19 +127,11 @@ pnpm update better-auth
 ## Files Changed
 
 ### @startupkit/analytics
-**Modified**:
-- `package.json` - Changed to peer dependencies
-- `src/index.ts` - Exports utilities only
-- `src/AnalyticsProvider.tsx` - Minimal orchestrator
-- `src/types.ts` - Core type definitions
-- `src/utils.ts` - Helper functions
-- `src/orchestrator.ts` - Multi-provider coordinator
-- `rollup.config.mjs` - Updated build config
-
-**Deleted**:
-- `src/plugins/*` - Moved to @repo/analytics (your code)
-- `src/config.ts` - Not needed
-- `src/plugins.ts` - Not needed
+**DELETED ENTIRELY** - Not needed!
+- Package provided no real value
+- @repo/analytics imports directly from upstream
+- Utilities moved to @repo/utils where they belong
+- Following shadcn principle: don't create wrappers unnecessarily
 
 ### @startupkit/auth
 **Modified**:

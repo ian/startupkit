@@ -143,17 +143,18 @@ import { createAuthClient } from "better-auth/react"; // DIRECT
 export const authClient = createAuthClient({ /* your config */ });
 ```
 
-**Minimal Core** (When it adds value):
+**Always Direct Import**:
 ```typescript
-// @repo/analytics uses @startupkit/analytics utilities
-import { createAnalyticsOrchestrator } from "@startupkit/analytics";
+// @repo/analytics imports DIRECTLY - no wrapper needed!
 import posthog from "posthog-js"; // DIRECT
-import rudderstack from "@rudderstack/analytics-js"; // DIRECT
+import { RudderAnalytics } from "@rudderstack/analytics-js"; // DIRECT
 
-export const analytics = createAnalyticsOrchestrator([
-  posthogPlugin,
-  rudderstackPlugin
-]);
+export const analytics = {
+  track: (event, props) => {
+    posthog.capture(event, props);
+    rudderstack.track(event, props);
+  }
+};
 ```
 
 ## Decision Framework
@@ -213,12 +214,13 @@ Located in `packages/`:
 
 | Package | Version | Strategy | Purpose | Status |
 |---------|---------|----------|---------|--------|
-| `@startupkit/analytics` | 0.4.0 | **Minimal Core** | Analytics orchestration utilities (pruneEmpty, createOrchestrator) | ✅ Active |
 | `@startupkit/auth` | 0.4.0 | **Minimal Core** | Auth helpers with StartupKit conventions (createAuth, AuthProvider) | ✅ Active |
 | `@startupkit/utils` | 0.4.0 | **Centralized** | Basic utility functions (URL helpers) | ✅ Active |
 | `@startupkit/cli` | - | **Centralized** | CLI tooling for StartupKit | ✅ Active |
 
-**Note**: All @startupkit/* packages use **peer dependencies** - projects control upstream library versions (posthog-js, better-auth, etc.)
+**Note**: 
+- All @startupkit/* packages use **peer dependencies** - projects control upstream library versions (better-auth, etc.)
+- `@startupkit/analytics` was removed - not needed since `@repo/analytics` imports directly from posthog-js and rudderstack
 
 ### Local Packages (@repo/*)
 
@@ -238,35 +240,30 @@ Located in `templates/repo/packages/`:
 
 ## Analytics Package Strategy
 
-### The Solution
+### The Solution: No Centralized Package Needed!
 
-**@startupkit/analytics** has been refactored to be a **minimal core**:
-- Provides orchestration utilities (for multi-provider setups)
-- No bundled dependencies - uses peer dependencies
-- Optional - only use if coordinating multiple providers
+**@startupkit/analytics** was removed entirely because it wasn't providing value. Instead:
 
 **@repo/analytics** imports directly from upstream:
 - Direct imports: `posthog-js`, `@rudderstack/analytics-js`
 - You control all dependency versions
-- Can use `@startupkit/analytics` utilities if helpful
+- No wrapper, no abstraction layer
 - Type-safe event tracking
 - Server-side support
 
 ### Architecture
 
 ```typescript
-// @repo/analytics imports DIRECTLY from upstream
+// @repo/analytics imports DIRECTLY from upstream - that's it!
 import posthog from "posthog-js";                    // YOU control version
 import { RudderAnalytics } from "@rudderstack/..."; // YOU control version
-
-// Optionally use @startupkit/analytics utilities
-import { pruneEmpty, stringifyValues } from "@startupkit/analytics";
+import { pruneEmpty } from "@repo/utils";            // Utilities from your utils
 
 // Your implementation
 export const analytics = {
   track: (event, props) => {
     posthog.capture(event, pruneEmpty(props));
-    rudderstack.track(event, stringifyValues(props));
+    rudderstack.track(event, props);
   }
 };
 ```
@@ -275,8 +272,15 @@ export const analytics = {
 
 1. **No Version Lock-in**: Upgrade posthog/rudderstack anytime
 2. **You Own The Code**: @repo/analytics code is yours to modify
-3. **Minimal Core**: @startupkit/analytics is tiny (just utilities)
+3. **No Unnecessary Abstraction**: Direct imports, no wrapper overhead
 4. **Type Safety**: Define events in your types.ts
+
+### Why No @startupkit/analytics?
+
+Following the shadcn principle: only create centralized packages when they add real value. For analytics:
+- No complex orchestration needed (just call posthog + rudderstack directly)
+- Utilities like `pruneEmpty` live in `@repo/utils` where they belong
+- Multi-provider setup is trivial without a framework
 
 ## Best Practices
 

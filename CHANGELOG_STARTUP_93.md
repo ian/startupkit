@@ -156,8 +156,8 @@ Note: This script only bumps centralized packages (@startupkit/*)
 
 | Package | Version | Status | Purpose |
 |---------|---------|--------|---------|
-| `@startupkit/analytics` | 0.4.0 | ⚠️ Legacy | Marketing analytics (consider deprecating) |
-| `@startupkit/auth` | 0.4.0 | ✅ Active | Core authentication (hybrid core) |
+| ~~`@startupkit/analytics`~~ | ~~0.4.0~~ | ❌ Removed | Not needed - @repo/analytics imports directly |
+| `@startupkit/auth` | 0.4.0 | ✅ Active | Core authentication (minimal core with helpers) |
 | `@startupkit/utils` | 0.4.0 | ✅ Active | Framework-agnostic utilities |
 | `@startupkit/cli` | - | ✅ Active | CLI tooling |
 
