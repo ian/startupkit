@@ -2,221 +2,239 @@
 
 ## Overview
 
-Created `@startupkit/analytics` as a minimal package following the same pattern as `@startupkit/auth`. This provides reusable PostHog integration helpers while allowing projects to control their own dependencies and event types.
+Created `@startupkit/analytics` as a **provider-agnostic** minimal package following the shadcn philosophy. This package provides reusable patterns (context, auto page tracking, memoization) while letting you implement handlers with whatever analytics providers you want.
 
-## Changes Made
+## Key Principle
 
-### 1. Created `packages/analytics` (NEW)
+**@startupkit/analytics handles the "how" (patterns), you handle the "what" (providers).**
 
-A new published package `@startupkit/analytics` v0.5.0 with:
+## What `@startupkit/analytics` Provides
 
-#### What It Provides (Value-Adding Features):
-- ✅ **`createAnalyticsProvider()`** - Factory function that creates a PostHog-integrated provider with:
-  - Auto page view tracking
-  - Clean route name generation (filters out Next.js route groups, replaces IDs with `:id`)
-  - Context with identify/track/reset methods
-  - Feature flags integration
-  - Optional `pruneEmpty` utility support
+✅ **Auto Page Tracking**
+- Uses Next.js App Router hooks (`usePathname`, `useSelectedLayoutSegments`)
+- Filters out route groups like `(dashboard)`
+- Replaces long IDs with `:id` for cleaner analytics
+- Can be disabled with `autoPageTracking: false`
 
-- ✅ **`useAnalytics()`** - Hook to access analytics context
-- ✅ **`useFlag()`** - Type-safe feature flag hook
-- ✅ **Types and Context** - Reusable TypeScript types
+✅ **Memoization**
+- Handlers are memoized for performance
+- Re-renders minimized
 
-#### Files Created:
-```
-packages/analytics/
-├── package.json
-├── tsconfig.json
-├── rollup.config.mjs
-├── README.md
-└── src/
-    ├── index.ts
-    ├── types.ts
-    ├── context.ts
-    ├── provider.tsx
-    ├── use-analytics.ts
-    └── use-flag.ts
-```
+✅ **React Context Pattern**
+- Context setup with proper TypeScript types
+- `useAnalytics()` and `useFlag()` hooks
 
-#### Peer Dependencies:
-- `next` >= 14.0.0
-- `posthog-js` >= 1.0.0
-- `react` >= 18.2.0
+❌ **NO vendor lock-in**
+- No PostHog imports
+- No analytics SDK dependencies
+- You implement handlers with YOUR providers
 
-You control all upstream dependency versions.
+## Architecture
 
-### 2. Updated `templates/repo/packages/analytics`
-
-Refactored to use `@startupkit/analytics`:
-
-#### Before (109 lines):
+### Before (Template had all the logic):
 ```typescript
-// All logic implemented inline
+// 84 lines of complex logic in template
 export function AnalyticsProvider({ children, flags }) {
-  // PostHog provider setup
+  const posthog = usePostHog()
+  const pathname = usePathname()
+  const segments = useSelectedLayoutSegments()
+  
   // Auto page tracking logic
+  useEffect(() => {
+    const name = segments.filter(...).map(...).join("/")
+    posthog.capture("$pageview", { route: name })
+  }, [pathname, segments, posthog])
+  
+  // Memoization
+  const handlers = useMemo(() => ({ ... }), [posthog, flags])
+  
   // Context setup
-  // ... 100+ lines
+  return <Context.Provider value={handlers}>...</Context.Provider>
 }
 ```
 
-#### After (37 lines):
+### After (Template just passes handlers):
 ```typescript
-import { createAnalyticsProvider } from "@startupkit/analytics"
-
-const AnalyticsProviderBase = createAnalyticsProvider<Flags>()
-
-export function AnalyticsProvider({ children, flags }) {
+// Clean 69-line implementation
+export function AnalyticsProviderInner({ children, flags }) {
+  const posthog = usePostHog()
+  
   return (
-    <AnalyticsProviderBase
+    <StartupKitAnalyticsProvider
       config={{
-        apiKey: process.env.POSTHOG_API_KEY as string,
-        apiHost: process.env.POSTHOG_HOST,
         flags,
-        pruneEmpty
+        handlers: {
+          identify: (userId, props) => posthog.identify(userId, props),
+          track: (event, props) => posthog.capture(event, props),
+          page: (name, props) => posthog.capture("$pageview", { route: name, ...props }),
+          reset: () => posthog.reset()
+        }
       }}
     >
       {children}
-    </AnalyticsProviderBase>
+    </StartupKitAnalyticsProvider>
   )
 }
 ```
 
-#### Files Modified:
-- `src/components/analytics-provider.tsx` - Now uses `@startupkit/analytics`
-- `src/hooks/use-analytics.ts` - Re-exports from `@startupkit/analytics`
-- `src/hooks/use-flag.ts` - Wraps `@startupkit/analytics` with project types
-- `package.json` - Added `@startupkit/analytics: 0.5.0` dependency
+**@startupkit/analytics handles:**
+- ✅ Auto page tracking with useEffect
+- ✅ Memoization of handlers
+- ✅ Context setup
+- ✅ Smart route name generation
 
-### 3. Cleaned Up `packages/auth`
+**Template handles:**
+- ✅ Implementing handlers with your providers
+- ✅ Choosing which analytics tools to use
 
-Removed 28 unnecessary re-exports from `packages/auth/src/index.ts`:
-
-#### Before:
-```typescript
-export {
-  anonymousClient,
-  apiKeyClient,
-  clientSideHasPermission,
-  customSessionClient,
-  emailOTPClient,
-  // ... 23 more plugins
-} from "better-auth/client/plugins"
-export { createAuthClient } from "better-auth/react"
-```
-
-#### After:
-```typescript
-export * from "./components"
-export { createAuth } from "./lib/auth"
-export * from "./types"
-```
-
-These were just pass-throughs that added no value. The template already imports directly from `better-auth`.
-
-### 4. Typed `AuthProvider` User Parameter
-
-In `templates/repo/packages/auth/src/components/provider.tsx`:
-
-#### Before:
-```typescript
-onIdentify={(user: unknown) => {
-  if (user && typeof user === "object" && ...) {
-    const typedUser = user as Record<string, unknown> & { id: string; email: string }
-    // Manual type checking...
-  }
-}}
-```
-
-#### After:
-```typescript
-import type { User } from "../types"
-
-onIdentify={(user: User) => {
-  // Direct access to typed user properties
-  identify(user.id, analyticsProps)
-}}
-```
-
-## Architecture Pattern
-
-Both `@startupkit/auth` and `@startupkit/analytics` now follow the same pattern:
+## Package Structure
 
 ```
-┌─────────────────────────────────────────────────────┐
-│ @startupkit/[package] (Published Package)          │
-│                                                     │
-│ - Provides reusable helpers that ADD VALUE          │
-│ - Uses peer dependencies (you control versions)    │
-│ - Type-safe, generic implementation                 │
-└─────────────────────────────────────────────────────┘
-                        ▼ used by
-┌─────────────────────────────────────────────────────┐
-│ @repo/[package] (Template/Your Project)            │
-│                                                     │
-│ - Project-specific configuration                    │
-│ - Custom event types                                │
-│ - Environment variables                             │
-│ - Direct imports from upstream libraries            │
-└─────────────────────────────────────────────────────┘
+packages/analytics/
+├── src/
+│   ├── provider.tsx        # Has useEffect for auto tracking + memoization
+│   ├── context.ts          # React context
+│   ├── use-analytics.ts    # Hook to access context
+│   ├── use-flag.ts         # Hook for feature flags
+│   └── types.ts            # AnalyticsHandlers, AnalyticsConfig, etc.
+└── package.json            # Peer deps: next, react (NO analytics SDKs)
 ```
 
-### Example: Analytics
+## Example: Multiple Providers
+
+Users can easily integrate multiple analytics providers:
 
 ```typescript
-// @startupkit/analytics - Reusable core
-export function createAnalyticsProvider<TFlags>() {
-  // Auto page tracking logic
-  // Provider setup
-  // Context management
-}
-
-// @repo/analytics - Your configuration
-const AnalyticsProvider = createAnalyticsProvider<Flags>()
-// + Your event types
-// + Your configuration
-// + Direct PostHog imports
+<StartupKitAnalyticsProvider
+  config={{
+    flags,
+    handlers: {
+      identify: (userId, properties) => {
+        posthog.identify(userId, properties)     // Product analytics
+        openMeter.identify(userId)               // Usage tracking  
+        gtag('set', 'user_id', userId)          // Marketing
+      },
+      track: (event, properties) => {
+        posthog.capture(event, properties)
+        openMeter.track(event, properties)
+        gtag('event', event, properties)
+      },
+      page: (name, properties) => {
+        posthog.capture("$pageview", { route: name })
+        ga('send', 'pageview', name)
+      },
+      reset: () => {
+        posthog.reset()
+        openMeter.reset()
+      }
+    }
+  }}
+>
+  {children}
+</StartupKitAnalyticsProvider>
 ```
 
 ## Benefits
 
-1. **DRY Principle** - Reusable logic extracted to `@startupkit/analytics`
-2. **No Version Lock-in** - Peer dependencies, you control PostHog version
-3. **Type Safety** - Generic types allow project-specific typing
-4. **Maintainability** - Core logic in one place, easier to update
-5. **Consistency** - Same pattern as `@startupkit/auth`
+1. **Separation of Concerns**
+   - Package: Patterns, auto tracking, memoization
+   - Template: Provider implementation
 
-## Next Steps
+2. **No Vendor Lock-in**
+   - Use PostHog, OpenMeter, GA, Mixpanel, or anything
+   - No analytics SDK dependencies in the package
 
-1. **Publish** `@startupkit/analytics` v0.5.0 to npm
-2. **Update Documentation** - Add to PACKAGE_STRATEGY.md
-3. **Test** - Ensure template works with new package
-4. **Consider** - Apply same pattern to other packages if applicable
+3. **Multiple Providers**
+   - Easily integrate multiple services
+   - Just add calls to your handlers
 
-## What About Old `@startupkit/analytics`?
+4. **Reusable Logic**
+   - Auto page tracking logic shared across all StartupKit projects
+   - Smart route name generation
+   - Memoization handled once
 
-The old `@startupkit/analytics` (v0.4.0 and below) was a different approach that bundled multiple analytics providers (PostHog, RudderStack, etc.). It was removed because:
-- Too much abstraction
+5. **Flexibility**
+   - Can disable auto tracking if needed
+   - Full control over handler implementation
+
+## Comparison with Old Approach
+
+### ❌ Old Approach (v0.2.0-0.3.0):
+- Forced PostHog
+- Had peer dependency on `posthog-js`
 - Version lock-in
-- Not following shadcn principles
+- Hard to add other providers
+- All logic in template (duplicated across projects)
 
-The new `@startupkit/analytics` (v0.5.0+) is different:
-- Minimal, focused on PostHog only
-- Peer dependencies (no lock-in)
-- Only exports value-adding helpers (auto page tracking, provider pattern)
-- Follows the same pattern as `@startupkit/auth`
+### ✅ New Approach (v0.4.0):
+- Provider-agnostic
+- No analytics dependencies
+- Reusable patterns in package
+- Simple handler implementation in template
+- Easy to add multiple providers
 
 ## Files Changed
 
 ### New Files:
 - `packages/analytics/` (entire package)
-- `ANALYTICS_PACKAGE_SUMMARY.md` (this file)
+  - `src/provider.tsx` - Has useEffect + memoization
+  - `src/context.ts` - React context
+  - `src/use-analytics.ts` - Hook
+  - `src/use-flag.ts` - Flag hook
+  - `src/types.ts` - TypeScript types
+  - `package.json` - Peer deps: next, react
+  - `README.md` - Documentation
 
 ### Modified Files:
-- `packages/auth/src/index.ts` - Removed unnecessary re-exports
-- `templates/repo/packages/analytics/package.json` - Added @startupkit/analytics dependency
-- `templates/repo/packages/analytics/src/components/analytics-provider.tsx` - Uses @startupkit/analytics
+- `templates/repo/packages/analytics/package.json` - Added @startupkit/analytics
+- `templates/repo/packages/analytics/src/components/analytics-provider.tsx` - Simplified to 69 lines
 - `templates/repo/packages/analytics/src/hooks/use-analytics.ts` - Re-exports from @startupkit/analytics
 - `templates/repo/packages/analytics/src/hooks/use-flag.ts` - Wraps @startupkit/analytics
+- `packages/auth/src/index.ts` - Removed unnecessary re-exports
 - `templates/repo/packages/auth/src/components/provider.tsx` - Typed user parameter
 
+## API
+
+### AnalyticsProvider Config
+
+```typescript
+interface AnalyticsConfig<TFlags> {
+  autoPageTracking?: boolean  // Default: true
+  flags: TFlags
+  handlers: {
+    identify: (userId: string | null, traits?: Record<string, unknown>) => void
+    track: (event: string, properties?: Record<string, unknown>) => void
+    page: (name?: string, properties?: Record<string, unknown>) => void
+    reset: () => void
+  }
+}
+```
+
+### Auto Page Tracking
+
+Input: `/dashboard/(settings)/profile/abc123def456`
+Output: `/dashboard/profile/:id`
+
+- Filters route groups: `(settings)` → removed
+- Replaces IDs: `abc123def456` → `:id`
+- Preserves segments: `dashboard`, `profile`
+
+## Next Steps
+
+1. ✅ Package built and ready
+2. **Publish** `@startupkit/analytics` v0.4.0 to npm
+3. **Publish** `@startupkit/auth` v0.5.0 (with cleaned up exports)
+4. **Update** PACKAGE_STRATEGY.md
+5. **Test** template with published packages
+
+## Summary
+
+This refactor achieves the StartupKit philosophy:
+
+- **Minimal core** - Package provides patterns, not implementations
+- **No assumptions** - Don't force specific tools
+- **User control** - Implement handlers however you want
+- **Reusable logic** - Auto tracking, memoization handled once
+- **Flexibility** - Easy to add multiple providers
+
+The package handles the complex parts (auto tracking, memoization) while giving you complete control over which analytics providers to use.

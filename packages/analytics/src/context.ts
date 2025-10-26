@@ -7,6 +7,7 @@ export const AnalyticsContext = createContext<AnalyticsContextType>({
     flags: {},
     identify: () => { },
     track: () => { },
+    page: () => { },
     reset: () => { }
 })
 

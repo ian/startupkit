@@ -11,7 +11,6 @@ export default {
     "react",
     "react/jsx-runtime",
     "next/navigation",
-    "posthog-js/react",
   ],
   plugins: [
     esbuild({

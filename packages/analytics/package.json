@@ -25,13 +25,11 @@
   },
   "peerDependencies": {
     "next": ">=14.0.0",
-    "posthog-js": ">=1.0.0",
     "react": ">=18.2.0"
   },
   "devDependencies": {
     "@types/node": "^22.4.0",
-    "@types/react": "^19.0.0",
-    "posthog-js": "^1.189.1"
+    "@types/react": "^19.0.0"
   }
 }
 
