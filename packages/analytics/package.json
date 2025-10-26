@@ -26,6 +26,8 @@
     "react": ">=18.2.0"
   },
   "devDependencies": {
+    "@config/biome": "workspace:*",
+    "@config/tsconfig": "workspace:*",
     "@types/node": "^22.4.0",
     "@types/react": "^19.0.0"
   }

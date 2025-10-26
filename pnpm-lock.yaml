@@ -118,6 +118,10 @@ importers:
         specifier: ^5
         version: 5.8.3
 
+  config/biome: {}
+
+  config/typescript: {}
+
   packages/analytics:
     dependencies:
       next:
@@ -127,6 +131,12 @@ importers:
         specifier: '>=18.2.0'
         version: 18.3.1
     devDependencies:
+      '@config/biome':
+        specifier: workspace:*
+        version: link:../../config/biome
+      '@config/tsconfig':
+        specifier: workspace:*
+        version: link:../../config/typescript
       '@types/node':
         specifier: ^22.4.0
         version: 22.15.3
@@ -149,6 +159,12 @@ importers:
         specifier: ^2.2.5
         version: 2.3.3(react@18.3.1)
     devDependencies:
+      '@config/biome':
+        specifier: workspace:*
+        version: link:../../config/biome
+      '@config/tsconfig':
+        specifier: workspace:*
+        version: link:../../config/typescript
       '@types/node':
         specifier: ^22.4.0
         version: 22.15.3
@@ -183,6 +199,12 @@ importers:
         specifier: 0.9.0
         version: 0.9.0
     devDependencies:
+      '@config/biome':
+        specifier: workspace:*
+        version: link:../../config/biome
+      '@config/tsconfig':
+        specifier: workspace:*
+        version: link:../../config/typescript
       '@rollup/plugin-json':
         specifier: 6.1.0
         version: 6.1.0(rollup@4.40.1)
@@ -201,6 +223,12 @@ importers:
 
   packages/utils:
     devDependencies:
+      '@config/biome':
+        specifier: workspace:*
+        version: link:../../config/biome
+      '@config/tsconfig':
+        specifier: workspace:*
+        version: link:../../config/typescript
       '@types/node':
         specifier: ^22.4.0
         version: 22.15.3
