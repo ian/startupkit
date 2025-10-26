@@ -4,10 +4,11 @@ import { useAnalytics } from "@repo/analytics"
 import { AuthProvider as StartupKitAuthProvider } from "@startupkit/auth"
 import type React from "react"
 import { authClient } from "../index"
+import type { User } from "../types"
 
 interface AuthProviderProps {
 	children: React.ReactNode
-	user?: unknown
+	user?: User
 }
 
 /**
@@ -20,36 +21,22 @@ export function AuthProvider({ children, user }: AuthProviderProps) {
 
 	return (
 		<StartupKitAuthProvider
-			authClient={authClient as never}
+			authClient={authClient}
 			user={user}
-			onIdentify={(user: unknown) => {
-				if (
-					user &&
-					typeof user === "object" &&
-					user !== null &&
-					"id" in user &&
-					"email" in user
-				) {
-					const typedUser = user as Record<string, unknown> & {
-						id: string
-						email: string
+			onIdentify={(user: User) => {
+				const analyticsProps: Record<string, string | number | boolean> = {}
+				for (const [key, value] of Object.entries(user)) {
+					if (
+						key !== "id" &&
+						(typeof value === "string" ||
+							typeof value === "number" ||
+							typeof value === "boolean")
+					) {
+						analyticsProps[key] = value
 					}
-
-					// Filter to only properties analytics accepts
-					const analyticsProps: Record<string, string | number | boolean> = {}
-					for (const [key, value] of Object.entries(typedUser)) {
-						if (
-							key !== "id" &&
-							(typeof value === "string" ||
-								typeof value === "number" ||
-								typeof value === "boolean")
-						) {
-							analyticsProps[key] = value
-						}
-					}
-
-					identify(typedUser.id, analyticsProps)
 				}
+
+				identify(user.id, analyticsProps)
 			}}
 			onReset={() => {
 				reset()
