@@ -1,15 +1,13 @@
 "use client"
 
 import { pruneEmpty } from "@repo/utils"
-import type { RudderAnalytics } from "@rudderstack/analytics-js"
 import { usePathname, useSelectedLayoutSegments } from "next/navigation"
 import { PostHogProvider, usePostHog } from "posthog-js/react"
 import {
-    type ReactNode,
-    createContext,
-    useEffect,
-    useMemo,
-    useState
+	type ReactNode,
+	createContext,
+	useEffect,
+	useMemo
 } from "react"
 import type { Flags } from "../types"
 
@@ -21,9 +19,7 @@ type TrackEvent = never
 
 const {
 	POSTHOG_API_KEY,
-	POSTHOG_HOST,
-	RUDDERSTACK_DATA_PLANE_URL,
-	RUDDERSTACK_WRITE_KEY,
+	POSTHOG_HOST
 } = process.env
 
 export interface AnalyticsContextType {
@@ -46,10 +42,9 @@ type AnalyticsProviderProps = {
 }
 
 /**
- * Analytics Provider - Direct integration with PostHog and RudderStack
+ * Analytics Provider - Direct integration with PostHog
  * 
- * This implementation imports directly from posthog-js and @rudderstack/analytics-js.
- * You control the versions and can upgrade them independently.
+ * Simple, direct PostHog integration. You control the version and can upgrade anytime.
  */
 export function AnalyticsProvider({ children, flags }: AnalyticsProviderProps) {
 	return (
@@ -68,8 +63,8 @@ function AnalyticsProviderInner({ children, flags }: AnalyticsProviderProps) {
 	const pathname = usePathname()
 	const segments = useSelectedLayoutSegments()
 	const posthog = usePostHog()
-	const [analytics, setAnalytics] = useState<RudderAnalytics | null>(null)
 
+	// Auto-track page views with clean route names
 	useEffect(() => {
 		const name = segments
 			.filter((segment) => {
@@ -80,45 +75,30 @@ function AnalyticsProviderInner({ children, flags }: AnalyticsProviderProps) {
 			})
 			.join("/")
 
-		analytics?.page(name, {
-			path: pathname,
+		posthog.capture("$pageview", {
+			$current_url: pathname,
 			route: `/${name}`
 		})
-	}, [analytics, pathname, segments])
-
-	useEffect(() => {
-		if (RUDDERSTACK_WRITE_KEY && RUDDERSTACK_DATA_PLANE_URL) {
-			import("@rudderstack/analytics-js").then(({ RudderAnalytics }) => {
-				const analytics = new RudderAnalytics()
-				analytics.load(RUDDERSTACK_WRITE_KEY, RUDDERSTACK_DATA_PLANE_URL)
-				setAnalytics(analytics)
-			})
-		}
-	}, [])
+	}, [pathname, segments, posthog])
 
 	const context = useMemo(() => {
 		return {
 			identify: (userId: string | null, properties: Properties = {}) => {
 				if (userId) {
-					const pruned = pruneEmpty(properties)
-					analytics?.identify(userId, pruned)
-					posthog.identify(userId, pruned)
+					posthog.identify(userId, pruneEmpty(properties))
 				} else {
-					analytics?.reset()
 					posthog.reset()
 				}
 			},
 			reset: () => {
-				analytics?.reset()
 				posthog.reset()
 			},
 			track: (event: string, properties?: Properties) => {
-				analytics?.track(event, pruneEmpty(properties))
 				posthog.capture(event, pruneEmpty(properties))
 			},
 			flags
 		}
-	}, [analytics, flags, posthog])
+	}, [flags, posthog])
 
 	return (
 		<AnalyticsContext.Provider value={context}>

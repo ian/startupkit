@@ -1,32 +1,37 @@
-// @repo/analytics/server - Server-side analytics (direct imports)
-// Imports directly from @rudderstack/rudder-sdk-node and posthog
+// @repo/analytics/server - Server-side analytics (PostHog only)
+// Imports directly from posthog-node
 
+import { PostHog } from "posthog-node"
 import type { AnalyticsEvent, AuthEvent } from "./types"
-import { rudderstack } from "./vendor/rudderstack"
 export { getFeatureFlags } from "./vendor/posthog"
 
 export type { Flags } from "./types"
 
+const posthog = new PostHog(
+	process.env.POSTHOG_API_KEY || "",
+	{
+		host: process.env.POSTHOG_HOST || "https://app.posthog.com"
+	}
+)
+
 /**
- * Tracks one or more analytics events server-side.
+ * Tracks one or more analytics events server-side using PostHog.
  * 
- * Imports directly from RudderStack SDK - you control the version.
- *
  * @param eventData - An AnalyticsEvent object or an array of AnalyticsEvent objects to track.
  */
 export async function track(eventData: AnalyticsEvent | AnalyticsEvent[]) {
 	const events = Array.isArray(eventData) ? eventData : [eventData]
 
-	const trackHandler = ({ event, ...rest }: AnalyticsEvent) => {
+	events.forEach(({ event, ...rest }) => {
 		const { user, ...properties } = rest as AuthEvent
-		return [
-			rudderstack.track({
-				event,
-				userId: user.id,
-				properties
-			})
-		]
-	}
 
-	await Promise.all(events.flatMap(trackHandler))
+		posthog.capture({
+			distinctId: user.id,
+			event,
+			properties
+		})
+	})
+
+	// Flush to ensure events are sent
+	await posthog.flush()
 }

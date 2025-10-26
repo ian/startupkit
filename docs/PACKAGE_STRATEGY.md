@@ -145,14 +145,12 @@ export const authClient = createAuthClient({ /* your config */ });
 
 **Always Direct Import**:
 ```typescript
-// @repo/analytics imports DIRECTLY - no wrapper needed!
-import posthog from "posthog-js"; // DIRECT
-import { RudderAnalytics } from "@rudderstack/analytics-js"; // DIRECT
+// @repo/analytics imports DIRECTLY - PostHog only, simple!
+import posthog from "posthog-js"; // DIRECT - YOU control version
 
 export const analytics = {
   track: (event, props) => {
     posthog.capture(event, props);
-    rudderstack.track(event, props);
   }
 };
 ```
@@ -228,7 +226,7 @@ Located in `templates/repo/packages/`:
 
 | Package | Strategy | Purpose | Upstream Dependencies |
 |---------|----------|---------|--------------|
-| `@repo/analytics` | **Direct Imports** | Type-safe analytics with PostHog + RudderStack | `posthog-js`, `@rudderstack/*` (you control versions) |
+| `@repo/analytics` | **Direct Imports** | Type-safe product analytics with PostHog | `posthog-js`, `posthog-node` (you control versions) |
 | `@repo/auth` | **Direct + Helpers** | Auth with better-auth + StartupKit helpers | `better-auth` (you control version) + `@startupkit/auth` |
 | `@repo/ui` | **Pure Local** | shadcn-based UI components (source exports) | `@radix-ui/*` (you control versions) |
 | `@repo/db` | **Pure Local** | Prisma database schema and client | `@prisma/client` |
@@ -244,43 +242,43 @@ Located in `templates/repo/packages/`:
 
 **@startupkit/analytics** was removed entirely because it wasn't providing value. Instead:
 
-**@repo/analytics** imports directly from upstream:
-- Direct imports: `posthog-js`, `@rudderstack/analytics-js`
+**@repo/analytics** imports directly from PostHog:
+- Direct imports: `posthog-js` (client), `posthog-node` (server)
 - You control all dependency versions
 - No wrapper, no abstraction layer
 - Type-safe event tracking
-- Server-side support
+- Server-side support + feature flags
 
 ### Architecture
 
 ```typescript
-// @repo/analytics imports DIRECTLY from upstream - that's it!
-import posthog from "posthog-js";                    // YOU control version
-import { RudderAnalytics } from "@rudderstack/..."; // YOU control version
-import { pruneEmpty } from "@repo/utils";            // Utilities from your utils
+// @repo/analytics imports DIRECTLY from PostHog - simple!
+import posthog from "posthog-js";        // YOU control version
+import { pruneEmpty } from "@repo/utils"; // Your utilities
 
 // Your implementation
 export const analytics = {
   track: (event, props) => {
     posthog.capture(event, pruneEmpty(props));
-    rudderstack.track(event, props);
   }
 };
 ```
 
 ### Benefits
 
-1. **No Version Lock-in**: Upgrade posthog/rudderstack anytime
+1. **No Version Lock-in**: Upgrade PostHog anytime
 2. **You Own The Code**: @repo/analytics code is yours to modify
 3. **No Unnecessary Abstraction**: Direct imports, no wrapper overhead
 4. **Type Safety**: Define events in your types.ts
+5. **One Tool**: PostHog handles analytics + feature flags + session replay
 
 ### Why No @startupkit/analytics?
 
 Following the shadcn principle: only create centralized packages when they add real value. For analytics:
-- No complex orchestration needed (just call posthog + rudderstack directly)
+- No complex orchestration needed (just call PostHog directly)
 - Utilities like `pruneEmpty` live in `@repo/utils` where they belong
-- Multi-provider setup is trivial without a framework
+- PostHog handles everything (analytics, feature flags, session replay)
+- One tool is simpler than multiple providers
 
 ## Best Practices
 

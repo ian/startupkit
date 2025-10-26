@@ -2,26 +2,27 @@
 
 > ✅ **Recommended**: This is the recommended analytics package for product applications.
 
-Type-safe product analytics with RudderStack and PostHog integration. Supports both client-side and server-side tracking with feature flags.
+Type-safe product analytics with PostHog. Simple, direct integration with both client-side and server-side tracking plus feature flags.
 
 ## Features
 
 - 🎯 **Type-safe event tracking** - Define events with TypeScript interfaces
 - 🖥️ **Server-side tracking** - Accurate metrics for billing and usage
 - 🌐 **Client-side tracking** - Track user interactions in real-time
-- 🚩 **Feature flags** - PostHog feature flags integration
-- 📊 **RudderStack + PostHog** - Best-in-class analytics platforms
-- 🔒 **Privacy-focused** - Full control over data
+- 🚩 **Feature flags** - Built-in PostHog feature flags
+- 📊 **PostHog** - Simple, powerful product analytics
+- 🔒 **Privacy-focused** - Full control over your data
 
-## Why This Package?
+## Why PostHog Only?
 
-Unlike `@startupkit/analytics` (which is client-side only and uses analytics.js), `@repo/analytics`:
+Simple is better. PostHog handles everything you need:
 
-- ✅ Tracks events server-side for accurate billing
-- ✅ Uses TypeScript for type-safe event definitions
-- ✅ Integrates directly with RudderStack and PostHog
-- ✅ Supports feature flags
-- ✅ Better for product analytics vs marketing analytics
+- ✅ Product analytics (events, funnels, cohorts)
+- ✅ Feature flags with targeting
+- ✅ Session recordings
+- ✅ A/B testing
+- ✅ Server-side + client-side SDKs
+- ✅ No need for multiple tools (RudderStack, Segment, etc.)
 
 ## Installation
 
@@ -144,13 +145,9 @@ TypeScript will enforce that you provide all required properties!
 Set these environment variables:
 
 ```bash
-# RudderStack (for event tracking)
-RUDDERSTACK_WRITE_KEY=your_write_key
-RUDDERSTACK_DATA_PLANE_URL=https://your-data-plane.com
-
-# PostHog (for feature flags)
+# PostHog (for everything)
 POSTHOG_API_KEY=your_api_key
-POSTHOG_HOST=https://app.posthog.com
+POSTHOG_HOST=https://app.posthog.com  # or your self-hosted instance
 ```
 
 ## API Reference
@@ -216,17 +213,13 @@ const isEnabled = useFlag("new-feature");
 
 ## Architecture
 
-This package integrates two analytics platforms:
+Simple, direct PostHog integration:
 
-1. **RudderStack**: Customer data platform for event tracking
-   - Server-side: `@rudderstack/rudder-sdk-node`
-   - Client-side: `@rudderstack/analytics-js`
+- **Client-side**: `posthog-js/react` for browser tracking
+- **Server-side**: `posthog-node` for backend events
+- **Feature flags**: Built-in PostHog API
 
-2. **PostHog**: Product analytics and feature flags
-   - Client-side: `posthog-js/react`
-   - Server-side: Feature flag API
-
-Events are sent to both platforms simultaneously for redundancy and different use cases.
+One tool, zero complexity.
 
 ## Best Practices
 
@@ -236,17 +229,21 @@ Events are sent to both platforms simultaneously for redundancy and different us
 4. **Include relevant context** - userId, teamId, etc.
 5. **Don't track PII without consent** - Be GDPR compliant
 
-## Comparison with @startupkit/analytics
+## Why Not Multiple Providers?
 
-| Feature | @repo/analytics | @startupkit/analytics |
-|---------|----------------|----------------------|
-| Server-side tracking | ✅ Yes | ❌ No |
-| Client-side tracking | ✅ Yes | ✅ Yes |
-| Type-safe events | ✅ Yes | ❌ No |
-| Feature flags | ✅ Yes | ❌ No |
-| RudderStack | ✅ Direct integration | ❌ No |
-| Multiple providers | ⚠️ RudderStack + PostHog | ✅ GA + Plausible + PostHog |
-| Use case | Product analytics | Marketing analytics |
+You might be tempted to send data to multiple analytics tools. **Don't.**
+
+**Problems with multiple providers:**
+- ❌ More dependencies to manage
+- ❌ More bills to pay
+- ❌ Data inconsistencies between platforms
+- ❌ Complex setup and maintenance
+
+**PostHog does it all:**
+- ✅ One tool, one bill
+- ✅ Consistent data
+- ✅ Simple setup
+- ✅ Can export to data warehouses if needed
 
 ## Support
 
