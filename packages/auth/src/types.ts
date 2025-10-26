@@ -6,11 +6,12 @@ export interface AdditionalField {
   defaultValue?: string | number | boolean | Date
 }
 
-export interface AuthConfig<TAdditionalFields extends Record<string, AdditionalField> = Record<string, AdditionalField>> {
+export interface AuthConfig<
+  TUsers extends object = object,
+  TAdditionalFields extends Record<string, AdditionalField> = Record<string, AdditionalField>
+> {
   db: BetterAuthOptions["database"]
-  users: {
-    id: unknown
-  }
+  users: TUsers
   sendEmail: (params: { email: string; otp: string }) => Promise<void>
   onUserLogin?: (userId: string) => Promise<void>
   onUserSignup?: (userId: string) => Promise<void>

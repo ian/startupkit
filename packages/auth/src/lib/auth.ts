@@ -21,7 +21,7 @@ const defaultAdditionalFields = {
 }
 
 export function createAuth<
-    TUsers = unknown,
+    TUsers extends object = object,
     TAdditionalFields extends Record<string, import("../types").AdditionalField> = Record<string, import("../types").AdditionalField>
 >(
     config: AuthConfig<TUsers, TAdditionalFields>
@@ -66,6 +66,7 @@ export function createAuth<
                     await db
                         .update(users)
                         .set({ lastSeenAt: new Date() })
+                        // @ts-expect-error - users is a generic Drizzle table, TypeScript can't verify .id exists but it will at runtime
                         .where(eq(users.id, newSession.user.id))
 
                     if (newUser && onUserSignup) {
