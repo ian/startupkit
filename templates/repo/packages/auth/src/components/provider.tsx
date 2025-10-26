@@ -30,15 +30,12 @@ export function AuthProvider({ children, user }: AuthProviderProps) {
 					"id" in user &&
 					"email" in user
 				) {
-					const typedUser = user as {
-						id: string
-						email: string
-						[key: string]: unknown
-					}
-					identify(typedUser.id, {
-						email: typedUser.email,
-						...typedUser
-					})
+				const typedUser = user as {
+					id: string
+					email: string
+					[key: string]: unknown
+				}
+				identify(typedUser.id, typedUser)
 				}
 			}}
 			onReset={() => {
