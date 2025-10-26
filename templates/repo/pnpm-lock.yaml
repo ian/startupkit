@@ -90,15 +90,12 @@ importers:
       '@repo/utils':
         specifier: workspace:*
         version: link:../utils
-      '@rudderstack/analytics-js':
-        specifier: 3.14.0
-        version: 3.14.0
-      '@rudderstack/rudder-sdk-node':
-        specifier: 2.1.1
-        version: 2.1.1(tslib@2.8.1)
       posthog-js:
         specifier: 1.235.5
         version: 1.235.5
+      posthog-node:
+        specifier: 4.2.1
+        version: 4.2.1
     devDependencies:
       '@repo/biome':
         specifier: workspace:*
@@ -4521,10 +4518,6 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@rudderstack/analytics-js@3.14.0':
-    resolution: {integrity: sha512-B/O/4YxnR2uoTmWGt+thj5HmvLzp3xS5K+uAgA8QGDpWCr+F2gCL3zJgK/8gF5qyUZv272ubn8zKFnoTOAUc+A==}
-    deprecated: This version has a bug in error reporting functionality which is fixed in the latest version
-
   '@rudderstack/rudder-sdk-node@2.1.1':
     resolution: {integrity: sha512-Gp14dAXwB0PqfOYl1LyQJocp3lV8XOXiBG1sVKD/NtThLs2T+SJSOA/+9SqoIhOWEwfm7wuXvLNCDaTwsQP2Kg==}
     peerDependencies:
@@ -8008,6 +8001,10 @@ packages:
       rrweb-snapshot:
         optional: true
 
+  posthog-node@4.2.1:
+    resolution: {integrity: sha512-l+fsjYEkTik3m/G0pE7gMr4qBJP84LhK779oQm6MBzhBGpd4By4qieTW+4FUAlNCyzQTynn3Nhsa50c0IELSxQ==}
+    engines: {node: '>=15.0.0'}
+
   preact@10.27.2:
     resolution: {integrity: sha512-5SYSgFKSyhCbk6SrXyMpqjb5+MQBgfvEKE/OC+PujcY34sOpqtr+0AZQtPYx5IA6VxynQ7rUPCtKzyovpj9Bpg==}
 
@@ -8424,6 +8421,9 @@ packages:
 
   run-parallel@1.2.0:
     resolution: {integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==}
+
+  rusha@0.8.14:
+    resolution: {integrity: sha512-cLgakCUf6PedEu15t8kbsjnwIFFR2D4RfL+W3iWFJ4iac7z4B0ZI8fxy4R3J956kAI68HclCFGL8MPoUVC3qVA==}
 
   safe-buffer@5.1.2:
     resolution: {integrity: sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g==}
@@ -13599,8 +13599,6 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.52.4':
     optional: true
 
-  '@rudderstack/analytics-js@3.14.0': {}
-
   '@rudderstack/rudder-sdk-node@2.1.1(tslib@2.8.1)':
     dependencies:
       axios: 1.7.7
@@ -18137,6 +18135,13 @@ snapshots:
       preact: 10.27.2
       web-vitals: 4.2.4
 
+  posthog-node@4.2.1:
+    dependencies:
+      axios: 1.12.2
+      rusha: 0.8.14
+    transitivePeerDependencies:
+      - debug
+
   preact@10.27.2: {}
 
   prettier@2.8.8: {}
@@ -18712,6 +18717,8 @@ snapshots:
   run-parallel@1.2.0:
     dependencies:
       queue-microtask: 1.2.3
+
+  rusha@0.8.14: {}
 
   safe-buffer@5.1.2: {}
 
