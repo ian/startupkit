@@ -20,8 +20,11 @@ const defaultAdditionalFields = {
     }
 }
 
-export function createAuth<TAdditionalFields extends Record<string, import("../types").AdditionalField> = Record<string, import("../types").AdditionalField>>(
-    config: AuthConfig<TAdditionalFields>
+export function createAuth<
+    TUsers = unknown,
+    TAdditionalFields extends Record<string, import("../types").AdditionalField> = Record<string, import("../types").AdditionalField>
+>(
+    config: AuthConfig<TUsers, TAdditionalFields>
 ) {
     const {
         db,
