@@ -86,9 +86,10 @@ jobs:
           echo "🔍 Testing project initialization with name 'test-startup'..."
           echo "Current directory: $(pwd)"
           echo "Available space: $(df -h . | tail -1)"
+          echo "Current branch: ${{ github.ref_name }}"
           
           set -x
-          node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" init --name "test-startup" --repo "ian/startupkit/templates/repo" 2>&1 || EXIT_CODE=$?
+          node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" init --name "test-startup" --repo "ian/startupkit#${{ github.ref_name }}" 2>&1 || EXIT_CODE=$?
           set +x
           
           if [ -n "$EXIT_CODE" ]; then
@@ -298,7 +299,7 @@ jobs:
         run: |
           echo "🧪 Testing project creation with special characters..."
           set -x
-          node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" init --name "My Awesome Startup!" --repo "ian/startupkit/templates/repo" 2>&1 || EXIT_CODE=$?
+          node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" init --name "My Awesome Startup!" --repo "ian/startupkit#${{ github.ref_name }}" 2>&1 || EXIT_CODE=$?
           set +x
           
           if [ -n "$EXIT_CODE" ]; then
@@ -445,7 +446,7 @@ jobs:
           
           for project in "project-one" "project-two" "project-three"; do
             echo "📝 Creating $project..."
-            if ! node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" init --name "$project" --repo "ian/startupkit/templates/repo"; then
+            if ! node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" init --name "$project" --repo "ian/startupkit#${{ github.ref_name }}"; then
               echo "❌ Failed to create $project"
               exit 1
             fi
@@ -478,7 +479,7 @@ jobs:
             expected="${test_case##*:}"
             
             echo "📝 Testing: '$input' -> '$expected'"
-            if ! node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" init --name "$input" --repo "ian/startupkit/templates/repo"; then
+            if ! node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" init --name "$input" --repo "ian/startupkit#${{ github.ref_name }}"; then
               echo "❌ Failed to create project with name '$input'"
               exit 1
             fi
