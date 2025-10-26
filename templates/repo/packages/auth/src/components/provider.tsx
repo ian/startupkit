@@ -30,12 +30,25 @@ export function AuthProvider({ children, user }: AuthProviderProps) {
 					"id" in user &&
 					"email" in user
 				) {
-				const typedUser = user as {
-					id: string
-					email: string
-					[key: string]: unknown
-				}
-				identify(typedUser.id, typedUser)
+					const typedUser = user as Record<string, unknown> & {
+						id: string
+						email: string
+					}
+
+					// Filter to only properties analytics accepts
+					const analyticsProps: Record<string, string | number | boolean> = {}
+					for (const [key, value] of Object.entries(typedUser)) {
+						if (
+							key !== "id" &&
+							(typeof value === "string" ||
+								typeof value === "number" ||
+								typeof value === "boolean")
+						) {
+							analyticsProps[key] = value
+						}
+					}
+
+					identify(typedUser.id, analyticsProps)
 				}
 			}}
 			onReset={() => {
