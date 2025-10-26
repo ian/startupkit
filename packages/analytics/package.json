@@ -9,13 +9,11 @@
     "type": "git",
     "url": "https://github.com/01-studio/startupkit"
   },
-  "main": "./dist/esm/index.js",
-  "module": "./dist/esm/index.js",
-  "types": "./dist/types/index.d.ts",
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
-      "import": "./dist/esm/index.js"
+      "default": "./dist/esm/index.js"
     }
   },
   "scripts": {
