@@ -52,7 +52,7 @@ type ExecOpts = {
 };
 
 export async function exec(cmd: string, opts: ExecOpts = {}) {
-  const { cwd, stdio = "ignore" } = opts;
+  const { cwd, stdio = "inherit" } = opts;
   return new Promise(async (resolve, reject) => {
     try {
       const res = child.execSync(cmd, {
