@@ -1,9 +1,10 @@
 {
-  "extends": "@config/tsconfig/base.json",
+  "extends": "@config/tsconfig/library.json",
   "compilerOptions": {
-    "declaration": true,
-    "outDir": "./dist/types",
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "declarationDir": "./dist/types"
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

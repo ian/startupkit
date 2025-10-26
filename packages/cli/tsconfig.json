@@ -1,17 +1,13 @@
 {
-  "extends": "@config/tsconfig/base.json",
+  "extends": "@config/tsconfig/library.json",
   "compilerOptions": {
-    "rootDir": "src",
+    "rootDir": "./src",
     "outDir": "./dist",
     "strict": false,
-    "target": "ESNext",
-    "module": "es2020",
-    "sourceMap": true,
-    "esModuleInterop": true,
-    "moduleResolution": "Bundler",
-    "resolveJsonModule": true,
-    "skipLibCheck": true
+    "lib": ["ES2020"],
+    "jsx": "preserve",
+    "sourceMap": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "dist"]
 }
