@@ -1,56 +1,31 @@
 "use client"
 
-import {
-	type ReactNode,
-	createContext,
-	useEffect,
-	useMemo,
-	useState
-} from "react"
 import { pruneEmpty } from "@repo/utils"
-import type { RudderAnalytics } from "@rudderstack/analytics-js"
-import { usePathname, useSelectedLayoutSegments } from "next/navigation"
+import { AnalyticsProvider as StartupKitAnalyticsProvider } from "@startupkit/analytics"
 import { PostHogProvider, usePostHog } from "posthog-js/react"
-import type { Flags } from "../vendor/posthog"
+import type { ReactNode } from "react"
+import type { Flags } from "../types"
 
-type TagKey = Lowercase<string>
-type Properties = Record<TagKey, string | number | boolean | null | undefined>
+export { AnalyticsContext } from "@startupkit/analytics"
+export type { AnalyticsContextType } from "@startupkit/analytics"
 
-// TODO: We track most events server side, what will be client side only?
-type TrackEvent = never
-
-const {
-	POSTHOG_API_KEY,
-	POSTHOG_HOST,
-	RUDDERSTACK_DATA_PLANE_URL,
-	RUDDERSTACK_WRITE_KEY,
-} = process.env
-
-export interface AnalyticsContextType {
-	flags: Flags
-	identify: (userId: string | null, traits?: Properties) => void
-	track: (event: TrackEvent, properties?: Properties) => void
-	reset: () => void
-}
-
-export const AnalyticsContext = createContext<AnalyticsContextType>({
-	flags: {},
-	identify: () => { },
-	track: () => { },
-	reset: () => { }
-})
-
-type AnalyticsProviderProps = {
+interface AnalyticsProviderProps {
 	children: ReactNode
 	flags: Flags
 }
 
+/**
+ * Analytics Provider - Direct integration with PostHog
+ * 
+ * Uses @startupkit/analytics for context pattern and auto page tracking.
+ * You control PostHog version and can add other providers (OpenMeter, GA, etc.).
+ */
 export function AnalyticsProvider({ children, flags }: AnalyticsProviderProps) {
 	return (
 		<PostHogProvider
-			apiKey={POSTHOG_API_KEY as string}
+			apiKey={process.env.POSTHOG_API_KEY as string}
 			options={{
-				api_host: POSTHOG_HOST
+				api_host: process.env.POSTHOG_HOST
 			}}
 		>
 			<AnalyticsProviderInner flags={flags}>{children}</AnalyticsProviderInner>
@@ -59,66 +34,34 @@ export function AnalyticsProvider({ children, flags }: AnalyticsProviderProps) {
 }
 
 function AnalyticsProviderInner({ children, flags }: AnalyticsProviderProps) {
-	const pathname = usePathname()
-	const segments = useSelectedLayoutSegments()
 	const posthog = usePostHog()
-	const [analytics, setAnalytics] = useState<RudderAnalytics | null>(null)
-
-	useEffect(() => {
-		const name = segments
-			.filter((segment) => {
-				// Filter out Next.js folder patterns wrapped in parentheses
-				return !segment.startsWith("(")
-			})
-			.map((segment) => {
-				// Check if segment contains numbers and is longer than 6 characters
-				return /\d/.test(segment) && segment.length > 6 ? ":id" : segment
-			})
-			.join("/")
-
-		analytics?.page(name, {
-			path: pathname,
-			route: `/${name}`
-		})
-	}, [analytics, pathname, segments])
-
-	useEffect(() => {
-		if (RUDDERSTACK_WRITE_KEY && RUDDERSTACK_DATA_PLANE_URL) {
-			import("@rudderstack/analytics-js").then(({ RudderAnalytics }) => {
-				const analytics = new RudderAnalytics()
-				analytics.load(RUDDERSTACK_WRITE_KEY, RUDDERSTACK_DATA_PLANE_URL)
-				setAnalytics(analytics)
-			})
-		}
-	}, [])
-
-	const context = useMemo(() => {
-		return {
-			identify: (userId: string | null, properties: Properties = {}) => {
-				if (userId) {
-					const pruned = pruneEmpty(properties)
-					analytics?.identify(userId, pruned)
-					posthog.identify(userId, pruned)
-				} else {
-					analytics?.reset()
-					posthog.reset()
-				}
-			},
-			reset: () => {
-				analytics?.reset()
-				posthog.reset()
-			},
-			track: (event: string, properties?: Properties) => {
-				analytics?.track(event, pruneEmpty(properties))
-				posthog.capture(event, pruneEmpty(properties))
-			},
-			flags
-		}
-	}, [analytics, flags])
 
 	return (
-		<AnalyticsContext.Provider value={context}>
+		<StartupKitAnalyticsProvider
+			flags={flags}
+			handlers={{
+				identify: (userId, properties) => {
+					if (userId) {
+						posthog.identify(userId, pruneEmpty(properties))
+					} else {
+						posthog.reset()
+					}
+				},
+				track: (event, properties) => {
+					posthog.capture(event, pruneEmpty(properties))
+				},
+				page: (name, properties) => {
+					posthog.capture("$pageview", {
+						...pruneEmpty(properties),
+						...(name ? { route: name } : {})
+					})
+				},
+				reset: () => {
+					posthog.reset()
+				}
+			}}
+		>
 			{children}
-		</AnalyticsContext.Provider>
+		</StartupKitAnalyticsProvider>
 	)
 }

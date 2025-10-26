@@ -1,8 +1,8 @@
-import inquirer from "inquirer";
-import { spinner } from "../lib/spinner";
-import { replaceInFile } from 'replace-in-file';
-import path from "path";
 import degit from "degit";
+import inquirer from "inquirer";
+import path from "path";
+import { replaceInFile } from 'replace-in-file';
+import { spinner } from "../lib/spinner";
 import { exec } from "../lib/system";
 
 type Answers = {
@@ -70,13 +70,22 @@ export async function init(props: {
 
   // Show the collected attributes
   const attrs = { name: projectName, key };
-  
+
   // --- USE DEGit TO CLONE ONLY THE SUBDIRECTORY ---
-  const repoSubdir = props.repoArg || "ian/startupkit/templates/repo";
+  const repoBase = props.repoArg || "ian/startupkit/templates/repo";
   const destDir = path.resolve(process.cwd(), key);
 
+  let degitSource: string;
+
+  if (repoBase.includes("#")) {
+    const [userRepo, branch] = repoBase.split("#");
+    degitSource = `${userRepo}/templates/repo#${branch}`;
+  } else {
+    degitSource = repoBase;
+  }
+
   await spinner(`Cloning template into ${destDir}`, async () => {
-    const emitter = degit(repoSubdir, { cache: false, force: true, verbose: false });
+    const emitter = degit(degitSource, { cache: false, force: true, verbose: false });
     await emitter.clone(destDir);
   });
 
@@ -122,6 +131,6 @@ function opener() {
                                         
 
   StartupKit - ${process.env.VERSION}
-  Your startup kit for building, growing, and scaling your startup.
+  From zero to scale — the startup framework for your AI dev team.
 `);
 }

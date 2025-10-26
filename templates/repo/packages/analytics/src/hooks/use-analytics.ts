@@ -1,6 +1,2 @@
-import { useContext } from "react";
-import { AnalyticsContext } from "../components/analytics-provider";
+export { useAnalytics } from "@startupkit/analytics";
 
-export function useAnalytics() {
-	return useContext(AnalyticsContext);
-}

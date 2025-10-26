@@ -2,7 +2,7 @@
 
 import { createContext } from "react"
 
-export interface AuthContextType<TUser = Record<string, unknown>> {
+export interface AuthContextType<TUser extends Record<string, unknown> = Record<string, unknown>> {
     isAuthenticated: boolean
     isLoading: boolean
     user: TUser | null | undefined
@@ -12,7 +12,7 @@ export interface AuthContextType<TUser = Record<string, unknown>> {
     googleAuth: () => Promise<void>
 }
 
-export const AuthContext = createContext<AuthContextType>({
+export const AuthContext = createContext<AuthContextType<Record<string, unknown>>>({
     isAuthenticated: false,
     isLoading: true,
     user: undefined,

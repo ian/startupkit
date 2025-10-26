@@ -20,9 +20,9 @@
 	"dependencies": {
 		"@repo/db": "workspace:*",
 		"@repo/utils": "workspace:*",
-		"@rudderstack/analytics-js": "3.14.0",
-		"@rudderstack/rudder-sdk-node": "2.1.1",
-		"posthog-js": "1.235.5"
+		"@startupkit/analytics": "0.4.0",
+		"posthog-js": "1.235.5",
+		"posthog-node": "4.2.1"
 	},
 	"peerDependencies": {
 		"next": "catalog:stack",

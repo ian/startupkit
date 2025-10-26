@@ -52,7 +52,7 @@ importers:
         version: 1.2.4(@types/react-dom@18.3.7(@types/react@18.3.20))(@types/react@18.3.20)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@startupkit/analytics':
         specifier: 0.2.0
-        version: 0.2.0(next@14.2.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(prop-types@15.8.1)(react@18.3.1)
+        version: 0.2.0(@types/dlv@1.1.5)(next@14.2.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(prop-types@15.8.1)(react@18.3.1)
       '@startupkit/cms':
         specifier: 0.2.0
         version: 0.2.0(@types/react@18.3.20)(next@14.2.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)(webpack@5.99.7(@swc/core@1.11.24)(esbuild@0.25.3))
@@ -120,61 +120,34 @@ importers:
 
   packages/analytics:
     dependencies:
-      '@analytics/google-analytics':
-        specifier: ^1.0.7
-        version: 1.1.0
-      '@metro-fs/analytics-plugin-posthog':
-        specifier: ^1.14.0
-        version: 1.14.0
-      analytics:
-        specifier: ^0.8.13
-        version: 0.8.16(@types/dlv@1.1.5)
-      analytics-plugin-plausible:
-        specifier: ^0.0.6
-        version: 0.0.6(@types/dlv@1.1.5)
-      posthog-js:
-        specifier: 1.154.2
-        version: 1.154.2
-      react-ga:
-        specifier: ^3.3.1
-        version: 3.3.1(prop-types@15.8.1)(react@18.3.1)
+      next:
+        specifier: '>=14.0.0'
+        version: 14.2.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react:
+        specifier: '>=18.2.0'
+        version: 18.3.1
     devDependencies:
-      '@types/mdast':
-        specifier: ^4.0.4
-        version: 4.0.4
-      '@types/mdx':
-        specifier: ^2.0.13
-        version: 2.0.13
       '@types/node':
         specifier: ^22.4.0
         version: 22.15.3
       '@types/react':
-        specifier: ^18.2.0
-        version: 18.3.20
-      '@types/vfile':
-        specifier: ^4.0.0
-        version: 4.0.0
-      next:
-        specifier: ^14
-        version: 14.2.5(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react:
-        specifier: ^18.2.0
-        version: 18.3.1
+        specifier: ^19.0.0
+        version: 19.2.2
 
   packages/auth:
     dependencies:
       next:
-        specifier: ^14
-        version: 14.2.5(react-dom@19.1.0(react@19.2.0))(react@19.2.0)
+        specifier: '>=14.0.0'
+        version: 14.2.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react:
-        specifier: ^19.0.0
-        version: 19.2.0
+        specifier: '>=18.2.0'
+        version: 18.3.1
       react-dom:
-        specifier: ^19.0.0
-        version: 19.1.0(react@19.2.0)
+        specifier: '>=18.2.0'
+        version: 18.3.1(react@18.3.1)
       swr:
         specifier: ^2.2.5
-        version: 2.3.3(react@19.2.0)
+        version: 2.3.3(react@18.3.1)
     devDependencies:
       '@types/node':
         specifier: ^22.4.0
@@ -183,8 +156,8 @@ importers:
         specifier: ^19.0.0
         version: 19.2.2
       better-auth:
-        specifier: 1.3.27
-        version: 1.3.27(next@14.2.5(react-dom@19.1.0(react@19.2.0))(react@19.2.0))(react-dom@19.1.0(react@19.2.0))(react@19.2.0)
+        specifier: ^1.3.27
+        version: 1.3.27(next@14.2.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
   packages/cli:
     dependencies:
@@ -921,6 +894,9 @@ packages:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
 
+  '@posthog/core@1.3.1':
+    resolution: {integrity: sha512-sGKVHituJ8L/bJxVV4KamMFp+IBWAZyCiYunFawJZ4cc59PCtLnKFIMEV6kn7A4eZQcQ6EKV5Via4sF3Z7qMLQ==}
+
   '@radix-ui/primitive@1.1.2':
     resolution: {integrity: sha512-XnbHrrprsNqZKQhStrSwgRUQzoCI1glLzdw79xiZPoofhGICeZRSQ3dIxAKH1gb3OHfNf4d6f+vAv3kil2eggA==}
 
@@ -1539,10 +1515,6 @@ packages:
   '@types/unist@3.0.3':
     resolution: {integrity: sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q==}
 
-  '@types/vfile@4.0.0':
-    resolution: {integrity: sha512-eleP0/Cz8uVWxARDLi3Axq2+fDdN4ibAXoC6Pv8p6s7znXaUL7XvhgeIhjCiNMnvlLNP+tmCLd+RuCryGgmtEg==}
-    deprecated: This is a stub types definition. vfile provides its own type definitions, so you do not need this installed.
-
   '@ungap/structured-clone@1.2.0':
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
 
@@ -1959,6 +1931,9 @@ packages:
   consola@3.4.2:
     resolution: {integrity: sha512-5IKcdX0nnYavi6G7TtOhwkYzyjfJlatbjMjuLSfE2kYT5pMDOilZ4OvMhi637CcDICTmz3wARPoyhqyX1Y+XvA==}
     engines: {node: ^14.18.0 || >=16.10.0}
+
+  core-js@3.46.0:
+    resolution: {integrity: sha512-vDMm9B0xnqqZ8uSBpZ8sNtRtOdmfShrvT6h2TuQGLs0Is+cR0DYbj/KWP6ALVNbWPpqA/qPLoOuppJN07humpA==}
 
   create-next-app@15.3.1:
     resolution: {integrity: sha512-qgMrINY3iNzbG5UNM/fpaoup45lORhbxUUEmoq+XcM4Ppzr+LrfvoVveJVj+rwrXstdz6Q1pYFlkVDq5LIh+tA==}
@@ -3212,6 +3187,9 @@ packages:
   posthog-js@1.154.2:
     resolution: {integrity: sha512-EM8xn5V86fTg/pUhCyyMCRotI07tXDLQryc5TDQinT9kCRz8799G1n+Bq7drOEYdD/xbvcKfcfTWmlMrTZCZ6A==}
 
+  posthog-js@1.280.1:
+    resolution: {integrity: sha512-ZfXaExn42aZBQg88pBzGo71sy4hmei3ubBPb7DBbsfYC3ipZ6F6xmNr3ScNdOyF8cBTZbG24SlIvntp83jTlUA==}
+
   preact@10.26.5:
     resolution: {integrity: sha512-fmpDkgfGU6JYux9teDWLhj9mKN55tyepwYbxHgQuIxbWQzgFg5vk7Mrrtfx7xRxq798ynkY4DDDxZr235Kk+4w==}
 
@@ -3281,11 +3259,6 @@ packages:
     peerDependencies:
       react: ^18.3.1
 
-  react-dom@19.1.0:
-    resolution: {integrity: sha512-Xs1hdnE+DyKgeHJeJznQmYMIBG3TKIHJJT95Q58nHLSrElKlGQqDTR2HQ9fx5CN/Gk6Vh/kupBTDLU11/nDk/g==}
-    peerDependencies:
-      react: ^19.1.0
-
   react-ga@3.3.1:
     resolution: {integrity: sha512-4Vc0W5EvXAXUN/wWyxvsAKDLLgtJ3oLmhYYssx+YzphJpejtOst6cbIHCIyF50Fdxuf5DDKqRYny24yJ2y7GFQ==}
     peerDependencies:
@@ -3340,10 +3313,6 @@ packages:
 
   react@18.3.1:
     resolution: {integrity: sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==}
-    engines: {node: '>=0.10.0'}
-
-  react@19.2.0:
-    resolution: {integrity: sha512-tmbWg6W31tQLeB5cdIBOicJDJRR2KzXsV7uSK9iNfLWQ5bIZfxuPEHp7M8wiHyHnn0DD1i7w3Zmin0FtkrwoCQ==}
     engines: {node: '>=0.10.0'}
 
   read-cache@1.0.0:
@@ -3478,9 +3447,6 @@ packages:
 
   scheduler@0.23.2:
     resolution: {integrity: sha512-UOShsPwz7NrMUqhR6t0hWjFduvOzbtv7toDH1/hIrfRNIDBnnBWd0CwJTGvTpngVlmwGCdP9/Zl/tVrDqcuYzQ==}
-
-  scheduler@0.26.0:
-    resolution: {integrity: sha512-NlHwttCI/l5gCPR3D1nNXtWABUmBwvZpEQiD4IXSbIDq8BzLIK/7Ir5gTFSGZDUu37K5cMNp0hFtzO38sC7gWA==}
 
   schema-utils@4.3.2:
     resolution: {integrity: sha512-Gn/JaSk/Mt9gYubxTtSn/QCV4em9mpAPiR1rqy/Ocu19u/G9J5WWdNoUT4SiV6mFC3y6cxyFcFwdzPM3FgxGAQ==}
@@ -4535,7 +4501,7 @@ snapshots:
 
   '@metro-fs/analytics-plugin-posthog@1.14.0':
     dependencies:
-      posthog-js: 1.154.2
+      posthog-js: 1.280.1
 
   '@next/env@14.2.5': {}
 
@@ -4939,6 +4905,8 @@ snapshots:
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
+  '@posthog/core@1.3.1': {}
+
   '@radix-ui/primitive@1.1.2': {}
 
   '@radix-ui/react-arrow@1.1.4(@types/react-dom@18.3.7(@types/react@18.3.20))(@types/react@18.3.20)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
@@ -5334,7 +5302,7 @@ snapshots:
       '@peculiar/asn1-x509': 2.5.0
       '@peculiar/x509': 1.14.0
 
-  '@startupkit/analytics@0.2.0(next@14.2.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(prop-types@15.8.1)(react@18.3.1)':
+  '@startupkit/analytics@0.2.0(@types/dlv@1.1.5)(next@14.2.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(prop-types@15.8.1)(react@18.3.1)':
     dependencies:
       '@analytics/google-analytics': 1.1.0
       '@metro-fs/analytics-plugin-posthog': 1.14.0
@@ -5509,10 +5477,6 @@ snapshots:
   '@types/unist@3.0.2': {}
 
   '@types/unist@3.0.3': {}
-
-  '@types/vfile@4.0.0':
-    dependencies:
-      vfile: 6.0.2
 
   '@ungap/structured-clone@1.2.0': {}
 
@@ -5755,7 +5719,7 @@ snapshots:
 
   balanced-match@1.0.2: {}
 
-  better-auth@1.3.27(next@14.2.5(react-dom@19.1.0(react@19.2.0))(react@19.2.0))(react-dom@19.1.0(react@19.2.0))(react@19.2.0):
+  better-auth@1.3.27(next@14.2.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@better-auth/core': 1.3.27
       '@better-auth/utils': 0.3.0
@@ -5771,9 +5735,9 @@ snapshots:
       nanostores: 1.0.1
       zod: 4.1.12
     optionalDependencies:
-      next: 14.2.5(react-dom@19.1.0(react@19.2.0))(react@19.2.0)
-      react: 19.2.0
-      react-dom: 19.1.0(react@19.2.0)
+      next: 14.2.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
   better-call@1.0.19:
     dependencies:
@@ -5976,6 +5940,8 @@ snapshots:
   concat-map@0.0.1: {}
 
   consola@3.4.2: {}
+
+  core-js@3.46.0: {}
 
   create-next-app@15.3.1: {}
 
@@ -7201,56 +7167,6 @@ snapshots:
       - '@babel/core'
       - babel-plugin-macros
 
-  next@14.2.5(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
-    dependencies:
-      '@next/env': 14.2.5
-      '@swc/helpers': 0.5.5
-      busboy: 1.6.0
-      caniuse-lite: 1.0.30001716
-      graceful-fs: 4.2.11
-      postcss: 8.4.31
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
-      styled-jsx: 5.1.1(react@18.3.1)
-    optionalDependencies:
-      '@next/swc-darwin-arm64': 14.2.5
-      '@next/swc-darwin-x64': 14.2.5
-      '@next/swc-linux-arm64-gnu': 14.2.5
-      '@next/swc-linux-arm64-musl': 14.2.5
-      '@next/swc-linux-x64-gnu': 14.2.5
-      '@next/swc-linux-x64-musl': 14.2.5
-      '@next/swc-win32-arm64-msvc': 14.2.5
-      '@next/swc-win32-ia32-msvc': 14.2.5
-      '@next/swc-win32-x64-msvc': 14.2.5
-    transitivePeerDependencies:
-      - '@babel/core'
-      - babel-plugin-macros
-
-  next@14.2.5(react-dom@19.1.0(react@19.2.0))(react@19.2.0):
-    dependencies:
-      '@next/env': 14.2.5
-      '@swc/helpers': 0.5.5
-      busboy: 1.6.0
-      caniuse-lite: 1.0.30001716
-      graceful-fs: 4.2.11
-      postcss: 8.4.31
-      react: 19.2.0
-      react-dom: 19.1.0(react@19.2.0)
-      styled-jsx: 5.1.1(react@19.2.0)
-    optionalDependencies:
-      '@next/swc-darwin-arm64': 14.2.5
-      '@next/swc-darwin-x64': 14.2.5
-      '@next/swc-linux-arm64-gnu': 14.2.5
-      '@next/swc-linux-arm64-musl': 14.2.5
-      '@next/swc-linux-x64-gnu': 14.2.5
-      '@next/swc-linux-x64-musl': 14.2.5
-      '@next/swc-win32-arm64-msvc': 14.2.5
-      '@next/swc-win32-ia32-msvc': 14.2.5
-      '@next/swc-win32-x64-msvc': 14.2.5
-    transitivePeerDependencies:
-      - '@babel/core'
-      - babel-plugin-macros
-
   node-gyp@10.3.1:
     dependencies:
       env-paths: 2.2.1
@@ -7601,6 +7517,14 @@ snapshots:
       preact: 10.26.5
       web-vitals: 4.2.4
 
+  posthog-js@1.280.1:
+    dependencies:
+      '@posthog/core': 1.3.1
+      core-js: 3.46.0
+      fflate: 0.4.8
+      preact: 10.26.5
+      web-vitals: 4.2.4
+
   preact@10.26.5: {}
 
   prelude-ls@1.2.1: {}
@@ -7653,16 +7577,6 @@ snapshots:
       react: 18.3.1
       scheduler: 0.23.2
 
-  react-dom@19.1.0(react@18.3.1):
-    dependencies:
-      react: 18.3.1
-      scheduler: 0.26.0
-
-  react-dom@19.1.0(react@19.2.0):
-    dependencies:
-      react: 19.2.0
-      scheduler: 0.26.0
-
   react-ga@3.3.1(prop-types@15.8.1)(react@18.3.1):
     dependencies:
       prop-types: 15.8.1
@@ -7711,8 +7625,6 @@ snapshots:
   react@18.3.1:
     dependencies:
       loose-envify: 1.4.0
-
-  react@19.2.0: {}
 
   read-cache@1.0.0:
     dependencies:
@@ -7883,8 +7795,6 @@ snapshots:
     dependencies:
       loose-envify: 1.4.0
 
-  scheduler@0.26.0: {}
-
   schema-utils@4.3.2:
     dependencies:
       '@types/json-schema': 7.0.15
@@ -8051,11 +7961,6 @@ snapshots:
       client-only: 0.0.1
       react: 18.3.1
 
-  styled-jsx@5.1.1(react@19.2.0):
-    dependencies:
-      client-only: 0.0.1
-      react: 19.2.0
-
   sucrase@3.35.0:
     dependencies:
       '@jridgewell/gen-mapping': 0.3.5
@@ -8081,11 +7986,11 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  swr@2.3.3(react@19.2.0):
+  swr@2.3.3(react@18.3.1):
     dependencies:
       dequal: 2.0.3
-      react: 19.2.0
-      use-sync-external-store: 1.5.0(react@19.2.0)
+      react: 18.3.1
+      use-sync-external-store: 1.5.0(react@18.3.1)
 
   tailwind-merge@2.6.0: {}
 
@@ -8413,9 +8318,9 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.3.20
 
-  use-sync-external-store@1.5.0(react@19.2.0):
+  use-sync-external-store@1.5.0(react@18.3.1):
     dependencies:
-      react: 19.2.0
+      react: 18.3.1
 
   util-deprecate@1.0.2: {}
 
