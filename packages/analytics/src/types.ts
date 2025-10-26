@@ -5,7 +5,7 @@ export interface AnalyticsHandlers {
     reset: () => void
 }
 
-export interface AnalyticsContextType<TFlags = Record<string, boolean | string | undefined>> {
+export interface AnalyticsContextType<TFlags extends Record<string, unknown> = Record<string, boolean | string | undefined>> {
     flags: TFlags
     identify: (userId: string | null, traits?: Record<string, unknown>) => void
     track: (event: string, properties?: Record<string, unknown>) => void

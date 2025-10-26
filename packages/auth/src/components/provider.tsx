@@ -5,7 +5,7 @@ import type React from "react"
 import { useEffect } from "react"
 import { AuthContext } from "./context"
 
-interface AuthProviderProps<TUser = Record<string, unknown>> {
+interface AuthProviderProps<TUser extends Record<string, unknown> = Record<string, unknown>> {
   children: React.ReactNode
   user?: TUser
   authClient: {
@@ -15,20 +15,20 @@ interface AuthProviderProps<TUser = Record<string, unknown>> {
       refetch: () => void | Promise<void>
     }
     emailOtp?: {
-      sendVerificationOtp?: (params: { email: string; type: "sign-in" | "forget-password" | "email-verification" }) => Promise<any>
-      [key: string]: any
+      sendVerificationOtp?: (params: { email: string; type: "sign-in" | "forget-password" | "email-verification" }) => Promise<unknown>
+      [key: string]: unknown
     }
     signIn: {
-      emailOtp?: (params: { email: string; otp: string }) => Promise<any>
-      social?: (params: { provider: string }) => Promise<any>
+      emailOtp?: (params: { email: string; otp: string }) => Promise<unknown>
+      social?: (params: { provider: string }) => Promise<unknown>
     }
-    signOut: () => Promise<any>
+    signOut: () => Promise<unknown>
   }
   onIdentify?: (user: TUser) => void
   onReset?: () => void
 }
 
-export function AuthProvider<TUser = Record<string, unknown>>({
+export function AuthProvider<TUser extends Record<string, unknown> = Record<string, unknown>>({
   children,
   user: initialUser,
   authClient,
@@ -98,6 +98,6 @@ export function AuthProvider<TUser = Record<string, unknown>>({
     googleAuth
   }
 
-  return <AuthContext.Provider value={value as never}>{children}</AuthContext.Provider>
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 

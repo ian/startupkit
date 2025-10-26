@@ -6,14 +6,14 @@ import { useEffect, useMemo } from "react"
 import { AnalyticsContext } from "./context"
 import type { AnalyticsHandlers } from "./types"
 
-interface AnalyticsProviderProps<TFlags = Record<string, boolean | string | undefined>> {
+interface AnalyticsProviderProps<TFlags extends Record<string, unknown> = Record<string, boolean | string | undefined>> {
   children: ReactNode
   flags: TFlags
   handlers: AnalyticsHandlers
   autoPageTracking?: boolean
 }
 
-export function AnalyticsProvider<TFlags = Record<string, boolean | string | undefined>>({ 
+export function AnalyticsProvider<TFlags extends Record<string, unknown> = Record<string, boolean | string | undefined>>({ 
   children,
   flags,
   handlers,
@@ -44,7 +44,7 @@ export function AnalyticsProvider<TFlags = Record<string, boolean | string | und
   }), [handlers, flags])
 
   return (
-    <AnalyticsContext.Provider value={context as never}>
+    <AnalyticsContext.Provider value={context}>
       {children}
     </AnalyticsContext.Provider>
   )
