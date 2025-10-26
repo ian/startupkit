@@ -91,10 +91,11 @@ export async function init(props: {
 
   // Recursively replace all instances of PROJECT with slug in the cloned repo
   await replaceInFile({
-    files: path.join(destDir, '**/*'),
+    files: `${destDir}/**/*`,
     from: /PROJECT/g,
     to: slug,
-    ignore: ['**/node_modules/**', '**/.git/**']
+    ignore: ['**/node_modules/**', '**/.git/**'],
+    allowEmptyPaths: true
   });
 
   // Install dependencies
