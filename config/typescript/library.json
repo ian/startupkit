@@ -1,0 +1,22 @@
+{
+    "$schema": "https://json.schemastore.org/tsconfig",
+    "compilerOptions": {
+        "lib": [
+            "ES2020",
+            "DOM",
+            "DOM.Iterable"
+        ],
+        "target": "ES2020",
+        "module": "ESNext",
+        "jsx": "react-jsx",
+        "moduleResolution": "bundler",
+        "allowJs": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "noEmit": false,
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "declaration": true
+    }
+}

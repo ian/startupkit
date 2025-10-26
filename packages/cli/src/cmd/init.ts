@@ -79,7 +79,12 @@ export async function init(props: {
 
   if (repoBase.includes("#")) {
     const [userRepo, branch] = repoBase.split("#");
-    degitSource = `${userRepo}/templates/repo#${branch}`;
+    // If the path already includes /templates/repo, don't add it again
+    if (userRepo.includes("/templates/repo")) {
+      degitSource = `${userRepo}#${branch}`;
+    } else {
+      degitSource = `${userRepo}/templates/repo#${branch}`;
+    }
   } else {
     degitSource = repoBase;
   }
@@ -91,10 +96,11 @@ export async function init(props: {
 
   // Recursively replace all instances of PROJECT with slug in the cloned repo
   await replaceInFile({
-    files: path.join(destDir, '**/*'),
+    files: `${destDir}/**/*`,
     from: /PROJECT/g,
     to: slug,
-    ignore: ['**/node_modules/**', '**/.git/**']
+    ignore: ['**/node_modules/**', '**/.git/**'],
+    allowEmptyPaths: true
   });
 
   // Install dependencies

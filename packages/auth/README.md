@@ -1,6 +1,6 @@
 # @startupkit/auth
 
-Authentication package built on [better-auth](https://better-auth.com) providing flexible authentication for Next.js applications.
+Lightweight Authentication and Authorization components and hooks for StartupKit projects.
 
 ## Installation
 
@@ -8,47 +8,51 @@ Authentication package built on [better-auth](https://better-auth.com) providing
 pnpm add @startupkit/auth better-auth
 ```
 
-## Features
+## What's Included
 
-- 🔐 Google OAuth authentication
-- 📧 Email OTP (one-time password) authentication
-- 🔄 Automatic session management
-- 🎯 TypeScript support with full type inference
-- 📦 Dual client/server exports for Next.js
-- 🪝 Extensible hooks for custom logic
-- 🗄️ Prisma database adapter
+This package provides lightweight wrappers around Better Auth:
+
+- 🎨 `AuthProvider` - React context provider for client components
+- 🪝 `useAuth()` - Authentication hook for client components
+- 📦 `createServerUtils()` - Server-side helpers for Next.js
+- 🎯 Full TypeScript support
+
+**You call `betterAuth()` directly** in your project for full control over configuration.
 
 ## Usage
 
 ### Server Setup
 
-Create your auth instance by configuring `createAuth` with your Prisma client and email sender:
+Call `betterAuth()` directly in your project with full control:
 
 ```ts
 // lib/auth.ts
-import { prisma } from "@/lib/db"
-import { createAuth } from "@startupkit/auth"
+import { betterAuth } from "better-auth"
+import { drizzleAdapter } from "better-auth/adapters/drizzle"
+import { emailOTP } from "better-auth/plugins"
+import { db } from "@/lib/db"
 
-async function sendVerificationOTP({ email, otp }: { email: string; otp: string }) {
-  // Implement your email sending logic
-  await sendEmail({
-    to: email,
-    subject: "Verify your email",
-    template: "verify-code",
-    data: { code: otp }
-  })
-}
-
-export const auth = createAuth({
-  prisma,
-  sendEmail: sendVerificationOTP,
-  onUserSignup: async (userId) => {
-    // Optional: Track user signup
-    console.log("New user signed up:", userId)
+export const auth = betterAuth({
+  basePath: "/auth",
+  database: drizzleAdapter(db, {
+    provider: "pg"
+  }),
+  emailAndPassword: {
+    enabled: true
   },
-  onUserLogin: async (userId) => {
-    // Optional: Track user login
-    console.log("User logged in:", userId)
+  plugins: [
+    emailOTP({
+      sendVerificationOTP: async ({ email, otp }) => {
+        // Send email with OTP code
+        // Implement your email sending logic here
+      }
+    })
+  ],
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!
+    }
   }
 })
 ```
@@ -62,20 +66,6 @@ import { auth } from "@/lib/auth"
 import { toNextJsHandler } from "better-auth/next-js"
 
 export const { GET, POST } = toNextJsHandler(auth.handler)
-```
-
-Or if you're re-exporting from a server module:
-
-```ts
-// server.ts
-import { auth } from "./lib/auth"
-import { toNextJsHandler } from "better-auth/next-js"
-
-export const handler = () => toNextJsHandler(auth.handler)
-
-// In your API route
-import { handler } from "@/lib/server"
-export const { GET, POST } = handler()
 ```
 
 ### Server-Side Authentication
@@ -105,16 +95,12 @@ export default async function Layout({ children }) {
 
 ### Client Setup
 
-Create your auth client with the plugins you need:
+Create your auth client using Better Auth directly:
 
 ```tsx
 // lib/auth-client.ts
-import {
-  createAuthClient,
-  emailOTPClient
-} from "@startupkit/auth"
-import { adminClient } from "better-auth/client/plugins"
-import type { auth } from "./auth"
+import { createAuthClient } from "better-auth/react"
+import { adminClient, emailOTPClient } from "better-auth/client/plugins"
 
 export const authClient = createAuthClient({
   basePath: "/auth",
@@ -125,7 +111,7 @@ export const authClient = createAuthClient({
 })
 ```
 
-Then wrap your application with the `AuthProvider`:
+Then wrap your application with the `AuthProvider` from `@startupkit/auth`:
 
 ```tsx
 "use client"
@@ -135,33 +121,20 @@ import { authClient } from "@/lib/auth-client"
 
 export function Providers({ children, user }) {
   return (
-    <AuthProvider user={user} authClient={authClient}>
+    <AuthProvider 
+      user={user} 
+      authClient={authClient}
+      onIdentify={(user) => {
+        // Optional: Track user identification (e.g., analytics)
+      }}
+      onReset={() => {
+        // Optional: Reset state on logout (e.g., clear analytics)
+      }}
+    >
       {children}
     </AuthProvider>
   )
 }
-```
-
-#### Customizing Plugins
-
-Add additional better-auth plugins to customize functionality:
-
-```tsx
-import {
-  createAuthClient,
-  emailOTPClient
-} from "@startupkit/auth"
-import { adminClient, twoFactor } from "better-auth/client/plugins"
-import type { auth } from "./auth"
-
-export const authClient = createAuthClient({
-  basePath: "/auth",
-  plugins: [
-    adminClient(),
-    emailOTPClient(),
-    twoFactor()  // Add 2FA support
-  ]
-})
 ```
 
 ### Using Authentication in Components
@@ -258,130 +231,32 @@ export function SocialSignIn() {
 
 ## Configuration
 
-### Environment Variables
-
-```bash
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-```
-
-### Auth Config Options
-
-```ts
-interface AuthConfig {
-  prisma: PrismaClient
-  sendEmail: (params: { email: string; otp: string }) => Promise<void>
-  onUserLogin?: (userId: string) => Promise<void>
-  onUserSignup?: (userId: string) => Promise<void>
-  additionalUserFields?: Record<string, AdditionalField>
-}
-
-interface AdditionalField {
-  type: "string" | "number" | "boolean" | "date"
-  required?: boolean
-  defaultValue?: string | number | boolean | Date
-}
-```
-
-### Custom User Fields
-
-You can add custom fields to your user model by passing `additionalUserFields`:
-
-```ts
-export const auth = createAuth({
-  prisma,
-  sendEmail: sendVerificationOTP,
-  additionalUserFields: {
-    companyName: {
-      type: "string",
-      required: false
-    },
-    timezone: {
-      type: "string",
-      required: false
-    },
-    role: {
-      type: "string",
-      required: true,
-      defaultValue: "user"
-    }
-  }
-})
-```
-
-The package includes these default additional fields (which are always available):
-- `firstName` (string, optional)
-- `lastName` (string, optional)
-- `phone` (string, optional)
-
-Your custom fields will be merged with these defaults.
-
-### Session Configuration
-
-Default session settings:
-- **Expiration**: 7 days (604,800 seconds)
-- **Update Age**: 24 hours (86,400 seconds)
-
-Sessions automatically refresh when the user is active.
-
-You can customize session duration:
-
-```ts
-export const auth = createAuth({
-  prisma,
-  sendEmail: sendVerificationOTP,
-  session: {
-    expiresIn: 60 * 60 * 24 * 30,  // 30 days
-    updateAge: 60 * 60 * 24 * 7     // 7 days
-  }
-})
-```
-
-### Additional User Fields
-
-The package includes additional user fields:
-
-- `firstName` (string, optional)
-- `lastName` (string, optional)
-- `phone` (string, optional)
+This package provides minimal opinions - you configure Better Auth directly. See the [Better Auth documentation](https://better-auth.com/docs) for all configuration options.
 
 ## API Reference
 
 ### Client Exports
 
-- `AuthProvider` - React context provider for authentication
+- `AuthProvider` - React context provider wrapping Better Auth client
 - `useAuth()` - Hook to access authentication state and methods
-- `createBetterAuthClient()` - Factory to create the auth client
-- `createAuth()` - Factory to create the server auth instance
+- `AuthContext` - React context (if you need direct access)
 
-### Server Exports
+### Server Exports  
 
-- `createServerUtils(auth)` - Factory to create server utilities
+- `createServerUtils(auth)` - Factory to create server utilities like `withAuth()`
 
-### Types
+### useAuth() Hook
 
 ```ts
-interface User {
-  id: string
-  email: string
-  name: string
-  firstName?: string
-  lastName?: string
-  phone?: string
-  image?: string
-  emailVerified: boolean
-  createdAt: Date
-  updatedAt: Date
-}
-
-interface Session {
-  id: string
-  userId: string
-  expiresAt: Date
-  token: string
-  ipAddress?: string
-  userAgent?: string
-}
+const {
+  isAuthenticated,    // boolean
+  isLoading,          // boolean  
+  user,               // User | null | undefined
+  logout,             // () => Promise<void>
+  sendAuthCode,       // (email: string) => Promise<void>
+  verifyAuthCode,     // (email: string, code: string) => Promise<void>
+  googleAuth          // () => Promise<void>
+} = useAuth()
 ```
 
 ## License

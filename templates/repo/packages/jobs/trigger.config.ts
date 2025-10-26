@@ -1,17 +1,11 @@
-import { PrismaInstrumentation } from "@prisma/instrumentation"
 import { sentryEsbuildPlugin } from "@sentry/esbuild-plugin"
 import * as Sentry from "@sentry/node"
 import { BuildExtension, esbuildPlugin } from "@trigger.dev/build/extensions"
-import { prismaExtension } from "@trigger.dev/build/extensions/prisma"
 import { defineConfig } from "@trigger.dev/sdk"
 
 const ONE_HOUR = 3600
 
-const extensions: BuildExtension[] = [
-	prismaExtension({
-		schema: "../db/prisma/schema.prisma"
-	})
-]
+const extensions: BuildExtension[] = []
 
 if (process.env.SENTRY_AUTH_TOKEN) {
 	extensions.push(
@@ -54,7 +48,6 @@ export default defineConfig({
 			randomize: true
 		}
 	},
-	instrumentations: [new PrismaInstrumentation()],
 	init: async () => {
 		if (process.env.SENTRY_DSN) {
 			Sentry.init({
@@ -62,7 +55,7 @@ export default defineConfig({
 				environment:
 					process.env.NODE_ENV === "production" ? "production" : "development",
 				tracesSampleRate: 1.0,
-				integrations: [Sentry.vercelAIIntegration(), Sentry.prismaIntegration()]
+				integrations: [Sentry.vercelAIIntegration()]
 			})
 		}
 	},

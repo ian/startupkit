@@ -1,0 +1,53 @@
+{
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"compilerOptions": {
+		"lib": [
+			"dom",
+			"dom.iterable",
+			"esnext"
+		],
+		"allowJs": true,
+		"skipLibCheck": true,
+		"strict": true,
+		"noEmit": true,
+		"esModuleInterop": true,
+		"module": "esnext",
+		"moduleResolution": "bundler",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"jsx": "preserve",
+		"incremental": true,
+		"plugins": [
+			{
+				"name": "next"
+			}
+		],
+		"paths": {
+			"@/*": [
+				"./src/*"
+			]
+		}
+	},
+	"references": [
+		{
+			"@startupkit/analytics": "packages/analytics"
+		},
+		{
+			"@startupkit/auth": "packages/auth"
+		},
+		{
+			"@startupkit/utils": "packages/utils"
+		},
+		{
+			"startupkit": "packages/cli"
+		}
+	],
+	"exclude": [
+		"node_modules",
+		"build",
+		"dist",
+		".next",
+		".expo",
+		"*.old"
+	]
+}
