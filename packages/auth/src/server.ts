@@ -1,8 +1,6 @@
 import { toNextJsHandler } from "better-auth/next-js"
 import { headers } from "next/headers"
 
-export * from "./types"
-
 export function createServerUtils(auth: ReturnType<typeof import("better-auth").betterAuth>) {
   const withAuth = async () => {
     const session = await auth.api.getSession({

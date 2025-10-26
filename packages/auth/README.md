@@ -10,10 +10,10 @@ pnpm add @startupkit/auth better-auth
 
 ## What's Included
 
-This package provides **client-side utilities only**:
+This package provides lightweight wrappers around Better Auth:
 
-- 🎨 `AuthProvider` - React context provider
-- 🪝 `useAuth()` - Authentication hook
+- 🎨 `AuthProvider` - React context provider for client components
+- 🪝 `useAuth()` - Authentication hook for client components
 - 📦 `createServerUtils()` - Server-side helpers for Next.js
 - 🎯 Full TypeScript support
 
@@ -29,15 +29,25 @@ Call `betterAuth()` directly in your project with full control:
 // lib/auth.ts
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
+import { emailOTP } from "better-auth/plugins"
 import { db } from "@/lib/db"
 
 export const auth = betterAuth({
+  basePath: "/auth",
   database: drizzleAdapter(db, {
     provider: "pg"
   }),
   emailAndPassword: {
     enabled: true
   },
+  plugins: [
+    emailOTP({
+      sendVerificationOTP: async ({ email, otp }) => {
+        // Send email with OTP code
+        // Implement your email sending logic here
+      }
+    })
+  ],
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -49,7 +59,7 @@ export const auth = betterAuth({
 
 ### API Routes
 
-Export the auth handler in your Next.js API route at `/app/api/auth/[...all]/route.ts`:
+Export the auth handler in your Next.js API route at `/app/auth/[...all]/route.ts`:
 
 ```ts
 import { auth } from "@/lib/auth"
@@ -93,7 +103,7 @@ import { createAuthClient } from "better-auth/react"
 import { adminClient, emailOTPClient } from "better-auth/client/plugins"
 
 export const authClient = createAuthClient({
-  basePath: "/api/auth",
+  basePath: "/auth",
   plugins: [
     adminClient(),
     emailOTPClient()
@@ -111,7 +121,16 @@ import { authClient } from "@/lib/auth-client"
 
 export function Providers({ children, user }) {
   return (
-    <AuthProvider user={user} authClient={authClient}>
+    <AuthProvider 
+      user={user} 
+      authClient={authClient}
+      onIdentify={(user) => {
+        // Optional: Track user identification (e.g., analytics)
+      }}
+      onReset={() => {
+        // Optional: Reset state on logout (e.g., clear analytics)
+      }}
+    >
       {children}
     </AuthProvider>
   )
