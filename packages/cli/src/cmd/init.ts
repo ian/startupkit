@@ -131,6 +131,6 @@ function opener() {
                                         
 
   StartupKit - ${process.env.VERSION}
-  Your startup kit for building, growing, and scaling your startup.
+  From zero to scale — the startup framework for your AI dev team.
 `);
 }
