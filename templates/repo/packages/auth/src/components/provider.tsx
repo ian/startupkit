@@ -12,7 +12,7 @@ interface AuthProviderProps<TUser = Record<string, unknown>> {
 
 /**
  * Auth Provider - Wraps @startupkit/auth provider with analytics integration
- * 
+ *
  * Uses better-auth directly (via authClient) and integrates with your analytics
  */
 export function AuthProvider<TUser = Record<string, unknown>>({
