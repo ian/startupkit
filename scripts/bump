@@ -1,108 +1,34 @@
 #!/bin/bash
 
-# StartupKit Version Bump Script
-# Manages versioning for centralized packages (@startupkit/*)
-# See docs/PACKAGE_STRATEGY.md for more details
-
-set -e  # Exit on error
-
 # Default to patch if no argument is provided
 VERSION_TYPE=${1:-patch}
 
-# Colors for output
-GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
-
 # Validate input
 if [[ "$VERSION_TYPE" != "patch" && "$VERSION_TYPE" != "minor" && "$VERSION_TYPE" != "major" ]]; then
-    echo -e "${YELLOW}Invalid version type. Use 'patch', 'minor', or 'major'.${NC}"
+    echo "Invalid version type. Use 'patch', 'minor', or 'major'."
     exit 1
 fi
 
-echo -e "${BLUE}═══════════════════════════════════════════════════════${NC}"
-echo -e "${BLUE}  StartupKit Version Bump: ${VERSION_TYPE}${NC}"
-echo -e "${BLUE}═══════════════════════════════════════════════════════${NC}"
-echo ""
-
-# Get current version before bump
-CURRENT_VERSION=$(node -p "require('./packages/auth/package.json').version" 2>/dev/null || echo "unknown")
-echo -e "${BLUE}Current version:${NC} $CURRENT_VERSION"
-
-# Execute the bump command on all centralized packages
-echo -e "\n${BLUE}Bumping centralized packages (@startupkit/*) in packages/...${NC}"
-pnpm recursive --filter "./packages/**" exec -- npm version "$VERSION_TYPE" --no-git-tag-version
+# Execute the bump command
+pnpm recursive --filter "./packages/**" exec -- npm version "$VERSION_TYPE"
 
 # Get the bumped version number
 BUMPED_VERSION=$(pnpm recursive --filter "./packages/**" exec -- node -p "require('./package.json').version" | uniq)
 
-echo -e "${GREEN}✓ Bumped to version: ${BUMPED_VERSION}${NC}"
-
-# List affected packages
-echo -e "\n${BLUE}Centralized packages updated:${NC}"
-for pkg_dir in packages/*/; do
-    if [ -f "$pkg_dir/package.json" ]; then
-        PKG_NAME=$(node -p "require('./$pkg_dir/package.json').name" 2>/dev/null || echo "unknown")
-        echo -e "  ${GREEN}✓${NC} $PKG_NAME"
-    fi
-done
-
 # Update template files to reference the new version
-echo -e "\n${BLUE}Updating template references...${NC}"
-
-UPDATED_COUNT=0
+echo "Updating template references to version $BUMPED_VERSION..."
 
 # Find all package.json files in templates and update @startupkit/* package references
 find templates -name "package.json" -type f | while read -r template_file; do
     if grep -q "@startupkit/" "$template_file"; then
         # Update each @startupkit package reference with the new version
         sed -i '' -E "s/(\"@startupkit\/[^\"]+\": \")(\^)?[0-9]+\.[0-9]+\.[0-9]+(\",?)/\1\2$BUMPED_VERSION\3/g" "$template_file"
-        echo -e "  ${GREEN}✓${NC} Updated $template_file"
-        UPDATED_COUNT=$((UPDATED_COUNT + 1))
+        echo "  Updated $template_file"
     fi
 done
 
-# Also check apps directory
-if [ -d "apps" ]; then
-    find apps -name "package.json" -type f | while read -r app_file; do
-        if grep -q "@startupkit/" "$app_file"; then
-            sed -i '' -E "s/(\"@startupkit\/[^\"]+\": \")(\^)?[0-9]+\.[0-9]+\.[0-9]+(\",?)/\1\2$BUMPED_VERSION\3/g" "$app_file"
-            echo -e "  ${GREEN}✓${NC} Updated $app_file"
-            UPDATED_COUNT=$((UPDATED_COUNT + 1))
-        fi
-    done
-fi
-
-echo -e "\n${BLUE}Summary:${NC}"
-echo -e "  Version: ${GREEN}${CURRENT_VERSION} → ${BUMPED_VERSION}${NC}"
-echo -e "  Type: ${YELLOW}${VERSION_TYPE}${NC}"
-echo -e "  Updated files: ${GREEN}${UPDATED_COUNT}${NC}"
-
-# Git commit
-echo -e "\n${BLUE}Committing changes...${NC}"
 git add .
-
-# Check if there are changes to commit
-if git diff --staged --quiet; then
-    echo -e "${YELLOW}No changes to commit${NC}"
-else
-    git commit -m "chore: bump version to $BUMPED_VERSION"
-    echo -e "${GREEN}✓ Changes committed${NC}"
-fi
+git ci -am"chore: bump version to $BUMPED_VERSION"
 
 echo ""
-echo -e "${GREEN}═══════════════════════════════════════════════════════${NC}"
-echo -e "${GREEN}  Successfully bumped to version ${BUMPED_VERSION}${NC}"
-echo -e "${GREEN}═══════════════════════════════════════════════════════${NC}"
-echo ""
-echo -e "${BLUE}Next steps:${NC}"
-echo -e "  1. Review the changes: ${YELLOW}git show${NC}"
-echo -e "  2. Push to remote: ${YELLOW}git push${NC}"
-echo -e "  3. Publish packages: ${YELLOW}npm publish${NC} (in each package directory)"
-echo -e "  4. Create a release tag: ${YELLOW}git tag v${BUMPED_VERSION} && git push --tags${NC}"
-echo ""
-echo -e "${BLUE}Note:${NC} This script only bumps centralized packages (@startupkit/*)"
-echo -e "      Local packages (@repo/*) don't need versioning."
-echo -e "      See ${YELLOW}docs/PACKAGE_STRATEGY.md${NC} for details."
-echo ""
+echo "Bumped version to $BUMPED_VERSION"
