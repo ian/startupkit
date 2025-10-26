@@ -79,7 +79,12 @@ export async function init(props: {
 
   if (repoBase.includes("#")) {
     const [userRepo, branch] = repoBase.split("#");
-    degitSource = `${userRepo}/templates/repo#${branch}`;
+    // If the path already includes /templates/repo, don't add it again
+    if (userRepo.includes("/templates/repo")) {
+      degitSource = `${userRepo}#${branch}`;
+    } else {
+      degitSource = `${userRepo}/templates/repo#${branch}`;
+    }
   } else {
     degitSource = repoBase;
   }
