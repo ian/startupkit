@@ -1,22 +1,22 @@
 "use client"
 
-import {
-	type ReactNode,
-	createContext,
-	useEffect,
-	useMemo,
-	useState
-} from "react"
 import { pruneEmpty } from "@repo/utils"
 import type { RudderAnalytics } from "@rudderstack/analytics-js"
 import { usePathname, useSelectedLayoutSegments } from "next/navigation"
 import { PostHogProvider, usePostHog } from "posthog-js/react"
-import type { Flags } from "../vendor/posthog"
+import {
+    type ReactNode,
+    createContext,
+    useEffect,
+    useMemo,
+    useState
+} from "react"
+import type { Flags } from "../types"
 
 type TagKey = Lowercase<string>
 type Properties = Record<TagKey, string | number | boolean | null | undefined>
 
-// TODO: We track most events server side, what will be client side only?
+// Client-side events (most tracking happens server-side)
 type TrackEvent = never
 
 const {
@@ -45,6 +45,12 @@ type AnalyticsProviderProps = {
 	flags: Flags
 }
 
+/**
+ * Analytics Provider - Direct integration with PostHog and RudderStack
+ * 
+ * This implementation imports directly from posthog-js and @rudderstack/analytics-js.
+ * You control the versions and can upgrade them independently.
+ */
 export function AnalyticsProvider({ children, flags }: AnalyticsProviderProps) {
 	return (
 		<PostHogProvider
@@ -67,11 +73,9 @@ function AnalyticsProviderInner({ children, flags }: AnalyticsProviderProps) {
 	useEffect(() => {
 		const name = segments
 			.filter((segment) => {
-				// Filter out Next.js folder patterns wrapped in parentheses
 				return !segment.startsWith("(")
 			})
 			.map((segment) => {
-				// Check if segment contains numbers and is longer than 6 characters
 				return /\d/.test(segment) && segment.length > 6 ? ":id" : segment
 			})
 			.join("/")
@@ -114,7 +118,7 @@ function AnalyticsProviderInner({ children, flags }: AnalyticsProviderProps) {
 			},
 			flags
 		}
-	}, [analytics, flags])
+	}, [analytics, flags, posthog])
 
 	return (
 		<AnalyticsContext.Provider value={context}>

@@ -1,12 +1,10 @@
-import { replaceInFile } from 'replace-in-file';
-import inquirer from "inquirer";
-import { spinner } from "../lib/spinner";
-import path from "path";
 import degit from "degit";
 import fs from "fs";
+import inquirer from "inquirer";
+import path from "path";
+import { replaceInFile } from 'replace-in-file';
+import { spinner } from "../lib/spinner";
 import { exec } from '../lib/system';
-import { exec as execCb } from 'child_process';
-import { promisify } from 'util';
 
 const APP_TYPES = [
   { name: "Next.js", value: "next" },
@@ -20,7 +18,8 @@ const APP_TYPES = [
 ];
 
 const PACKAGE_TYPES = [
-  { name: "Package", value: "pkg" },
+  { name: "Local Package (@repo/*) - Project-specific, fast iteration", value: "pkg-local" },
+  { name: "Centralized Package (@startupkit/*) - Shared across projects", value: "pkg-centralized" },
 ];
 
 // Slugify copied from init
@@ -44,7 +43,7 @@ async function addApp(props: {
   type?: string, nameArg?: string, repoArg?: string
 }) {
   const { type, nameArg, repoArg } = props;
-  
+
   // If no type specified, show interactive select
   let appType = type;
   if (!appType) {
@@ -60,15 +59,21 @@ async function addApp(props: {
     appType = selected;
   }
 
-  if (!["next", "vite", "pkg"].includes(appType)) {
+  if (!["next", "vite", "pkg-local", "pkg-centralized"].includes(appType)) {
     printComingSoon(appType);
     return;
   }
 
-  // Determine template type
+  // Determine template type and package strategy
   let templateType = "app";
-  if (appType === "pkg") {
+  let packageStrategy: "local" | "centralized" | null = null;
+
+  if (appType === "pkg-local") {
     templateType = "package";
+    packageStrategy = "local";
+  } else if (appType === "pkg-centralized") {
+    templateType = "package";
+    packageStrategy = "centralized";
   }
 
   // Ask for name if not provided
@@ -91,12 +96,38 @@ async function addApp(props: {
   let destDir: string;
   const cwd = process.cwd();
   const cwdBase = path.basename(cwd);
-  
+
   if (templateType === "package") {
-    if (cwdBase === "packages") {
-      destDir = path.resolve(cwd, appSlug);
+    if (packageStrategy === "centralized") {
+      // Centralized packages go in packages/
+      if (cwdBase === "packages") {
+        destDir = path.resolve(cwd, appSlug);
+      } else {
+        destDir = path.resolve(cwd, "packages", appSlug);
+      }
+      console.log("\n📦 Creating centralized package (@startupkit/*)");
+      console.log("   This package will be:");
+      console.log("   - Published to NPM");
+      console.log("   - Compiled with rollup");
+      console.log("   - Versioned with semantic versioning");
     } else {
-      destDir = path.resolve(cwd, "packages", appSlug);
+      // Local packages go in templates/repo/packages/ or packages/ in a template
+      if (cwdBase === "packages") {
+        destDir = path.resolve(cwd, appSlug);
+      } else if (fs.existsSync(path.resolve(cwd, "templates", "repo", "packages"))) {
+        // We're in the root of startupkit monorepo
+        destDir = path.resolve(cwd, "templates", "repo", "packages", appSlug);
+      } else if (fs.existsSync(path.resolve(cwd, "packages"))) {
+        // We're in a project root with packages/
+        destDir = path.resolve(cwd, "packages", appSlug);
+      } else {
+        destDir = path.resolve(cwd, "packages", appSlug);
+      }
+      console.log("\n📦 Creating local package (@repo/*)");
+      console.log("   This package will be:");
+      console.log("   - Private to your monorepo");
+      console.log("   - Source consumed directly (no compilation)");
+      console.log("   - Fast iteration and customization");
     }
   } else {
     if (cwdBase === "apps") {
@@ -108,12 +139,12 @@ async function addApp(props: {
 
   // Determine template path
   let templatePath;
-  
+
   if (appType === "next") {
     templatePath = repoArg || "ian/startupkit/templates/next";
   } else if (appType === "vite") {
     templatePath = repoArg || "ian/startupkit/templates/vite";
-  } else if (appType === "pkg") {
+  } else if (appType === "pkg-local" || appType === "pkg-centralized") {
     templatePath = repoArg || "ian/startupkit/templates/package";
   }
 
@@ -143,8 +174,37 @@ async function addApp(props: {
   // Note: pnpm should automatically link workspace dependencies when installing in a workspace
 
   const itemTypeLabel = templateType === "package" ? "Package" : "App";
-  console.log(`\n${itemTypeLabel} added at: ${destDir}`);
+  console.log(`\n✅ ${itemTypeLabel} added at: ${destDir}`);
 
+  // Provide package-specific guidance
+  if (templateType === "package") {
+    console.log("\n📝 Next steps:");
+
+    if (packageStrategy === "centralized") {
+      console.log("   1. Update package.json:");
+      console.log(`      - name: "@startupkit/${appSlug}"`);
+      console.log(`      - version: "0.4.0" (or current version)`);
+      console.log("      - Ensure exports are configured for compilation");
+      console.log("\n   2. Add build scripts:");
+      console.log('      - build: "rollup -c && tsc --emitDeclarationOnly"');
+      console.log('      - clean: "rm -rf ./dist ./.turbo"');
+      console.log("\n   3. Configure rollup.config.mjs for compilation");
+      console.log("\n   4. When ready to publish:");
+      console.log("      - Build the package: pnpm build");
+      console.log("      - Publish to NPM: npm publish");
+      console.log("\n   📖 See docs/PACKAGE_STRATEGY.md for more details");
+    } else {
+      console.log("   1. Update package.json:");
+      console.log(`      - name: "@repo/${appSlug}"`);
+      console.log('      - private: true');
+      console.log("      - Configure exports to point to source files");
+      console.log("\n   2. Add TypeScript configuration");
+      console.log("\n   3. Import in other packages using:");
+      console.log(`      "@repo/${appSlug}": "workspace:*"`);
+      console.log("\n   4. No build step needed - source consumed directly!");
+      console.log("\n   📖 See docs/PACKAGE_STRATEGY.md for examples");
+    }
+  }
 
 }
 

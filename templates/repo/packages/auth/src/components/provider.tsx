@@ -1,40 +1,43 @@
 "use client"
 
 import { useAnalytics } from "@repo/analytics"
-import { AuthProvider as BaseAuthProvider } from "@startupkit/auth"
+import { AuthProvider as StartupKitAuthProvider } from "@startupkit/auth"
 import type React from "react"
-import { authClient } from ".."
-import type { User } from "../types"
+import { authClient } from "../index"
 
-export function AuthProvider({
-	children,
-	user: initialUser
-}: {
+interface AuthProviderProps<TUser = Record<string, unknown>> {
 	children: React.ReactNode
-	user?: User
-}) {
-	const analytics = useAnalytics()
+	user?: TUser
+}
 
-	const handleIdentify = (user: User) => {
-		analytics.identify(user.id, {
-			name: user.name,
-			email: user.email,
-			phone: user.phone ?? null
-		})
-	}
-
-	const handleReset = () => {
-		analytics.reset()
-	}
+/**
+ * Auth Provider - Wraps @startupkit/auth provider with analytics integration
+ * 
+ * Uses better-auth directly (via authClient) and integrates with your analytics
+ */
+export function AuthProvider<TUser = Record<string, unknown>>({
+	children,
+	user
+}: AuthProviderProps<TUser>) {
+	const { identify, reset } = useAnalytics()
 
 	return (
-		<BaseAuthProvider
-			user={initialUser}
+		<StartupKitAuthProvider
 			authClient={authClient}
-			onIdentify={handleIdentify}
-			onReset={handleReset}
+			user={user}
+			onIdentify={(user) => {
+				if (user && "id" in user && "email" in user) {
+					identify(user.id as string, {
+						email: user.email as string,
+						...(user as Record<string, unknown>)
+					})
+				}
+			}}
+			onReset={() => {
+				reset()
+			}}
 		>
 			{children}
-		</BaseAuthProvider>
+		</StartupKitAuthProvider>
 	)
 }

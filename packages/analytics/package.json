@@ -12,9 +12,9 @@
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
-      "import": "./dist/esm/index.js"
-    },
-    "./config": "./dist/cjs/config.js"
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    }
   },
   "scripts": {
     "clean": "rm -rf ./dist ./.turbo",
@@ -23,25 +23,28 @@
     "build:watch": "npx chokidar-cli \"src/**/*\" -c \"pnpm run build\" --initial",
     "type-check": "tsc --noEmit"
   },
-  "dependencies": {
-    "@analytics/google-analytics": "^1.0.7",
-    "@metro-fs/analytics-plugin-posthog": "^1.14.0",
-    "analytics": "^0.8.13",
-    "analytics-plugin-plausible": "^0.0.6",
-    "posthog-js": "1.154.2",
-    "react-ga": "^3.3.1"
-  },
   "peerDependencies": {
+    "analytics": ">=0.8.0",
+    "posthog-js": ">=1.0.0",
     "next": "^14",
     "react": "^18.2.0"
   },
+  "peerDependenciesMeta": {
+    "analytics": {
+      "optional": true
+    },
+    "posthog-js": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+  },
   "devDependencies": {
-    "@types/mdast": "^4.0.4",
-    "@types/mdx": "^2.0.13",
     "@types/node": "^22.4.0",
     "@types/react": "^18.2.0",
-    "@types/vfile": "^4.0.0",
+    "analytics": "^0.8.13",
     "next": "^14",
+    "posthog-js": "^1.154.2",
     "react": "^18.2.0"
   }
 }

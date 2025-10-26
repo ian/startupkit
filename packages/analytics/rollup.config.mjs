@@ -2,9 +2,8 @@ import esbuild from "rollup-plugin-esbuild";
 import preserveDirectives from "rollup-preserve-directives";
 
 import { readFileSync } from "fs"; // Import fs to read package.json
-import { resolve } from "path"; // Import path to resolve paths
+import { dirname, resolve } from "path"; // Import path to resolve paths
 import { fileURLToPath } from "url";
-import { dirname } from "path";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -14,7 +13,7 @@ const pkg = JSON.parse(
 const external = Object.keys(pkg.dependencies || {}); // Make all dependencies external
 
 export default {
-  input: ["src/index.ts", "src/config.ts", "src/plugins.ts"],
+  input: ["src/index.ts"],
   output: [
     {
       dir: "dist/cjs",

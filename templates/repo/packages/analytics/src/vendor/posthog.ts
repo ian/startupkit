@@ -1,3 +1,6 @@
+// PostHog server-side feature flags
+// For client-side, we import directly from posthog-js/react
+
 const POSTHOG_HOST = process.env.POSTHOG_HOST
 const POSTHOG_API_KEY = process.env.POSTHOG_API_KEY
 

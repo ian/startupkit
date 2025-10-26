@@ -1,59 +1,74 @@
 "use client";
 
-import React, { createContext, useEffect, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Analytics, AnalyticsInstance, AnalyticsPlugin } from "analytics";
-import { AnalyticsPlugins } from "./plugins";
+import React, { createContext, useEffect, useMemo } from "react";
+import type { AnalyticsInstance, AnalyticsPlugin } from "./types";
 
 export const AnalyticsContext = createContext<AnalyticsInstance | undefined>(
-  undefined,
+  undefined
 );
 
-export const AnalyticsProvider = ({
-  children,
-  plugins,
-}: {
+interface AnalyticsProviderProps {
   children: React.ReactNode;
-  plugins: AnalyticsPlugins;
-}) => {
+  plugins: AnalyticsPlugin[];
+}
+
+/**
+ * Analytics Provider - Minimal orchestration for multiple analytics providers
+ * 
+ * Usage:
+ * ```tsx
+ * import { AnalyticsProvider } from "@startupkit/analytics";
+ * import { posthogPlugin, rudderstackPlugin } from "@repo/analytics/plugins";
+ * 
+ * <AnalyticsProvider plugins={[posthogPlugin, rudderstackPlugin]}>
+ *   {children}
+ * </AnalyticsProvider>
+ * ```
+ */
+export function AnalyticsProvider({ children, plugins }: AnalyticsProviderProps) {
   const pathname = usePathname();
-  const [analyticsPlugins, setAnalyticsPlugins] = useState<AnalyticsPlugin[]>();
 
-  // Rebuild the analytics.js plugins config anytime our config object changes
-  useEffect(() => {
-    (async () => {
-      const _plugins = [];
-
-      if (plugins.googleAnalytics) {
-        const { googleAnalyticsPlugin } = await import("./plugins/ga");
-        _plugins.push(googleAnalyticsPlugin(plugins.googleAnalytics));
+  const analytics = useMemo<AnalyticsInstance>(() => {
+    // Initialize all plugins
+    plugins.forEach((plugin) => {
+      if (plugin.initialize) {
+        plugin.initialize();
       }
+    });
 
-      if (plugins.plausible) {
-        const { plausiblePlugin } = await import("./plugins/plausible");
-        _plugins.push(plausiblePlugin(plugins.plausible));
-      }
+    return {
+      page: (path: string, properties?: Record<string, unknown>) => {
+        plugins.forEach((plugin) => {
+          if (plugin.page) {
+            plugin.page(path, properties);
+          }
+        });
+      },
 
-      if (plugins.posthog) {
-        const { posthogPlugin } = await import("./plugins/posthog");
-        _plugins.push(posthogPlugin(plugins.posthog));
-      }
+      track: (event: string, properties?: Record<string, unknown>) => {
+        plugins.forEach((plugin) => {
+          if (plugin.track) {
+            plugin.track(event, properties);
+          }
+        });
+      },
 
-      setAnalyticsPlugins(_plugins);
-    })();
+      identify: (userId: string, traits?: Record<string, unknown>) => {
+        plugins.forEach((plugin) => {
+          if (plugin.identify) {
+            plugin.identify(userId, traits);
+          }
+        });
+      },
+    };
   }, [plugins]);
 
-  const analytics = useMemo(() => {
-    if (!analyticsPlugins) return;
-    return Analytics({
-      // version: 100,
-      plugins: analyticsPlugins,
-    });
-  }, [analyticsPlugins]);
-
+  // Auto-track page views
   useEffect(() => {
-    if (!analytics || !pathname) return;
-    analytics.page({ path: pathname });
+    if (pathname) {
+      analytics.page(pathname);
+    }
   }, [analytics, pathname]);
 
   return (
@@ -61,4 +76,4 @@ export const AnalyticsProvider = ({
       {children}
     </AnalyticsContext.Provider>
   );
-};
+}

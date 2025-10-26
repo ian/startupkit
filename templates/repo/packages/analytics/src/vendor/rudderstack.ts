@@ -1,5 +1,7 @@
-import RudderAnalytics from "@rudderstack/rudder-sdk-node";
+// Direct import from @rudderstack/rudder-sdk-node
+// You control the version - upgrade anytime!
 import { stringifyValues } from "@repo/utils";
+import RudderAnalytics from "@rudderstack/rudder-sdk-node";
 import type { IdentityOptions } from "../types";
 
 export type Properties = Record<string, unknown>;
@@ -10,7 +12,7 @@ const {
 	RUDDERSTACK_WRITE_KEY,
 } = process.env
 
-const RUDDERSTACK_ENABLED =  RUDDERSTACK_WRITE_KEY && RUDDERSTACK_DATA_PLANE_URL
+const RUDDERSTACK_ENABLED = RUDDERSTACK_WRITE_KEY && RUDDERSTACK_DATA_PLANE_URL
 
 function getRudder() {
 	if (!RUDDERSTACK_WRITE_KEY || !RUDDERSTACK_DATA_PLANE_URL) {

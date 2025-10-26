@@ -1,14 +1,18 @@
-import type { AnalyticsEvent, AuthEvent } from "./types"
-export { getFeatureFlags } from "./vendor/posthog"
-import { rudderstack } from "./vendor/rudderstack"
+// @repo/analytics/server - Server-side analytics (direct imports)
+// Imports directly from @rudderstack/rudder-sdk-node and posthog
 
-export type { Flags } from "./vendor/posthog"
+import type { AnalyticsEvent, AuthEvent } from "./types"
+import { rudderstack } from "./vendor/rudderstack"
+export { getFeatureFlags } from "./vendor/posthog"
+
+export type { Flags } from "./types"
 
 /**
- * Tracks one or more analytics events by publishing them to a specified URL using Upstash Qstash.
+ * Tracks one or more analytics events server-side.
+ * 
+ * Imports directly from RudderStack SDK - you control the version.
  *
  * @param eventData - An AnalyticsEvent object or an array of AnalyticsEvent objects to track.
- * @returns An object containing the status of the tracking operation and the Upstash Qstash message ID.
  */
 export async function track(eventData: AnalyticsEvent | AnalyticsEvent[]) {
 	const events = Array.isArray(eventData) ? eventData : [eventData]
