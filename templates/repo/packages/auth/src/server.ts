@@ -1,19 +1,26 @@
 // @repo/auth/server - Server-side auth configuration
 // Imports directly from better-auth and uses @startupkit/auth helpers
 
-import { track } from "@repo/analytics/server"
+import { getFeatureFlags, track } from "@repo/analytics/server"
 import { prisma } from "@repo/db"
 import { sendEmail } from "@repo/emails"
 import { createAuth } from "@startupkit/auth"
+import { headers } from "next/headers"
 
 // Create auth instance with your project's configuration
 export const auth = createAuth({
 	prisma,
 	sendEmail: async ({ email, otp }) => {
 		await sendEmail({
+			from: "noreply@startupkit.com",
 			to: email,
-			template: "verify-code",
-			props: { code: otp }
+			subject: "Your verification code",
+			template: "VerifyCode",
+			props: {
+				email,
+				otpCode: otp,
+				expiryTime: "10 minutes"
+			}
 		})
 	},
 	onUserLogin: async (userId: string) => {
@@ -54,3 +61,23 @@ export const auth = createAuth({
 
 export type Session = typeof auth.$Infer.Session.session
 export type User = typeof auth.$Infer.Session.user
+
+// Export auth handlers
+export const handler = auth.handler
+
+// Helper to get auth session in Server Components
+export async function withAuth(opts?: { flags?: boolean }) {
+	const session = await auth.api.getSession({
+		headers: await headers()
+	})
+
+	const flags = opts?.flags && session?.user
+		? await getFeatureFlags(session.user.id)
+		: undefined
+
+	return {
+		user: session?.user ?? null,
+		session: session?.session ?? null,
+		flags
+	}
+}

@@ -5,31 +5,32 @@ import { AuthProvider as StartupKitAuthProvider } from "@startupkit/auth"
 import type React from "react"
 import { authClient } from "../index"
 
-interface AuthProviderProps<TUser = Record<string, unknown>> {
+interface AuthProviderProps {
 	children: React.ReactNode
-	user?: TUser
+	user?: unknown
 }
 
 /**
  * Auth Provider - Wraps @startupkit/auth provider with analytics integration
- *
+ * 
  * Uses better-auth directly (via authClient) and integrates with your analytics
  */
-export function AuthProvider<TUser = Record<string, unknown>>({
+export function AuthProvider({
 	children,
 	user
-}: AuthProviderProps<TUser>) {
+}: AuthProviderProps) {
 	const { identify, reset } = useAnalytics()
 
 	return (
 		<StartupKitAuthProvider
-			authClient={authClient}
+			authClient={authClient as never}
 			user={user}
-			onIdentify={(user) => {
-				if (user && "id" in user && "email" in user) {
-					identify(user.id as string, {
-						email: user.email as string,
-						...(user as Record<string, unknown>)
+			onIdentify={(user: unknown) => {
+				if (user && typeof user === "object" && user !== null && "id" in user && "email" in user) {
+					const typedUser = user as { id: string; email: string; [key: string]: unknown }
+					identify(typedUser.id, {
+						email: typedUser.email,
+						...typedUser
 					})
 				}
 			}}
