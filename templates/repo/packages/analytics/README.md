@@ -72,7 +72,8 @@ export function MyComponent() {
 ### Setup Analytics Provider
 
 ```typescript
-import { AnalyticsProvider, getFeatureFlags } from "@repo/analytics";
+import { AnalyticsProvider } from "@repo/analytics";
+import { getFeatureFlags } from "@repo/analytics/server";
 
 export async function RootLayout({ children }) {
   const flags = await getFeatureFlags(userId);
