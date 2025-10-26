@@ -1,6 +1,6 @@
 # @startupkit/auth
 
-Lightweight React components and hooks for [better-auth](https://better-auth.com) in Next.js applications.
+Lightweight Authentication and Authorization components and hooks for StartupKit projects.
 
 ## Installation
 
