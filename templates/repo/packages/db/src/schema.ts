@@ -161,3 +161,21 @@ export const teamMembersRelations = relations(teamMembers, ({ one }) => ({
     })
 }))
 
+export type User = typeof users.$inferSelect
+export type NewUser = typeof users.$inferInsert
+
+export type Account = typeof accounts.$inferSelect
+export type NewAccount = typeof accounts.$inferInsert
+
+export type Session = typeof sessions.$inferSelect
+export type NewSession = typeof sessions.$inferInsert
+
+export type Team = typeof teams.$inferSelect
+export type NewTeam = typeof teams.$inferInsert
+
+export type TeamMember = typeof teamMembers.$inferSelect
+export type NewTeamMember = typeof teamMembers.$inferInsert
+
+export type Verification = typeof verifications.$inferSelect
+export type NewVerification = typeof verifications.$inferInsert
+
