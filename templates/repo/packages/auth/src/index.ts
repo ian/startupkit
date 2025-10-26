@@ -1,8 +1,8 @@
 // @repo/auth - Your customizable auth implementation
 // Imports directly from better-auth - you control the version!
 
-import { createAuthClient } from "better-auth/react"
 import { adminClient, emailOTPClient } from "better-auth/client/plugins"
+import { createAuthClient } from "better-auth/react"
 
 export * from "./components"
 export * from "./types"
