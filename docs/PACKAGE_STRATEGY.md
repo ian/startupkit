@@ -88,7 +88,7 @@ StartupKit uses a hybrid package approach with both centralized NPM packages (`@
 - Rapidly evolving features
 
 ✅ **Infrastructure integration**
-- Database access (Prisma schemas)
+- Database access (Drizzle ORM schemas)
 - Email templates with project-specific branding
 - Background job definitions
 
@@ -229,7 +229,7 @@ Located in `templates/repo/packages/`:
 | `@repo/analytics` | **Direct Imports** | Type-safe product analytics with PostHog | `posthog-js`, `posthog-node` (you control versions) |
 | `@repo/auth` | **Direct + Helpers** | Auth with better-auth + StartupKit helpers | `better-auth` (you control version) + `@startupkit/auth` |
 | `@repo/ui` | **Pure Local** | shadcn-based UI components (source exports) | `@radix-ui/*` (you control versions) |
-| `@repo/db` | **Pure Local** | Prisma database schema and client | `@prisma/client` |
+| `@repo/db` | **Pure Local** | Drizzle ORM database schema and client | `drizzle-orm`, `pg` |
 | `@repo/emails` | **Pure Local** | React Email templates | `@react-email/*` |
 | `@repo/jobs` | **Pure Local** | Trigger.dev background jobs | `@trigger.dev/*` |
 | `@repo/utils` | **Pure Local** | Project-specific utilities (AWS, Slack, etc.) | Various |

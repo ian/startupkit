@@ -2,14 +2,16 @@
 // Imports directly from better-auth and uses @startupkit/auth helpers
 
 import { getFeatureFlags, track } from "@repo/analytics/server"
-import { prisma } from "@repo/db"
+import { db, users } from "@repo/db"
 import { sendEmail } from "@repo/emails"
 import { createAuth } from "@startupkit/auth"
+import { eq } from "drizzle-orm"
 import { headers } from "next/headers"
 
 // Create auth instance with your project's configuration
 export const auth = createAuth({
-	prisma,
+	db,
+	users,
 	sendEmail: async ({ email, otp }) => {
 		await sendEmail({
 			from: "noreply@startupkit.com",
@@ -24,10 +26,17 @@ export const auth = createAuth({
 		})
 	},
 	onUserLogin: async (userId: string) => {
-		const user = await prisma.user.findUnique({
-			where: { id: userId },
-			select: { id: true, email: true, firstName: true, lastName: true }
-		})
+		const [user] = await db
+			.select({
+				id: users.id,
+				email: users.email,
+				firstName: users.firstName,
+				lastName: users.lastName
+			})
+			.from(users)
+			.where(eq(users.id, userId))
+			.limit(1)
+
 		if (user?.email) {
 			await track({
 				event: "USER_SIGNED_IN",
@@ -41,10 +50,17 @@ export const auth = createAuth({
 		}
 	},
 	onUserSignup: async (userId: string) => {
-		const user = await prisma.user.findUnique({
-			where: { id: userId },
-			select: { id: true, email: true, firstName: true, lastName: true }
-		})
+		const [user] = await db
+			.select({
+				id: users.id,
+				email: users.email,
+				firstName: users.firstName,
+				lastName: users.lastName
+			})
+			.from(users)
+			.where(eq(users.id, userId))
+			.limit(1)
+
 		if (user?.email) {
 			await track({
 				event: "USER_SIGNED_UP",

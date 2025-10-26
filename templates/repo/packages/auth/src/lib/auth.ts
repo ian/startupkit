@@ -1,6 +1,6 @@
-import { prisma } from "@repo/db"
-import { sendEmail } from "@repo/emails"
-import { createAuth } from "@startupkit/auth"
+import { db, users } from "@repo/db";
+import { sendEmail } from "@repo/emails";
+import { createAuth } from "@startupkit/auth";
 
 async function sendVerificationOTP({
 	email,
@@ -22,7 +22,8 @@ async function sendVerificationOTP({
 }
 
 export const auth = createAuth({
-	prisma,
+	db,
+	users,
 	sendEmail: sendVerificationOTP,
 	additionalUserFields: {
 		// Add custom fields here if needed, e.g.:

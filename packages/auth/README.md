@@ -16,17 +16,17 @@ pnpm add @startupkit/auth better-auth
 - 🎯 TypeScript support with full type inference
 - 📦 Dual client/server exports for Next.js
 - 🪝 Extensible hooks for custom logic
-- 🗄️ Prisma database adapter
+- 🗄️ Drizzle ORM database adapter
 
 ## Usage
 
 ### Server Setup
 
-Create your auth instance by configuring `createAuth` with your Prisma client and email sender:
+Create your auth instance by configuring `createAuth` with your Drizzle database client and email sender:
 
 ```ts
 // lib/auth.ts
-import { prisma } from "@/lib/db"
+import { db, users } from "@/lib/db"
 import { createAuth } from "@startupkit/auth"
 
 async function sendVerificationOTP({ email, otp }: { email: string; otp: string }) {
@@ -40,7 +40,8 @@ async function sendVerificationOTP({ email, otp }: { email: string; otp: string 
 }
 
 export const auth = createAuth({
-  prisma,
+  db,
+  users,
   sendEmail: sendVerificationOTP,
   onUserSignup: async (userId) => {
     // Optional: Track user signup
@@ -269,7 +270,8 @@ GOOGLE_CLIENT_SECRET=your_google_client_secret
 
 ```ts
 interface AuthConfig {
-  prisma: PrismaClient
+  db: DrizzleDB
+  users: PgTableWithColumns
   sendEmail: (params: { email: string; otp: string }) => Promise<void>
   onUserLogin?: (userId: string) => Promise<void>
   onUserSignup?: (userId: string) => Promise<void>
@@ -289,7 +291,8 @@ You can add custom fields to your user model by passing `additionalUserFields`:
 
 ```ts
 export const auth = createAuth({
-  prisma,
+  db,
+  users,
   sendEmail: sendVerificationOTP,
   additionalUserFields: {
     companyName: {
@@ -328,7 +331,8 @@ You can customize session duration:
 
 ```ts
 export const auth = createAuth({
-  prisma,
+  db,
+  users,
   sendEmail: sendVerificationOTP,
   session: {
     expiresIn: 60 * 60 * 24 * 30,  // 30 days

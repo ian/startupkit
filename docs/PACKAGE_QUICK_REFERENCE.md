@@ -160,9 +160,9 @@ export function slugify(str: string): string {
 ### ✅ Good: Local
 
 ```typescript
-// @repo/db - Project-specific Prisma schema
-export * from "@prisma/client";
-export { prisma } from "./client";
+// @repo/db - Project-specific Drizzle schema
+export * from "./schema";
+export { db } from "./client";
 ```
 
 ### ✅ Good: Hybrid
@@ -172,11 +172,12 @@ export { prisma } from "./client";
 export { createAuthClient } from "better-auth/react";
 
 // @repo/auth - Project wrapper
-import { createAuthClient } from "@startupkit/auth";
-import { prisma } from "@repo/db";
+import { createAuth } from "@startupkit/auth";
+import { db, users } from "@repo/db";
 
-export const authClient = createAuthClient({
-  database: prisma,
+export const auth = createAuth({
+  db,
+  users,
   // ... project-specific config
 });
 ```
@@ -187,7 +188,7 @@ export const authClient = createAuthClient({
 
 ```typescript
 // @startupkit/payments - DON'T DO THIS
-import { prisma } from "@repo/db"; // ❌ Can't import local packages
+import { db } from "@repo/db"; // ❌ Can't import local packages
 ```
 
 **Fix**: Use hybrid pattern instead

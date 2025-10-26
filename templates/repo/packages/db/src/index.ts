@@ -1,20 +1,19 @@
-import { PrismaClient } from "@prisma/client";
+import { drizzle } from "drizzle-orm/node-postgres"
+import { Pool } from "pg"
+import * as schema from "./schema"
 
-const globalForPrisma = globalThis as unknown as {
-	prisma: PrismaClient | undefined;
-};
+const globalForDb = globalThis as unknown as {
+	pool: Pool | undefined
+}
 
-export const prisma =
-	globalForPrisma.prisma ??
-	new PrismaClient({
-		// @todo - Add logging for development
-		// log:
-		// 	process.env.NODE_ENV === "development"
-		// 		? ["query", "error", "warn"]
-		// 		: ["error"],
-	});
+const pool =
+	globalForDb.pool ??
+	new Pool({
+		connectionString: process.env.DATABASE_URL
+	})
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+if (process.env.NODE_ENV !== "production") globalForDb.pool = pool
 
-export type * from "@prisma/client";
+export const db = drizzle({ client: pool, schema })
 
+export * from "./schema"

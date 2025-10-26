@@ -19,7 +19,6 @@
 		"@repo/analytics": "workspace:*",
 		"@repo/db": "workspace:*",
 		"@repo/utils": "workspace:*",
-		"@prisma/instrumentation": "catalog:instrumentation",
 		"@trigger.dev/sdk": "4.0.0-v4-beta.11",
 		"zod": "catalog:stack"
 	},

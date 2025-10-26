@@ -325,23 +325,30 @@ jobs:
           echo "✅ Package.json name correctly sanitized"
         working-directory: test-projects
 
-      - name: Verify Prisma schema
+      - name: Verify Drizzle schema
         run: |
-          echo "🔍 Verifying Prisma schema..."
+          echo "🔍 Verifying Drizzle schema..."
           cd test-startup
 
-          if [ ! -f "packages/db/prisma/schema.prisma" ]; then
-            echo "❌ Prisma schema not found"
+          if [ ! -f "packages/db/src/schema.ts" ]; then
+            echo "❌ Drizzle schema not found"
             exit 1
           fi
-          echo "✅ Prisma schema exists"
+          echo "✅ Drizzle schema exists"
 
           echo "📄 Checking schema content..."
-          if ! grep -q "datasource" packages/db/prisma/schema.prisma; then
-            echo "❌ Prisma schema appears to be invalid"
+          if ! grep -q "pgTable" packages/db/src/schema.ts; then
+            echo "❌ Drizzle schema appears to be invalid"
             exit 1
           fi
-          echo "✅ Prisma schema is valid"
+          echo "✅ Drizzle schema is valid"
+
+          echo "📄 Checking Drizzle config..."
+          if [ ! -f "packages/db/drizzle.config.ts" ]; then
+            echo "❌ Drizzle config not found"
+            exit 1
+          fi
+          echo "✅ Drizzle config exists"
         working-directory: test-projects
 
       - name: Verify auth package structure

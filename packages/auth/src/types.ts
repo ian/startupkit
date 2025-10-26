@@ -7,7 +7,8 @@ export interface AdditionalField {
 }
 
 export interface AuthConfig<TAdditionalFields extends Record<string, AdditionalField> = Record<string, AdditionalField>> {
-  prisma: BetterAuthOptions["database"]
+  db: BetterAuthOptions["database"]
+  users: Record<string, never>
   sendEmail: (params: { email: string; otp: string }) => Promise<void>
   onUserLogin?: (userId: string) => Promise<void>
   onUserSignup?: (userId: string) => Promise<void>

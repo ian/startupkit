@@ -81,7 +81,7 @@ pnpm add-package
 
 **Local Only**:
 - `@repo/ui` - shadcn-based UI components
-- `@repo/db` - Prisma database schema
+- `@repo/db` - Drizzle ORM database schema
 - `@repo/emails` - Email templates
 - `@repo/analytics` - Product analytics (recommended)
 

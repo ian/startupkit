@@ -1,7 +1,8 @@
 import { betterAuth } from "better-auth"
-import { prismaAdapter } from "better-auth/adapters/prisma"
+import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { nextCookies } from "better-auth/next-js"
 import { admin, createAuthMiddleware, emailOTP } from "better-auth/plugins"
+import { eq } from "drizzle-orm"
 import type { AuthConfig } from "../types"
 
 const defaultAdditionalFields = {
@@ -23,7 +24,8 @@ export function createAuth<TAdditionalFields extends Record<string, import("../t
     config: AuthConfig<TAdditionalFields>
 ) {
     const {
-        prisma,
+        db,
+        users,
         sendEmail,
         onUserLogin,
         onUserSignup,
@@ -50,22 +52,18 @@ export function createAuth<TAdditionalFields extends Record<string, import("../t
                 enabled: true
             }
         },
-        database: prismaAdapter(prisma, {
-            provider: "postgresql"
+        database: drizzleAdapter(db, {
+            provider: "pg"
         }),
         hooks: {
             after: createAuthMiddleware(async (ctx) => {
                 const { newSession, newUser } = ctx.context
 
                 if (newSession) {
-                    await prisma.user.update({
-                        where: {
-                            id: newSession.user.id
-                        },
-                        data: {
-                            lastSeenAt: new Date()
-                        }
-                    })
+                    await db
+                        .update(users)
+                        .set({ lastSeenAt: new Date() })
+                        .where(eq(users.id, newSession.user.id))
 
                     if (newUser && onUserSignup) {
                         await onUserSignup(newSession.user.id)
