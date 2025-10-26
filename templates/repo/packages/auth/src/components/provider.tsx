@@ -12,13 +12,10 @@ interface AuthProviderProps {
 
 /**
  * Auth Provider - Wraps @startupkit/auth provider with analytics integration
- * 
+ *
  * Uses better-auth directly (via authClient) and integrates with your analytics
  */
-export function AuthProvider({
-	children,
-	user
-}: AuthProviderProps) {
+export function AuthProvider({ children, user }: AuthProviderProps) {
 	const { identify, reset } = useAnalytics()
 
 	return (
@@ -26,8 +23,18 @@ export function AuthProvider({
 			authClient={authClient as never}
 			user={user}
 			onIdentify={(user: unknown) => {
-				if (user && typeof user === "object" && user !== null && "id" in user && "email" in user) {
-					const typedUser = user as { id: string; email: string; [key: string]: unknown }
+				if (
+					user &&
+					typeof user === "object" &&
+					user !== null &&
+					"id" in user &&
+					"email" in user
+				) {
+					const typedUser = user as {
+						id: string
+						email: string
+						[key: string]: unknown
+					}
 					identify(typedUser.id, {
 						email: typedUser.email,
 						...typedUser

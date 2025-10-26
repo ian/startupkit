@@ -71,9 +71,10 @@ export async function withAuth(opts?: { flags?: boolean }) {
 		headers: await headers()
 	})
 
-	const flags = opts?.flags && session?.user
-		? await getFeatureFlags(session.user.id)
-		: undefined
+	const flags =
+		opts?.flags && session?.user
+			? await getFeatureFlags(session.user.id)
+			: undefined
 
 	return {
 		user: session?.user ?? null,
