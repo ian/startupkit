@@ -4,12 +4,11 @@ on:
   push:
     branches:
       - main
-      - startup-90-remove-workos-switch-to-better-auth
   pull_request:
 
 jobs:
   test-cli:
-    name: Test StartupKit CLI Project Generator
+    name: CLI Project Generator
     runs-on: ubuntu-latest
 
     steps:
@@ -138,7 +137,6 @@ jobs:
             "packages/ui/package.json"
             "packages/utils/package.json"
             "packages/analytics/package.json"
-            "packages/jobs/package.json"
             "packages/emails/package.json"
           )
 
@@ -421,10 +419,9 @@ jobs:
           echo "CLI dist files:"
           ls -lah packages/cli/dist/ || echo "dist directory does not exist"
 
-  test-cli-comprehensive:
+  test-cli-edge-cases:
     name: CLI Edge Cases and Validation
     runs-on: ubuntu-latest
-    needs: test-cli
 
     steps:
       - uses: actions/checkout@v4
@@ -541,7 +538,7 @@ jobs:
   test-cli-summary:
     name: CLI Testing Summary
     runs-on: ubuntu-latest
-    needs: [test-cli, test-cli-comprehensive]
+    needs: [test-cli, test-cli-edge-cases]
     if: always()
 
     steps:
@@ -551,9 +548,9 @@ jobs:
           echo ""
           echo "📊 Test Results Summary:"
           echo "  - Basic CLI tests: ${{ needs.test-cli.result }}"
-          echo "  - Edge case tests: ${{ needs.test-cli-comprehensive.result }}"
+          echo "  - Edge case tests: ${{ needs.test-cli-edge-cases.result }}"
           echo ""
-          if [ "${{ needs.test-cli.result }}" = "success" ] && [ "${{ needs.test-cli-comprehensive.result }}" = "success" ]; then
+          if [ "${{ needs.test-cli.result }}" = "success" ] && [ "${{ needs.test-cli-edge-cases.result }}" = "success" ]; then
             echo "✅ All CLI tests passed successfully!"
             exit 0
           else
