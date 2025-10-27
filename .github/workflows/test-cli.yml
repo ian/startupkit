@@ -420,10 +420,9 @@ jobs:
           echo "CLI dist files:"
           ls -lah packages/cli/dist/ || echo "dist directory does not exist"
 
-  test-cli-comprehensive:
+  test-cli-edge-cases:
     name: CLI Edge Cases and Validation
     runs-on: ubuntu-latest
-    needs: test-cli
 
     steps:
       - uses: actions/checkout@v4
