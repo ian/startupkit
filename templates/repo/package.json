@@ -10,7 +10,6 @@
 	"packageManager": "pnpm@9.15.5",
 	"scripts": {
 		"build": "turbo run build --ui stream",
-		"build:packages": "turbo run build --ui stream --filter=./packages/jobs",
 		"clean": "pnpm -r clean",
 		"dev": "pnpm with-env pnpm -r --parallel --stream run dev",
 		"test": "pnpm with-test-env turbo run test --ui stream",
