@@ -93,6 +93,12 @@ importers:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.17)
     devDependencies:
+      '@config/biome':
+        specifier: workspace:*
+        version: link:../../config/biome
+      '@config/tsconfig':
+        specifier: workspace:*
+        version: link:../../config/typescript
       '@types/node':
         specifier: ^20
         version: 20.17.32
