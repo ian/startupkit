@@ -17,8 +17,7 @@ This is a **pnpm monorepo** built with **TypeScript**, **Next.js 16**, **React 1
 ├── packages/               # Published npm packages
 │   ├── analytics/         # @startupkit/analytics npm package
 │   ├── auth/              # @startupkit/auth npm package
-│   ├── cli/               # startupkit CLI tool
-│   └── utils/             # @startupkit/utils npm package
+│   └── cli/               # startupkit CLI tool
 ├── templates/             # Scaffolding templates
 │   ├── next/              # Next.js app template
 │   ├── package/           # Generic package template
@@ -36,7 +35,6 @@ This is a **pnpm monorepo** built with **TypeScript**, **Next.js 16**, **React 1
 - **`packages/cli`** - The `startupkit` CLI tool for scaffolding projects
 - **`packages/analytics`** - Published to npm as `@startupkit/analytics`
 - **`packages/auth`** - Published to npm as `@startupkit/auth`
-- **`packages/utils`** - Published to npm as `@startupkit/utils`
 
 **Templates**:
 - **`templates/repo`** - Full monorepo template (most comprehensive)

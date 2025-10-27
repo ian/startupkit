@@ -57,7 +57,9 @@ export const auth = betterAuth({
 			if (newSession) {
 				await db
 					.update(users)
-					.set({ lastSeenAt: new Date() })
+					.set({
+						lastSeenAt: new Date()
+					})
 					.where(eq(users.id, newSession.user.id))
 
 				const [user] = await db
@@ -86,7 +88,7 @@ export const auth = betterAuth({
 		})
 	},
 	plugins: [
-		admin(),
+		admin() as never,
 		emailOTP({
 			sendVerificationOTP
 		}),
