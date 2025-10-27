@@ -14,13 +14,15 @@
     "typecheck": "turbo run typecheck --ui stream",
     "bump": "./scripts/bump",
     "oldrelease": "pnpm --stream --filter \"./packages/**\" exec -- pnpm release --no-git-checks --access public",
-    "release": "pnpm build && pnpm -r publish --access public --no-git-checks"
+    "release": "pnpm build && pnpm -r publish --access public --no-git-checks",
+    "agents.md": "ruler apply"
   },
   "packageManager": "pnpm@9.6.0",
   "author": "Ian Hunter <ian@01.studio>",
   "license": "ISC",
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
+    "@intellectronica/ruler": "^0.3.11",
     "@rollup/plugin-commonjs": "^26.0.1",
     "@rollup/plugin-swc": "^0.3.1",
     "@swc/core": "^1.7.6",
