@@ -138,7 +138,6 @@ jobs:
             "packages/ui/package.json"
             "packages/utils/package.json"
             "packages/analytics/package.json"
-            "packages/jobs/package.json"
             "packages/emails/package.json"
           )
 
