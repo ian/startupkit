@@ -29,8 +29,7 @@
 		"shadcn": "sh ./packages/ui/shadcn.sh",
 		"with-env": "dotenv -e .env.local --",
 		"with-test-env": "dotenv -e .env.test --",
-		"ruler:apply": "ruler apply",
-		"ruler:init": "ruler init"
+		"agents.md": "ruler apply"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
