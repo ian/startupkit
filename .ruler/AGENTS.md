@@ -1,6 +1,8 @@
-# AI Development Agent Guidelines
+# StartupKit Framework - AI Development Agent Guidelines
 
-This is a **pnpm monorepo** built with **TypeScript**, **Next.js 16**, **React 19**, and **Turbo** for task orchestration. The repository follows a modular architecture with shared packages and Next.js applications.
+**StartupKit** is a meta-framework for building SaaS applications. This repository contains the framework CLI, npm packages, and templates that developers scaffold with.
+
+This is a **pnpm monorepo** built with **TypeScript**, **Next.js 16**, **React 19**, and **Turbo** for task orchestration.
 
 ---
 
@@ -10,27 +12,37 @@ This is a **pnpm monorepo** built with **TypeScript**, **Next.js 16**, **React 1
 
 ```
 /
-├── apps/                    # Next.js applications (empty by default)
-├── packages/                # Shared packages
-│   ├── analytics/          # PostHog analytics integration
-│   ├── auth/               # Better-auth authentication (client & server)
-│   ├── db/                 # Drizzle ORM database layer (PostgreSQL)
-│   ├── emails/             # React Email templates
-│   ├── jobs/               # Trigger.dev background jobs
-│   ├── ui/                 # Shadcn UI component library
-│   └── utils/              # Shared utility functions
-├── config/                 # Shared configurations
-│   ├── biome/              # Biome linter/formatter config
-│   └── typescript/         # TypeScript base configurations
-└── pnpm-workspace.yaml     # Workspace & catalog definitions
+├── apps/                    # Example Next.js applications
+│   └── home/               # Marketing site for startupkit.com
+├── packages/               # Published npm packages
+│   ├── analytics/         # @startupkit/analytics npm package
+│   ├── auth/              # @startupkit/auth npm package
+│   ├── cli/               # startupkit CLI tool
+│   └── utils/             # @startupkit/utils npm package
+├── templates/             # Scaffolding templates
+│   ├── next/              # Next.js app template
+│   ├── package/           # Generic package template
+│   ├── repo/              # Full monorepo template
+│   └── vite/              # Vite app template
+├── config/                # Shared configurations
+│   ├── biome/             # Biome linter/formatter config
+│   └── typescript/        # TypeScript base configurations
+└── pnpm-workspace.yaml    # Workspace & catalog definitions
 ```
 
 ### Package Architecture
 
-All packages are **workspace packages** (not published to npm) and use:
-- **Source imports**: Packages import directly from `./src` (no build step required during development)
-- **Workspace protocol**: Dependencies use `workspace:*` to reference other packages
-- **pnpm catalogs**: Version management for shared dependencies (see `pnpm-workspace.yaml`)
+**Key packages**:
+- **`packages/cli`** - The `startupkit` CLI tool for scaffolding projects
+- **`packages/analytics`** - Published to npm as `@startupkit/analytics`
+- **`packages/auth`** - Published to npm as `@startupkit/auth`
+- **`packages/utils`** - Published to npm as `@startupkit/utils`
+
+**Templates**:
+- **`templates/repo`** - Full monorepo template (most comprehensive)
+- **`templates/next`** - Next.js app template
+- **`templates/package`** - Generic package template
+- **`templates/vite`** - Vite app template
 
 ---
 
@@ -111,8 +123,8 @@ pnpm clean            # Clean build artifacts
 
 **Run commands in specific packages**:
 ```bash
-pnpm --filter @repo/ui build
-pnpm --filter @repo/db db:generate
+pnpm --filter @startupkit/analytics build
+pnpm --filter startupkit build
 ```
 
 ### Dependency Catalogs
