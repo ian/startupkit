@@ -23,7 +23,7 @@ catalogs:
     "next": 16.0.0
     "zod": 3.24.1
   
-  instrumentation: 
+  otel: 
     "@opentelemetry/api": 1.9.0
     "@opentelemetry/api-logs": 0.200.0
     "@opentelemetry/instrumentation": 0.200.0

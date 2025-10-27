@@ -28,22 +28,21 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# local env files
-.env.*
-
 # turbo
 .turbo
 
 # env
-.env.*
+.env.local
+.env.test
+
+# config
 .vercel
 .vscode
 
+# old files
 *.old
 *.cache
 .cache
-.trigger
-tsconfig.tsbuildinfo
 
 # bug - ruler does not include these
 /.gemini/
