@@ -319,25 +319,6 @@ const flags = await getFeatureFlags(userId);
 
 ---
 
-## Background Jobs (@repo/jobs)
-
-Built on [Trigger.dev](https://trigger.dev).
-
-### Job Location
-
-Create jobs in:
-```
-packages/jobs/src/trigger/
-```
-
-### Configuration
-
-- **Config file**: `packages/jobs/trigger.config.ts`
-- **Project ID**: Set in config (currently `"PROJECT"`)
-- **Sentry integration**: Auto-enabled if `SENTRY_AUTH_TOKEN` is set
-
----
-
 ## File Placement Guidelines
 
 ### Where to Put New Files
@@ -350,7 +331,6 @@ packages/jobs/src/trigger/
 | Database schema | `packages/db/src/schema.ts` | Add tables to existing schema |
 | Database migrations | `packages/db/drizzle/` | Auto-generated via `pnpm db:generate` |
 | Auth logic | `packages/auth/src/` | Extend `lib/auth.ts` or add hooks |
-| Background jobs | `packages/jobs/src/` | `packages/jobs/src/send-email.ts` |
 | Email templates | `packages/emails/src/templates/` | `packages/emails/src/templates/welcome.tsx` |
 | Utility functions | `packages/utils/src/lib/` | `packages/utils/src/lib/string.ts` |
 | Hooks | `packages/ui/src/hooks/` or app-specific hooks dir | |
@@ -493,11 +473,6 @@ NEXT_PUBLIC_POSTHOG_KEY=phc_...
 NEXT_PUBLIC_POSTHOG_HOST=https://app.posthog.com
 ```
 
-**Jobs (optional)**:
-```bash
-TRIGGER_SECRET_KEY=tr_dev_...
-```
-
 **Monitoring (optional)**:
 ```bash
 SENTRY_DSN=https://...
@@ -598,12 +573,6 @@ This updates `AGENTS.md`, `CLAUDE.md`, `WARP.md`, etc. at the repository root.
 1. Create: `apps/{app}/src/app/my-page/page.tsx`
 2. Use Server Component by default
 3. Add client interactivity only where needed
-
-### Add a background job
-
-1. Create: `packages/jobs/src/my-job.ts`
-2. Export job with Trigger.dev client
-3. Test locally with Trigger.dev CLI
 
 ### Add an email template
 
