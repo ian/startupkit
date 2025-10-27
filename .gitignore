@@ -34,6 +34,10 @@ next-env.d.ts
 old/
 tmp/
 
+# bug - ruler does not include these
+/.gemini/
+/.qwen/
+
 # START Ruler Generated Files
 /.aider.conf.yml
 /.aider.conf.yml.bak
