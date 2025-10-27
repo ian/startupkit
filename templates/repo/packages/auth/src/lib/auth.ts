@@ -88,7 +88,7 @@ export const auth = betterAuth({
 		})
 	},
 	plugins: [
-		admin() as never,
+		admin(),
 		emailOTP({
 			sendVerificationOTP
 		}),
