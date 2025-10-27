@@ -2,12 +2,35 @@
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
-      "inputs": ["packages/**"],
-      "outputs": [".next/**", "!.next/cache/**", "!.next/template/**"]
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "packages/**"
+      ],
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        "!.next/template/**"
+      ]
     },
-    "type-check": {
-      "dependsOn": ["^type-check"]
+    "lint": {
+      "outputs": [
+        ".cache/.lint"
+      ]
+    },
+    "lint:fix": {
+      "outputs": [
+        ".cache/.lint"
+      ]
+    },
+    "typecheck": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        ".cache/tsbuildinfo.json"
+      ]
     },
     "dev": {
       "persistent": true,

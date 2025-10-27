@@ -19,7 +19,9 @@
   "scripts": {
     "clean": "rm -rf ./dist ./.turbo",
     "build": "rollup -c && tsc --emitDeclarationOnly",
-    "type-check": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check",
+    "lint:fix": "biome check --write"
   },
   "peerDependencies": {
     "next": ">=14.0.0",

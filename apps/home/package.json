@@ -6,7 +6,9 @@
     "dev": "next dev -p 7548",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check",
+    "lint:fix": "biome check --write"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.1",

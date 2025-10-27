@@ -25,8 +25,9 @@
     "clean": "rm -rf ./dist ./.turbo",
     "build": "rollup -c && tsc --emitDeclarationOnly",
     "build:watch": "npx chokidar-cli \"src/**/*\" -c \"pnpm run build\" --initial",
-    "oldpostbuild": "validate-package-exports --check --verify",
-    "type-check": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check",
+    "lint:fix": "biome check --write"
   },
   "dependencies": {
     "swr": "^2.2.5"
