@@ -11,6 +11,9 @@ importers:
       '@biomejs/biome':
         specifier: 1.9.4
         version: 1.9.4
+      '@intellectronica/ruler':
+        specifier: ^0.3.11
+        version: 0.3.11
       '@rollup/plugin-commonjs':
         specifier: ^26.0.1
         version: 26.0.3(rollup@4.40.1)
@@ -557,6 +560,9 @@ packages:
     resolution: {integrity: sha512-93zYdMES/c1D69yZiKDBj0V24vqNzB/koF26KPaagAfd3P/4gUlh3Dys5ogAK+Exi9QyzlD8x/08Zt7wIKcDcA==}
     deprecated: Use @eslint/object-schema instead
 
+  '@iarna/toml@2.2.5':
+    resolution: {integrity: sha512-trnsAYxU3xnS1gPHPyU961coFyLkh4gAD/0zQ5mymY4yOZ+CYvsPqUbOFSw0aDM4y0tV7tiFxL/1XfXPNC6IPg==}
+
   '@inquirer/checkbox@4.1.5':
     resolution: {integrity: sha512-swPczVU+at65xa5uPfNP9u3qx/alNwiaykiI/ExpsmMSQW55trmZcwhYWzw/7fj+n6Q8z1eENvR7vFfq9oPSAQ==}
     engines: {node: '>=18'}
@@ -677,6 +683,10 @@ packages:
     peerDependenciesMeta:
       '@types/node':
         optional: true
+
+  '@intellectronica/ruler@0.3.11':
+    resolution: {integrity: sha512-Cf7iuMsxjUJBw+ZMuzGjfblvsY8lInFWEluowZiIuCvdCsEMOcmKwopCE6Yi8CI1PtoNTABjM3w9fAxXHFEVcA==}
+    hasBin: true
 
   '@isaacs/cliui@8.0.2':
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
@@ -4257,6 +4267,9 @@ packages:
     resolution: {integrity: sha512-cYVsTjKl8b+FrnidjibDWskAv7UKOfcwaVZdp/it9n1s9fU3IkgDbhdIRKCW4JDsAlECJY0ytoVPT3sK6kideA==}
     engines: {node: '>=18'}
 
+  zod@3.25.76:
+    resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
+
   zod@4.1.12:
     resolution: {integrity: sha512-JInaHOamG8pt5+Ey8kGmdcAcg3OL9reK8ltczgHTAwNhMys/6ThXHityHxVV2p3fkw/c+MAvBHFVYHFZDmjMCQ==}
 
@@ -4512,6 +4525,8 @@ snapshots:
 
   '@humanwhocodes/object-schema@2.0.3': {}
 
+  '@iarna/toml@2.2.5': {}
+
   '@inquirer/checkbox@4.1.5(@types/node@22.15.3)':
     dependencies:
       '@inquirer/core': 10.1.10(@types/node@22.15.3)
@@ -4627,6 +4642,13 @@ snapshots:
   '@inquirer/type@3.0.6(@types/node@22.15.3)':
     optionalDependencies:
       '@types/node': 22.15.3
+
+  '@intellectronica/ruler@0.3.11':
+    dependencies:
+      '@iarna/toml': 2.2.5
+      js-yaml: 4.1.0
+      yargs: 17.7.2
+      zod: 3.25.76
 
   '@isaacs/cliui@8.0.2':
     dependencies:
@@ -8728,6 +8750,8 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   yoctocolors-cjs@2.1.2: {}
+
+  zod@3.25.76: {}
 
   zod@4.1.12: {}
 
