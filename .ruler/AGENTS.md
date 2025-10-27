@@ -506,15 +506,36 @@ SENTRY_AUTH_TOKEN=...
 
 ### Loading Variables
 
-Use **dotenv-cli** for local development:
+**Always use `with-env` and `with-test-env` wrappers** when running commands that need environment variables.
+
+The project uses **dotenv-cli** to automatically load environment variables:
+- `pnpm with-env` → Loads `.env.local` (for development)
+- `pnpm with-test-env` → Loads `.env.test` (for testing)
+
+**Development commands**:
 ```bash
-pnpm with-env pnpm dev          # Load from .env.local
-pnpm with-test-env pnpm test    # Load from .env.test
+pnpm with-env pnpm dev                              # Start dev servers
+pnpm with-env pnpm --filter @repo/db db:migrate     # Run migrations
+pnpm with-env pnpm --filter @repo/web dev           # Start specific app
 ```
 
-Or run directly:
+**Test commands**:
 ```bash
-pnpm --filter @repo/db db:migrate  # Reads DATABASE_URL from .env.local
+pnpm with-test-env pnpm test                           # Run all tests
+pnpm with-test-env pnpm --filter ./packages/analytics test  # Test specific package
+pnpm with-test-env turbo run test --ui stream          # Run tests via Turbo
+```
+
+**Why use these wrappers?**
+- ✅ Automatically loads correct environment file
+- ✅ Works across all packages in monorepo
+- ✅ Prevents accidentally using wrong environment
+- ✅ No need to manually export variables
+
+**Don't** run commands without the wrapper:
+```bash
+pnpm dev                    # ❌ Missing environment variables
+pnpm --filter @repo/web dev # ❌ Won't load .env.local
 ```
 
 ---
@@ -523,12 +544,15 @@ pnpm --filter @repo/db db:migrate  # Reads DATABASE_URL from .env.local
 
 ### Running Tests
 
+**Always use `with-test-env` when running tests** to ensure proper environment variables are loaded.
+
 ```bash
-pnpm test              # Run all tests
-pnpm with-test-env pnpm test  # Run with test environment
+pnpm with-test-env pnpm test                           # Run all tests
+pnpm with-test-env pnpm --filter ./packages/analytics test  # Test specific package
+pnpm with-test-env turbo run test --ui stream          # Run tests via Turbo
 ```
 
-Tests use the `.env.test` file for environment variables.
+Tests use the `.env.test` file for environment variables (automatically loaded by `with-test-env`).
 
 ---
 
@@ -657,5 +681,6 @@ When working on this codebase:
 6. ✅ **Database changes** → `pnpm db:generate` → `pnpm db:migrate`
 7. ✅ **UI components** → `pnpm shadcn add component-name`
 8. ✅ **Run tasks via Turbo** - `pnpm dev`, `pnpm build`, `pnpm lint:fix`
-9. ✅ **Place files correctly** - See "File Placement Guidelines" above
-10. ✅ **No unnecessary comments** - Code should be self-documenting
+9. ✅ **Use env wrappers** - `pnpm with-env` for dev, `pnpm with-test-env` for tests
+10. ✅ **Place files correctly** - See "File Placement Guidelines" above
+11. ✅ **No unnecessary comments** - Code should be self-documenting

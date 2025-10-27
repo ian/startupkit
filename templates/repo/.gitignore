@@ -66,7 +66,6 @@ tsconfig.tsbuildinfo
 /.crush.json.bak
 /.cursor/rules/ruler_cursor_instructions.mdc
 /.cursor/rules/ruler_cursor_instructions.mdc.bak
-/.gemini/
 /.goosehints
 /.goosehints.bak
 /.idx/airules.md
@@ -79,7 +78,6 @@ tsconfig.tsbuildinfo
 /.kiro/steering/ruler_kiro_instructions.md.bak
 /.openhands/microagents/repo.md
 /.openhands/microagents/repo.md.bak
-/.qwen/
 /.roo/mcp.json
 /.roo/mcp.json.bak
 /.trae/rules/project_rules.md
