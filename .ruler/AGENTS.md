@@ -137,7 +137,7 @@ The workspace uses **pnpm catalogs** to manage shared dependency versions in `pn
 - `catalog:react18` - React 18 (fallback)
 - `catalog:ui` - UI dependencies (`lucide-react`, `framer-motion`, `tailwindcss`, etc.)
 - `catalog:analytics` - Analytics packages
-- `catalog:instrumentation` - OpenTelemetry, Sentry
+- `catalog:otel` - OpenTelemetry, Sentry
 
 **Using catalogs in `package.json`**:
 ```json
