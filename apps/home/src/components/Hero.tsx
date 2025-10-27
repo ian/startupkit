@@ -13,13 +13,9 @@ export const Hero = () => {
 			>
 				<Badge />
 				<h1 className="mb-4 font-serif text-4xl font-extrabold leading-none tracking-tight text-white md:text-5xl lg:text-6xl">
-					{/* The Ultimate Startup Framework */}
-					{/* Everything you need to launch a SaaS product */}
 					Launch Faster with StartupKit
 				</h1>
 				<p className="mb-8 text-lg font-normal text-gray-300 lg:text-xl">
-					{/* StartupKit is the open-source SaaS framework designed to ensure you
-          not only launch but also thrive. */}
 					Your SaaS framework in a box. Built using modern open-source
 					frameworks and packed full of integrations, StartupKit provides
 					everything you need to build, grow, and scale your startup.
@@ -37,7 +33,7 @@ export const Hero = () => {
 								fillRule="evenodd"
 								d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
 								clipRule="evenodd"
-							></path>
+							/>
 						</svg>
 					</span>
 					<CopyCmd />
@@ -51,7 +47,6 @@ const Badge = () => {
 	return (
 		<a
 			className="inline-flex items-center justify-between px-1 py-1 pr-4 text-sm text-white rounded-full mb-7 bg-blue-500/30 hover:scale-105 transition-all duration-150"
-			role="alert"
 			href="https://www.npmjs.com/package/startupkit"
 			rel="noopen nofollow"
 			target="_blank"
@@ -75,7 +70,7 @@ const Badge = () => {
 					fillRule="evenodd"
 					d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
 					clipRule="evenodd"
-				></path>
+				/>
 			</svg>
 		</a>
 	)

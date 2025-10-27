@@ -1,8 +1,8 @@
+@import "scrollbars.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import "scrollbars.css";
 
 [data-layout="static"] {
 	@apply min-h-screen font-sans antialiased pt-28 w-full mx-auto md:max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl px-4 lg:px-6;

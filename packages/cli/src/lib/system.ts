@@ -1,5 +1,5 @@
-import child from "child_process"
-import fs from "fs"
+import child from "node:child_process"
+import fs from "node:fs"
 
 export async function readFile(path: string) {
 	return fs.readFileSync(path).toString()
@@ -53,7 +53,7 @@ type ExecOpts = {
 
 export async function exec(cmd: string, opts: ExecOpts = {}) {
 	const { cwd, stdio = "inherit" } = opts
-	return new Promise(async (resolve, reject) => {
+	return new Promise((resolve, reject) => {
 		try {
 			const res = child.execSync(cmd, {
 				cwd,

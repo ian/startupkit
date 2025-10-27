@@ -45,15 +45,15 @@ body {
 }
 
 .bg-gradient {
-	background: var(--bg-gradient-fallback, #141e30); /* fallback for old browsers */
+	background: var(--bg-gradient-fallback, #141e30);
 	background: -webkit-linear-gradient(
-		to bottom,
+		top,
 		var(--bg-background-light, #243b55),
 		var(--bg-gradient-end, #141e30)
-	); /* Chrome 10-25, Safari 5.1-6 */
+	);
 	background: linear-gradient(
 		to bottom,
 		var(--bg-background-light, #243b55),
 		var(--bg-gradient-end, #141e30)
-	); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+	);
 }
