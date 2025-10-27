@@ -1,42 +1,42 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"
 
 interface NpmVersionProps {
-  packageName: string;
+	packageName: string
 }
 
 const NpmVersion: React.FC<NpmVersionProps> = ({ packageName }) => {
-  const [version, setVersion] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+	const [version, setVersion] = useState<string | null>(null)
+	const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    const fetchLatestVersion = async (): Promise<void> => {
-      try {
-        const response = await fetch(
-          `https://registry.npmjs.org/${packageName}/latest`
-        );
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data: { version: string } = await response.json();
-        setVersion(data.version);
-      } catch (err) {
-        setError("Failed to fetch package version");
-        console.error("Error fetching package version:", err);
-      }
-    };
+	useEffect(() => {
+		const fetchLatestVersion = async (): Promise<void> => {
+			try {
+				const response = await fetch(
+					`https://registry.npmjs.org/${packageName}/latest`
+				)
+				if (!response.ok) {
+					throw new Error("Network response was not ok")
+				}
+				const data: { version: string } = await response.json()
+				setVersion(data.version)
+			} catch (err) {
+				setError("Failed to fetch package version")
+				console.error("Error fetching package version:", err)
+			}
+		}
 
-    fetchLatestVersion();
-  }, [packageName]);
+		fetchLatestVersion()
+	}, [packageName])
 
-  if (error) {
-    return <>{error}</>;
-  }
+	if (error) {
+		return <>{error}</>
+	}
 
-  if (!version) {
-    return <>@...</>;
-  }
+	if (!version) {
+		return <>@...</>
+	}
 
-  return <>@{version}</>;
-};
+	return <>@{version}</>
+}
 
-export default NpmVersion;
+export default NpmVersion

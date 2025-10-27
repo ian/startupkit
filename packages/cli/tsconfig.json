@@ -1,13 +1,13 @@
 {
-  "extends": "@config/tsconfig/library.json",
-  "compilerOptions": {
-    "rootDir": "./src",
-    "outDir": "./dist",
-    "strict": false,
-    "lib": ["ES2020"],
-    "jsx": "preserve",
-    "sourceMap": true
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+	"extends": "@config/tsconfig/library.json",
+	"compilerOptions": {
+		"rootDir": "./src",
+		"outDir": "./dist",
+		"strict": false,
+		"lib": ["ES2020"],
+		"jsx": "preserve",
+		"sourceMap": true
+	},
+	"include": ["src/**/*"],
+	"exclude": ["node_modules", "dist"]
 }

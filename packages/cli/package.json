@@ -1,58 +1,51 @@
 {
-  "name": "startupkit",
-  "version": "0.4.0",
-  "author": "Ian Hunter <ian@01.studio>",
-  "license": "ISC",
-  "description": "The NextJS framework with everything you need to launch a SaaS product.",
-  "homepage": "https://startupkit.com",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/01-studio/startupkit"
-  },
-  "keywords": [
-    "startup",
-    "boostrap",
-    "boilerplate",
-    "analytics",
-    "auth"
-  ],
-  "files": [
-    "dist",
-    "templates"
-  ],
-  "type": "module",
-  "main": "dist/cli.js",
-  "bin": {
-    "startupkit": "./dist/cli.js"
-  },
-  "exports": {
-    ".": {
-      "default": "./dist/cli.js"
-    },
-    "./package.json": "./package.json"
-  },
-  "scripts": {
-    "clean": "rm -rf dist",
-    "build": "rollup -c",
-    "build:watch": "rollup -c -w",
-    "cli": "node dist/cli.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "dependencies": {
-    "commander": "13.1.0",
-    "create-next-app": "15.3.1",
-    "degit": "^2.8.4",
-    "ora": "8.2.0",
-    "replace-in-file": "^8.3.0",
-    "validate-package-exports": "0.9.0"
-  },
-  "devDependencies": {
-    "@config/biome": "workspace:*",
-    "@config/tsconfig": "workspace:*",
-    "@rollup/plugin-json": "6.1.0",
-    "@rollup/plugin-node-resolve": "16.0.1",
-    "@types/node": "22.15.3",
-    "inquirer": "12.6.0",
-    "rollup-plugin-command": "^1.1.3"
-  }
+	"name": "startupkit",
+	"version": "0.4.0",
+	"author": "Ian Hunter <ian@01.studio>",
+	"license": "ISC",
+	"description": "The NextJS framework with everything you need to launch a SaaS product.",
+	"homepage": "https://startupkit.com",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/01-studio/startupkit"
+	},
+	"keywords": ["startup", "boostrap", "boilerplate", "analytics", "auth"],
+	"files": ["dist", "templates"],
+	"type": "module",
+	"main": "dist/cli.js",
+	"bin": {
+		"startupkit": "./dist/cli.js"
+	},
+	"exports": {
+		".": {
+			"default": "./dist/cli.js"
+		},
+		"./package.json": "./package.json"
+	},
+	"scripts": {
+		"clean": "rm -rf dist",
+		"build": "rollup -c",
+		"build:watch": "rollup -c -w",
+		"cli": "node dist/cli.js",
+		"typecheck": "tsc --noEmit",
+		"lint": "biome check",
+		"lint:fix": "biome check --write"
+	},
+	"dependencies": {
+		"commander": "13.1.0",
+		"create-next-app": "15.3.1",
+		"degit": "^2.8.4",
+		"ora": "8.2.0",
+		"replace-in-file": "^8.3.0",
+		"validate-package-exports": "0.9.0"
+	},
+	"devDependencies": {
+		"@config/biome": "workspace:*",
+		"@config/tsconfig": "workspace:*",
+		"@rollup/plugin-json": "6.1.0",
+		"@rollup/plugin-node-resolve": "16.0.1",
+		"@types/node": "22.15.3",
+		"inquirer": "12.6.0",
+		"rollup-plugin-command": "^1.1.3"
+	}
 }

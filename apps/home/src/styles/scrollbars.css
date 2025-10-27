@@ -1,32 +1,32 @@
 ::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
+	width: 4px;
+	height: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 10px;
+	background: #888;
+	border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+	background: #555;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-blue;
+	@apply bg-blue;
 }
 
 /* For Firefox */
 * {
-  scrollbar-width: thin;
-  scrollbar-color: #27405c transparent;
+	scrollbar-width: thin;
+	scrollbar-color: #27405c transparent;
 }
 
 /* For Internet Explorer and Edge */
 body {
-  -ms-overflow-style: none; /* hide the default scrollbar */
+	-ms-overflow-style: none; /* hide the default scrollbar */
 }
 
 body::-webkit-scrollbar {
-  display: none; /* hide the default scrollbar */
+	display: none; /* hide the default scrollbar */
 }

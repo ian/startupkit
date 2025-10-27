@@ -1,11 +1,10 @@
 {
-  "extends": "@config/tsconfig/library.json",
-  "compilerOptions": {
-    "rootDir": "./src",
-    "outDir": "./dist",
-    "declarationDir": "./dist/types"
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+	"extends": "@config/tsconfig/library.json",
+	"compilerOptions": {
+		"rootDir": "./src",
+		"outDir": "./dist",
+		"declarationDir": "./dist/types"
+	},
+	"include": ["src/**/*"],
+	"exclude": ["node_modules", "dist"]
 }
-
