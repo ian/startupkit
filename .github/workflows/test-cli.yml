@@ -8,7 +8,7 @@ on:
 
 jobs:
   test-cli:
-    name: Test StartupKit CLI Project Generator
+    name: CLI Project Generator
     runs-on: ubuntu-latest
 
     steps:
