@@ -36,9 +36,6 @@
 			"@startupkit/auth": "packages/auth"
 		},
 		{
-			"@startupkit/utils": "packages/utils"
-		},
-		{
 			"startupkit": "packages/cli"
 		}
 	],

@@ -232,8 +232,7 @@ jobs:
           pkg.pnpm = pkg.pnpm || {};
           pkg.pnpm.overrides = {
             '@startupkit/auth': 'link:' + workspace + '/packages/auth',
-            '@startupkit/analytics': 'link:' + workspace + '/packages/analytics',
-            '@startupkit/utils': 'link:' + workspace + '/packages/utils'
+            '@startupkit/analytics': 'link:' + workspace + '/packages/analytics'
           };
           fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
           console.log('Overrides added:', pkg.pnpm.overrides);
