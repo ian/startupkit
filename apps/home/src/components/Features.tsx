@@ -92,6 +92,11 @@ const FEATURES = [
 				label: "Plausible",
 				image: require("@/images/integrations/plausible.svg"),
 				className: "h-6"
+			},
+			{
+				label: "OpenPanel",
+				image: require("@/images/integrations/openpanel.svg"),
+				className: "h-6"
 			}
 		]
 	},
