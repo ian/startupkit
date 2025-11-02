@@ -223,43 +223,11 @@ jobs:
 
       - name: Link local packages for testing
         run: |
-          echo "🔗 Replacing @startupkit/* packages with local file: references..."
-          cd test-startup
-          
-          # Find all package.json files in the workspace
-          find packages -name "package.json" -type f | while read pkg_file; do
-            echo "Processing: $pkg_file"
-            node -e "
-            const fs = require('fs');
-            const pkg = JSON.parse(fs.readFileSync('$pkg_file', 'utf8'));
-            let changed = false;
-            
-            // Calculate relative path from package to root
-            const depth = '$pkg_file'.split('/').length - 1;
-            const relativeRoot = '../'.repeat(depth);
-            
-            // Replace in dependencies
-            if (pkg.dependencies) {
-              if (pkg.dependencies['@startupkit/auth']) {
-                pkg.dependencies['@startupkit/auth'] = 'file:' + relativeRoot + '../packages/auth';
-                changed = true;
-              }
-              if (pkg.dependencies['@startupkit/analytics']) {
-                pkg.dependencies['@startupkit/analytics'] = 'file:' + relativeRoot + '../packages/analytics';
-                changed = true;
-              }
-            }
-            
-            if (changed) {
-              fs.writeFileSync('$pkg_file', JSON.stringify(pkg, null, 2) + '\n');
-              console.log('✅ Updated:', '$pkg_file');
-            }
-            "
-          done
+          echo "🔗 Linking local @startupkit/* packages..."
+          node "$GITHUB_WORKSPACE/scripts/link-local.js" link "test-projects/test-startup" "$GITHUB_WORKSPACE/packages"
           
           echo "📄 Verifying changes in packages/analytics/package.json:"
-          grep -A 2 '@startupkit/analytics' packages/analytics/package.json || true
-        working-directory: test-projects
+          grep -A 2 '@startupkit/analytics' test-projects/test-startup/packages/analytics/package.json || true
 
       - name: Install dependencies in generated project
         run: |

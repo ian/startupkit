@@ -7,34 +7,47 @@
  * for @startupkit/* packages in the template repo.
  *
  * Usage:
- *   pnpm link:local    - Convert npm versions to local file: links (for development)
- *   pnpm unlink:local  - Convert file: links back to npm versions (before publishing)
+ *   pnpm link:local              - Link template repo packages
+ *   pnpm unlink:local            - Unlink template repo packages
+ *   node scripts/link-local.js link <target-dir> <packages-dir>
  *
  * Examples:
  *   Development: pnpm link:local && cd templates/repo && pnpm install
  *   Publishing:  pnpm unlink:local
+ *   CI: node scripts/link-local.js link test-projects/test-startup $GITHUB_WORKSPACE/packages
  */
 
 import { glob } from 'glob';
 import { readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, relative, resolve } from 'node:path';
 
-const TEMPLATE_ROOT = 'templates/repo';
 const PACKAGES_TO_LINK = ['@startupkit/auth', '@startupkit/analytics'];
 
 const command = process.argv[2];
+const targetDir = process.argv[3] || 'templates/repo';
+const packagesDir = process.argv[4];
 
 if (!command || !['link', 'unlink'].includes(command)) {
-  console.error('Usage: node scripts/link-local.js [link|unlink]');
+  console.error(
+    'Usage: node scripts/link-local.js [link|unlink] [target-dir] [packages-dir]',
+  );
   console.error('');
   console.error('Commands:');
   console.error('  link    Convert npm versions to local file: links');
   console.error('  unlink  Convert file: links to npm versions');
+  console.error('');
+  console.error('Arguments:');
+  console.error(
+    '  target-dir     Directory to process (default: templates/repo)',
+  );
+  console.error(
+    '  packages-dir   Path to packages directory (optional, for CI)',
+  );
   process.exit(1);
 }
 
 async function main() {
-  const packageJsonFiles = await glob(`${TEMPLATE_ROOT}/**/package.json`, {
+  const packageJsonFiles = await glob(`${targetDir}/**/package.json`, {
     ignore: ['**/node_modules/**', '**/dist/**', '**/.next/**'],
   });
 
@@ -53,26 +66,37 @@ async function main() {
           if (command === 'link') {
             // Convert version to file: link
             if (!currentValue.startsWith('file:')) {
-              // Calculate relative path from package to root
-              const depth = file.split('/').length - 1;
-              const relativeRoot = '../'.repeat(depth);
               const targetPackage = pkgName.replace('@startupkit/', '');
-              pkg.dependencies[pkgName] =
-                `file:${relativeRoot}packages/${targetPackage}`;
+
+              let relativePackagePath;
+              if (packagesDir) {
+                // Use custom packages directory (for CI)
+                const fileDir = resolve(file, '..');
+                const absolutePackagesPath = resolve(
+                  packagesDir,
+                  targetPackage,
+                );
+                relativePackagePath = relative(fileDir, absolutePackagesPath);
+              } else {
+                // Calculate from file depth (for local development)
+                const depth = file.split('/').length - 1;
+                const relativeRoot = '../'.repeat(depth);
+                relativePackagePath = `${relativeRoot}packages/${targetPackage}`;
+              }
+
+              pkg.dependencies[pkgName] = `file:${relativePackagePath}`;
               changed = true;
               console.log(`✅ ${file}: ${pkgName} → local link`);
             }
           } else if (command === 'unlink') {
             // Convert file: link to version
             if (currentValue.startsWith('file:')) {
-              // Read version from root package
               const targetPackage = pkgName.replace('@startupkit/', '');
-              const rootPkg = JSON.parse(
-                readFileSync(
-                  join('packages', targetPackage, 'package.json'),
-                  'utf8',
-                ),
-              );
+              const rootPkgPath = packagesDir
+                ? join(packagesDir, targetPackage, 'package.json')
+                : join('packages', targetPackage, 'package.json');
+
+              const rootPkg = JSON.parse(readFileSync(rootPkgPath, 'utf8'));
               pkg.dependencies[pkgName] = rootPkg.version;
               changed = true;
               console.log(`✅ ${file}: ${pkgName} → v${rootPkg.version}`);
