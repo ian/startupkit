@@ -3,9 +3,9 @@
 	"private": true,
 	"scripts": {
 		"clean": "rm -rf .cache .next",
-		"build": "next build --webpack",
+		"build": "next build",
 		"start": "next start",
-		"dev": "next dev -p 2999 --turbo",
+		"dev": "next dev -p 2999",
 		"lint": "biome lint --unsafe",
 		"lint:fix": "biome lint --write --unsafe",
 		"typecheck": "tsc --noEmit",
