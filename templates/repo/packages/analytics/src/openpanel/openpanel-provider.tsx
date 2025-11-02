@@ -11,23 +11,33 @@
 
 'use client';
 
-import { OpenPanel } from '@openpanel/web';
+import type { OpenPanelOptions } from '@openpanel/sdk';
+import { OpenPanel as OpenPanelBase } from '@openpanel/sdk';
 import { type ReactNode, createContext, useContext, useRef } from 'react';
+
+export * from '@openpanel/sdk';
+
+/**
+ * React-specific OpenPanel client
+ */
+export class OpenPanel extends OpenPanelBase {
+  constructor(options: OpenPanelOptions) {
+    super({
+      ...options,
+      sdk: 'react',
+      sdkVersion: '19.0.0',
+    });
+  }
+}
 
 /**
  * Configuration options for the OpenPanel provider
  */
-interface OpenPanelProviderProps {
+interface OpenPanelProviderProps extends Omit<OpenPanelOptions, 'clientId'> {
   /** React children to render */
   children: ReactNode;
   /** OpenPanel client ID. Falls back to environment variables if not provided */
   clientId?: string;
-  /** Whether to automatically track screen views */
-  trackScreenViews?: boolean;
-  /** Whether to track clicks on outgoing links */
-  trackOutgoingLinks?: boolean;
-  /** Whether to track element attributes in events */
-  trackAttributes?: boolean;
 }
 
 const OpenPanelContext = createContext<OpenPanel | null>(null);
@@ -61,9 +71,7 @@ export function useOpenPanel() {
  *
  * @param children - React children to render
  * @param clientId - OpenPanel client ID. Falls back to environment variables if not provided
- * @param trackScreenViews - Whether to automatically track screen views (default: false)
- * @param trackOutgoingLinks - Whether to track clicks on outgoing links (default: true)
- * @param trackAttributes - Whether to track element attributes in events (default: true)
+ * @param options - Additional OpenPanel configuration options
  *
  * @example
  * ```tsx
@@ -75,9 +83,7 @@ export function useOpenPanel() {
 export function OpenPanelProvider({
   children,
   clientId,
-  trackScreenViews = false,
-  trackOutgoingLinks = true,
-  trackAttributes = true,
+  ...options
 }: OpenPanelProviderProps) {
   const openpanelRef = useRef<OpenPanel | null>(null);
 
@@ -91,9 +97,7 @@ export function OpenPanelProvider({
     if (id) {
       openpanelRef.current = new OpenPanel({
         clientId: id,
-        trackScreenViews,
-        trackOutgoingLinks,
-        trackAttributes,
+        ...options,
       });
     }
   }
@@ -104,4 +108,3 @@ export function OpenPanelProvider({
     </OpenPanelContext.Provider>
   );
 }
-

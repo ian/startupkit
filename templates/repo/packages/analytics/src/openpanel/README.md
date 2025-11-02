@@ -1,11 +1,13 @@
 # OpenPanel React Provider
 
-A React context provider for [OpenPanel](https://openpanel.dev) analytics.
+A React context provider for [OpenPanel](https://openpanel.dev) analytics built on `@openpanel/sdk`.
+
+This follows the same architecture as the official React Native SDK and is designed to be contributed back to the OpenPanel project.
 
 ## Installation
 
 ```bash
-npm install @openpanel/web
+npm install @openpanel/sdk
 ```
 
 ## Usage
@@ -42,12 +44,16 @@ It will check for:
 
 ### Configuration Options
 
+The provider accepts all options from `OpenPanelOptions`:
+
 ```tsx
 <OpenPanelProvider
   clientId="your-client-id"
-  trackScreenViews={false}        // Default: false
-  trackOutgoingLinks={true}       // Default: true
-  trackAttributes={true}          // Default: true
+  trackScreenViews={false}
+  trackOutgoingLinks={true}
+  trackAttributes={true}
+  apiUrl="https://api.openpanel.dev"
+  // ... any other OpenPanelOptions
 >
   {children}
 </OpenPanelProvider>
