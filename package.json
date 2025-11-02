@@ -9,7 +9,7 @@
     "clean": "pnpm --stream -r run clean",
     "build": "pnpm --stream -r --filter \"./packages/**\" run build",
     "build:watch": "pnpm --stream -r run build:watch",
-    "dev": "pnpm --stream -r run dev",
+    "dev": "turbo run dev --continue --ui stream",
     "lint": "turbo run lint --continue --ui stream",
     "lint:fix": "turbo run lint:fix --continue --ui stream",
     "typecheck": "turbo run typecheck --ui stream",

@@ -2,10 +2,12 @@ import { startupkitCMS } from "@startupkit/cms/plugin"
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-	eslint: {
-		// We use biome for linting, so we can ignore ESLint errors during builds
-		ignoreDuringBuilds: true
-	},
+	turbopack: {},
+	transpilePackages: [
+		"@startupkit/analytics",
+		"@startupkit/auth",
+		"@startupkit/utils"
+	],
 	rewrites: () => [
 		{
 			source: "/docs",

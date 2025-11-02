@@ -9,6 +9,7 @@ export const Hero = () => {
 				initial={{ opacity: 0, marginTop: 0, scale: 0.9 }}
 				whileInView={{ opacity: 1, marginTop: -10, scale: 1 }}
 				viewport={{ once: true }}
+				transition={{ duration: 0.6, ease: "easeOut" }}
 				className="py-8 mx-auto text-center md:max-w-screen-sm lg:max-w-screen-md lg:py-16 lg:px-12"
 			>
 				<Badge />
