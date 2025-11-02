@@ -36,8 +36,8 @@ catalogs:
       specifier: 2.1.1
       version: 2.1.1
     framer-motion:
-      specifier: 12.9.4
-      version: 12.9.4
+      specifier: 12.23.24
+      version: 12.23.24
     lucide-react:
       specifier: 0.446.0
       version: 0.446.0
@@ -126,7 +126,7 @@ importers:
         version: 2.1.1
       framer-motion:
         specifier: catalog:ui
-        version: 12.9.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        version: 12.23.24(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       lucide-react:
         specifier: catalog:ui
         version: 0.446.0(react@19.0.0)
@@ -2356,8 +2356,8 @@ packages:
   fraction.js@4.3.7:
     resolution: {integrity: sha512-ZsDfxO51wGAXREY55a7la9LScWpwv9RxIrYABrlvOFBlH/ShPnrtsXeuUIfXKKOVicNxQ+o8JTbJvjS4M89yew==}
 
-  framer-motion@12.9.4:
-    resolution: {integrity: sha512-yaeGDmGQ3eCQEwZ95/pRQMaSh/Q4E2CK6JYOclG/PdjyQad0MULJ+JFVV8911Fl5a6tF6o0wgW8Dpl5Qx4Adjg==}
+  framer-motion@12.23.24:
+    resolution: {integrity: sha512-HMi5HRoRCTou+3fb3h9oTLyJGBxHfW+HnNE25tAXOvVx/IvwMHK0cx7IR4a2ZU6sh3IX1Z+4ts32PcYBOqka8w==}
     peerDependencies:
       '@emotion/is-prop-valid': '*'
       react: ^18.0.0 || ^19.0.0
@@ -5937,7 +5937,7 @@ snapshots:
 
   fraction.js@4.3.7: {}
 
-  framer-motion@12.9.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+  framer-motion@12.23.24(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:
       motion-dom: 12.23.23
       motion-utils: 12.23.6
