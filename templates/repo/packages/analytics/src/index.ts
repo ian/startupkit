@@ -2,7 +2,6 @@
 // This code is generated and YOU OWN IT - customize as needed
 
 export * from "./components/analytics-provider";
-export * from "./openpanel";
 export * from "./hooks/use-analytics";
 export * from "./hooks/use-flag";
 export * from "./types";
