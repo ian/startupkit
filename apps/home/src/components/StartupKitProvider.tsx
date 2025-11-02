@@ -1,92 +1,83 @@
 'use client';
 
-import { OpenPanel } from '@openpanel/web';
 import {
   AnalyticsProvider,
   GoogleAnalyticsProvider,
   gtag,
+  OpenPanelProvider,
+  useOpenPanel,
 } from '@startupkit/analytics';
 import type { ReactNode } from 'react';
-import { useEffect, useRef } from 'react';
-
-const openpanel =
-  typeof window !== 'undefined'
-    ? new OpenPanel({
-        clientId:
-          process.env.NEXT_PUBLIC_OPENPANEL_CLIENT_ID ||
-          process.env.OPENPANEL_CLIENT_ID ||
-          '',
-        trackScreenViews: false,
-        trackOutgoingLinks: true,
-        trackAttributes: true,
-      })
-    : null;
 
 export const StartupKitProvider = ({
   children,
 }: Readonly<{
   children: ReactNode;
-}>) => {
-  const initialized = useRef(false);
+}>) => (
+  <GoogleAnalyticsProvider>
+    <OpenPanelProvider>
+      <StartupKitProviderInner>{children}</StartupKitProviderInner>
+    </OpenPanelProvider>
+  </GoogleAnalyticsProvider>
+);
 
-  useEffect(() => {
-    if (!initialized.current && openpanel) {
-      initialized.current = true;
-    }
-  }, []);
+function StartupKitProviderInner({
+  children,
+}: Readonly<{
+  children: ReactNode;
+}>) {
+  const openpanel = useOpenPanel();
 
   return (
-    <GoogleAnalyticsProvider>
-      <AnalyticsProvider
-        flags={{}}
-        handlers={{
-          identify: (userId, traits) => {
-            if (openpanel) {
-              if (userId) {
-                openpanel.identify({
-                  profileId: userId,
-                  ...(traits || {}),
-                });
-              } else {
-                openpanel.clear();
-              }
-            }
-
+    <AnalyticsProvider
+      flags={{}}
+      handlers={{
+        identify: (userId, traits) => {
+          if (openpanel) {
             if (userId) {
-              gtag('set', { user_id: userId });
-              gtag('set', 'user_properties', traits || {});
-            }
-          },
-          track: (event, properties) => {
-            if (openpanel) {
-              openpanel.track(event, properties || {});
-            }
-
-            gtag('event', event, properties || {});
-          },
-          page: (name, properties) => {
-            if (openpanel) {
-              openpanel.track('$pageview', {
-                ...(properties || {}),
-                ...(name ? { route: name } : {}),
+              openpanel.identify({
+                profileId: userId,
+                ...(traits || {}),
               });
-            }
-
-            gtag('event', 'page_view', {
-              page_path: properties?.pathname || window.location.pathname,
-              page_title: name || document.title,
-              ...(properties || {}),
-            });
-          },
-          reset: () => {
-            if (openpanel) {
+            } else {
               openpanel.clear();
             }
-          },
-        }}
-      >
-        {children}
-      </AnalyticsProvider>
-    </GoogleAnalyticsProvider>
+          }
+
+          if (userId) {
+            gtag('set', { user_id: userId });
+            gtag('set', 'user_properties', traits || {});
+          }
+        },
+        track: (event, properties) => {
+          if (openpanel) {
+            openpanel.track(event, properties || {});
+          }
+
+          gtag('event', event, properties || {});
+        },
+        page: (name, properties) => {
+          if (openpanel) {
+            openpanel.track('$pageview', {
+              ...(properties || {}),
+              ...(name ? { route: name } : {}),
+            });
+          }
+
+          gtag('event', 'page_view', {
+            page_path: properties?.pathname || window.location.pathname,
+            page_title: name || document.title,
+            ...(properties || {}),
+          });
+        },
+        reset: () => {
+          if (openpanel) {
+            openpanel.clear();
+          }
+        },
+      }}
+    >
+      {children}
+    </AnalyticsProvider>
   );
-};
+}

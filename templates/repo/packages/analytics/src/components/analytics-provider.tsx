@@ -2,14 +2,16 @@
 
 import { pruneEmpty } from '@repo/utils';
 import {
+  GoogleAnalyticsProvider,
   gtag,
+  OpenPanelProvider,
   AnalyticsProvider as StartupKitAnalyticsProvider,
+  useOpenPanel,
   type AnalyticsHandlers,
 } from '@startupkit/analytics';
 import { PostHogProvider, usePostHog } from 'posthog-js/react';
 import type { ReactNode } from 'react';
 import { useMemo } from 'react';
-import { OpenPanelProvider, useOpenPanel } from '../openpanel';
 import type { Flags } from '../types';
 
 export {

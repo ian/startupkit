@@ -100,9 +100,9 @@ importers:
 
   apps/home:
     dependencies:
-      '@openpanel/web':
-        specifier: ^1.0.1
-        version: 1.0.1
+      '@openpanel/sdk':
+        specifier: ^1.0.0
+        version: 1.0.0
       '@radix-ui/react-dialog':
         specifier: ^1.1.1
         version: 1.1.15(@types/react-dom@19.0.2(@types/react@19.0.1))(@types/react@19.0.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -202,6 +202,9 @@ importers:
       '@config/tsconfig':
         specifier: workspace:*
         version: link:../../config/typescript
+      '@openpanel/sdk':
+        specifier: ^1.0.0
+        version: 1.0.0
       '@types/node':
         specifier: ^22.4.0
         version: 22.15.3
@@ -1135,9 +1138,6 @@ packages:
 
   '@openpanel/sdk@1.0.0':
     resolution: {integrity: sha512-FNmmfjdXoC/VHEjA+WkrQ4lyM5lxEmV7xDd57uj4E+lIS0sU3DLG2mV/dpS8AscnZbUvuMn3kPhiLCqYzuv/gg==}
-
-  '@openpanel/web@1.0.1':
-    resolution: {integrity: sha512-cVZ7Kr9SicczJ/RDIfEtZs8+1iGDzwkabVA/j3NqSl8VSucsC8m1+LVbjmCDzCJNnK4yVn6tEcc9PJRi2rtllw==}
 
   '@peculiar/asn1-android@2.5.0':
     resolution: {integrity: sha512-t8A83hgghWQkcneRsgGs2ebAlRe54ns88p7ouv8PW2tzF1nAW4yHcL4uZKrFpIU+uszIRzTkcCuie37gpkId0A==}
@@ -4810,10 +4810,6 @@ snapshots:
       - supports-color
 
   '@openpanel/sdk@1.0.0': {}
-
-  '@openpanel/web@1.0.1':
-    dependencies:
-      '@openpanel/sdk': 1.0.0
 
   '@peculiar/asn1-android@2.5.0':
     dependencies:
