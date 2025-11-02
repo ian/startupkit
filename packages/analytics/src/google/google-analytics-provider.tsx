@@ -1,7 +1,8 @@
 "use client"
 
 import type { ReactNode } from "react"
-import { useEffect } from "react"
+import { useCallback, useEffect } from "react"
+import type { AnalyticsPlugin } from "../types"
 
 declare global {
 	interface Window {
@@ -48,4 +49,61 @@ export function GoogleAnalyticsProvider({
 	}, [measurementId])
 
 	return <>{children}</>
+}
+
+interface GoogleAnalyticsOptions {
+	measurementId: string
+}
+
+export function GoogleAnalytics(
+	options: GoogleAnalyticsOptions
+): AnalyticsPlugin {
+	return {
+		name: "GoogleAnalytics",
+		Provider: ({ children }: { children: ReactNode }) => (
+			<GoogleAnalyticsProvider measurementId={options.measurementId}>
+				{children}
+			</GoogleAnalyticsProvider>
+		),
+		useHandlers: () => {
+			const identify = useCallback(
+				(userId: string | null, traits?: Record<string, unknown>) => {
+					if (userId) {
+						gtag("set", { user_id: userId })
+						gtag("set", "user_properties", traits || {})
+					}
+				},
+				[]
+			)
+
+			const track = useCallback(
+				(event: string, properties?: Record<string, unknown>) => {
+					gtag("event", event, properties || {})
+				},
+				[]
+			)
+
+			const page = useCallback(
+				(name?: string, properties?: Record<string, unknown>) => {
+					gtag("event", "page_view", {
+						page_path: properties?.pathname || window.location.pathname,
+						page_title: name || document.title,
+						...(properties || {})
+					})
+				},
+				[]
+			)
+
+			const reset = useCallback(() => {
+				// Google Analytics doesn't have a reset method
+			}, [])
+
+			return {
+				identify,
+				track,
+				page,
+				reset
+			}
+		}
+	}
 }

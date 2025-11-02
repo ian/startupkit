@@ -13,7 +13,14 @@
 
 import type { OpenPanelOptions } from "@openpanel/sdk"
 import { OpenPanel as OpenPanelBase } from "@openpanel/sdk"
-import { type ReactNode, createContext, useContext, useRef } from "react"
+import {
+	type ReactNode,
+	createContext,
+	useCallback,
+	useContext,
+	useRef
+} from "react"
+import type { AnalyticsPlugin } from "../types"
 
 export * from "@openpanel/sdk"
 
@@ -107,4 +114,72 @@ export function OpenPanelProvider({
 			{children}
 		</OpenPanelContext.Provider>
 	)
+}
+
+interface OpenPanelPluginOptions extends Omit<OpenPanelOptions, "clientId"> {
+	clientId: string
+}
+
+export function OpenPanelPlugin(
+	options: OpenPanelPluginOptions
+): AnalyticsPlugin {
+	return {
+		name: "OpenPanel",
+		Provider: ({ children }: { children: ReactNode }) => (
+			<OpenPanelProvider {...options}>{children}</OpenPanelProvider>
+		),
+		useHandlers: () => {
+			const openpanel = useOpenPanel()
+
+			const identify = useCallback(
+				(userId: string | null, traits?: Record<string, unknown>) => {
+					if (openpanel) {
+						if (userId) {
+							openpanel.identify({
+								profileId: userId,
+								...(traits || {})
+							})
+						} else {
+							openpanel.clear()
+						}
+					}
+				},
+				[openpanel]
+			)
+
+			const track = useCallback(
+				(event: string, properties?: Record<string, unknown>) => {
+					if (openpanel) {
+						openpanel.track(event, properties || {})
+					}
+				},
+				[openpanel]
+			)
+
+			const page = useCallback(
+				(name?: string, properties?: Record<string, unknown>) => {
+					if (openpanel) {
+						openpanel.track("$pageview", {
+							...(properties || {}),
+							...(name ? { route: name } : {})
+						})
+					}
+				},
+				[openpanel]
+			)
+
+			const reset = useCallback(() => {
+				if (openpanel) {
+					openpanel.clear()
+				}
+			}, [openpanel])
+
+			return {
+				identify,
+				track,
+				page,
+				reset
+			}
+		}
+	}
 }
