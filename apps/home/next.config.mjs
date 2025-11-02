@@ -3,6 +3,7 @@ import { startupkitCMS } from '@startupkit/cms/plugin';
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   turbopack: {},
+  transpilePackages: ['@startupkit/analytics', '@startupkit/auth', '@startupkit/utils'],
   rewrites: () => [
     {
       source: '/docs',
