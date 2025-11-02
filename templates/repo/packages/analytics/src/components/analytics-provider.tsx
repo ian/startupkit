@@ -5,7 +5,7 @@ import { pruneEmpty } from '@repo/utils';
 import { AnalyticsProvider as StartupKitAnalyticsProvider } from '@startupkit/analytics';
 import { PostHogProvider, usePostHog } from 'posthog-js/react';
 import type { ReactNode } from 'react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import type { Flags } from '../types';
 
 export { AnalyticsContext } from '@startupkit/analytics';
@@ -58,44 +58,46 @@ function AnalyticsProviderInner({ children, flags }: AnalyticsProviderProps) {
     }
   }, []);
 
-  return (
-    <StartupKitAnalyticsProvider
-      flags={flags}
-      handlers={{
-        identify: (userId, properties) => {
-          if (userId) {
-            posthog.identify(userId, pruneEmpty(properties));
-            openpanel?.identify({
-              profileId: userId,
-              ...pruneEmpty(properties),
-            });
-          } else {
-            posthog.reset();
-            openpanel?.clear();
-          }
-        },
-        track: (event, properties) => {
-          const cleanProps = pruneEmpty(properties);
-          posthog.capture(event, cleanProps);
-          openpanel?.track(event, cleanProps || {});
-        },
-        page: (name, properties) => {
-          const cleanProps = pruneEmpty(properties);
-          posthog.capture('$pageview', {
-            ...cleanProps,
-            ...(name ? { route: name } : {}),
+  const handlers = useMemo(
+    () => ({
+      identify: (userId, properties) => {
+        if (userId) {
+          posthog.identify(userId, pruneEmpty(properties));
+          openpanel?.identify({
+            profileId: userId,
+            ...pruneEmpty(properties),
           });
-          openpanel?.track('$pageview', {
-            ...(cleanProps || {}),
-            ...(name ? { route: name } : {}),
-          });
-        },
-        reset: () => {
+        } else {
           posthog.reset();
           openpanel?.clear();
-        },
-      }}
-    >
+        }
+      },
+      track: (event, properties) => {
+        const cleanProps = pruneEmpty(properties);
+        posthog.capture(event, cleanProps);
+        openpanel?.track(event, cleanProps || {});
+      },
+      page: (name, properties) => {
+        const cleanProps = pruneEmpty(properties);
+        posthog.capture('$pageview', {
+          ...cleanProps,
+          ...(name ? { route: name } : {}),
+        });
+        openpanel?.track('$pageview', {
+          ...(cleanProps || {}),
+          ...(name ? { route: name } : {}),
+        });
+      },
+      reset: () => {
+        posthog.reset();
+        openpanel?.clear();
+      },
+    }),
+    [posthog],
+  );
+
+  return (
+    <StartupKitAnalyticsProvider flags={flags} handlers={handlers}>
       {children}
     </StartupKitAnalyticsProvider>
   );
