@@ -1,6 +1,5 @@
 'use client';
 
-import { OpenPanel } from '@openpanel/web';
 import { pruneEmpty } from '@repo/utils';
 import {
   AnalyticsProvider as StartupKitAnalyticsProvider,
@@ -8,7 +7,8 @@ import {
 } from '@startupkit/analytics';
 import { PostHogProvider, usePostHog } from 'posthog-js/react';
 import type { ReactNode } from 'react';
-import { useEffect, useMemo, useRef } from 'react';
+import { useMemo } from 'react';
+import { OpenPanelProvider, useOpenPanel } from '../openpanel';
 import type { Flags } from '../types';
 
 export {
@@ -21,19 +21,6 @@ interface AnalyticsProviderProps {
   flags: Flags;
 }
 
-const openpanel =
-  typeof window !== 'undefined'
-    ? new OpenPanel({
-        clientId:
-          process.env.NEXT_PUBLIC_OPENPANEL_CLIENT_ID ||
-          process.env.OPENPANEL_CLIENT_ID ||
-          '',
-        trackScreenViews: false,
-        trackOutgoingLinks: true,
-        trackAttributes: true,
-      })
-    : null;
-
 /**
  * Analytics Provider - Multi-provider integration with PostHog and OpenPanel
  *
@@ -42,26 +29,24 @@ const openpanel =
  */
 export function AnalyticsProvider({ children, flags }: AnalyticsProviderProps) {
   return (
-    <PostHogProvider
-      apiKey={process.env.POSTHOG_API_KEY as string}
-      options={{
-        api_host: process.env.POSTHOG_HOST,
-      }}
-    >
-      <AnalyticsProviderInner flags={flags}>{children}</AnalyticsProviderInner>
-    </PostHogProvider>
+    <OpenPanelProvider>
+      <PostHogProvider
+        apiKey={process.env.POSTHOG_API_KEY as string}
+        options={{
+          api_host: process.env.POSTHOG_HOST,
+        }}
+      >
+        <AnalyticsProviderInner flags={flags}>
+          {children}
+        </AnalyticsProviderInner>
+      </PostHogProvider>
+    </OpenPanelProvider>
   );
 }
 
 function AnalyticsProviderInner({ children, flags }: AnalyticsProviderProps) {
   const posthog = usePostHog();
-  const initialized = useRef(false);
-
-  useEffect(() => {
-    if (!initialized.current && openpanel) {
-      initialized.current = true;
-    }
-  }, []);
+  const openpanel = useOpenPanel();
 
   const handlers = useMemo<AnalyticsHandlers>(
     () => ({
@@ -98,7 +83,7 @@ function AnalyticsProviderInner({ children, flags }: AnalyticsProviderProps) {
         openpanel?.clear();
       },
     }),
-    [posthog],
+    [posthog, openpanel],
   );
 
   return (
