@@ -3,7 +3,7 @@
 	"private": true,
 	"scripts": {
 		"clean": "rm -rf .cache .next",
-		"build": "next build",
+		"build": "next build --webpack",
 		"start": "next start",
 		"dev": "next dev -p 2999 --turbo",
 		"lint": "biome lint --unsafe",
