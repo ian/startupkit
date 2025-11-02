@@ -223,21 +223,42 @@ jobs:
 
       - name: Link local packages for testing
         run: |
-          echo "Adding pnpm overrides to use local packages..."
+          echo "🔗 Replacing @startupkit/* packages with local file: references..."
           cd test-startup
-          node -e "
-          const fs = require('fs');
-          const workspace = process.env.GITHUB_WORKSPACE;
-          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-          pkg.pnpm = pkg.pnpm || {};
-          pkg.pnpm.overrides = {
-            '@startupkit/auth': 'link:' + workspace + '/packages/auth',
-            '@startupkit/analytics': 'link:' + workspace + '/packages/analytics'
-          };
-          fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
-          console.log('Overrides added:', pkg.pnpm.overrides);
-          "
-          cat package.json | grep -A 6 '"pnpm"'
+          
+          # Find all package.json files in the workspace
+          find packages -name "package.json" -type f | while read pkg_file; do
+            echo "Processing: $pkg_file"
+            node -e "
+            const fs = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('$pkg_file', 'utf8'));
+            let changed = false;
+            
+            // Calculate relative path from package to root
+            const depth = '$pkg_file'.split('/').length - 1;
+            const relativeRoot = '../'.repeat(depth);
+            
+            // Replace in dependencies
+            if (pkg.dependencies) {
+              if (pkg.dependencies['@startupkit/auth']) {
+                pkg.dependencies['@startupkit/auth'] = 'file:' + relativeRoot + '../packages/auth';
+                changed = true;
+              }
+              if (pkg.dependencies['@startupkit/analytics']) {
+                pkg.dependencies['@startupkit/analytics'] = 'file:' + relativeRoot + '../packages/analytics';
+                changed = true;
+              }
+            }
+            
+            if (changed) {
+              fs.writeFileSync('$pkg_file', JSON.stringify(pkg, null, 2) + '\n');
+              console.log('✅ Updated:', '$pkg_file');
+            }
+            "
+          done
+          
+          echo "📄 Verifying changes in packages/analytics/package.json:"
+          grep -A 2 '@startupkit/analytics' packages/analytics/package.json || true
         working-directory: test-projects
 
       - name: Install dependencies in generated project

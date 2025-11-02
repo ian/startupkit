@@ -2,14 +2,19 @@
 
 import { OpenPanel } from '@openpanel/web';
 import { pruneEmpty } from '@repo/utils';
-import { AnalyticsProvider as StartupKitAnalyticsProvider } from '@startupkit/analytics';
+import {
+  AnalyticsProvider as StartupKitAnalyticsProvider,
+  type AnalyticsHandlers,
+} from '@startupkit/analytics';
 import { PostHogProvider, usePostHog } from 'posthog-js/react';
 import type { ReactNode } from 'react';
 import { useEffect, useMemo, useRef } from 'react';
 import type { Flags } from '../types';
 
-export { AnalyticsContext } from '@startupkit/analytics';
-export type { AnalyticsContextType } from '@startupkit/analytics';
+export {
+  AnalyticsContext,
+  type AnalyticsContextType,
+} from '@startupkit/analytics';
 
 interface AnalyticsProviderProps {
   children: ReactNode;
@@ -58,14 +63,14 @@ function AnalyticsProviderInner({ children, flags }: AnalyticsProviderProps) {
     }
   }, []);
 
-  const handlers = useMemo(
+  const handlers = useMemo<AnalyticsHandlers>(
     () => ({
-      identify: (userId, properties) => {
+      identify: (userId, traits) => {
         if (userId) {
-          posthog.identify(userId, pruneEmpty(properties));
+          posthog.identify(userId, pruneEmpty(traits));
           openpanel?.identify({
             profileId: userId,
-            ...pruneEmpty(properties),
+            ...pruneEmpty(traits),
           });
         } else {
           posthog.reset();
