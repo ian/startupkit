@@ -35,12 +35,13 @@ export function AnalyticsProvider<
 	useEffect(() => {
 		if (!autoPageTracking) return
 
-		const name = segments
-			?.filter((segment) => !segment.startsWith("("))
-			.map((segment) =>
-				/\d/.test(segment) && segment.length > 6 ? ":id" : segment
-			)
-			.join("/") ?? ""
+		const name =
+			segments
+				?.filter((segment) => !segment.startsWith("("))
+				.map((segment) =>
+					/\d/.test(segment) && segment.length > 6 ? ":id" : segment
+				)
+				.join("/") ?? ""
 
 		handlers.page(`/${name}`, {
 			pathname
