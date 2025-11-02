@@ -1,18 +1,27 @@
 'use client';
 
+import type {
+  AnalyticsPlugin,
+  AnalyticsContextType as BaseAnalyticsContextType,
+} from '@startupkit/analytics';
 import {
   GoogleAnalytics,
   OpenPanelPlugin,
   PostHogPlugin,
   AnalyticsProvider as StartupKitAnalyticsProvider,
+  useAnalytics as useBaseAnalytics,
 } from '@startupkit/analytics';
 import type { ReactNode } from 'react';
-import type { Flags } from '../types';
+import type { AnalyticsEvent, Flags } from '../types';
 
-export {
-  AnalyticsContext,
-  type AnalyticsContextType,
-} from '@startupkit/analytics';
+export type AnalyticsContextType = BaseAnalyticsContextType<
+  Flags,
+  AnalyticsEvent
+>;
+
+export function useAnalytics(): AnalyticsContextType {
+  return useBaseAnalytics() as AnalyticsContextType;
+}
 
 interface AnalyticsProviderProps {
   children: ReactNode;
@@ -25,7 +34,7 @@ interface AnalyticsProviderProps {
  * Uses @startupkit/analytics plugin architecture for clean, composable analytics integration.
  * Events are sent to PostHog, OpenPanel, and Google Analytics (if configured) simultaneously.
  */
-const plugins = [
+const plugins: AnalyticsPlugin<AnalyticsEvent>[] = [
   GoogleAnalytics({
     measurementId: process.env.GOOGLE_ANALYTICS_ID as string,
   }),
