@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "private": true,
   "scripts": {
     "clean": "pnpm --stream -r run clean",
@@ -15,7 +16,9 @@
     "bump": "./scripts/bump",
     "oldrelease": "pnpm --stream --filter \"./packages/**\" exec -- pnpm release --no-git-checks --access public",
     "release": "pnpm build && pnpm -r publish --access public --no-git-checks",
-    "agents.md": "ruler apply"
+    "agents.md": "ruler apply",
+    "link:local": "node scripts/link-local.js link",
+    "unlink:local": "node scripts/link-local.js unlink"
   },
   "packageManager": "pnpm@9.6.0",
   "author": "Ian Hunter <ian@01.studio>",
@@ -26,6 +29,7 @@
     "@rollup/plugin-commonjs": "^26.0.1",
     "@rollup/plugin-swc": "^0.3.1",
     "@swc/core": "^1.7.6",
+    "glob": "^11.0.3",
     "rollup": "^4.20.0",
     "rollup-plugin-esbuild": "^6.1.1",
     "rollup-preserve-directives": "^1.1.1",

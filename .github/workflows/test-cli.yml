@@ -223,22 +223,11 @@ jobs:
 
       - name: Link local packages for testing
         run: |
-          echo "Adding pnpm overrides to use local packages..."
-          cd test-startup
-          node -e "
-          const fs = require('fs');
-          const workspace = process.env.GITHUB_WORKSPACE;
-          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-          pkg.pnpm = pkg.pnpm || {};
-          pkg.pnpm.overrides = {
-            '@startupkit/auth': 'link:' + workspace + '/packages/auth',
-            '@startupkit/analytics': 'link:' + workspace + '/packages/analytics'
-          };
-          fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
-          console.log('Overrides added:', pkg.pnpm.overrides);
-          "
-          cat package.json | grep -A 6 '"pnpm"'
-        working-directory: test-projects
+          echo "🔗 Linking local @startupkit/* packages..."
+          node "$GITHUB_WORKSPACE/scripts/link-local.js" link "test-projects/test-startup" "$GITHUB_WORKSPACE/packages"
+          
+          echo "📄 Verifying changes in packages/analytics/package.json:"
+          grep -A 2 '@startupkit/analytics' test-projects/test-startup/packages/analytics/package.json || true
 
       - name: Install dependencies in generated project
         run: |

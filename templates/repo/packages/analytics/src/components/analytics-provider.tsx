@@ -1,67 +1,94 @@
-"use client"
+'use client';
 
-import { pruneEmpty } from "@repo/utils"
-import { AnalyticsProvider as StartupKitAnalyticsProvider } from "@startupkit/analytics"
-import { PostHogProvider, usePostHog } from "posthog-js/react"
-import type { ReactNode } from "react"
-import type { Flags } from "../types"
+import { pruneEmpty } from '@repo/utils';
+import {
+  AnalyticsProvider as StartupKitAnalyticsProvider,
+  type AnalyticsHandlers,
+} from '@startupkit/analytics';
+import { PostHogProvider, usePostHog } from 'posthog-js/react';
+import type { ReactNode } from 'react';
+import { useMemo } from 'react';
+import { OpenPanelProvider, useOpenPanel } from '../openpanel';
+import type { Flags } from '../types';
 
-export { AnalyticsContext } from "@startupkit/analytics"
-export type { AnalyticsContextType } from "@startupkit/analytics"
+export {
+  AnalyticsContext,
+  type AnalyticsContextType,
+} from '@startupkit/analytics';
 
 interface AnalyticsProviderProps {
-	children: ReactNode
-	flags: Flags
+  children: ReactNode;
+  flags: Flags;
 }
 
 /**
- * Analytics Provider - Direct integration with PostHog
- * 
+ * Analytics Provider - Multi-provider integration with PostHog and OpenPanel
+ *
  * Uses @startupkit/analytics for context pattern and auto page tracking.
- * You control PostHog version and can add other providers (OpenMeter, GA, etc.).
+ * Events are sent to both PostHog and OpenPanel simultaneously.
  */
 export function AnalyticsProvider({ children, flags }: AnalyticsProviderProps) {
-	return (
-		<PostHogProvider
-			apiKey={process.env.POSTHOG_API_KEY as string}
-			options={{
-				api_host: process.env.POSTHOG_HOST
-			}}
-		>
-			<AnalyticsProviderInner flags={flags}>{children}</AnalyticsProviderInner>
-		</PostHogProvider>
-	)
+  return (
+    <OpenPanelProvider>
+      <PostHogProvider
+        apiKey={process.env.POSTHOG_API_KEY as string}
+        options={{
+          api_host: process.env.POSTHOG_HOST,
+        }}
+      >
+        <AnalyticsProviderInner flags={flags}>
+          {children}
+        </AnalyticsProviderInner>
+      </PostHogProvider>
+    </OpenPanelProvider>
+  );
 }
 
 function AnalyticsProviderInner({ children, flags }: AnalyticsProviderProps) {
-	const posthog = usePostHog()
+  const posthog = usePostHog();
+  const openpanel = useOpenPanel();
 
-	return (
-		<StartupKitAnalyticsProvider
-			flags={flags}
-			handlers={{
-				identify: (userId, properties) => {
-					if (userId) {
-						posthog.identify(userId, pruneEmpty(properties))
-					} else {
-						posthog.reset()
-					}
-				},
-				track: (event, properties) => {
-					posthog.capture(event, pruneEmpty(properties))
-				},
-				page: (name, properties) => {
-					posthog.capture("$pageview", {
-						...pruneEmpty(properties),
-						...(name ? { route: name } : {})
-					})
-				},
-				reset: () => {
-					posthog.reset()
-				}
-			}}
-		>
-			{children}
-		</StartupKitAnalyticsProvider>
-	)
+  const handlers = useMemo<AnalyticsHandlers>(
+    () => ({
+      identify: (userId, traits) => {
+        if (userId) {
+          posthog.identify(userId, pruneEmpty(traits));
+          openpanel?.identify({
+            profileId: userId,
+            ...pruneEmpty(traits),
+          });
+        } else {
+          posthog.reset();
+          openpanel?.clear();
+        }
+      },
+      track: (event, properties) => {
+        const cleanProps = pruneEmpty(properties);
+        posthog.capture(event, cleanProps);
+        openpanel?.track(event, cleanProps || {});
+      },
+      page: (name, properties) => {
+        const cleanProps = pruneEmpty(properties);
+        posthog.capture('$pageview', {
+          ...cleanProps,
+          ...(name ? { route: name } : {}),
+        });
+        openpanel?.track('$pageview', {
+          ...(cleanProps || {}),
+          ...(name ? { route: name } : {}),
+        });
+      },
+      reset: () => {
+        posthog.reset();
+        openpanel?.clear();
+      },
+    }),
+    [posthog, openpanel],
+  );
+
+  return (
+    <StartupKitAnalyticsProvider flags={flags} handlers={handlers}>
+      {children}
+    </StartupKitAnalyticsProvider>
+  );
 }

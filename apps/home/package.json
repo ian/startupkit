@@ -11,10 +11,11 @@
 		"lint:fix": "biome check --write"
 	},
 	"dependencies": {
+		"@openpanel/web": "^1.0.1",
 		"@radix-ui/react-dialog": "^1.1.1",
 		"@radix-ui/react-slot": "^1.1.0",
 		"@radix-ui/react-tooltip": "^1.1.2",
-		"@startupkit/analytics": "0.2.0",
+		"@startupkit/analytics": "workspace:*",
 		"@startupkit/cms": "0.2.0",
 		"class-variance-authority": "^0.7.0",
 		"clsx": "^2.1.1",
