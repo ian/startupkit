@@ -220,7 +220,9 @@ export const authClient = createAuthClient({
 export { auth } from "./lib/auth"
 export type Session = typeof auth.$Infer.Session.session
 export type User = typeof auth.$Infer.Session.user
-export const handler = auth.handler
+export function handler() {
+	return toNextJsHandler(auth.handler)
+}
 export async function withAuth(opts?: { flags?: boolean }) { ... }
 ```
 
