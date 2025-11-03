@@ -44,19 +44,19 @@ The plugin architecture makes it easy to use multiple analytics providers:
 ```typescript
 "use client"
 
-import { 
+import {
   AnalyticsProvider,
-  PostHog,
-  GoogleAnalytics,
+  PostHogPlugin,
+  GoogleAnalyticsPlugin,
   OpenPanelPlugin
 } from "@startupkit/analytics"
 
 const plugins = [
-  PostHog({
+  PostHogPlugin({
     apiKey: process.env.NEXT_PUBLIC_POSTHOG_API_KEY,
     apiHost: process.env.NEXT_PUBLIC_POSTHOG_HOST // optional
   }),
-  GoogleAnalytics({
+  GoogleAnalyticsPlugin({
     measurementId: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
   }),
   OpenPanelPlugin({
@@ -143,7 +143,7 @@ interface AnalyticsProviderProps<TFlags> {
   flags={flags} 
   plugins={[
     PostHogPlugin({ apiKey: "..." }),
-    GoogleAnalytics({ measurementId: "..." })
+    GoogleAnalyticsPlugin({ measurementId: "..." })
   ]}
 >
   {children}
@@ -156,8 +156,8 @@ For full customization, provide both `plugins` and `handlers`. Your handlers rec
 
 ```typescript
 const plugins = [
-  PostHog({ apiKey: "..." }),
-  GoogleAnalytics({ measurementId: "..." })
+  PostHogPlugin({ apiKey: "..." }),
+  GoogleAnalyticsPlugin({ measurementId: "..." })
 ] as const // Important: use 'as const' for type inference
 
 <AnalyticsProvider 
@@ -263,9 +263,9 @@ if (isNewFeatureEnabled) {
 ### PostHog
 
 ```typescript
-import { PostHog } from "@startupkit/analytics"
+import { PostHogPlugin } from "@startupkit/analytics"
 
-const plugin = PostHog({
+const plugin = PostHogPlugin({
   apiKey: "phc_...",
   apiHost: "https://app.posthog.com" // optional
 })
@@ -280,9 +280,9 @@ const plugin = PostHog({
 ### GoogleAnalytics
 
 ```typescript
-import { GoogleAnalytics } from "@startupkit/analytics"
+import { GoogleAnalyticsPlugin } from "@startupkit/analytics"
 
-const plugin = GoogleAnalytics({
+const plugin = GoogleAnalyticsPlugin({
   measurementId: "G-XXXXXXXXXX"
 })
 ```
@@ -396,8 +396,8 @@ For maximum flexibility, you can provide both `plugins` and `handlers` to gain f
 
 ```typescript
 const plugins = [
-  PostHog({ apiKey: "..." }),
-  GoogleAnalytics({ measurementId: "..." })
+  PostHogPlugin({ apiKey: "..." }),
+  GoogleAnalyticsPlugin({ measurementId: "..." })
 ] as const // 'as const' enables type inference
 
 <AnalyticsProvider 
@@ -447,8 +447,8 @@ The `plugins` object is **strongly typed** based on the plugins you provide:
 
 ```typescript
 const plugins = [
-  PostHog({ apiKey: "..." }),
-  GoogleAnalytics({ measurementId: "..." })
+  PostHogPlugin({ apiKey: "..." }),
+  GoogleAnalyticsPlugin({ measurementId: "..." })
 ] as const // Important!
 
 // TypeScript knows these exist:
@@ -492,8 +492,8 @@ You don't need to provide all handlers! **Unspecified handlers will use the defa
 
 ```typescript
 const plugins = [
-  PostHog({ apiKey: "..." }),
-  GoogleAnalytics({ measurementId: "..." })
+  PostHogPlugin({ apiKey: "..." }),
+  GoogleAnalyticsPlugin({ measurementId: "..." })
 ] as const
 
 <AnalyticsProvider 
@@ -529,8 +529,8 @@ Events are sent to **all** configured plugins simultaneously:
 
 ```typescript
 const plugins = [
-  PostHog({ apiKey: "..." }),      // Product analytics
-  GoogleAnalytics({ measurementId: "..." }), // Marketing analytics
+  PostHogPlugin({ apiKey: "..." }),      // Product analytics
+  GoogleAnalyticsPlugin({ measurementId: "..." }), // Marketing analytics
   OpenPanelPlugin({ clientId: "..." })   // Privacy-focused analytics
 ]
 
@@ -607,8 +607,8 @@ You can use the built-in plugins, create your own, or implement custom handlers.
 
 Plugin-specific dependencies (only install what you use):
 - `posthog-js` - For PostHogPlugin
-- `@openpanel/nextjs` - For OpenPanelPlugin
-- (Google Analytics and Ahrefs work via script injection)
+- `@openpanel/sdk` - For OpenPanelPlugin
+- (GoogleAnalyticsPlugin and AhrefsPlugin work via script injection)
 
 ## Learn More
 

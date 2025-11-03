@@ -69,7 +69,7 @@ function pruneEmpty(
 	return Object.keys(result).length > 0 ? result : undefined
 }
 
-export function PostHog(options: PostHogOptions): AnalyticsPlugin {
+export function PostHogPlugin(options: PostHogOptions): AnalyticsPlugin {
 	return {
 		name: "PostHog",
 		Provider: ({ children }: { children: ReactNode }) => (

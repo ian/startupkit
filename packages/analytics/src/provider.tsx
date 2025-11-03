@@ -52,7 +52,7 @@ interface AnalyticsProviderProps<
  * ```tsx
  * // Plugin mode (recommended)
  * const plugins = [
- *   GoogleAnalytics({ measurementId: 'G-XXXXXXXXXX' }),
+ *   GoogleAnalyticsPlugin({ measurementId: 'G-XXXXXXXXXX' }),
  *   OpenPanelPlugin({ clientId: 'your-client-id' }),
  * ];
  *
