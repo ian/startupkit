@@ -7,7 +7,7 @@
   "private": true,
   "scripts": {
     "clean": "pnpm --stream -r run clean",
-    "build": "pnpm --stream -r --filter \"./apps/**\" run build",
+    "build": "pnpm build:packages && pnpm --stream -r --filter \"./apps/**\" run build",
     "build:packages": "pnpm --stream -r --filter \"./packages/**\" run build",
     "dev": "turbo run dev --continue --ui stream",
     "lint": "turbo run lint --continue --ui stream",
