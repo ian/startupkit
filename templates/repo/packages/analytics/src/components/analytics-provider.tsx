@@ -1,124 +1,152 @@
-"use client"
+/**
+ * Analytics Provider - Type-safe analytics integration for your application
+ *
+ * This module provides a fully typed analytics implementation using @startupkit/analytics
+ * with support for multiple analytics providers (Google Analytics, PostHog, OpenPanel).
+ *
+ * Features:
+ * - Type-safe event tracking using discriminated unions
+ * - Multi-provider support (events sent to all providers simultaneously)
+ * - Feature flag integration
+ * - Automatic page view tracking
+ *
+ * @example
+ * ```tsx
+ * // In your root layout
+ * import { AnalyticsProvider } from '@repo/analytics';
+ *
+ * <AnalyticsProvider flags={flags}>
+ *   <App />
+ * </AnalyticsProvider>
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // In your components
+ * import { useAnalytics } from '@repo/analytics';
+ *
+ * function MyComponent() {
+ *   const { track, flags } = useAnalytics();
+ *
+ *   track({
+ *     event: "USER_SIGNED_IN",
+ *     user: { id: "123", email: "user@example.com" }
+ *   });
+ * }
+ * ```
+ */
+'use client';
 
+import type {
+  AnalyticsContextType,
+  AnalyticsPlugin,
+} from '@startupkit/analytics';
 import {
-	type ReactNode,
-	createContext,
-	useEffect,
-	useMemo,
-	useState
-} from "react"
-import { pruneEmpty } from "@repo/utils"
-import type { RudderAnalytics } from "@rudderstack/analytics-js"
-import { usePathname, useSelectedLayoutSegments } from "next/navigation"
-import { PostHogProvider, usePostHog } from "posthog-js/react"
-import type { Flags } from "../vendor/posthog"
+  GoogleAnalytics,
+  OpenPanelPlugin,
+  PostHogPlugin,
+  AnalyticsProvider as StartupKitAnalyticsProvider,
+  useAnalytics as useBaseAnalytics,
+} from '@startupkit/analytics';
+import type { ReactNode } from 'react';
+import type { Flags } from '../types';
 
-type TagKey = Lowercase<string>
-type Properties = Record<TagKey, string | number | boolean | null | undefined>
+/**
+ * Analytics plugins configuration
+ *
+ * Configures all analytics providers to receive events simultaneously.
+ * Add or remove providers by modifying this array.
+ *
+ * Providers are initialized with environment variables:
+ * - NEXT_PUBLIC_GOOGLE_ANALYTICS_ID - Google Analytics measurement ID
+ * - NEXT_PUBLIC_OPENPANEL_CLIENT_ID - OpenPanel client ID
+ * - NEXT_PUBLIC_POSTHOG_API_KEY - PostHog API key
+ * - POSTHOG_HOST (optional) - Custom PostHog host URL (defaults to https://app.posthog.com)
+ */
+const plugins: AnalyticsPlugin[] = [
+  GoogleAnalytics({
+    measurementId: process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID as string,
+  }),
+  OpenPanelPlugin({
+    clientId: process.env.NEXT_PUBLIC_OPENPANEL_CLIENT_ID as string,
+  }),
+  PostHogPlugin({
+    apiKey: process.env.NEXT_PUBLIC_POSTHOG_API_KEY as string,
+  }),
+];
 
-// TODO: We track most events server side, what will be client side only?
-type TrackEvent = never
-
-const {
-	POSTHOG_API_KEY,
-	POSTHOG_HOST,
-	RUDDERSTACK_DATA_PLANE_URL,
-	RUDDERSTACK_WRITE_KEY,
-} = process.env
-
-export interface AnalyticsContextType {
-	flags: Flags
-	identify: (userId: string | null, traits?: Properties) => void
-	track: (event: TrackEvent, properties?: Properties) => void
-	reset: () => void
+/**
+ * Type-safe analytics hook
+ *
+ * Returns an analytics context with properly typed events and feature flags.
+ * All events are validated at compile-time using TypeScript discriminated unions.
+ *
+ * @returns Analytics context with track, identify, page, reset methods and feature flags
+ *
+ * @example
+ * ```tsx
+ * const { track, identify, flags } = useAnalytics();
+ *
+ * // Type-safe event tracking
+ * track({
+ *   event: "TEAM_CREATED",
+ *   teamId: "team_123"
+ * });
+ *
+ * // Identify users
+ * identify("user_123", {
+ *   email: "user@example.com",
+ *   name: "John Doe"
+ * });
+ *
+ * // Check feature flags
+ * if (flags["secret-flag"]) {
+ *   // Show secret feature
+ * }
+ * ```
+ */
+export function useAnalytics(): AnalyticsContextType<Flags> {
+  return useBaseAnalytics();
+}
+interface AnalyticsProviderProps {
+  children: ReactNode;
+  flags: Flags;
 }
 
-export const AnalyticsContext = createContext<AnalyticsContextType>({
-	flags: {},
-	identify: () => { },
-	track: () => { },
-	reset: () => { }
-})
-
-type AnalyticsProviderProps = {
-	children: ReactNode
-	flags: Flags
-}
-
+/**
+ * Analytics Provider component
+ *
+ * Wraps your application to provide analytics tracking and feature flags.
+ * Should be placed near the root of your component tree.
+ *
+ * @param children - React children to wrap
+ * @param flags - Feature flags object (from PostHog or other feature flag provider)
+ *
+ * @example
+ * ```tsx
+ * // In your root layout
+ * import { AnalyticsProvider } from '@repo/analytics';
+ * import { getFeatureFlags } from '@repo/analytics/server';
+ *
+ * export default async function RootLayout({ children }) {
+ *   const flags = await getFeatureFlags();
+ *
+ *   return (
+ *     <html>
+ *       <body>
+ *         <AnalyticsProvider flags={flags}>
+ *           {children}
+ *         </AnalyticsProvider>
+ *       </body>
+ *     </html>
+ *   );
+ * }
+ * ```
+ */
 export function AnalyticsProvider({ children, flags }: AnalyticsProviderProps) {
-	return (
-		<PostHogProvider
-			apiKey={POSTHOG_API_KEY as string}
-			options={{
-				api_host: POSTHOG_HOST
-			}}
-		>
-			<AnalyticsProviderInner flags={flags}>{children}</AnalyticsProviderInner>
-		</PostHogProvider>
-	)
-}
-
-function AnalyticsProviderInner({ children, flags }: AnalyticsProviderProps) {
-	const pathname = usePathname()
-	const segments = useSelectedLayoutSegments()
-	const posthog = usePostHog()
-	const [analytics, setAnalytics] = useState<RudderAnalytics | null>(null)
-
-	useEffect(() => {
-		const name = segments
-			.filter((segment) => {
-				// Filter out Next.js folder patterns wrapped in parentheses
-				return !segment.startsWith("(")
-			})
-			.map((segment) => {
-				// Check if segment contains numbers and is longer than 6 characters
-				return /\d/.test(segment) && segment.length > 6 ? ":id" : segment
-			})
-			.join("/")
-
-		analytics?.page(name, {
-			path: pathname,
-			route: `/${name}`
-		})
-	}, [analytics, pathname, segments])
-
-	useEffect(() => {
-		if (RUDDERSTACK_WRITE_KEY && RUDDERSTACK_DATA_PLANE_URL) {
-			import("@rudderstack/analytics-js").then(({ RudderAnalytics }) => {
-				const analytics = new RudderAnalytics()
-				analytics.load(RUDDERSTACK_WRITE_KEY, RUDDERSTACK_DATA_PLANE_URL)
-				setAnalytics(analytics)
-			})
-		}
-	}, [])
-
-	const context = useMemo(() => {
-		return {
-			identify: (userId: string | null, properties: Properties = {}) => {
-				if (userId) {
-					const pruned = pruneEmpty(properties)
-					analytics?.identify(userId, pruned)
-					posthog.identify(userId, pruned)
-				} else {
-					analytics?.reset()
-					posthog.reset()
-				}
-			},
-			reset: () => {
-				analytics?.reset()
-				posthog.reset()
-			},
-			track: (event: string, properties?: Properties) => {
-				analytics?.track(event, pruneEmpty(properties))
-				posthog.capture(event, pruneEmpty(properties))
-			},
-			flags
-		}
-	}, [analytics, flags])
-
-	return (
-		<AnalyticsContext.Provider value={context}>
-			{children}
-		</AnalyticsContext.Provider>
-	)
+  return (
+    <StartupKitAnalyticsProvider flags={flags} plugins={plugins}>
+      {children}
+    </StartupKitAnalyticsProvider>
+  );
 }

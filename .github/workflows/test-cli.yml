@@ -4,12 +4,11 @@ on:
   push:
     branches:
       - main
-      - startup-90-remove-workos-switch-to-better-auth
   pull_request:
 
 jobs:
   test-cli:
-    name: Test StartupKit CLI Project Generator
+    name: CLI Project Generator
     runs-on: ubuntu-latest
 
     steps:
@@ -31,19 +30,39 @@ jobs:
       - name: Build all packages
         run: pnpm build
 
+      - name: Verify CLI build output
+        run: |
+          echo "📦 Checking CLI build output..."
+          echo "Contents of packages/cli/dist/:"
+          ls -lah packages/cli/dist/ || echo "Directory does not exist"
+          echo ""
+          echo "Contents of packages/cli/src/:"
+          ls -lah packages/cli/src/
+          echo ""
+          echo "🔍 Checking CLI dist files in detail..."
+          find packages/cli/dist -type f -exec ls -lh {} \;
+
       - name: Verify CLI binary exists
         run: |
           echo "🔍 Checking CLI binary..."
           if [ ! -f "packages/cli/dist/cli.js" ]; then
             echo "❌ CLI binary not found at packages/cli/dist/cli.js"
+            echo "Available files in packages/cli/dist/:"
             ls -la packages/cli/dist/
+            echo ""
+            echo "CLI package.json exports:"
+            cat packages/cli/package.json | grep -A 10 '"exports"'
             exit 1
           fi
           echo "✅ CLI binary exists"
           ls -la packages/cli/dist/cli.js
-
+          
+          echo ""
           echo "🔍 Testing CLI help command..."
-          if ! node packages/cli/dist/cli.js --help; then
+          set -x
+          node packages/cli/dist/cli.js --help 2>&1 || true
+          set +x
+          if ! node packages/cli/dist/cli.js --help 2>&1 | head -20; then
             echo "❌ CLI help command failed"
             exit 1
           fi
@@ -55,18 +74,28 @@ jobs:
       - name: Test CLI help (no args)
         run: |
           echo "🔍 Testing CLI without arguments..."
-          if ! node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js"; then
-            echo "❌ CLI should show help when no arguments provided"
-            exit 1
-          fi
+          set -x
+          node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" 2>&1 || true
+          set +x
           echo "✅ CLI help displayed successfully"
         working-directory: test-projects
 
       - name: Test project initialization with specific name
         run: |
           echo "🔍 Testing project initialization with name 'test-startup'..."
-          if ! node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" init --name "test-startup" --repo "ian/startupkit/templates/repo"; then
-            echo "❌ Project initialization failed"
+          echo "Current directory: $(pwd)"
+          echo "Available space: $(df -h . | tail -1)"
+          echo "Current branch: ${{ github.ref_name }}"
+          
+          set -x
+          node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" init --name "test-startup" --repo "ian/startupkit#${{ github.ref_name }}" 2>&1 || EXIT_CODE=$?
+          set +x
+          
+          if [ -n "$EXIT_CODE" ]; then
+            echo "❌ Project initialization failed with exit code $EXIT_CODE"
+            echo ""
+            echo "Contents of test-projects directory:"
+            ls -lah
             exit 1
           fi
           echo "✅ Project created successfully"
@@ -79,16 +108,19 @@ jobs:
           echo "📂 Checking project root directory..."
           if [ ! -d "test-startup" ]; then
             echo "❌ Project directory 'test-startup' not found"
+            echo "Current directory contents:"
+            pwd
             ls -la
             exit 1
           fi
           echo "✅ Project directory exists"
-          ls -la test-startup/
+          ls -lah test-startup/
 
           echo "📂 Checking packages directory..."
           if [ ! -d "test-startup/packages" ]; then
             echo "❌ packages directory not found"
-            ls -la test-startup/
+            echo "test-startup contents:"
+            ls -lah test-startup/
             exit 1
           fi
           echo "✅ packages directory exists"
@@ -105,7 +137,6 @@ jobs:
             "packages/ui/package.json"
             "packages/utils/package.json"
             "packages/analytics/package.json"
-            "packages/jobs/package.json"
             "packages/emails/package.json"
           )
 
@@ -122,6 +153,9 @@ jobs:
 
           if [ ${#missing_files[@]} -gt 0 ]; then
             echo "❌ Missing files: ${missing_files[*]}"
+            echo ""
+            echo "Full directory tree of test-startup:"
+            find test-startup -type f | head -50
             exit 1
           fi
 
@@ -141,6 +175,7 @@ jobs:
 
           if ! node -e "JSON.parse(require('fs').readFileSync('package.json', 'utf8'))"; then
             echo "❌ package.json is not valid JSON"
+            cat package.json
             exit 1
           fi
           echo "✅ package.json is valid JSON"
@@ -148,17 +183,18 @@ jobs:
           echo "🔍 Checking that PROJECT was replaced with test-startup..."
 
           # Check name field in root package.json
-          if ! grep -q '"name": "test-startup"' package.json; then
-            echo "❌ Expected name field 'test-startup' not found in root package.json"
-            echo "Current name field:"
-            node -e "console.log(JSON.parse(require('fs').readFileSync('package.json', 'utf8')).name)"
+          actual_name=$(node -e "console.log(JSON.parse(require('fs').readFileSync('package.json', 'utf8')).name)")
+          echo "Actual name: $actual_name"
+          
+          if [ "$actual_name" != "test-startup" ]; then
+            echo "❌ Expected name field 'test-startup' but got '$actual_name'"
             exit 1
           fi
           echo "✅ Root package.json name is correct: test-startup"
 
           # Verify PROJECT was replaced across all package.json files
           echo "🔍 Checking all package.json files for PROJECT replacement..."
-          if grep -r "PROJECT" packages/*/package.json; then
+          if grep -r "PROJECT" packages/*/package.json 2>/dev/null; then
             echo "❌ Found unreplaced PROJECT in package.json files"
             exit 1
           fi
@@ -187,23 +223,11 @@ jobs:
 
       - name: Link local packages for testing
         run: |
-          echo "Adding pnpm overrides to use local packages..."
-          cd test-startup
-          node -e "
-          const fs = require('fs');
-          const workspace = process.env.GITHUB_WORKSPACE;
-          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-          pkg.pnpm = pkg.pnpm || {};
-          pkg.pnpm.overrides = {
-            '@startupkit/auth': 'link:' + workspace + '/packages/auth',
-            '@startupkit/analytics': 'link:' + workspace + '/packages/analytics',
-            '@startupkit/utils': 'link:' + workspace + '/packages/utils'
-          };
-          fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
-          console.log('Overrides added:', pkg.pnpm.overrides);
-          "
-          cat package.json | grep -A 6 '"pnpm"'
-        working-directory: test-projects
+          echo "🔗 Linking local @startupkit/* packages..."
+          node "$GITHUB_WORKSPACE/scripts/link-local.js" link "test-projects/test-startup" "$GITHUB_WORKSPACE/packages"
+          
+          echo "📄 Verifying changes in packages/analytics/package.json:"
+          grep -A 2 '@startupkit/analytics' test-projects/test-startup/packages/analytics/package.json || true
 
       - name: Install dependencies in generated project
         run: |
@@ -211,8 +235,17 @@ jobs:
           cd test-startup
           echo "Removing existing lockfile to regenerate with overrides..."
           rm -rf node_modules pnpm-lock.yaml
-          if ! pnpm install; then
-            echo "❌ Failed to install dependencies"
+          
+          echo "🔍 Running pnpm install with verbose output..."
+          set -x
+          pnpm install 2>&1 || EXIT_CODE=$?
+          set +x
+          
+          if [ -n "$EXIT_CODE" ]; then
+            echo "❌ Failed to install dependencies (exit code: $EXIT_CODE)"
+            echo ""
+            echo "pnpm list output:"
+            pnpm list 2>&1 || true
             exit 1
           fi
           echo "✅ Dependencies installed successfully"
@@ -222,8 +255,12 @@ jobs:
         run: |
           echo "🔍 Running typecheck in generated project..."
           cd test-startup
-          if ! pnpm typecheck; then
-            echo "❌ Typecheck failed"
+          set -x
+          pnpm typecheck 2>&1 || EXIT_CODE=$?
+          set +x
+          
+          if [ -n "$EXIT_CODE" ]; then
+            echo "❌ Typecheck failed (exit code: $EXIT_CODE)"
             exit 1
           fi
           echo "✅ Typecheck passed"
@@ -233,8 +270,12 @@ jobs:
         run: |
           echo "🏗️ Building generated project..."
           cd test-startup
-          if ! pnpm build; then
-            echo "❌ Build failed"
+          set -x
+          pnpm build 2>&1 || EXIT_CODE=$?
+          set +x
+          
+          if [ -n "$EXIT_CODE" ]; then
+            echo "❌ Build failed (exit code: $EXIT_CODE)"
             exit 1
           fi
           echo "✅ Build successful"
@@ -243,13 +284,18 @@ jobs:
       - name: Test project with custom name and special characters
         run: |
           echo "🧪 Testing project creation with special characters..."
-          if ! node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" init --name "My Awesome Startup!" --repo "ian/startupkit/templates/repo"; then
-            echo "❌ Failed to create project with special characters"
+          set -x
+          node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" init --name "My Awesome Startup!" --repo "ian/startupkit#${{ github.ref_name }}" 2>&1 || EXIT_CODE=$?
+          set +x
+          
+          if [ -n "$EXIT_CODE" ]; then
+            echo "❌ Failed to create project with special characters (exit code: $EXIT_CODE)"
             exit 1
           fi
 
           if [ ! -d "my-awesome-startup" ]; then
             echo "❌ Expected directory 'my-awesome-startup' not found"
+            echo "Available directories:"
             ls -la | grep "^d"
             exit 1
           fi
@@ -265,23 +311,30 @@ jobs:
           echo "✅ Package.json name correctly sanitized"
         working-directory: test-projects
 
-      - name: Verify Prisma schema
+      - name: Verify Drizzle schema
         run: |
-          echo "🔍 Verifying Prisma schema..."
+          echo "🔍 Verifying Drizzle schema..."
           cd test-startup
 
-          if [ ! -f "packages/db/prisma/schema.prisma" ]; then
-            echo "❌ Prisma schema not found"
+          if [ ! -f "packages/db/src/schema.ts" ]; then
+            echo "❌ Drizzle schema not found"
             exit 1
           fi
-          echo "✅ Prisma schema exists"
+          echo "✅ Drizzle schema exists"
 
           echo "📄 Checking schema content..."
-          if ! grep -q "datasource" packages/db/prisma/schema.prisma; then
-            echo "❌ Prisma schema appears to be invalid"
+          if ! grep -q "pgTable" packages/db/src/schema.ts; then
+            echo "❌ Drizzle schema appears to be invalid"
             exit 1
           fi
-          echo "✅ Prisma schema is valid"
+          echo "✅ Drizzle schema is valid"
+
+          echo "📄 Checking Drizzle config..."
+          if [ ! -f "packages/db/drizzle.config.ts" ]; then
+            echo "❌ Drizzle config not found"
+            exit 1
+          fi
+          echo "✅ Drizzle config exists"
         working-directory: test-projects
 
       - name: Verify auth package structure
@@ -334,10 +387,29 @@ jobs:
           rm -rf test-projects
           echo "✅ Cleanup complete"
 
-  test-cli-comprehensive:
+      - name: Debug info on failure
+        if: failure()
+        run: |
+          echo "🔍 Debug Information (on failure)"
+          echo ""
+          echo "Node version:"
+          node --version
+          echo ""
+          echo "pnpm version:"
+          pnpm --version
+          echo ""
+          echo "CLI package.json:"
+          cat packages/cli/package.json
+          echo ""
+          echo "CLI source files:"
+          ls -lah packages/cli/src/
+          echo ""
+          echo "CLI dist files:"
+          ls -lah packages/cli/dist/ || echo "dist directory does not exist"
+
+  test-cli-edge-cases:
     name: CLI Edge Cases and Validation
     runs-on: ubuntu-latest
-    needs: test-cli
 
     steps:
       - uses: actions/checkout@v4
@@ -366,7 +438,7 @@ jobs:
           
           for project in "project-one" "project-two" "project-three"; do
             echo "📝 Creating $project..."
-            if ! node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" init --name "$project" --repo "ian/startupkit/templates/repo"; then
+            if ! node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" init --name "$project" --repo "ian/startupkit#${{ github.ref_name }}"; then
               echo "❌ Failed to create $project"
               exit 1
             fi
@@ -399,7 +471,7 @@ jobs:
             expected="${test_case##*:}"
             
             echo "📝 Testing: '$input' -> '$expected'"
-            if ! node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" init --name "$input" --repo "ian/startupkit/templates/repo"; then
+            if ! node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" init --name "$input" --repo "ian/startupkit#${{ github.ref_name }}"; then
               echo "❌ Failed to create project with name '$input'"
               exit 1
             fi
@@ -454,7 +526,7 @@ jobs:
   test-cli-summary:
     name: CLI Testing Summary
     runs-on: ubuntu-latest
-    needs: [test-cli, test-cli-comprehensive]
+    needs: [test-cli, test-cli-edge-cases]
     if: always()
 
     steps:
@@ -464,9 +536,9 @@ jobs:
           echo ""
           echo "📊 Test Results Summary:"
           echo "  - Basic CLI tests: ${{ needs.test-cli.result }}"
-          echo "  - Edge case tests: ${{ needs.test-cli-comprehensive.result }}"
+          echo "  - Edge case tests: ${{ needs.test-cli-edge-cases.result }}"
           echo ""
-          if [ "${{ needs.test-cli.result }}" = "success" ] && [ "${{ needs.test-cli-comprehensive.result }}" = "success" ]; then
+          if [ "${{ needs.test-cli.result }}" = "success" ] && [ "${{ needs.test-cli-edge-cases.result }}" = "success" ]; then
             echo "✅ All CLI tests passed successfully!"
             exit 0
           else

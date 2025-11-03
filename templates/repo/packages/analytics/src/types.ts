@@ -47,4 +47,13 @@ export type TeamSwitched = {
 }
 
 // ####################################
+// Feature Flags (from PostHog)
+
+export type Flags = {
+	"secret-flag"?: true | false | undefined
+}
+
+export type FlagName = keyof Flags
+
+// ####################################
 // TODO - Add more custom tracking events

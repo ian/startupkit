@@ -12,16 +12,21 @@
 		"lint": "biome lint --unsafe",
 		"lint:fix": "biome lint --write --unsafe",
 		"typecheck": "tsc --noEmit",
-		"prisma": "npx prisma",
-		"postinstall": "prisma generate"
+		"drizzle": "npx drizzle-kit",
+		"db:generate": "drizzle-kit generate",
+		"db:migrate": "drizzle-kit migrate",
+		"db:push": "drizzle-kit push",
+		"db:studio": "drizzle-kit studio"
 	},
 	"dependencies": {
-		"@prisma/client": "6.10.1"
+		"drizzle-orm": "^0.38.3",
+		"pg": "^8.13.1"
 	},
 	"devDependencies": {
 		"@repo/biome": "workspace:*",
 		"@repo/tsconfig": "workspace:*",
 		"@types/node": "catalog:stack",
-		"prisma": "6.10.1"
+		"@types/pg": "^8.11.10",
+		"drizzle-kit": "^0.30.2"
 	}
 }

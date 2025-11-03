@@ -4,7 +4,7 @@ Authentication package built on [better-auth](https://better-auth.com) with dual
 
 ## Installation
 
-This package is part of the monorepo workspace and is already configured with Prisma adapter, PostgreSQL, and Google OAuth support.
+This package is part of the monorepo workspace and is already configured with Drizzle ORM adapter, PostgreSQL, and Google OAuth support.
 
 The package exports two entry points:
 - `@repo/auth` - Client-side authentication utilities (AuthProvider, useAuth, authClient)
@@ -203,7 +203,7 @@ All authentication routes are served at `/auth`:
 The auth package integrates with other workspace packages:
 - `@repo/emails` - Sends OTP verification emails
 - `@repo/analytics` - Tracks user authentication events
-- `@repo/db` - Prisma database adapter for user and session storage
+- `@repo/db` - Drizzle ORM database adapter for user and session storage
 
 ## Authentication Methods
 
@@ -295,7 +295,7 @@ interface AuthContextType {
 ### Workspace Dependencies
 
 - **@repo/analytics** - User tracking and feature flags
-- **@repo/db** - Prisma database client
+- **@repo/db** - Drizzle ORM database client
 - **@repo/emails** - Email sending service
 - **@repo/utils** - Shared utilities
 
@@ -308,7 +308,7 @@ interface AuthContextType {
 ### Integration Points
 
 The package leverages workspace dependencies for:
-- **Database**: Prisma adapter connects to PostgreSQL via `@repo/db`
+- **Database**: Drizzle ORM adapter connects to PostgreSQL via `@repo/db`
 - **Email**: OTP codes sent through `@repo/emails` with custom templates
 - **Analytics**: User identification and event tracking via `@repo/analytics`
 - **Middleware**: Updates user's `lastSeenAt` timestamp on each session creation

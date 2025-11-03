@@ -1,47 +1,48 @@
 {
-  "name": "@startupkit/analytics",
-  "version": "0.4.0",
-  "author": "Ian Hunter <ian@01.studio>",
-  "license": "ISC",
-  "description": "Analytics package for StartupKit",
-  "homepage": "https://startupkit.com",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/01-studio/startupkit"
-  },
-  "exports": {
-    ".": {
-      "types": "./dist/types/index.d.ts",
-      "import": "./dist/esm/index.js"
-    },
-    "./config": "./dist/cjs/config.js"
-  },
-  "scripts": {
-    "clean": "rm -rf ./dist ./.turbo",
-    "build": "rollup -c && tsc --emitDeclarationOnly",
-    "oldpostbuild": "validate-package-exports --check --verify",
-    "build:watch": "npx chokidar-cli \"src/**/*\" -c \"pnpm run build\" --initial",
-    "type-check": "tsc --noEmit"
-  },
-  "dependencies": {
-    "@analytics/google-analytics": "^1.0.7",
-    "@metro-fs/analytics-plugin-posthog": "^1.14.0",
-    "analytics": "^0.8.13",
-    "analytics-plugin-plausible": "^0.0.6",
-    "posthog-js": "1.154.2",
-    "react-ga": "^3.3.1"
-  },
-  "peerDependencies": {
-    "next": "^14",
-    "react": "^18.2.0"
-  },
-  "devDependencies": {
-    "@types/mdast": "^4.0.4",
-    "@types/mdx": "^2.0.13",
-    "@types/node": "^22.4.0",
-    "@types/react": "^18.2.0",
-    "@types/vfile": "^4.0.0",
-    "next": "^14",
-    "react": "^18.2.0"
-  }
+	"name": "@startupkit/analytics",
+	"version": "0.4.0",
+	"author": "Ian Hunter <ian@01.studio>",
+	"license": "ISC",
+	"description": "Provider-agnostic analytics helpers for StartupKit",
+	"homepage": "https://startupkit.com",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/01-studio/startupkit"
+	},
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/types/index.d.ts",
+			"default": "./dist/esm/index.js"
+		}
+	},
+	"scripts": {
+		"clean": "rm -rf ./dist ./.turbo",
+		"build": "rollup -c && tsc --emitDeclarationOnly",
+		"typecheck": "tsc --noEmit",
+		"lint": "biome check",
+		"lint:fix": "biome check --write"
+	},
+	"peerDependencies": {
+		"@openpanel/sdk": ">=1.0.0",
+		"next": ">=14.0.0",
+		"posthog-js": ">=1.0.0",
+		"react": ">=18.2.0"
+	},
+	"peerDependenciesMeta": {
+		"@openpanel/sdk": {
+			"optional": true
+		},
+		"posthog-js": {
+			"optional": true
+		}
+	},
+	"devDependencies": {
+		"@config/biome": "workspace:*",
+		"@config/tsconfig": "workspace:*",
+		"@openpanel/sdk": "^1.0.0",
+		"@types/node": "^22.4.0",
+		"@types/react": "^19.0.0",
+		"posthog-js": "^1.186.1"
+	}
 }

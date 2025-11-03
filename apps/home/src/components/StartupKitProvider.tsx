@@ -1,33 +1,33 @@
-"use client";
+"use client"
 
-import { AnalyticsProvider } from "@startupkit/analytics";
-import googleAnalytics from "@startupkit/analytics/ga";
-import plausiblePlugin from "@startupkit/analytics/plausible";
-import posthogPlugin from "@startupkit/analytics/posthog";
+import {
+	Ahrefs,
+	AnalyticsProvider,
+	GoogleAnalytics,
+	OpenPanelPlugin
+} from "@startupkit/analytics"
+import type { ReactNode } from "react"
 
-const plugins: any[] = [
-  googleAnalytics({
-    measurementIds: [process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID],
-  }),
-  plausiblePlugin({
-    domain: "startupkit.com",
-    trackLocalhost: true,
-  }),
-  posthogPlugin({
-    token: process.env.NEXT_PUBLIC_POSTHOG_TOKEN!,
-    enabled: true,
-    options: {
-      // debug: process.env.NODE_ENV === "development",
-      persistence: "memory",
-      disable_cookie: true,
-    },
-  }),
-];
+const plugins = [
+	Ahrefs({
+		key: process.env.NEXT_PUBLIC_AHREFS_API_KEY as string
+	}),
+	GoogleAnalytics({
+		measurementId: process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID as string
+	}),
+	OpenPanelPlugin({
+		clientId: process.env.NEXT_PUBLIC_OPENPANEL_CLIENT_ID as string
+	})
+]
 
-export const StartupKitProvider = ({
-  children,
+export function StartupKitProvider({
+	children
 }: Readonly<{
-  children: React.ReactNode;
-}>) => {
-  return <AnalyticsProvider plugins={plugins}>{children}</AnalyticsProvider>;
-};
+	children: ReactNode
+}>) {
+	return (
+		<AnalyticsProvider flags={{}} plugins={plugins}>
+			{children}
+		</AnalyticsProvider>
+	)
+}
