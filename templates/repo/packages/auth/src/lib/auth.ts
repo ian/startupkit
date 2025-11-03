@@ -4,7 +4,7 @@ import { sendEmail } from "@repo/emails"
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { nextCookies } from "better-auth/next-js"
-import { admin, createAuthMiddleware, emailOTP } from "better-auth/plugins"
+import { createAuthMiddleware, emailOTP } from "better-auth/plugins"
 import { eq } from "drizzle-orm"
 
 async function sendVerificationOTP({
@@ -59,7 +59,7 @@ export const auth = betterAuth({
 					.update(users)
 					.set({
 						lastSeenAt: new Date()
-					})
+					} as unknown as typeof users.$inferInsert)
 					.where(eq(users.id, newSession.user.id))
 
 				const [user] = await db
@@ -88,7 +88,6 @@ export const auth = betterAuth({
 		})
 	},
 	plugins: [
-		admin(),
 		emailOTP({
 			sendVerificationOTP
 		}),
