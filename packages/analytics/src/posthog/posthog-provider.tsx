@@ -5,7 +5,7 @@ import {
 	PostHogProvider as PostHogBaseProvider,
 	usePostHog
 } from "posthog-js/react"
-import React, { type ReactNode, useCallback } from "react"
+import { type ReactNode, useCallback } from "react"
 import type { AnalyticsPlugin } from "../types"
 
 export { usePostHog }
