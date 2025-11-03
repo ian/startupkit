@@ -1,1 +1,1 @@
-export { Ahrefs, AhrefsProvider } from "./ahrefs-provider";
+export { Ahrefs, AhrefsProvider } from "./ahrefs-provider"
