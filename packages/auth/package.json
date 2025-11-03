@@ -7,7 +7,7 @@
 	"homepage": "https://startupkit.com",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/01-studio/startupkit"
+		"url": "https://github.com/ian/startupkit"
 	},
 	"type": "module",
 	"exports": {

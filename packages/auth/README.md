@@ -2,10 +2,18 @@
 
 Lightweight Authentication and Authorization components and hooks for StartupKit projects.
 
+Part of [**StartupKit**](https://startupkit.com) - The Zero to One Startup Framework.
+
 ## Installation
 
 ```bash
 pnpm add @startupkit/auth better-auth
+```
+
+Or use the [StartupKit CLI](https://startupkit.com) to get started with a complete monorepo setup:
+
+```bash
+npx startupkit init
 ```
 
 ## What's Included
@@ -14,21 +22,21 @@ This package provides lightweight wrappers around Better Auth:
 
 - 🎨 `AuthProvider` - React context provider for client components
 - 🪝 `useAuth()` - Authentication hook for client components
-- 📦 `createServerUtils()` - Server-side helpers for Next.js
-- 🎯 Full TypeScript support
+- 🔒 Full TypeScript support
 
 **You call `betterAuth()` directly** in your project for full control over configuration.
 
 ## Usage
 
-### Server Setup
+### 1. Configure Better Auth (Server-Side)
 
-Call `betterAuth()` directly in your project with full control:
+Create your auth configuration with Better Auth directly:
 
-```ts
+```typescript
 // lib/auth.ts
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
+import { nextCookies } from "better-auth/next-js"
 import { emailOTP } from "better-auth/plugins"
 import { db } from "@/lib/db"
 
@@ -37,16 +45,23 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg"
   }),
-  emailAndPassword: {
-    enabled: true
+  session: {
+    expiresIn: 60 * 60 * 24 * 7, // 7 days
+    updateAge: 60 * 60 * 24 // Refresh every 24 hours
   },
   plugins: [
     emailOTP({
       sendVerificationOTP: async ({ email, otp }) => {
-        // Send email with OTP code
-        // Implement your email sending logic here
+        // Send OTP via your email provider
+        await sendEmail({
+          to: email,
+          subject: "Your verification code",
+          template: "otp",
+          data: { code: otp }
+        })
       }
-    })
+    }),
+    nextCookies()
   ],
   socialProviders: {
     google: {
@@ -57,26 +72,78 @@ export const auth = betterAuth({
 })
 ```
 
-### API Routes
+### 2. Create API Route Handler
 
-Export the auth handler in your Next.js API route at `/app/auth/[...all]/route.ts`:
+Create the auth API route at `app/auth/[...all]/route.ts`:
 
-```ts
+```typescript
+// app/auth/[...all]/route.ts
 import { auth } from "@/lib/auth"
 import { toNextJsHandler } from "better-auth/next-js"
 
 export const { GET, POST } = toNextJsHandler(auth.handler)
 ```
 
-### Server-Side Authentication
+### 3. Create Auth Client (Client-Side)
 
-Access the authenticated user in Server Components:
+Create your auth client using Better Auth:
 
-```tsx
+```typescript
+// lib/auth-client.ts
+import { createAuthClient } from "better-auth/react"
+import { emailOTPClient } from "better-auth/client/plugins"
+
+export const authClient = createAuthClient({
+  basePath: "/auth",
+  plugins: [emailOTPClient()]
+})
+```
+
+### 4. Set Up Providers
+
+Wrap your app with the `AuthProvider` from `@startupkit/auth`:
+
+```typescript
+// app/providers.tsx
+"use client"
+
+import { AuthProvider } from "@startupkit/auth"
+import { authClient } from "@/lib/auth-client"
+
+interface ProvidersProps {
+  children: React.ReactNode
+  user?: User
+}
+
+export function Providers({ children, user }: ProvidersProps) {
+  return (
+    <AuthProvider 
+      authClient={authClient}
+      user={user}
+      onIdentify={(user) => {
+        // Optional: Track user identification (e.g., analytics)
+        console.log("User identified:", user)
+      }}
+      onReset={() => {
+        // Optional: Reset state on logout (e.g., clear analytics)
+        console.log("User logged out")
+      }}
+    >
+      {children}
+    </AuthProvider>
+  )
+}
+```
+
+Pass the user from your root layout:
+
+```typescript
+// app/layout.tsx
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
+import { Providers } from "./providers"
 
-export default async function Layout({ children }) {
+export default async function RootLayout({ children }) {
   const session = await auth.api.getSession({
     headers: await headers()
   })
@@ -93,101 +160,72 @@ export default async function Layout({ children }) {
 }
 ```
 
-### Client Setup
-
-Create your auth client using Better Auth directly:
-
-```tsx
-// lib/auth-client.ts
-import { createAuthClient } from "better-auth/react"
-import { adminClient, emailOTPClient } from "better-auth/client/plugins"
-
-export const authClient = createAuthClient({
-  basePath: "/auth",
-  plugins: [
-    adminClient(),
-    emailOTPClient()
-  ]
-})
-```
-
-Then wrap your application with the `AuthProvider` from `@startupkit/auth`:
-
-```tsx
-"use client"
-
-import { AuthProvider } from "@startupkit/auth"
-import { authClient } from "@/lib/auth-client"
-
-export function Providers({ children, user }) {
-  return (
-    <AuthProvider 
-      user={user} 
-      authClient={authClient}
-      onIdentify={(user) => {
-        // Optional: Track user identification (e.g., analytics)
-      }}
-      onReset={() => {
-        // Optional: Reset state on logout (e.g., clear analytics)
-      }}
-    >
-      {children}
-    </AuthProvider>
-  )
-}
-```
-
-### Using Authentication in Components
+### 5. Use Authentication in Components
 
 Access authentication state and methods with the `useAuth` hook:
 
-```tsx
+```typescript
 "use client"
 
 import { useAuth } from "@startupkit/auth"
 
-export function Header() {
-  const { isAuthenticated, user, logout } = useAuth()
+export function UserProfile() {
+  const { isAuthenticated, isLoading, user, logout } = useAuth()
+
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
 
   if (!isAuthenticated) {
-    return <a href="/auth/sign-in">Sign In</a>
+    return <a href="/sign-in">Sign In</a>
   }
 
   return (
     <div>
-      <span>Welcome, {user?.name}</span>
+      <p>Welcome, {user.name}</p>
       <button onClick={logout}>Sign Out</button>
     </div>
   )
 }
 ```
 
-### Email OTP Flow
+## Authentication Methods
 
-```tsx
+### Email OTP (One-Time Password)
+
+```typescript
 "use client"
 
 import { useAuth } from "@startupkit/auth"
 import { useState } from "react"
 
-export function SignIn() {
+export function EmailSignIn() {
   const { sendAuthCode, verifyAuthCode } = useAuth()
   const [email, setEmail] = useState("")
   const [code, setCode] = useState("")
   const [step, setStep] = useState<"email" | "code">("email")
 
+  const handleSendCode = async (e: React.FormEvent) => {
+    e.preventDefault()
+    await sendAuthCode(email)
+    setStep("code")
+  }
+
+  const handleVerifyCode = async (e: React.FormEvent) => {
+    e.preventDefault()
+    await verifyAuthCode(email, code)
+    // User is now authenticated
+  }
+
   if (step === "email") {
     return (
-      <form onSubmit={async (e) => {
-        e.preventDefault()
-        await sendAuthCode(email)
-        setStep("code")
-      }}>
+      <form onSubmit={handleSendCode}>
         <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Enter your email"
+          required
         />
         <button type="submit">Send Code</button>
       </form>
@@ -195,15 +233,13 @@ export function SignIn() {
   }
 
   return (
-    <form onSubmit={async (e) => {
-      e.preventDefault()
-      await verifyAuthCode(email, code)
-    }}>
+    <form onSubmit={handleVerifyCode}>
       <input
         type="text"
         value={code}
         onChange={(e) => setCode(e.target.value)}
-        placeholder="Enter code"
+        placeholder="Enter verification code"
+        required
       />
       <button type="submit">Verify</button>
     </form>
@@ -213,12 +249,12 @@ export function SignIn() {
 
 ### Google OAuth
 
-```tsx
+```typescript
 "use client"
 
 import { useAuth } from "@startupkit/auth"
 
-export function SocialSignIn() {
+export function GoogleSignIn() {
   const { googleAuth } = useAuth()
 
   return (
@@ -229,37 +265,169 @@ export function SocialSignIn() {
 }
 ```
 
-## Configuration
+### Sign Out
 
-This package provides minimal opinions - you configure Better Auth directly. See the [Better Auth documentation](https://better-auth.com/docs) for all configuration options.
+```typescript
+"use client"
+
+import { useAuth } from "@startupkit/auth"
+
+export function SignOutButton() {
+  const { logout } = useAuth()
+
+  return (
+    <button onClick={logout}>
+      Sign Out
+    </button>
+  )
+}
+```
+
+## Server-Side Authentication
+
+### Protect Server Components
+
+```typescript
+// app/dashboard/page.tsx
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
+import { redirect } from "next/navigation"
+
+export default async function DashboardPage() {
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
+
+  if (!session) {
+    redirect("/sign-in")
+  }
+
+  return (
+    <div>
+      <h1>Dashboard</h1>
+      <p>Welcome, {session.user.name}</p>
+    </div>
+  )
+}
+```
+
+### Use in API Routes
+
+```typescript
+// app/api/profile/route.ts
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
+import { NextResponse } from "next/server"
+
+export async function GET() {
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
+
+  if (!session) {
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401 }
+    )
+  }
+
+  return NextResponse.json({
+    user: session.user
+  })
+}
+```
+
+## Features
+
+### Supported Authentication Methods
+
+- ✅ **Email OTP** - One-time password via email (10-minute expiration)
+- ✅ **Google OAuth** - Sign in with Google
+- ✅ **Session Management** - 7-day sessions with 24-hour auto-refresh
+- ✅ **TypeScript** - Full type safety
+
+### Built With
+
+This package is a lightweight wrapper around [Better Auth](https://better-auth.com), providing:
+
+- React context and hooks for easy integration
+- Server utilities for Next.js
+- TypeScript type definitions
+- Minimal configuration required
 
 ## API Reference
 
 ### Client Exports
 
-- `AuthProvider` - React context provider wrapping Better Auth client
-- `useAuth()` - Hook to access authentication state and methods
-- `AuthContext` - React context (if you need direct access)
+#### `AuthProvider`
 
-### Server Exports  
+React context provider wrapping Better Auth client.
 
-- `createServerUtils(auth)` - Factory to create server utilities like `withAuth()`
+```typescript
+interface AuthProviderProps {
+  children: React.ReactNode
+  user?: User
+  authClient: BetterAuthClient
+  onIdentify?: (user: User) => void
+  onReset?: () => void
+}
+```
 
-### useAuth() Hook
+#### `useAuth()`
 
-```ts
+Hook to access authentication state and methods.
+
+```typescript
 const {
-  isAuthenticated,    // boolean
-  isLoading,          // boolean  
-  user,               // User | null | undefined
-  logout,             // () => Promise<void>
-  sendAuthCode,       // (email: string) => Promise<void>
-  verifyAuthCode,     // (email: string, code: string) => Promise<void>
-  googleAuth          // () => Promise<void>
+  isAuthenticated,    // boolean - Is user authenticated?
+  isLoading,          // boolean - Is session loading?
+  user,               // User | null | undefined - Current user
+  logout,             // () => Promise<void> - Sign out user
+  sendAuthCode,       // (email: string) => Promise<void> - Send OTP
+  verifyAuthCode,     // (email: string, code: string) => Promise<void> - Verify OTP
+  googleAuth          // () => Promise<void> - Sign in with Google
 } = useAuth()
 ```
 
+#### `AuthContext`
+
+React context (if you need direct access).
+
+```typescript
+import { AuthContext } from "@startupkit/auth"
+```
+
+### Configuration
+
+All authentication configuration happens in Better Auth directly. See the [Better Auth documentation](https://better-auth.com/docs) for complete configuration options including:
+
+- Email/password authentication
+- Social providers (Google, GitHub, etc.)
+- Magic links
+- Two-factor authentication
+- Custom database adapters
+- Hooks and middleware
+
+## Environment Variables
+
+Required for Google OAuth:
+
+```bash
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+```
+
+## Learn More
+
+- **StartupKit Website:** [startupkit.com](https://startupkit.com)
+- **GitHub Repository:** [github.com/ian/startupkit](https://github.com/ian/startupkit)
+- **Better Auth Docs:** [better-auth.com/docs](https://better-auth.com/docs)
+- **Full Documentation:** [startupkit.com](https://startupkit.com)
+
+## Support
+
+Having issues? [Open an issue on GitHub](https://github.com/ian/startupkit/issues)
+
 ## License
 
-ISC
-
+ISC © 2025 01 Studio

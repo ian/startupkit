@@ -249,7 +249,7 @@ You might be tempted to send data to multiple analytics tools. **Don't.**
 ## Support
 
 For issues or questions:
-- GitHub: https://github.com/01-studio/startupkit
+- GitHub: https://github.com/ian/startupkit
 - Docs: https://startupkit.com/docs
 
 ## License
