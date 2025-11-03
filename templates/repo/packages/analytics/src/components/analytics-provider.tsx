@@ -1,8 +1,45 @@
+/**
+ * Analytics Provider - Type-safe analytics integration for your application
+ *
+ * This module provides a fully typed analytics implementation using @startupkit/analytics
+ * with support for multiple analytics providers (Google Analytics, PostHog, OpenPanel).
+ *
+ * Features:
+ * - Type-safe event tracking using discriminated unions
+ * - Multi-provider support (events sent to all providers simultaneously)
+ * - Feature flag integration
+ * - Automatic page view tracking
+ *
+ * @example
+ * ```tsx
+ * // In your root layout
+ * import { AnalyticsProvider } from '@repo/analytics';
+ *
+ * <AnalyticsProvider flags={flags}>
+ *   <App />
+ * </AnalyticsProvider>
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // In your components
+ * import { useAnalytics } from '@repo/analytics';
+ *
+ * function MyComponent() {
+ *   const { track, flags } = useAnalytics();
+ *
+ *   track({
+ *     event: "USER_SIGNED_IN",
+ *     user: { id: "123", email: "user@example.com" }
+ *   });
+ * }
+ * ```
+ */
 'use client';
 
 import type {
+  AnalyticsContextType,
   AnalyticsPlugin,
-  AnalyticsContextType as BaseAnalyticsContextType,
 } from '@startupkit/analytics';
 import {
   GoogleAnalytics,
@@ -14,25 +51,17 @@ import {
 import type { ReactNode } from 'react';
 import type { AnalyticsEvent, Flags } from '../types';
 
-export type AnalyticsContextType = BaseAnalyticsContextType<
-  Flags,
-  AnalyticsEvent
->;
-
-export function useAnalytics(): AnalyticsContextType {
-  return useBaseAnalytics() as AnalyticsContextType;
-}
-
-interface AnalyticsProviderProps {
-  children: ReactNode;
-  flags: Flags;
-}
-
 /**
- * Analytics Provider - Multi-provider integration with PostHog, OpenPanel, and Google Analytics
+ * Analytics plugins configuration
  *
- * Uses @startupkit/analytics plugin architecture for clean, composable analytics integration.
- * Events are sent to PostHog, OpenPanel, and Google Analytics (if configured) simultaneously.
+ * Configures all analytics providers to receive events simultaneously.
+ * Add or remove providers by modifying this array.
+ *
+ * Providers are initialized with environment variables:
+ * - GOOGLE_ANALYTICS_ID - Google Analytics measurement ID
+ * - OPENPANEL_CLIENT_ID - OpenPanel client ID
+ * - POSTHOG_API_KEY - PostHog API key
+ * - POSTHOG_HOST - PostHog host URL (optional)
  */
 const plugins: AnalyticsPlugin<AnalyticsEvent>[] = [
   GoogleAnalytics({
@@ -47,6 +76,74 @@ const plugins: AnalyticsPlugin<AnalyticsEvent>[] = [
   }),
 ];
 
+/**
+ * Type-safe analytics hook
+ *
+ * Returns an analytics context with properly typed events and feature flags.
+ * All events are validated at compile-time using TypeScript discriminated unions.
+ *
+ * @returns Analytics context with track, identify, page, reset methods and feature flags
+ *
+ * @example
+ * ```tsx
+ * const { track, identify, flags } = useAnalytics();
+ *
+ * // Type-safe event tracking
+ * track({
+ *   event: "TEAM_CREATED",
+ *   teamId: "team_123"
+ * });
+ *
+ * // Identify users
+ * identify("user_123", {
+ *   email: "user@example.com",
+ *   name: "John Doe"
+ * });
+ *
+ * // Check feature flags
+ * if (flags["secret-flag"]) {
+ *   // Show secret feature
+ * }
+ * ```
+ */
+export function useAnalytics(): AnalyticsContextType<Flags, AnalyticsEvent> {
+  return useBaseAnalytics();
+}
+interface AnalyticsProviderProps {
+  children: ReactNode;
+  flags: Flags;
+}
+
+/**
+ * Analytics Provider component
+ *
+ * Wraps your application to provide analytics tracking and feature flags.
+ * Should be placed near the root of your component tree.
+ *
+ * @param children - React children to wrap
+ * @param flags - Feature flags object (from PostHog or other feature flag provider)
+ *
+ * @example
+ * ```tsx
+ * // In your root layout
+ * import { AnalyticsProvider } from '@repo/analytics';
+ * import { getFeatureFlags } from '@repo/analytics/server';
+ *
+ * export default async function RootLayout({ children }) {
+ *   const flags = await getFeatureFlags();
+ *
+ *   return (
+ *     <html>
+ *       <body>
+ *         <AnalyticsProvider flags={flags}>
+ *           {children}
+ *         </AnalyticsProvider>
+ *       </body>
+ *     </html>
+ *   );
+ * }
+ * ```
+ */
 export function AnalyticsProvider({ children, flags }: AnalyticsProviderProps) {
   return (
     <StartupKitAnalyticsProvider flags={flags} plugins={plugins}>
