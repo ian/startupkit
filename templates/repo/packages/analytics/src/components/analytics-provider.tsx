@@ -58,21 +58,20 @@ import type { AnalyticsEvent, Flags } from '../types';
  * Add or remove providers by modifying this array.
  *
  * Providers are initialized with environment variables:
- * - GOOGLE_ANALYTICS_ID - Google Analytics measurement ID
- * - OPENPANEL_CLIENT_ID - OpenPanel client ID
- * - POSTHOG_API_KEY - PostHog API key
- * - POSTHOG_HOST - PostHog host URL (optional)
+ * - NEXT_PUBLIC_GOOGLE_ANALYTICS_ID - Google Analytics measurement ID
+ * - NEXT_PUBLIC_OPENPANEL_CLIENT_ID - OpenPanel client ID
+ * - NEXT_PUBLIC_POSTHOG_API_KEY - PostHog API key
+ * - POSTHOG_HOST (optional) - Custom PostHog host URL (defaults to https://app.posthog.com)
  */
 const plugins: AnalyticsPlugin<AnalyticsEvent>[] = [
   GoogleAnalytics({
-    measurementId: process.env.GOOGLE_ANALYTICS_ID as string,
+    measurementId: process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID as string,
   }),
   OpenPanelPlugin({
-    clientId: process.env.OPENPANEL_CLIENT_ID as string,
+    clientId: process.env.NEXT_PUBLIC_OPENPANEL_CLIENT_ID as string,
   }),
   PostHogPlugin({
-    apiKey: process.env.POSTHOG_API_KEY as string,
-    apiHost: process.env.POSTHOG_HOST,
+    apiKey: process.env.NEXT_PUBLIC_POSTHOG_API_KEY as string,
   }),
 ];
 
