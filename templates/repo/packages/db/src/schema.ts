@@ -22,6 +22,9 @@ export const users = pgTable("User", {
     emailVerified: boolean("emailVerified").default(false).notNull(),
     phone: text("phone").unique(),
     role: text("role").default("user").notNull(),
+    banned: boolean("banned").default(false),
+    banReason: text("banReason"),
+    banExpires: timestamp("banExpires", { mode: "date" }),
     createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
     updatedAt: timestamp("updatedAt", { mode: "date" }).defaultNow().notNull(),
     lastSeenAt: timestamp("lastSeenAt", { mode: "date" })
