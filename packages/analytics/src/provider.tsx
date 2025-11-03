@@ -7,7 +7,8 @@ import { AnalyticsContext } from "./context"
 import type {
 	AnalyticsContextType,
 	AnalyticsHandlers,
-	AnalyticsPlugin
+	AnalyticsPlugin,
+	CustomAnalyticsHandlers
 } from "./types"
 
 /**
@@ -19,16 +20,17 @@ interface AnalyticsProviderProps<
 	TFlags extends Record<string, unknown> = Record<
 		string,
 		boolean | string | undefined
-	>
+	>,
+	TPlugins extends readonly AnalyticsPlugin[] = readonly AnalyticsPlugin[]
 > {
 	/** React children to render within the provider */
 	children: ReactNode
 	/** Feature flags object to be made available throughout the app */
 	flags: TFlags
 	/** Optional array of analytics plugins (GoogleAnalytics, OpenPanel, PostHog, etc.) */
-	plugins?: AnalyticsPlugin[]
-	/** Optional manual handlers (for backward compatibility, use plugins instead) */
-	handlers?: AnalyticsHandlers
+	plugins?: TPlugins
+	/** Optional manual handlers - can be simple handlers OR custom handlers with plugin access. When used with plugins, handlers can be partial - unspecified handlers will use default behavior */
+	handlers?: AnalyticsHandlers | Partial<CustomAnalyticsHandlers<TPlugins>>
 	/** Whether to automatically track page views on navigation. Defaults to true */
 	autoPageTracking?: boolean
 }
@@ -50,7 +52,7 @@ interface AnalyticsProviderProps<
  * ```tsx
  * // Plugin mode (recommended)
  * const plugins = [
- *   GoogleAnalytics({ measurementId: 'G-XXXXXXXXXX' }),
+ *   GoogleAnalyticsPlugin({ measurementId: 'G-XXXXXXXXXX' }),
  *   OpenPanelPlugin({ clientId: 'your-client-id' }),
  * ];
  *
@@ -80,14 +82,30 @@ export function AnalyticsProvider<
 	TFlags extends Record<string, unknown> = Record<
 		string,
 		boolean | string | undefined
-	>
+	>,
+	TPlugins extends readonly AnalyticsPlugin[] = readonly AnalyticsPlugin[]
 >({
 	children,
 	flags,
-	plugins = [],
+	plugins = [] as unknown as TPlugins,
 	handlers: providedHandlers,
 	autoPageTracking = true
-}: AnalyticsProviderProps<TFlags>) {
+}: AnalyticsProviderProps<TFlags, TPlugins>) {
+	if (plugins.length > 0 && providedHandlers) {
+		return (
+			<PluginComposer plugins={plugins}>
+				<AnalyticsProviderInnerWithCustomHandlers
+					flags={flags}
+					plugins={plugins}
+					handlers={providedHandlers as CustomAnalyticsHandlers<TPlugins>}
+					autoPageTracking={autoPageTracking}
+				>
+					{children}
+				</AnalyticsProviderInnerWithCustomHandlers>
+			</PluginComposer>
+		)
+	}
+
 	if (plugins.length > 0) {
 		return (
 			<PluginComposer plugins={plugins}>
@@ -111,7 +129,7 @@ export function AnalyticsProvider<
 	return (
 		<AnalyticsProviderCore
 			flags={flags}
-			handlers={providedHandlers}
+			handlers={providedHandlers as AnalyticsHandlers}
 			autoPageTracking={autoPageTracking}
 		>
 			{children}
@@ -141,7 +159,7 @@ function PluginComposer({
 	plugins,
 	children
 }: {
-	plugins: AnalyticsPlugin[]
+	plugins: readonly AnalyticsPlugin[]
 	children: ReactNode
 }) {
 	return plugins.reduceRight((acc, plugin) => {
@@ -169,7 +187,7 @@ interface AnalyticsProviderInnerProps<
 	/** Feature flags object */
 	flags: TFlags
 	/** Array of analytics plugins to merge handlers from */
-	plugins: AnalyticsPlugin[]
+	plugins: readonly AnalyticsPlugin[]
 	/** Whether to enable automatic page tracking */
 	autoPageTracking?: boolean
 }
@@ -224,6 +242,141 @@ function AnalyticsProviderInner<
 		}
 		return mergedHandlers
 	}, [pluginHandlers])
+
+	return (
+		<AnalyticsProviderCore
+			flags={flags}
+			handlers={handlers}
+			autoPageTracking={autoPageTracking}
+		>
+			{children}
+		</AnalyticsProviderCore>
+	)
+}
+
+/**
+ * Props for AnalyticsProviderInnerWithCustomHandlers component
+ *
+ * @template TFlags - Type definition for feature flags
+ * @template TPlugins - Type definition for plugins array
+ * @internal
+ */
+interface AnalyticsProviderInnerWithCustomHandlersProps<
+	TFlags extends Record<string, unknown> = Record<
+		string,
+		boolean | string | undefined
+	>,
+	TPlugins extends readonly AnalyticsPlugin[] = readonly AnalyticsPlugin[]
+> {
+	/** React children to render */
+	children: ReactNode
+	/** Feature flags object */
+	flags: TFlags
+	/** Array of analytics plugins */
+	plugins: TPlugins
+	/** Custom handlers with plugin access - can be partial */
+	handlers: Partial<CustomAnalyticsHandlers<TPlugins>>
+	/** Whether to enable automatic page tracking */
+	autoPageTracking?: boolean
+}
+
+/**
+ * AnalyticsProviderInnerWithCustomHandlers - Provides plugin handlers to custom handlers
+ *
+ * This component is responsible for:
+ * 1. Calling each plugin's useHandlers() hook to get their handlers
+ * 2. Creating a typed map of plugin names to handlers
+ * 3. Calling the custom handlers with the plugin map for full customization
+ *
+ * @internal This is an internal component used by AnalyticsProvider
+ *
+ * @template TFlags - Type definition for feature flags
+ * @template TPlugins - Type definition for plugins array
+ */
+function AnalyticsProviderInnerWithCustomHandlers<
+	TFlags extends Record<string, unknown> = Record<
+		string,
+		boolean | string | undefined
+	>,
+	TPlugins extends readonly AnalyticsPlugin[] = readonly AnalyticsPlugin[]
+>({
+	children,
+	flags,
+	plugins,
+	handlers: customHandlers,
+	autoPageTracking = true
+}: AnalyticsProviderInnerWithCustomHandlersProps<TFlags, TPlugins>) {
+	const pluginHandlers = plugins.map((plugin) => plugin.useHandlers())
+
+	const pluginMap = useMemo(() => {
+		const map: Record<string, Partial<AnalyticsHandlers>> = {}
+		for (let i = 0; i < plugins.length; i++) {
+			const plugin = plugins[i]
+			if (plugin) {
+				map[plugin.name] = pluginHandlers[i] ?? {}
+			}
+		}
+		return map as import("./types").PluginsToHandlersMap<TPlugins>
+	}, [plugins, pluginHandlers])
+
+	const handlers = useMemo<AnalyticsHandlers>(() => {
+		const pluginHandlersList = Object.values(
+			pluginMap
+		) as Partial<AnalyticsHandlers>[]
+
+		return {
+			identify: (userId, traits) => {
+				if (customHandlers.identify) {
+					customHandlers.identify({
+						plugins: pluginMap,
+						userId,
+						traits
+					})
+				} else {
+					for (const handler of pluginHandlersList) {
+						handler.identify?.(userId, traits)
+					}
+				}
+			},
+			track: (event, properties) => {
+				if (customHandlers.track) {
+					customHandlers.track({
+						plugins: pluginMap,
+						event,
+						properties
+					})
+				} else {
+					for (const handler of pluginHandlersList) {
+						handler.track?.(event, properties)
+					}
+				}
+			},
+			page: (name, properties) => {
+				if (customHandlers.page) {
+					customHandlers.page({
+						plugins: pluginMap,
+						name,
+						properties
+					})
+				} else {
+					for (const handler of pluginHandlersList) {
+						handler.page?.(name, properties)
+					}
+				}
+			},
+			reset: () => {
+				if (customHandlers.reset) {
+					customHandlers.reset({
+						plugins: pluginMap
+					})
+				} else {
+					for (const handler of pluginHandlersList) {
+						handler.reset?.()
+					}
+				}
+			}
+		}
+	}, [customHandlers, pluginMap])
 
 	return (
 		<AnalyticsProviderCore

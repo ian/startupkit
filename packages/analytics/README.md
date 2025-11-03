@@ -30,7 +30,7 @@ This package provides a **provider-agnostic** analytics context pattern with bui
 
 The package includes ready-to-use plugins for popular analytics services:
 
-- **PostHogPlugin** - Product analytics and feature flags
+- **PostHog** - Product analytics and feature flags
 - **GoogleAnalytics** - Google Analytics 4 integration
 - **OpenPanelPlugin** - Privacy-focused analytics
 - **AhrefsPlugin** - SEO and traffic analytics
@@ -44,10 +44,10 @@ The plugin architecture makes it easy to use multiple analytics providers:
 ```typescript
 "use client"
 
-import { 
+import {
   AnalyticsProvider,
   PostHogPlugin,
-  GoogleAnalytics,
+  GoogleAnalyticsPlugin,
   OpenPanelPlugin
 } from "@startupkit/analytics"
 
@@ -56,7 +56,7 @@ const plugins = [
     apiKey: process.env.NEXT_PUBLIC_POSTHOG_API_KEY,
     apiHost: process.env.NEXT_PUBLIC_POSTHOG_HOST // optional
   }),
-  GoogleAnalytics({
+  GoogleAnalyticsPlugin({
     measurementId: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
   }),
   OpenPanelPlugin({
@@ -143,14 +143,61 @@ interface AnalyticsProviderProps<TFlags> {
   flags={flags} 
   plugins={[
     PostHogPlugin({ apiKey: "..." }),
-    GoogleAnalytics({ measurementId: "..." })
+    GoogleAnalyticsPlugin({ measurementId: "..." })
   ]}
 >
   {children}
 </AnalyticsProvider>
 ```
 
-**Manual Handlers Mode (Advanced):**
+**Custom Handlers with Plugins (Advanced):**
+
+For full customization, provide both `plugins` and `handlers`. Your handlers receive a strongly-typed `plugins` object:
+
+```typescript
+const plugins = [
+  PostHogPlugin({ apiKey: "..." }),
+  GoogleAnalyticsPlugin({ measurementId: "..." })
+] as const // Important: use 'as const' for type inference
+
+<AnalyticsProvider 
+  flags={flags}
+  plugins={plugins}
+  handlers={{
+    identify: ({ plugins, userId, traits }) => {
+      // plugins.PostHog is strongly typed!
+      if (userId) {
+        plugins.PostHog.identify?.(userId, traits)
+        
+        // Add custom logic
+        if (traits?.isPremium) {
+          plugins.GoogleAnalytics.identify?.(userId, traits)
+        }
+      }
+    },
+    track: ({ plugins, event, properties }) => {
+      // Full control over which events go where
+      plugins.PostHog.track?.(event, properties)
+      
+      if (event.startsWith('PURCHASE_')) {
+        plugins.GoogleAnalytics.track?.(event, properties)
+      }
+    },
+    page: ({ plugins, name, properties }) => {
+      plugins.PostHog.page?.(name, properties)
+      plugins.GoogleAnalytics.page?.(name, properties)
+    },
+    reset: ({ plugins }) => {
+      plugins.PostHog.reset?.()
+      plugins.GoogleAnalytics.reset?.()
+    }
+  }}
+>
+  {children}
+</AnalyticsProvider>
+```
+
+**Simple Handlers Mode (No Plugins):**
 ```typescript
 <AnalyticsProvider 
   flags={flags}
@@ -213,7 +260,7 @@ if (isNewFeatureEnabled) {
 
 ## Built-in Plugins
 
-### PostHogPlugin
+### PostHog
 
 ```typescript
 import { PostHogPlugin } from "@startupkit/analytics"
@@ -233,9 +280,9 @@ const plugin = PostHogPlugin({
 ### GoogleAnalytics
 
 ```typescript
-import { GoogleAnalytics } from "@startupkit/analytics"
+import { GoogleAnalyticsPlugin } from "@startupkit/analytics"
 
-const plugin = GoogleAnalytics({
+const plugin = GoogleAnalyticsPlugin({
   measurementId: "G-XXXXXXXXXX"
 })
 ```
@@ -328,6 +375,154 @@ export function MyAnalyticsPlugin(): AnalyticsPlugin {
 }
 ```
 
+## Advanced: Custom Handlers with Plugins
+
+For maximum flexibility, you can provide both `plugins` and `handlers` to gain full control over how analytics events are dispatched. When you do this, the analytics provider:
+
+1. **Initializes all plugins** (calls their `Provider` components)
+2. **Gets handlers from each plugin** (calls their `useHandlers()` hooks)
+3. **Passes a strongly-typed `plugins` object** to your custom handlers
+4. **Lets you decide** which events go to which plugins
+
+### Use Cases
+
+- **Conditional tracking**: Only send certain events to specific providers
+- **Data transformation**: Modify event properties per provider
+- **Performance**: Skip expensive tracking for non-critical events
+- **Debugging**: Log events before sending to providers
+- **A/B testing**: Route events differently for different user segments
+
+### Example: Conditional Tracking
+
+```typescript
+const plugins = [
+  PostHogPlugin({ apiKey: "..." }),
+  GoogleAnalyticsPlugin({ measurementId: "..." })
+] as const // 'as const' enables type inference
+
+<AnalyticsProvider 
+  flags={flags}
+  plugins={plugins}
+  handlers={{
+    track: ({ plugins, event, properties }) => {
+      // All events go to PostHog
+      plugins.PostHog.track?.(event, properties)
+      
+      // Only send purchase events to Google Analytics
+      if (event.startsWith('PURCHASE_')) {
+        plugins.GoogleAnalytics.track?.(event, {
+          ...properties,
+          value: properties.amount // Transform property name
+        })
+      }
+    },
+    identify: ({ plugins, userId, traits }) => {
+      if (!userId) return
+      
+      plugins.PostHog.identify?.(userId, traits)
+      
+      // Only identify premium users in GA
+      if (traits?.plan === 'premium') {
+        plugins.GoogleAnalytics.identify?.(userId, traits)
+      }
+    },
+    page: ({ plugins, name, properties }) => {
+      // Track all page views in both
+      plugins.PostHog.page?.(name, properties)
+      plugins.GoogleAnalytics.page?.(name, properties)
+    },
+    reset: ({ plugins }) => {
+      plugins.PostHog.reset?.()
+      plugins.GoogleAnalytics.reset?.()
+    }
+  }}
+>
+  {children}
+</AnalyticsProvider>
+```
+
+### Type Safety
+
+The `plugins` object is **strongly typed** based on the plugins you provide:
+
+```typescript
+const plugins = [
+  PostHogPlugin({ apiKey: "..." }),
+  GoogleAnalyticsPlugin({ measurementId: "..." })
+] as const // Important!
+
+// TypeScript knows these exist:
+plugins.PostHog.track(...)      // ✅
+plugins.GoogleAnalytics.track(...) // ✅
+
+// TypeScript catches typos:
+plugins.PostHOG.track(...)      // ❌ Error
+plugins.Mixpanel.track(...)     // ❌ Error
+```
+
+**Important**: Use `as const` when defining your plugins array for proper type inference.
+
+### Example: Debugging
+
+```typescript
+<AnalyticsProvider 
+  flags={flags}
+  plugins={plugins}
+  handlers={{
+    track: ({ plugins, event, properties }) => {
+      // Log all events in development
+      if (process.env.NODE_ENV === 'development') {
+        console.log('📊 Analytics:', event, properties)
+      }
+      
+      // Send to all providers
+      plugins.PostHog.track?.(event, properties)
+      plugins.GoogleAnalytics.track?.(event, properties)
+    }
+    // identify, page, reset use default behavior (send to all plugins)
+  }}
+>
+  {children}
+</AnalyticsProvider>
+```
+
+### Partial Handlers
+
+You don't need to provide all handlers! **Unspecified handlers will use the default behavior** (sending to all plugins):
+
+```typescript
+const plugins = [
+  PostHogPlugin({ apiKey: "..." }),
+  GoogleAnalyticsPlugin({ measurementId: "..." })
+] as const
+
+<AnalyticsProvider 
+  flags={flags}
+  plugins={plugins}
+  handlers={{
+    // Only override track - everything else uses defaults
+    track: ({ plugins, event, properties }) => {
+      // Custom logic for tracking only
+      if (event.startsWith('PURCHASE_')) {
+        plugins.PostHog.track?.(event, properties)
+        plugins.GoogleAnalytics.track?.(event, properties)
+      } else {
+        // Only track non-purchase events to PostHog
+        plugins.PostHog.track?.(event, properties)
+      }
+    }
+    // identify, page, reset automatically send to ALL plugins
+  }}
+>
+  {children}
+</AnalyticsProvider>
+```
+
+This is perfect for:
+- **Selective tracking**: Override just `track` to filter which events go where
+- **Custom identification**: Override just `identify` to add extra logic
+- **Debugging specific methods**: Add logging to one method without affecting others
+
 ## Multi-Provider Setup
 
 Events are sent to **all** configured plugins simultaneously:
@@ -335,7 +530,7 @@ Events are sent to **all** configured plugins simultaneously:
 ```typescript
 const plugins = [
   PostHogPlugin({ apiKey: "..." }),      // Product analytics
-  GoogleAnalytics({ measurementId: "..." }), // Marketing analytics
+  GoogleAnalyticsPlugin({ measurementId: "..." }), // Marketing analytics
   OpenPanelPlugin({ clientId: "..." })   // Privacy-focused analytics
 ]
 
@@ -371,12 +566,39 @@ interface AnalyticsPlugin {
   useHandlers: () => Partial<AnalyticsHandlers>
 }
 
-// Handlers interface
+// Simple handlers interface (no plugins)
 interface AnalyticsHandlers {
   identify: (userId: string | null, traits?: Record<string, unknown>) => void
   track: (event: string, properties?: Record<string, unknown>) => void
   page: (name?: string, properties?: Record<string, unknown>) => void
   reset: () => void
+}
+
+// Custom handlers interface (with plugins) - receives plugins object and parameters
+interface CustomAnalyticsHandlers<TPlugins extends readonly AnalyticsPlugin[]> {
+  identify: (params: {
+    plugins: PluginsToHandlersMap<TPlugins>
+    userId: string | null
+    traits?: Record<string, unknown>
+  }) => void
+  track: (params: {
+    plugins: PluginsToHandlersMap<TPlugins>
+    event: string
+    properties?: Record<string, unknown>
+  }) => void
+  page: (params: {
+    plugins: PluginsToHandlersMap<TPlugins>
+    name?: string
+    properties?: Record<string, unknown>
+  }) => void
+  reset: (params: { 
+    plugins: PluginsToHandlersMap<TPlugins> 
+  }) => void
+}
+
+// Plugins map - strongly typed based on plugin names
+type PluginsToHandlersMap<TPlugins extends readonly AnalyticsPlugin[]> = {
+  [K in TPlugins[number]["name"]]: Partial<AnalyticsHandlers>
 }
 
 // Context interface
@@ -412,8 +634,8 @@ You can use the built-in plugins, create your own, or implement custom handlers.
 
 Plugin-specific dependencies (only install what you use):
 - `posthog-js` - For PostHogPlugin
-- `@openpanel/nextjs` - For OpenPanelPlugin
-- (Google Analytics and Ahrefs work via script injection)
+- `@openpanel/sdk` - For OpenPanelPlugin
+- (GoogleAnalyticsPlugin and AhrefsPlugin work via script injection)
 
 ## Learn More
 

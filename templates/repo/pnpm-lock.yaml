@@ -90,8 +90,8 @@ importers:
         specifier: workspace:*
         version: link:../utils
       '@startupkit/analytics':
-        specifier: 0.4.0
-        version: 0.4.0(@types/dlv@1.1.5)(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(prop-types@15.8.1)(react@19.0.0)
+        specifier: 0.5.0
+        version: 0.5.0(@openpanel/sdk@1.0.0)(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(posthog-js@1.235.5)(react@19.0.0)
       posthog-js:
         specifier: 1.235.5
         version: 1.235.5
@@ -139,8 +139,8 @@ importers:
         specifier: workspace:*
         version: link:../utils
       '@startupkit/auth':
-        specifier: 0.4.0
-        version: 0.4.0(better-auth@1.3.27(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        specifier: 0.5.0
+        version: 0.5.0(better-auth@1.3.27(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(drizzle-orm@0.38.4(@opentelemetry/api@1.9.0)(@types/pg@8.15.6)(@types/react@19.0.1)(kysely@0.28.8)(pg@8.16.3)(react@19.0.0))(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       better-auth:
         specifier: 1.3.27
         version: 1.3.27(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -519,42 +519,6 @@ packages:
   '@alloc/quick-lru@5.2.0':
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
     engines: {node: '>=10'}
-
-  '@analytics/cookie-utils@0.2.14':
-    resolution: {integrity: sha512-x51x2cLqvP5Fb1ydgNvTCX+SVv0ALK/yTNwp/53++yk4kLhxb850krWtQ4aASN0612oXrIGotwfmdJIttnLiPQ==}
-
-  '@analytics/core@0.10.23':
-    resolution: {integrity: sha512-crOJ7tNA5xak5YGiiX8IvPyqf4Hy3tMmTH4dTvQiOapO6BiBJcxBUkjtJNPwZlhS4nmsWh0skeTBr4Kv92RzeA==}
-
-  '@analytics/core@0.13.2':
-    resolution: {integrity: sha512-ejvfoPP8TEh2hA2szMEq9c4TdeX8FAeY1j/7MxJVZjzDaq8BDHOyaAAQzTFiLMHvV0WcU2YC0smJ5Ids5Ll5ng==}
-
-  '@analytics/global-storage-utils@0.1.9':
-    resolution: {integrity: sha512-+xm6CDnWsVOQIKkqbPRPRdYDXKk3PNgr/bCZWSI+7tEDT5PCDgI0QSBZe+FqCVkCRtTkgOrjFOY7wOM8Gq+ndA==}
-
-  '@analytics/google-analytics@1.1.0':
-    resolution: {integrity: sha512-i8uGyELMtwEUAf3GNWNLNBzhRvReDn1RUxvMdMhjUA7+GNGxPOM4kkzFfv3giQXKNxTEjfsh75kqNcscbJsuaA==}
-
-  '@analytics/localstorage-utils@0.1.12':
-    resolution: {integrity: sha512-BL3vuZUwWgMqdkQsE0GKsED5SPLC6daI4K4LE0a/BkKv+4Cae5JLLqpO5gju2HUGOjJxIvw8U/G5EcglNY5+1w==}
-
-  '@analytics/session-storage-utils@0.0.4':
-    resolution: {integrity: sha512-HPVIUMpL9ua8uBj5kLsTOLbxUNP0GVYQowC9AwX1S/T39Eg8RKwbV/GYaDAqeCjEi8BGYOEguqI9kFGqxIt1iA==}
-
-  '@analytics/session-storage-utils@0.0.9':
-    resolution: {integrity: sha512-fhP9QCpyq45rZKsXaAxyz+VTmOUWljIW08CWSkFzpwOHkDM4Xy5tymc1YcWqSBBaLjHldo3HlY4qfqEIS4Aj1A==}
-
-  '@analytics/storage-utils@0.3.0':
-    resolution: {integrity: sha512-uxOz5wdZkuxc7RaWlNsj/7iFr0GkkFqmxyIYY4oFk91E3/hyosny59lb8DEC/MpdUUAoNI+clU+I/PYcv3p1WA==}
-
-  '@analytics/storage-utils@0.4.4':
-    resolution: {integrity: sha512-873P4wDIunbOnBqADc2AhTVsLbluUv1dP6k9UrK8FIeV8WXv5+fG12HdwwaniUIxq6QLgZJfKEaCwtWSKrrV0g==}
-
-  '@analytics/type-utils@0.5.4':
-    resolution: {integrity: sha512-2CT5YTsvif3gYPYp5hPIhh66mUo/Cu+k5OiHbX3k5p+YsZ5Bggcp/wLEFnrdKG4tKgGn5SOKkEtL63VYhGXX7g==}
-
-  '@analytics/type-utils@0.6.4':
-    resolution: {integrity: sha512-Ou1gQxFakOWLcPnbFVsrPb8g1wLLUZYYJXDPjHkG07+5mustGs5yqACx42UAu4A6NszNN6Z5gGxhyH45zPWRxw==}
 
   '@aws-crypto/crc32@5.2.0':
     resolution: {integrity: sha512-nLbCWqQNgUiwwtFsen1AdzAtvuLRsQS8rYgMuxCrdKf9kOssamGLuPwyTY9wyYblNr9+1XM8v6zoDTPPSIeANg==}
@@ -2425,9 +2389,6 @@ packages:
     peerDependencies:
       '@types/react': '>=16'
       react: '>=16'
-
-  '@metro-fs/analytics-plugin-posthog@1.14.0':
-    resolution: {integrity: sha512-ZLRPf97B6/kgjurl89g5nriHoqS73W4Q9NT4FTG8hfi/odTJ24T6rGacEFCGaYC1m12vIzvAZaGVxyTfJNTf2w==}
 
   '@msgpackr-extract/msgpackr-extract-darwin-arm64@3.0.3':
     resolution: {integrity: sha512-QZHtlVgbAdy2zAqNA9Gu1UpIuI8Xvsd1v8ic6B2pZmeFnFcMWiPLfWXh7TVw4eGEZ/C9TH281KwhVoeQUKbyjw==}
@@ -4530,19 +4491,27 @@ packages:
   '@standard-schema/spec@1.0.0':
     resolution: {integrity: sha512-m2bOd0f2RT9k8QJx1JN85cZYyH1RqFBdlwtkSlf4tBDYLCiiZnv1fIIwacK6cqwXavOydf0NPToMQgpKq+dVlA==}
 
-  '@startupkit/analytics@0.4.0':
-    resolution: {integrity: sha512-fYFUqhDc1G+C6IY92Z32Z12UULqAL4E+kID/P8XEGUZThdHs2CL6HKHUoMScfDiiAzCZdc6/4P3LDAG+se4o5g==}
+  '@startupkit/analytics@0.5.0':
+    resolution: {integrity: sha512-+hCTjjogvVIAx9dyucCxPlkwkBliO6HoW37lNpKk9JOK7O08a5vFYr8w/ARvNpdBBtVcXWIfX6yobJKz+8nzig==}
     peerDependencies:
-      next: ^14
-      react: ^18.2.0
+      '@openpanel/sdk': '>=1.0.0'
+      next: '>=14.0.0'
+      posthog-js: '>=1.0.0'
+      react: '>=18.2.0'
+    peerDependenciesMeta:
+      '@openpanel/sdk':
+        optional: true
+      posthog-js:
+        optional: true
 
-  '@startupkit/auth@0.4.0':
-    resolution: {integrity: sha512-HQsmQoAn+2jvJG0DGd18SWSEMvv72UX6gE+DjpgF5IyAE/c2Ni68JyFUKA6g84NE885CzjJ7wAaiV4I3m+dV6A==}
+  '@startupkit/auth@0.5.0':
+    resolution: {integrity: sha512-ZEVaELCMD561PuVr3zCeuwd4t7imQggS7nXWBuXRFwZP1uWe1Ye02kUy7pAAuAWjgILkodSO7F/k7J9IAiGoJw==}
     peerDependencies:
-      better-auth: 1.3.27
-      next: ^14
-      react: ^19.0.0
-      react-dom: ^19.0.0
+      better-auth: '>=1.3.0'
+      drizzle-orm: '>=0.38.0'
+      next: '>=14.0.0'
+      react: '>=18.2.0'
+      react-dom: '>=18.2.0'
 
   '@storybook/addon-actions@8.5.3':
     resolution: {integrity: sha512-7a+SD4EZdZocm+NG1Kx4yV6Aw7+YUlRIyGvKcxsGtYMOLaqrUewApqveXF83+FbYWMoezXcoZCLQFROtS/Z6Fw==}
@@ -4918,9 +4887,6 @@ packages:
   '@types/debug@4.1.12':
     resolution: {integrity: sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==}
 
-  '@types/dlv@1.1.5':
-    resolution: {integrity: sha512-JHOWNfiWepAhfwlSw17kiWrWrk6od2dEQgHltJw9AS0JPFoLZJBge5+Dnil2NfdjAvJ/+vGSX60/BRW20PpUXw==}
-
   '@types/doctrine@0.0.9':
     resolution: {integrity: sha512-eOIHzCUSH7SMfonMG1LsC2f8vxBFtho6NGBznK41R84YzPuvSBzrhEps33IsQiOW9+VL6NQ9DbjQJznk/S4uRA==}
 
@@ -5163,20 +5129,6 @@ packages:
 
   ajv@8.17.1:
     resolution: {integrity: sha512-B/gBuNg5SiMTrPkC+A2+cW0RszwxYmn6VYxB/inlBStS5nx6xHIt/ehKRhIMhqusl7a8LjQoZnjCs5vhwxOQ1g==}
-
-  analytics-plugin-plausible@0.0.6:
-    resolution: {integrity: sha512-gXeoJo85JLO91DckbPq23jn/QJW4vg1hA/bRcAbcAo5D6u6JUIg/rG6Ecwkk75sPefnGFIZ6qGHIoz1b2wFK9w==}
-
-  analytics-utils@1.1.1:
-    resolution: {integrity: sha512-nRybjTpRAcHVhWb1cvYaOLJaI3R79r8XjMbu5c0wd2jKmANNqSrYwybiU0X3mp+CQQdm4YiAggTXb2cIA8XhUg==}
-    peerDependencies:
-      '@types/dlv': ^1.0.0
-
-  analytics@0.7.23:
-    resolution: {integrity: sha512-9zujZOUmDnRGRNoKIXwongMlOV1Odi+5ftRpfTPlYYQfX7Kl6ttSaP2caFQhKr5SenSCW2RMIxiLzX+LynE7sw==}
-
-  analytics@0.8.19:
-    resolution: {integrity: sha512-JFgasxpWFiAoqm5UHaGQv9j9OGz+f1KAeQkABYr3Z7YGhiqhQrBpPhIVAIEyttBRJZmew1QwMhN9/bOGGBnpJA==}
 
   ansi-html-community@0.0.8:
     resolution: {integrity: sha512-1APHAyr3+PCamwNw3bXCPp4HFLONZt/yIH0sZp0/469KWNTEy+qN5jQ3GVX6DMZ1UXAi34yVwtTeaG/HpBuuzw==}
@@ -7529,11 +7481,6 @@ packages:
     resolution: {integrity: sha512-Ie9z/WINcxxLp27BKOCHGde4ITq9UklYKDzVo1nhk5sqGEXU3FpkwP5GM2voTGJkGd9B3Otl+Q4uwSOeSUtOBA==}
     engines: {node: '>=14.16'}
 
-  plausible-tracker@0.3.9:
-    resolution: {integrity: sha512-hMhneYm3GCPyQon88SZrVJx+LlqhM1kZFQbuAgXPoh/Az2YvO1B6bitT9qlhpiTdJlsT5lsr3gPmzoVjb5CDXA==}
-    engines: {node: '>=10'}
-    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
-
   pnp-webpack-plugin@1.7.0:
     resolution: {integrity: sha512-2Rb3vm+EXble/sMXNSu6eoBx8e79gKqhNq9F5ZWW6ERNCTE/Q0wQNne5541tE5vKjfM8hpNCYL+LGc1YTfI0dg==}
     engines: {node: '>=6'}
@@ -7662,9 +7609,6 @@ packages:
   postgres-interval@1.2.0:
     resolution: {integrity: sha512-9ZhXKM/rw350N1ovuWHbGxnGh/SNJ4cnxHiM0rxE4VN41wsg8P8zWn9hv/buK00RP4WvlOyr/RBDiptyxVbkZQ==}
     engines: {node: '>=0.10.0'}
-
-  posthog-js@1.154.2:
-    resolution: {integrity: sha512-EM8xn5V86fTg/pUhCyyMCRotI07tXDLQryc5TDQinT9kCRz8799G1n+Bq7drOEYdD/xbvcKfcfTWmlMrTZCZ6A==}
 
   posthog-js@1.235.5:
     resolution: {integrity: sha512-uTvYm8dJ/xAqq385IKGVcPALf0F4G/cQ3eMQO8JQzwZUUoYggBKzp4NuzXZHDSfvxgDZDchi7yfZupbVVdVn9A==}
@@ -7830,12 +7774,6 @@ packages:
     resolution: {integrity: sha512-aaQWy8uIjd0mah3BKEulHOLgxDqsDUvrau3iwFdEz2qoc3kknACvZSbRNDcJrmxVLkUaGqAarFTSuioY6jGJoQ==}
     engines: {node: '>=18.0.0'}
     hasBin: true
-
-  react-ga@3.3.1:
-    resolution: {integrity: sha512-4Vc0W5EvXAXUN/wWyxvsAKDLLgtJ3oLmhYYssx+YzphJpejtOst6cbIHCIyF50Fdxuf5DDKqRYny24yJ2y7GFQ==}
-    peerDependencies:
-      prop-types: ^15.6.0
-      react: ^15.6.2 || ^16.0 || ^17 || ^18
 
   react-hook-form@7.54.1:
     resolution: {integrity: sha512-PUNzFwQeQ5oHiiTUO7GO/EJXGEtuun2Y1A59rLnZBBj+vNEOWt/3ERTiG1/zt7dVeJEM+4vDX/7XQ/qanuvPMg==}
@@ -8971,64 +8909,6 @@ snapshots:
       json-schema: 0.4.0
 
   '@alloc/quick-lru@5.2.0': {}
-
-  '@analytics/cookie-utils@0.2.14':
-    dependencies:
-      '@analytics/global-storage-utils': 0.1.9
-
-  '@analytics/core@0.10.23(@types/dlv@1.1.5)':
-    dependencies:
-      '@analytics/global-storage-utils': 0.1.9
-      '@analytics/type-utils': 0.5.4
-      analytics-utils: 1.1.1(@types/dlv@1.1.5)
-    transitivePeerDependencies:
-      - '@types/dlv'
-
-  '@analytics/core@0.13.2(@types/dlv@1.1.5)':
-    dependencies:
-      '@analytics/global-storage-utils': 0.1.9
-      '@analytics/type-utils': 0.6.4
-      analytics-utils: 1.1.1(@types/dlv@1.1.5)
-    transitivePeerDependencies:
-      - '@types/dlv'
-
-  '@analytics/global-storage-utils@0.1.9':
-    dependencies:
-      '@analytics/type-utils': 0.6.4
-
-  '@analytics/google-analytics@1.1.0': {}
-
-  '@analytics/localstorage-utils@0.1.12':
-    dependencies:
-      '@analytics/global-storage-utils': 0.1.9
-
-  '@analytics/session-storage-utils@0.0.4':
-    dependencies:
-      '@analytics/global-storage-utils': 0.1.9
-
-  '@analytics/session-storage-utils@0.0.9':
-    dependencies:
-      '@analytics/global-storage-utils': 0.1.9
-
-  '@analytics/storage-utils@0.3.0':
-    dependencies:
-      '@analytics/cookie-utils': 0.2.14
-      '@analytics/global-storage-utils': 0.1.9
-      '@analytics/localstorage-utils': 0.1.12
-      '@analytics/session-storage-utils': 0.0.4
-      '@analytics/type-utils': 0.5.4
-
-  '@analytics/storage-utils@0.4.4':
-    dependencies:
-      '@analytics/cookie-utils': 0.2.14
-      '@analytics/global-storage-utils': 0.1.9
-      '@analytics/localstorage-utils': 0.1.12
-      '@analytics/session-storage-utils': 0.0.9
-      '@analytics/type-utils': 0.6.4
-
-  '@analytics/type-utils@0.5.4': {}
-
-  '@analytics/type-utils@0.6.4': {}
 
   '@aws-crypto/crc32@5.2.0':
     dependencies:
@@ -11012,13 +10892,6 @@ snapshots:
       '@types/mdx': 2.0.13
       '@types/react': 19.0.1
       react: 18.3.1
-
-  '@metro-fs/analytics-plugin-posthog@1.14.0':
-    dependencies:
-      posthog-js: 1.235.5
-    transitivePeerDependencies:
-      - '@rrweb/types'
-      - rrweb-snapshot
 
   '@msgpackr-extract/msgpackr-extract-darwin-arm64@3.0.3':
     optional: true
@@ -13241,25 +13114,18 @@ snapshots:
 
   '@standard-schema/spec@1.0.0': {}
 
-  '@startupkit/analytics@0.4.0(@types/dlv@1.1.5)(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(prop-types@15.8.1)(react@19.0.0)':
+  '@startupkit/analytics@0.5.0(@openpanel/sdk@1.0.0)(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(posthog-js@1.235.5)(react@19.0.0)':
     dependencies:
-      '@analytics/google-analytics': 1.1.0
-      '@metro-fs/analytics-plugin-posthog': 1.14.0
-      analytics: 0.8.19(@types/dlv@1.1.5)
-      analytics-plugin-plausible: 0.0.6(@types/dlv@1.1.5)
       next: 16.0.0(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-      posthog-js: 1.154.2
       react: 19.0.0
-      react-ga: 3.3.1(prop-types@15.8.1)(react@19.0.0)
-    transitivePeerDependencies:
-      - '@rrweb/types'
-      - '@types/dlv'
-      - prop-types
-      - rrweb-snapshot
+    optionalDependencies:
+      '@openpanel/sdk': 1.0.0
+      posthog-js: 1.235.5
 
-  '@startupkit/auth@0.4.0(better-auth@1.3.27(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+  '@startupkit/auth@0.5.0(better-auth@1.3.27(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(drizzle-orm@0.38.4(@opentelemetry/api@1.9.0)(@types/pg@8.15.6)(@types/react@19.0.1)(kysely@0.28.8)(pg@8.16.3)(react@19.0.0))(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
       better-auth: 1.3.27(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      drizzle-orm: 0.38.4(@opentelemetry/api@1.9.0)(@types/pg@8.15.6)(@types/react@19.0.1)(kysely@0.28.8)(pg@8.16.3)(react@19.0.0)
       next: 16.0.0(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
@@ -13988,8 +13854,6 @@ snapshots:
     dependencies:
       '@types/ms': 2.1.0
 
-  '@types/dlv@1.1.5': {}
-
   '@types/doctrine@0.0.9': {}
 
   '@types/eslint-scope@3.7.7':
@@ -14296,33 +14160,6 @@ snapshots:
       fast-uri: 3.1.0
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
-
-  analytics-plugin-plausible@0.0.6(@types/dlv@1.1.5):
-    dependencies:
-      analytics: 0.7.23(@types/dlv@1.1.5)
-      plausible-tracker: 0.3.9
-    transitivePeerDependencies:
-      - '@types/dlv'
-
-  analytics-utils@1.1.1(@types/dlv@1.1.5):
-    dependencies:
-      '@analytics/type-utils': 0.6.4
-      '@types/dlv': 1.1.5
-      dlv: 1.1.3
-
-  analytics@0.7.23(@types/dlv@1.1.5):
-    dependencies:
-      '@analytics/core': 0.10.23(@types/dlv@1.1.5)
-      '@analytics/storage-utils': 0.3.0
-    transitivePeerDependencies:
-      - '@types/dlv'
-
-  analytics@0.8.19(@types/dlv@1.1.5):
-    dependencies:
-      '@analytics/core': 0.13.2(@types/dlv@1.1.5)
-      '@analytics/storage-utils': 0.4.4
-    transitivePeerDependencies:
-      - '@types/dlv'
 
   ansi-html-community@0.0.8: {}
 
@@ -17010,8 +16847,6 @@ snapshots:
     dependencies:
       find-up: 6.3.0
 
-  plausible-tracker@0.3.9: {}
-
   pnp-webpack-plugin@1.7.0(typescript@5.8.3):
     dependencies:
       ts-pnp: 1.2.0(typescript@5.8.3)
@@ -17134,12 +16969,6 @@ snapshots:
   postgres-interval@1.2.0:
     dependencies:
       xtend: 4.0.2
-
-  posthog-js@1.154.2:
-    dependencies:
-      fflate: 0.4.8
-      preact: 10.27.2
-      web-vitals: 4.2.4
 
   posthog-js@1.235.5:
     dependencies:
@@ -17376,11 +17205,6 @@ snapshots:
       - sass
       - supports-color
       - utf-8-validate
-
-  react-ga@3.3.1(prop-types@15.8.1)(react@19.0.0):
-    dependencies:
-      prop-types: 15.8.1
-      react: 19.0.0
 
   react-hook-form@7.54.1(react@19.0.0):
     dependencies:

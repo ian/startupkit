@@ -1,11 +1,11 @@
 "use client"
 
-import type { PostHog } from "posthog-js"
+import type { PostHog as PostHogClient } from "posthog-js"
 import {
 	PostHogProvider as PostHogBaseProvider,
 	usePostHog
 } from "posthog-js/react"
-import React, { type ReactNode, useCallback } from "react"
+import { type ReactNode, useCallback } from "react"
 import type { AnalyticsPlugin } from "../types"
 
 export { usePostHog }
@@ -44,7 +44,7 @@ export function PostHogProvider({
 	)
 }
 
-interface PostHogPluginOptions {
+interface PostHogOptions {
 	apiKey: string
 	apiHost?: string
 }
@@ -69,7 +69,7 @@ function pruneEmpty(
 	return Object.keys(result).length > 0 ? result : undefined
 }
 
-export function PostHogPlugin(options: PostHogPluginOptions): AnalyticsPlugin {
+export function PostHogPlugin(options: PostHogOptions): AnalyticsPlugin {
 	return {
 		name: "PostHog",
 		Provider: ({ children }: { children: ReactNode }) => (
@@ -78,7 +78,7 @@ export function PostHogPlugin(options: PostHogPluginOptions): AnalyticsPlugin {
 			</PostHogProvider>
 		),
 		useHandlers: () => {
-			const posthog: PostHog = usePostHog()
+			const posthog: PostHogClient = usePostHog()
 
 			const identify = useCallback(
 				(userId: string | null, traits?: Record<string, unknown>) => {

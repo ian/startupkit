@@ -3,7 +3,10 @@ export { AnalyticsProvider } from "./provider"
 export type {
 	AnalyticsContextType,
 	AnalyticsHandlers,
-	AnalyticsPlugin
+	AnalyticsPlugin,
+	CustomAnalyticsHandlers,
+	PluginHandlersMap,
+	PluginsToHandlersMap
 } from "./types"
 export { useAnalytics } from "./use-analytics"
 export { useFlag } from "./use-flag"

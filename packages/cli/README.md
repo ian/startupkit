@@ -1,6 +1,6 @@
 # StartupKit CLI
 
-The Zero to One Startup Framework - Bootstrap production-ready SaaS projects in seconds.
+Command-line tool for scaffolding StartupKit projects.
 
 [**startupkit.com**](https://startupkit.com) | [GitHub](https://github.com/ian/startupkit) | [Documentation](https://startupkit.com)
 
@@ -16,86 +16,7 @@ StartupKit is a meta-framework for building SaaS applications. It's built on **N
 npx startupkit init
 ```
 
-This will:
-- ✅ Prompt for your project name
-- ✅ Clone the complete monorepo template
-- ✅ Install all dependencies
-- ✅ Set up workspace packages
-
-### Add an App to Existing Project
-
-```bash
-npx startupkit add
-```
-
-Choose from:
-- **Next.js** - Full-stack React application
-- **Vite** - Lightweight frontend application
-- **Package** - Shared workspace package
-
-Or specify directly:
-
-```bash
-npx startupkit add next --name my-app
-npx startupkit add vite --name landing
-npx startupkit add pkg --name utils
-```
-
-## What's Included
-
-The StartupKit monorepo includes:
-
-### 📦 Pre-Built Packages
-
-- **`@startupkit/auth`** - Authentication with Better Auth (Google OAuth, Email OTP)
-- **`@startupkit/analytics`** - Provider-agnostic analytics hooks and context
-- **`@startupkit/utils`** - Common utilities for SaaS applications
-
-### 🏗️ Monorepo Setup
-
-- **pnpm workspaces** - Efficient dependency management
-- **Turbo** - Fast task orchestration (build, dev, lint)
-- **TypeScript** - Strict type checking across all packages
-- **Biome** - Fast linting and formatting
-
-### 🎨 UI & Styling
-
-- **Shadcn UI** - Beautiful, accessible components
-- **Tailwind CSS** - Utility-first styling
-- **Lucide Icons** - Clean, consistent icons
-
-### 🗄️ Database
-
-- **Drizzle ORM** - Type-safe database access
-- **PostgreSQL** - Production-ready database setup
-- **Migrations** - Version-controlled schema changes
-
-### 📧 Email
-
-- **React Email** - Beautiful email templates with React
-- **Resend** - Transactional email delivery
-
-## Project Structure
-
-```
-my-project/
-├── apps/
-│   ├── web/              # Main Next.js application
-│   └── mobile/           # Optional: Expo/React Native
-├── packages/
-│   ├── analytics/        # Analytics implementation
-│   ├── auth/             # Authentication setup
-│   ├── db/               # Database schema & migrations
-│   ├── emails/           # Email templates
-│   ├── ui/               # Shared UI components
-│   └── utils/            # Utility functions
-├── config/
-│   ├── biome/            # Linter configuration
-│   └── typescript/       # TypeScript configs
-└── pnpm-workspace.yaml   # Workspace definition
-```
-
-## CLI Commands
+## Commands
 
 ### `init`
 
@@ -107,12 +28,17 @@ npx startupkit init --name my-project
 ```
 
 **Options:**
-- `--name <name>` - Project name (will be prompted if not provided)
+- `--name <name>` - Project name (prompts if not provided)
 - `--repo <repo>` - Custom template repository
+
+**What it does:**
+- Clones the complete monorepo template
+- Installs all dependencies
+- Sets up workspace packages
 
 ### `add`
 
-Add a new app or package to your workspace.
+Add an app or package to your workspace.
 
 ```bash
 npx startupkit add
@@ -125,6 +51,11 @@ npx startupkit add pkg --name shared-utils
 - `--name <name>` - App/package name
 - `--repo <repo>` - Custom template repository
 
+**Templates:**
+- `next` - Full-stack Next.js application
+- `vite` - Lightweight Vite application
+- `pkg` - Shared workspace package
+
 ### `help`
 
 Show help information.
@@ -133,153 +64,30 @@ Show help information.
 npx startupkit help
 ```
 
-## Usage Examples
+## Examples
 
-### Create a New SaaS Project
+**Create a new project:**
 
 ```bash
-# Initialize project
-npx startupkit init
-
-# Navigate to project
-cd my-project
-
-# Set up environment variables
-cp .env.example .env.local
-
-# Start development server
+npx startupkit init --name my-saas
+cd my-saas
 pnpm dev
-
-# Visit http://localhost:3000
 ```
 
-### Add a Marketing Site
+**Add a marketing site:**
 
 ```bash
-# Inside your StartupKit project
 npx startupkit add next --name marketing
-
-# Start only the marketing app
-pnpm --filter marketing dev
 ```
 
-### Add a Custom Package
+**Add a shared package:**
 
 ```bash
-# Inside your StartupKit project
 npx startupkit add pkg --name api-client
-
-# The package will be added to packages/api-client
-# Import it in your apps: import { client } from "@repo/api-client"
 ```
 
-## Common Tasks
+## Resources
 
-### Start Development Server
-
-```bash
-pnpm dev                           # All apps
-pnpm --filter web dev             # Specific app
-```
-
-### Build for Production
-
-```bash
-pnpm build                        # All packages
-pnpm --filter web build          # Specific app
-```
-
-### Run Database Migrations
-
-```bash
-pnpm db:generate                  # Generate migration files
-pnpm db:migrate                   # Apply migrations
-pnpm db:studio                    # Open database GUI
-```
-
-### Add UI Components
-
-```bash
-pnpm shadcn add button
-pnpm shadcn add dialog
-```
-
-### Lint & Format
-
-```bash
-pnpm lint                         # Check all files
-pnpm lint:fix                     # Fix issues
-```
-
-### Type Check
-
-```bash
-pnpm typecheck                    # Check all packages
-```
-
-## Environment Setup
-
-After initialization, configure your environment variables:
-
-```bash
-# .env.local
-
-# Database
-DATABASE_URL=postgresql://user:pass@localhost:5432/mydb
-
-# Authentication
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-
-# Analytics (optional)
-NEXT_PUBLIC_POSTHOG_KEY=phc_...
-NEXT_PUBLIC_POSTHOG_HOST=https://app.posthog.com
-```
-
-## Tech Stack
-
-- **Framework:** Next.js 16 (App Router)
-- **UI:** React 19 + Shadcn UI + Tailwind CSS
-- **Language:** TypeScript (strict mode)
-- **Database:** PostgreSQL + Drizzle ORM
-- **Auth:** Better Auth
-- **Email:** React Email + Resend
-- **Monorepo:** pnpm + Turbo
-- **Linting:** Biome
-
-## Why StartupKit?
-
-### ⚡ Ship Faster
-
-Skip weeks of setup. Authentication, database, analytics, and UI components are pre-configured and ready to use.
-
-### 🏗️ Production Ready
-
-Built with best practices: TypeScript strict mode, type-safe database queries, secure authentication, and optimized builds.
-
-### 🔧 Fully Customizable
-
-You own the code. Extend, modify, or replace any part of the framework. No vendor lock-in.
-
-### 📦 Monorepo Architecture
-
-Share code between apps effortlessly. Build once, import everywhere.
-
-### 🚀 Optimized for AI Development
-
-Clear structure and conventions make it easy for AI assistants to navigate and build features.
-
-## Support & Resources
-
-- **Website:** [startupkit.com](https://startupkit.com)
-- **GitHub:** [github.com/ian/startupkit](https://github.com/ian/startupkit)
-- **Issues:** [github.com/ian/startupkit/issues](https://github.com/ian/startupkit/issues)
-
-## License
-
-ISC © 2025 01 Studio
-
----
-
-**Built for founders, optimized for AI.** 🚀
-
+- [Documentation](https://startupkit.com)
+- [GitHub](https://github.com/ian/startupkit)
+- [Issues](https://github.com/ian/startupkit/issues)

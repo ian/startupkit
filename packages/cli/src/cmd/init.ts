@@ -142,6 +142,6 @@ function opener() {
                                         
 
   StartupKit - ${process.env.VERSION}
-  From zero to scale — the startup framework for your AI dev team.
+  The Zero to One Startup Framework
 `)
 }

@@ -55,7 +55,7 @@ interface GoogleAnalyticsOptions {
 	measurementId: string
 }
 
-export function GoogleAnalytics(
+export function GoogleAnalyticsPlugin(
 	options: GoogleAnalyticsOptions
 ): AnalyticsPlugin {
 	return {

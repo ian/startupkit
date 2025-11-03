@@ -42,7 +42,7 @@ import type {
   AnalyticsPlugin,
 } from '@startupkit/analytics';
 import {
-  GoogleAnalytics,
+  GoogleAnalyticsPlugin,
   OpenPanelPlugin,
   PostHogPlugin,
   AnalyticsProvider as StartupKitAnalyticsProvider,
@@ -64,7 +64,7 @@ import type { Flags } from '../types';
  * - POSTHOG_HOST (optional) - Custom PostHog host URL (defaults to https://app.posthog.com)
  */
 const plugins: AnalyticsPlugin[] = [
-  GoogleAnalytics({
+  GoogleAnalyticsPlugin({
     measurementId: process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID as string,
   }),
   OpenPanelPlugin({

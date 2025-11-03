@@ -44,9 +44,9 @@ interface AhrefsOptions {
  *
  * @example
  * ```tsx
- * import { AnalyticsProvider, Ahrefs } from "@startupkit/analytics"
+ * import { AnalyticsProvider, AhrefsPlugin } from "@startupkit/analytics"
  *
- * <AnalyticsProvider plugins={[Ahrefs({ key: "your-ahrefs-key" })]}>
+ * <AnalyticsProvider plugins={[AhrefsPlugin({ key: "your-ahrefs-key" })]}>
  *   {children}
  * </AnalyticsProvider>
  * ```
@@ -54,7 +54,7 @@ interface AhrefsOptions {
  * @param options - Configuration options
  * @param options.key - Ahrefs API key
  */
-export function Ahrefs(options: AhrefsOptions): AnalyticsPlugin {
+export function AhrefsPlugin(options: AhrefsOptions): AnalyticsPlugin {
 	return {
 		name: "Ahrefs",
 		Provider: ({ children }: { children: ReactNode }) => (
