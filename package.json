@@ -15,7 +15,7 @@
     "typecheck": "turbo run typecheck --ui stream",
     "bump": "./scripts/bump",
     "oldrelease": "pnpm --stream --filter \"./packages/**\" exec -- pnpm release --no-git-checks --access public",
-    "release": "pnpm build && pnpm -r publish --access public --no-git-checks",
+    "release": "pnpm build:packages && pnpm --filter \"./packages/**\" -r publish --access public --no-git-checks",
     "agents.md": "ruler apply",
     "link:local": "node scripts/link-local.js link",
     "unlink:local": "node scripts/link-local.js unlink"
