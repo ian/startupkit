@@ -17,7 +17,7 @@
 		"@repo/db": "workspace:*",
 		"@repo/emails": "workspace:*",
 		"@repo/utils": "workspace:*",
-		"@startupkit/auth": "0.5.0",
+		"@startupkit/auth": "0.5.1",
 		"better-auth": "1.3.27",
 		"drizzle-orm": "0.38.4",
 		"swr": "2.2.5"
