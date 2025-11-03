@@ -1,6 +1,7 @@
 "use client"
 
 import {
+	Ahrefs,
 	AnalyticsProvider,
 	GoogleAnalytics,
 	OpenPanelPlugin
@@ -8,6 +9,9 @@ import {
 import type { ReactNode } from "react"
 
 const plugins = [
+	Ahrefs({
+		key: process.env.NEXT_PUBLIC_AHREFS_API_KEY as string
+	}),
 	GoogleAnalytics({
 		measurementId: process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID as string
 	}),
