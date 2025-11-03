@@ -1,6 +1,6 @@
+import path from "node:path"
 import degit from "degit"
 import inquirer from "inquirer"
-import path from "node:path"
 import { replaceInFile } from "replace-in-file"
 import { spinner } from "../lib/spinner"
 import { exec } from "../lib/system"
