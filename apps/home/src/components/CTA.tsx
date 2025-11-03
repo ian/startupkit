@@ -27,20 +27,21 @@ export default function CTA() {
 	const { register, handleSubmit } = useForm<FormData>()
 	const { track } = useAnalytics()
 
-	const sendToLoops = ({ email }: FormData) => {
+	const sendToLoops = async ({ email }: FormData) => {
 		setSending(true)
-		fetch(LOOPS_ENDPOINT, {
-			method: "POST",
-			body: `email=${email}`,
-			headers: {
-				"Content-Type": "application/x-www-form-urlencoded"
-			}
-		})
-			.then(() => setDone(true))
-			.then(() => {
-				track("CTA:Register", { email })
+		try {
+			await fetch(LOOPS_ENDPOINT, {
+				method: "POST",
+				body: `email=${email}`,
+				headers: {
+					"Content-Type": "application/x-www-form-urlencoded"
+				}
 			})
-			.finally(() => setSending(false))
+			setDone(true)
+			track("CTA:Register", { email })
+		} finally {
+			setSending(false)
+		}
 	}
 
 	return (
