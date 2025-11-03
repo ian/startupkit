@@ -120,9 +120,9 @@ interface OpenPanelPluginOptions extends Omit<OpenPanelOptions, "clientId"> {
 	clientId: string
 }
 
-export function OpenPanelPlugin<TEvent = Record<string, unknown>>(
+export function OpenPanelPlugin(
 	options: OpenPanelPluginOptions
-): AnalyticsPlugin<TEvent> {
+): AnalyticsPlugin {
 	return {
 		name: "OpenPanel",
 		Provider: ({ children }: { children: ReactNode }) => (
@@ -148,12 +148,9 @@ export function OpenPanelPlugin<TEvent = Record<string, unknown>>(
 			)
 
 			const track = useCallback(
-				(event: TEvent) => {
+				(event: string, properties?: Record<string, unknown>) => {
 					if (openpanel) {
-						const eventObj = event as Record<string, unknown>
-						const eventName = eventObj.event as string
-						const { event: _, ...properties } = eventObj
-						openpanel.track(eventName, properties)
+						openpanel.track(event, properties || {})
 					}
 				},
 				[openpanel]

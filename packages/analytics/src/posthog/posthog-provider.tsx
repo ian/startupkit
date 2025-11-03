@@ -69,9 +69,7 @@ function pruneEmpty(
 	return Object.keys(result).length > 0 ? result : undefined
 }
 
-export function PostHogPlugin<TEvent = Record<string, unknown>>(
-	options: PostHogPluginOptions
-): AnalyticsPlugin<TEvent> {
+export function PostHogPlugin(options: PostHogPluginOptions): AnalyticsPlugin {
 	return {
 		name: "PostHog",
 		Provider: ({ children }: { children: ReactNode }) => (
@@ -94,11 +92,8 @@ export function PostHogPlugin<TEvent = Record<string, unknown>>(
 			)
 
 			const track = useCallback(
-				(event: TEvent) => {
-					const eventObj = event as Record<string, unknown>
-					const eventName = eventObj.event as string
-					const { event: _, ...properties } = eventObj
-					posthog.capture(eventName, pruneEmpty(properties))
+				(event: string, properties?: Record<string, unknown>) => {
+					posthog.capture(event, pruneEmpty(properties))
 				},
 				[posthog]
 			)

@@ -14,23 +14,21 @@ import type {
  * Props for the AnalyticsProvider component
  *
  * @template TFlags - Type definition for feature flags, defaults to a record of boolean, string, or undefined values
- * @template TEvent - Type definition for analytics events, defaults to a generic record
  */
 interface AnalyticsProviderProps<
 	TFlags extends Record<string, unknown> = Record<
 		string,
 		boolean | string | undefined
-	>,
-	TEvent = Record<string, unknown>
+	>
 > {
 	/** React children to render within the provider */
 	children: ReactNode
 	/** Feature flags object to be made available throughout the app */
 	flags: TFlags
 	/** Optional array of analytics plugins (GoogleAnalytics, OpenPanel, PostHog, etc.) */
-	plugins?: AnalyticsPlugin<TEvent>[]
+	plugins?: AnalyticsPlugin[]
 	/** Optional manual handlers (for backward compatibility, use plugins instead) */
-	handlers?: AnalyticsHandlers<TEvent>
+	handlers?: AnalyticsHandlers
 	/** Whether to automatically track page views on navigation. Defaults to true */
 	autoPageTracking?: boolean
 }
@@ -77,21 +75,19 @@ interface AnalyticsProviderProps<
  * ```
  *
  * @template TFlags - Type definition for feature flags
- * @template TEvent - Type definition for analytics events
  */
 export function AnalyticsProvider<
 	TFlags extends Record<string, unknown> = Record<
 		string,
 		boolean | string | undefined
-	>,
-	TEvent = Record<string, unknown>
+	>
 >({
 	children,
 	flags,
 	plugins = [],
 	handlers: providedHandlers,
 	autoPageTracking = true
-}: AnalyticsProviderProps<TFlags, TEvent>) {
+}: AnalyticsProviderProps<TFlags>) {
 	if (plugins.length > 0) {
 		return (
 			<PluginComposer plugins={plugins}>
@@ -141,11 +137,11 @@ export function AnalyticsProvider<
  * </GoogleAnalyticsProvider>
  * ```
  */
-function PluginComposer<TEvent = Record<string, unknown>>({
+function PluginComposer({
 	plugins,
 	children
 }: {
-	plugins: AnalyticsPlugin<TEvent>[]
+	plugins: AnalyticsPlugin[]
 	children: ReactNode
 }) {
 	return plugins.reduceRight((acc, plugin) => {
@@ -160,22 +156,20 @@ function PluginComposer<TEvent = Record<string, unknown>>({
  * Props for AnalyticsProviderInner component
  *
  * @template TFlags - Type definition for feature flags
- * @template TEvent - Type definition for analytics events
  * @internal
  */
 interface AnalyticsProviderInnerProps<
 	TFlags extends Record<string, unknown> = Record<
 		string,
 		boolean | string | undefined
-	>,
-	TEvent = Record<string, unknown>
+	>
 > {
 	/** React children to render */
 	children: ReactNode
 	/** Feature flags object */
 	flags: TFlags
 	/** Array of analytics plugins to merge handlers from */
-	plugins: AnalyticsPlugin<TEvent>[]
+	plugins: AnalyticsPlugin[]
 	/** Whether to enable automatic page tracking */
 	autoPageTracking?: boolean
 }
@@ -191,32 +185,30 @@ interface AnalyticsProviderInnerProps<
  * @internal This is an internal component used by AnalyticsProvider
  *
  * @template TFlags - Type definition for feature flags
- * @template TEvent - Type definition for analytics events
  */
 function AnalyticsProviderInner<
 	TFlags extends Record<string, unknown> = Record<
 		string,
 		boolean | string | undefined
-	>,
-	TEvent = Record<string, unknown>
+	>
 >({
 	children,
 	flags,
 	plugins,
 	autoPageTracking = true
-}: AnalyticsProviderInnerProps<TFlags, TEvent>) {
+}: AnalyticsProviderInnerProps<TFlags>) {
 	const pluginHandlers = plugins.map((plugin) => plugin.useHandlers())
 
-	const handlers = useMemo<AnalyticsHandlers<TEvent>>(() => {
-		const mergedHandlers: AnalyticsHandlers<TEvent> = {
+	const handlers = useMemo<AnalyticsHandlers>(() => {
+		const mergedHandlers: AnalyticsHandlers = {
 			identify: (userId, traits) => {
 				for (const handler of pluginHandlers) {
 					handler.identify?.(userId, traits)
 				}
 			},
-			track: (event) => {
+			track: (event, properties) => {
 				for (const handler of pluginHandlers) {
-					handler.track?.(event)
+					handler.track?.(event, properties)
 				}
 			},
 			page: (name, properties) => {
@@ -248,22 +240,20 @@ function AnalyticsProviderInner<
  * Props for AnalyticsProviderCore component
  *
  * @template TFlags - Type definition for feature flags
- * @template TEvent - Type definition for analytics events
  * @internal
  */
 interface AnalyticsProviderCoreProps<
 	TFlags extends Record<string, unknown> = Record<
 		string,
 		boolean | string | undefined
-	>,
-	TEvent = Record<string, unknown>
+	>
 > {
 	/** React children to render */
 	children: ReactNode
 	/** Feature flags object */
 	flags: TFlags
 	/** Analytics handlers for identify, track, page, and reset operations */
-	handlers: AnalyticsHandlers<TEvent>
+	handlers: AnalyticsHandlers
 	/** Whether to enable automatic page tracking */
 	autoPageTracking?: boolean
 }
@@ -285,20 +275,18 @@ interface AnalyticsProviderCoreProps<
  * @internal This is an internal component used by AnalyticsProvider
  *
  * @template TFlags - Type definition for feature flags
- * @template TEvent - Type definition for analytics events
  */
 function AnalyticsProviderCore<
 	TFlags extends Record<string, unknown> = Record<
 		string,
 		boolean | string | undefined
-	>,
-	TEvent = Record<string, unknown>
+	>
 >({
 	children,
 	flags,
 	handlers,
 	autoPageTracking = true
-}: AnalyticsProviderCoreProps<TFlags, TEvent>) {
+}: AnalyticsProviderCoreProps<TFlags>) {
 	const pathname = usePathname()
 	const segments = useSelectedLayoutSegments()
 
@@ -331,12 +319,7 @@ function AnalyticsProviderCore<
 
 	return (
 		<AnalyticsContext.Provider
-			value={
-				context as AnalyticsContextType<
-					Record<string, unknown>,
-					Record<string, unknown>
-				>
-			}
+			value={context as AnalyticsContextType<Record<string, unknown>>}
 		>
 			{children}
 		</AnalyticsContext.Provider>

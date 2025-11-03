@@ -55,9 +55,9 @@ interface GoogleAnalyticsOptions {
 	measurementId: string
 }
 
-export function GoogleAnalytics<TEvent = Record<string, unknown>>(
+export function GoogleAnalytics(
 	options: GoogleAnalyticsOptions
-): AnalyticsPlugin<TEvent> {
+): AnalyticsPlugin {
 	return {
 		name: "GoogleAnalytics",
 		Provider: ({ children }: { children: ReactNode }) => (
@@ -76,12 +76,12 @@ export function GoogleAnalytics<TEvent = Record<string, unknown>>(
 				[]
 			)
 
-			const track = useCallback((event: TEvent) => {
-				const eventObj = event as Record<string, unknown>
-				const eventName = eventObj.event as string
-				const { event: _, ...properties } = eventObj
-				gtag("event", eventName, properties)
-			}, [])
+			const track = useCallback(
+				(event: string, properties?: Record<string, unknown>) => {
+					gtag("event", event, properties || {})
+				},
+				[]
+			)
 
 			const page = useCallback(
 				(name?: string, properties?: Record<string, unknown>) => {

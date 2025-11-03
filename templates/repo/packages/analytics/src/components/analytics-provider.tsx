@@ -49,7 +49,7 @@ import {
   useAnalytics as useBaseAnalytics,
 } from '@startupkit/analytics';
 import type { ReactNode } from 'react';
-import type { AnalyticsEvent, Flags } from '../types';
+import type { Flags } from '../types';
 
 /**
  * Analytics plugins configuration
@@ -63,7 +63,7 @@ import type { AnalyticsEvent, Flags } from '../types';
  * - NEXT_PUBLIC_POSTHOG_API_KEY - PostHog API key
  * - POSTHOG_HOST (optional) - Custom PostHog host URL (defaults to https://app.posthog.com)
  */
-const plugins: AnalyticsPlugin<AnalyticsEvent>[] = [
+const plugins: AnalyticsPlugin[] = [
   GoogleAnalytics({
     measurementId: process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID as string,
   }),
@@ -105,7 +105,7 @@ const plugins: AnalyticsPlugin<AnalyticsEvent>[] = [
  * }
  * ```
  */
-export function useAnalytics(): AnalyticsContextType<Flags, AnalyticsEvent> {
+export function useAnalytics(): AnalyticsContextType<Flags> {
   return useBaseAnalytics();
 }
 interface AnalyticsProviderProps {
