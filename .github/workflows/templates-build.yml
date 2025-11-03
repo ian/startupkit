@@ -36,21 +36,8 @@ jobs:
 
       - name: Link local packages for testing
         run: |
-          echo "Adding pnpm overrides to use local packages..."
-          node -e "
-          const fs = require('fs');
-          const workspace = process.env.GITHUB_WORKSPACE;
-          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-          pkg.pnpm = pkg.pnpm || {};
-          pkg.pnpm.overrides = {
-            '@startupkit/auth': 'link:' + workspace + '/packages/auth',
-            '@startupkit/analytics': 'link:' + workspace + '/packages/analytics'
-          };
-          fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
-          console.log('Overrides added:', pkg.pnpm.overrides);
-          "
-          cat package.json | grep -A 6 '"pnpm"'
-        working-directory: ./tmp/repo
+          echo "🔗 Linking local @startupkit/* packages..."
+          node "$GITHUB_WORKSPACE/scripts/link-local.js" link "tmp/repo" "$GITHUB_WORKSPACE/packages"
 
       - name: Reinstall with local packages
         run: |
@@ -93,21 +80,8 @@ jobs:
 
       - name: Link local packages for testing
         run: |
-          echo "Adding pnpm overrides to use local packages..."
-          node -e "
-          const fs = require('fs');
-          const workspace = process.env.GITHUB_WORKSPACE;
-          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-          pkg.pnpm = pkg.pnpm || {};
-          pkg.pnpm.overrides = {
-            '@startupkit/auth': 'link:' + workspace + '/packages/auth',
-            '@startupkit/analytics': 'link:' + workspace + '/packages/analytics'
-          };
-          fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
-          console.log('Overrides added:', pkg.pnpm.overrides);
-          "
-          cat package.json | grep -A 6 '"pnpm"'
-        working-directory: ./tmp/repo
+          echo "🔗 Linking local @startupkit/* packages..."
+          node "$GITHUB_WORKSPACE/scripts/link-local.js" link "tmp/repo" "$GITHUB_WORKSPACE/packages"
 
       - name: Reinstall with local packages
         run: |
