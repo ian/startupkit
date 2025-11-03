@@ -30,5 +30,9 @@ done
 git add .
 git ci -am"chore: bump version to $BUMPED_VERSION"
 
+git tag "v$BUMPED_VERSION"
+git push
+git push --tags
+
 echo ""
 echo "Bumped version to $BUMPED_VERSION"
