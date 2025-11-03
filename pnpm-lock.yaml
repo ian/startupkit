@@ -196,12 +196,6 @@ importers:
         specifier: '>=18.2.0'
         version: 19.2.0
     devDependencies:
-      '@config/biome':
-        specifier: workspace:*
-        version: link:../../config/biome
-      '@config/tsconfig':
-        specifier: workspace:*
-        version: link:../../config/typescript
       '@openpanel/sdk':
         specifier: ^1.0.0
         version: 1.0.0
@@ -230,12 +224,6 @@ importers:
         specifier: ^2.2.5
         version: 2.3.6(react@19.2.0)
     devDependencies:
-      '@config/biome':
-        specifier: workspace:*
-        version: link:../../config/biome
-      '@config/tsconfig':
-        specifier: workspace:*
-        version: link:../../config/typescript
       '@types/node':
         specifier: ^22.4.0
         version: 22.15.3
@@ -270,12 +258,6 @@ importers:
         specifier: 0.9.0
         version: 0.9.0
     devDependencies:
-      '@config/biome':
-        specifier: workspace:*
-        version: link:../../config/biome
-      '@config/tsconfig':
-        specifier: workspace:*
-        version: link:../../config/typescript
       '@rollup/plugin-json':
         specifier: 6.1.0
         version: 6.1.0(rollup@4.52.5)
