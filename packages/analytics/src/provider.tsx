@@ -1,14 +1,14 @@
-'use client';
+"use client"
 
-import { usePathname, useSelectedLayoutSegments } from 'next/navigation';
-import type { ReactNode } from 'react';
-import { useEffect, useMemo } from 'react';
-import { AnalyticsContext } from './context';
+import { usePathname, useSelectedLayoutSegments } from "next/navigation"
+import type { ReactNode } from "react"
+import { useEffect, useMemo } from "react"
+import { AnalyticsContext } from "./context"
 import type {
-  AnalyticsContextType,
-  AnalyticsHandlers,
-  AnalyticsPlugin,
-} from './types';
+	AnalyticsContextType,
+	AnalyticsHandlers,
+	AnalyticsPlugin
+} from "./types"
 
 /**
  * Props for the AnalyticsProvider component
@@ -17,22 +17,22 @@ import type {
  * @template TEvent - Type definition for analytics events, defaults to a generic record
  */
 interface AnalyticsProviderProps<
-  TFlags extends Record<string, unknown> = Record<
-    string,
-    boolean | string | undefined
-  >,
-  TEvent = Record<string, unknown>,
+	TFlags extends Record<string, unknown> = Record<
+		string,
+		boolean | string | undefined
+	>,
+	TEvent = Record<string, unknown>
 > {
-  /** React children to render within the provider */
-  children: ReactNode;
-  /** Feature flags object to be made available throughout the app */
-  flags: TFlags;
-  /** Optional array of analytics plugins (GoogleAnalytics, OpenPanel, PostHog, etc.) */
-  plugins?: AnalyticsPlugin<TEvent>[];
-  /** Optional manual handlers (for backward compatibility, use plugins instead) */
-  handlers?: AnalyticsHandlers<TEvent>;
-  /** Whether to automatically track page views on navigation. Defaults to true */
-  autoPageTracking?: boolean;
+	/** React children to render within the provider */
+	children: ReactNode
+	/** Feature flags object to be made available throughout the app */
+	flags: TFlags
+	/** Optional array of analytics plugins (GoogleAnalytics, OpenPanel, PostHog, etc.) */
+	plugins?: AnalyticsPlugin<TEvent>[]
+	/** Optional manual handlers (for backward compatibility, use plugins instead) */
+	handlers?: AnalyticsHandlers<TEvent>
+	/** Whether to automatically track page views on navigation. Defaults to true */
+	autoPageTracking?: boolean
 }
 
 /**
@@ -80,47 +80,47 @@ interface AnalyticsProviderProps<
  * @template TEvent - Type definition for analytics events
  */
 export function AnalyticsProvider<
-  TFlags extends Record<string, unknown> = Record<
-    string,
-    boolean | string | undefined
-  >,
-  TEvent = Record<string, unknown>,
+	TFlags extends Record<string, unknown> = Record<
+		string,
+		boolean | string | undefined
+	>,
+	TEvent = Record<string, unknown>
 >({
-  children,
-  flags,
-  plugins = [],
-  handlers: providedHandlers,
-  autoPageTracking = true,
+	children,
+	flags,
+	plugins = [],
+	handlers: providedHandlers,
+	autoPageTracking = true
 }: AnalyticsProviderProps<TFlags, TEvent>) {
-  if (plugins.length > 0) {
-    return (
-      <PluginComposer plugins={plugins}>
-        <AnalyticsProviderInner
-          flags={flags}
-          plugins={plugins}
-          autoPageTracking={autoPageTracking}
-        >
-          {children}
-        </AnalyticsProviderInner>
-      </PluginComposer>
-    );
-  }
+	if (plugins.length > 0) {
+		return (
+			<PluginComposer plugins={plugins}>
+				<AnalyticsProviderInner
+					flags={flags}
+					plugins={plugins}
+					autoPageTracking={autoPageTracking}
+				>
+					{children}
+				</AnalyticsProviderInner>
+			</PluginComposer>
+		)
+	}
 
-  if (!providedHandlers) {
-    throw new Error(
-      'AnalyticsProvider requires either plugins or handlers prop',
-    );
-  }
+	if (!providedHandlers) {
+		throw new Error(
+			"AnalyticsProvider requires either plugins or handlers prop"
+		)
+	}
 
-  return (
-    <AnalyticsProviderCore
-      flags={flags}
-      handlers={providedHandlers}
-      autoPageTracking={autoPageTracking}
-    >
-      {children}
-    </AnalyticsProviderCore>
-  );
+	return (
+		<AnalyticsProviderCore
+			flags={flags}
+			handlers={providedHandlers}
+			autoPageTracking={autoPageTracking}
+		>
+			{children}
+		</AnalyticsProviderCore>
+	)
 }
 
 /**
@@ -142,18 +142,18 @@ export function AnalyticsProvider<
  * ```
  */
 function PluginComposer<TEvent = Record<string, unknown>>({
-  plugins,
-  children,
+	plugins,
+	children
 }: {
-  plugins: AnalyticsPlugin<TEvent>[];
-  children: ReactNode;
+	plugins: AnalyticsPlugin<TEvent>[]
+	children: ReactNode
 }) {
-  return plugins.reduceRight((acc, plugin) => {
-    if (plugin.Provider) {
-      return <plugin.Provider>{acc}</plugin.Provider>;
-    }
-    return acc;
-  }, children);
+	return plugins.reduceRight((acc, plugin) => {
+		if (plugin.Provider) {
+			return <plugin.Provider>{acc}</plugin.Provider>
+		}
+		return acc
+	}, children)
 }
 
 /**
@@ -164,20 +164,20 @@ function PluginComposer<TEvent = Record<string, unknown>>({
  * @internal
  */
 interface AnalyticsProviderInnerProps<
-  TFlags extends Record<string, unknown> = Record<
-    string,
-    boolean | string | undefined
-  >,
-  TEvent = Record<string, unknown>,
+	TFlags extends Record<string, unknown> = Record<
+		string,
+		boolean | string | undefined
+	>,
+	TEvent = Record<string, unknown>
 > {
-  /** React children to render */
-  children: ReactNode;
-  /** Feature flags object */
-  flags: TFlags;
-  /** Array of analytics plugins to merge handlers from */
-  plugins: AnalyticsPlugin<TEvent>[];
-  /** Whether to enable automatic page tracking */
-  autoPageTracking?: boolean;
+	/** React children to render */
+	children: ReactNode
+	/** Feature flags object */
+	flags: TFlags
+	/** Array of analytics plugins to merge handlers from */
+	plugins: AnalyticsPlugin<TEvent>[]
+	/** Whether to enable automatic page tracking */
+	autoPageTracking?: boolean
 }
 
 /**
@@ -194,54 +194,54 @@ interface AnalyticsProviderInnerProps<
  * @template TEvent - Type definition for analytics events
  */
 function AnalyticsProviderInner<
-  TFlags extends Record<string, unknown> = Record<
-    string,
-    boolean | string | undefined
-  >,
-  TEvent = Record<string, unknown>,
+	TFlags extends Record<string, unknown> = Record<
+		string,
+		boolean | string | undefined
+	>,
+	TEvent = Record<string, unknown>
 >({
-  children,
-  flags,
-  plugins,
-  autoPageTracking = true,
+	children,
+	flags,
+	plugins,
+	autoPageTracking = true
 }: AnalyticsProviderInnerProps<TFlags, TEvent>) {
-  const pluginHandlers = plugins.map((plugin) => plugin.useHandlers());
+	const pluginHandlers = plugins.map((plugin) => plugin.useHandlers())
 
-  const handlers = useMemo<AnalyticsHandlers<TEvent>>(() => {
-    const mergedHandlers: AnalyticsHandlers<TEvent> = {
-      identify: (userId, traits) => {
-        for (const handler of pluginHandlers) {
-          handler.identify?.(userId, traits);
-        }
-      },
-      track: (event) => {
-        for (const handler of pluginHandlers) {
-          handler.track?.(event);
-        }
-      },
-      page: (name, properties) => {
-        for (const handler of pluginHandlers) {
-          handler.page?.(name, properties);
-        }
-      },
-      reset: () => {
-        for (const handler of pluginHandlers) {
-          handler.reset?.();
-        }
-      },
-    };
-    return mergedHandlers;
-  }, [pluginHandlers]);
+	const handlers = useMemo<AnalyticsHandlers<TEvent>>(() => {
+		const mergedHandlers: AnalyticsHandlers<TEvent> = {
+			identify: (userId, traits) => {
+				for (const handler of pluginHandlers) {
+					handler.identify?.(userId, traits)
+				}
+			},
+			track: (event) => {
+				for (const handler of pluginHandlers) {
+					handler.track?.(event)
+				}
+			},
+			page: (name, properties) => {
+				for (const handler of pluginHandlers) {
+					handler.page?.(name, properties)
+				}
+			},
+			reset: () => {
+				for (const handler of pluginHandlers) {
+					handler.reset?.()
+				}
+			}
+		}
+		return mergedHandlers
+	}, [pluginHandlers])
 
-  return (
-    <AnalyticsProviderCore
-      flags={flags}
-      handlers={handlers}
-      autoPageTracking={autoPageTracking}
-    >
-      {children}
-    </AnalyticsProviderCore>
-  );
+	return (
+		<AnalyticsProviderCore
+			flags={flags}
+			handlers={handlers}
+			autoPageTracking={autoPageTracking}
+		>
+			{children}
+		</AnalyticsProviderCore>
+	)
 }
 
 /**
@@ -252,20 +252,20 @@ function AnalyticsProviderInner<
  * @internal
  */
 interface AnalyticsProviderCoreProps<
-  TFlags extends Record<string, unknown> = Record<
-    string,
-    boolean | string | undefined
-  >,
-  TEvent = Record<string, unknown>,
+	TFlags extends Record<string, unknown> = Record<
+		string,
+		boolean | string | undefined
+	>,
+	TEvent = Record<string, unknown>
 > {
-  /** React children to render */
-  children: ReactNode;
-  /** Feature flags object */
-  flags: TFlags;
-  /** Analytics handlers for identify, track, page, and reset operations */
-  handlers: AnalyticsHandlers<TEvent>;
-  /** Whether to enable automatic page tracking */
-  autoPageTracking?: boolean;
+	/** React children to render */
+	children: ReactNode
+	/** Feature flags object */
+	flags: TFlags
+	/** Analytics handlers for identify, track, page, and reset operations */
+	handlers: AnalyticsHandlers<TEvent>
+	/** Whether to enable automatic page tracking */
+	autoPageTracking?: boolean
 }
 
 /**
@@ -288,57 +288,57 @@ interface AnalyticsProviderCoreProps<
  * @template TEvent - Type definition for analytics events
  */
 function AnalyticsProviderCore<
-  TFlags extends Record<string, unknown> = Record<
-    string,
-    boolean | string | undefined
-  >,
-  TEvent = Record<string, unknown>,
+	TFlags extends Record<string, unknown> = Record<
+		string,
+		boolean | string | undefined
+	>,
+	TEvent = Record<string, unknown>
 >({
-  children,
-  flags,
-  handlers,
-  autoPageTracking = true,
+	children,
+	flags,
+	handlers,
+	autoPageTracking = true
 }: AnalyticsProviderCoreProps<TFlags, TEvent>) {
-  const pathname = usePathname();
-  const segments = useSelectedLayoutSegments();
+	const pathname = usePathname()
+	const segments = useSelectedLayoutSegments()
 
-  useEffect(() => {
-    if (!autoPageTracking) return;
+	useEffect(() => {
+		if (!autoPageTracking) return
 
-    const name =
-      segments
-        ?.filter((segment) => !segment.startsWith('('))
-        .map((segment) =>
-          /\d/.test(segment) && segment.length > 6 ? ':id' : segment,
-        )
-        .join('/') ?? '';
+		const name =
+			segments
+				?.filter((segment) => !segment.startsWith("("))
+				.map((segment) =>
+					/\d/.test(segment) && segment.length > 6 ? ":id" : segment
+				)
+				.join("/") ?? ""
 
-    handlers.page(`/${name}`, {
-      pathname,
-    });
-  }, [pathname, segments, handlers, autoPageTracking]);
+		handlers.page(`/${name}`, {
+			pathname
+		})
+	}, [pathname, segments, handlers, autoPageTracking])
 
-  const context = useMemo(
-    () => ({
-      identify: handlers.identify,
-      track: handlers.track,
-      page: handlers.page,
-      reset: handlers.reset,
-      flags,
-    }),
-    [handlers, flags],
-  );
+	const context = useMemo(
+		() => ({
+			identify: handlers.identify,
+			track: handlers.track,
+			page: handlers.page,
+			reset: handlers.reset,
+			flags
+		}),
+		[handlers, flags]
+	)
 
-  return (
-    <AnalyticsContext.Provider
-      value={
-        context as AnalyticsContextType<
-          Record<string, unknown>,
-          Record<string, unknown>
-        >
-      }
-    >
-      {children}
-    </AnalyticsContext.Provider>
-  );
+	return (
+		<AnalyticsContext.Provider
+			value={
+				context as AnalyticsContextType<
+					Record<string, unknown>,
+					Record<string, unknown>
+				>
+			}
+		>
+			{children}
+		</AnalyticsContext.Provider>
+	)
 }

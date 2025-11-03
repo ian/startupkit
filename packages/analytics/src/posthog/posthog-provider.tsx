@@ -69,7 +69,9 @@ function pruneEmpty(
 	return Object.keys(result).length > 0 ? result : undefined
 }
 
-export function PostHogPlugin<TEvent = Record<string, unknown>>(options: PostHogPluginOptions): AnalyticsPlugin<TEvent> {
+export function PostHogPlugin<TEvent = Record<string, unknown>>(
+	options: PostHogPluginOptions
+): AnalyticsPlugin<TEvent> {
 	return {
 		name: "PostHog",
 		Provider: ({ children }: { children: ReactNode }) => (
