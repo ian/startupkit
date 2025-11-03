@@ -2,6 +2,9 @@
 const nextConfig = {
   output: 'export',
   turbopack: {},
+  images: {
+    unoptimized: true,
+  },
   transpilePackages: [
     '@startupkit/analytics',
     '@startupkit/auth',
