@@ -6,7 +6,7 @@ import { UIProvider } from "@repo/ui/providers"
 import { AnalyticsProvider } from "@repo/analytics";
 import type { Flags } from "@repo/analytics/server";
 import { toast } from "@repo/ui/components/toast"
-import { AuthProvider, User } from "@repo/auth";
+import { AuthProvider, type User } from "@repo/auth";
 
 export function Providers({
 	children,
@@ -17,7 +17,7 @@ export function Providers({
 	flags: Flags;
 	user?: User
 }) {
-	const { replace, refresh } = useRouter();
+	const { replace } = useRouter();
 	const searchParams = useSearchParams();
 
 	const params = useMemo(

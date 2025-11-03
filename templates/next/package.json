@@ -21,6 +21,7 @@
 		"framer-motion": "catalog:ui",
 		"lucide-react": "catalog:ui",
 		"next": "catalog:stack",
+		"nuqs": "2.2.2",
 		"react": "catalog:react19",
 		"react-dom": "catalog:react19"
 	},

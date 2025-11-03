@@ -44,6 +44,313 @@ This is a **pnpm monorepo** built with **TypeScript**, **Next.js 16**, **React 1
 
 ---
 
+## Templates Architecture
+
+**CRITICAL: Understanding the Templates Structure**
+
+This repository contains **two types of templates** that work together differently than you might expect.
+
+### Template Types
+
+#### 1. `templates/repo` - Complete Monorepo Template
+
+The **source of truth** for all workspace packages. Contains:
+
+```
+templates/repo/
+├── packages/
+│   ├── analytics/      # @repo/analytics - Analytics with PostHog
+│   ├── auth/           # @repo/auth - Authentication (Better Auth wrapper)
+│   ├── db/             # @repo/db - Database with Drizzle ORM
+│   ├── emails/         # @repo/emails - Email templates
+│   ├── ui/             # @repo/ui - Shadcn UI components
+│   └── utils/          # @repo/utils - Utility functions
+└── apps/               # (empty, apps go here when scaffolded)
+```
+
+**Key characteristics**:
+- Contains **complete implementations** of all workspace packages
+- Has its own Better Auth configuration in `packages/auth/src/lib/auth.ts`
+- Has `authClient` exported from `packages/auth/src/index.ts`
+- Uses `basePath: "/auth"` for auth routes
+- This is what gets copied when users run `startupkit init`
+
+#### 2. `templates/next` - Standalone Next.js App Template
+
+A **Next.js app that expects to live in a workspace with `packages/`**. This is NOT standalone.
+
+```
+templates/next/
+└── src/
+    ├── app/
+    │   ├── auth/[...all]/      # Auth API route (imports from @repo/auth/server)
+    │   ├── dashboard/          # Example protected page
+    │   ├── sign-in/            # Example sign-in page
+    │   ├── layout.tsx          # Uses withAuth from @repo/auth/server
+    │   └── providers.tsx       # Uses AuthProvider from @repo/auth
+    └── components/
+        ├── header.tsx          # Uses useAuth from @repo/auth
+        └── ...
+```
+
+**Key characteristics**:
+- **DOES NOT contain lib/auth.ts or lib/auth-client.ts** - these live in `@repo/auth`
+- Imports from workspace packages: `@repo/auth`, `@repo/ui`, `@repo/db`, etc.
+- Assumes these packages exist in `packages/*` directory at workspace root
+- This template demonstrates **how to use** the workspace packages
+
+### How Templates Relate to Each Other
+
+```
+When developers scaffold with StartupKit CLI:
+
+1. Run `startupkit init` 
+   → Copies `templates/repo/*` to project root
+   → Creates packages/analytics, packages/auth, packages/db, etc.
+
+2. Later: Add a new Next.js app
+   → Copies `templates/next/*` to `apps/my-app/`
+   → This app can now import from `@repo/auth`, `@repo/ui`, etc.
+```
+
+### Critical Rules for Working with Templates
+
+#### ❌ DO NOT: Add Configuration Files to `templates/next`
+
+**WRONG**:
+```typescript
+// ❌ DON'T create templates/next/src/lib/auth.ts
+import { betterAuth } from "better-auth"
+export const auth = betterAuth({ ... })
+```
+
+**WRONG**:
+```typescript
+// ❌ DON'T create templates/next/src/lib/auth-client.ts
+import { createAuthClient } from "better-auth/react"
+export const authClient = createAuthClient({ ... })
+```
+
+**WHY**: These already exist in `templates/repo/packages/auth/` and are imported via workspace packages.
+
+#### ✅ DO: Import from Workspace Packages
+
+**CORRECT**:
+```typescript
+// templates/next/src/app/layout.tsx
+import { withAuth } from "@repo/auth/server"
+
+export default async function RootLayout({ children }) {
+  const { user } = await withAuth()
+  // ...
+}
+```
+
+**CORRECT**:
+```typescript
+// templates/next/src/app/providers.tsx
+import { AuthProvider } from "@repo/auth"
+
+export function Providers({ children, user }) {
+  return <AuthProvider user={user}>{children}</AuthProvider>
+}
+```
+
+**CORRECT**:
+```typescript
+// templates/next/src/app/auth/[...all]/route.ts
+import { handler } from "@repo/auth/server"
+
+export const { GET, POST } = handler()
+```
+
+#### ❌ DO NOT: Add package dependencies already in workspace packages
+
+**WRONG**:
+```json
+// templates/next/package.json
+{
+  "dependencies": {
+    "better-auth": "^1.3.6",  // ❌ Already in @repo/auth
+    "drizzle-orm": "^0.38.0"  // ❌ Already in @repo/db
+  }
+}
+```
+
+**CORRECT**:
+```json
+// templates/next/package.json
+{
+  "dependencies": {
+    "@repo/auth": "workspace:*",    // ✅ Use workspace package
+    "@repo/db": "workspace:*",      // ✅ Use workspace package
+    "@repo/ui": "workspace:*"       // ✅ Use workspace package
+  }
+}
+```
+
+### Authentication Configuration Example
+
+This is a perfect example of the templates relationship:
+
+**In `templates/repo/packages/auth/src/lib/auth.ts`** (source of truth):
+```typescript
+export const auth = betterAuth({
+  basePath: "/auth",
+  database: drizzleAdapter(db, { provider: "pg" }),
+  plugins: [emailOTP({ sendVerificationOTP }), nextCookies()],
+  socialProviders: { google: { ... } }
+})
+```
+
+**In `templates/repo/packages/auth/src/index.ts`** (client export):
+```typescript
+export const authClient = createAuthClient({
+  basePath: "/auth",
+  plugins: [emailOTPClient()]
+})
+```
+
+**In `templates/repo/packages/auth/src/server.ts`** (server export):
+```typescript
+export { auth } from "./lib/auth"
+export async function withAuth() { ... }
+export function handler() { ... }
+```
+
+**In `templates/next/src/app/auth/[...all]/route.ts`** (usage):
+```typescript
+import { handler } from "@repo/auth/server"  // ✅ Imports from workspace
+export const { GET, POST } = handler()
+```
+
+### Auth Routes Configuration
+
+**Critical**: The auth routes path must match the `basePath` configuration:
+
+- `templates/repo/packages/auth/src/lib/auth.ts` sets `basePath: "/auth"`
+- Therefore, Next.js apps need routes at `app/auth/[...all]/route.ts`
+- **NOT** at `app/api/auth/[...all]/route.ts`
+- Auth endpoints are served at `/auth/*` (e.g., `/auth/sign-in/google`)
+
+### When to Modify Each Template
+
+**Modify `templates/repo/packages/*`** when:
+- Changing authentication configuration (providers, session duration)
+- Adding new database tables or schema changes
+- Adding new UI components to the shared library
+- Changing email templates
+- Modifying analytics tracking
+
+**Modify `templates/next/`** when:
+- Adding example pages that demonstrate package usage
+- Creating new app-specific components
+- Adding new routes or layouts
+- Showing authentication patterns
+
+### Testing Template Changes
+
+When you modify templates, test in this order:
+
+1. **Test `templates/repo` packages directly**:
+   ```bash
+   cd templates/repo
+   pnpm install
+   pnpm build
+   pnpm typecheck
+   ```
+
+2. **Test `templates/next` in a workspace context**:
+   ```bash
+   # Create a test workspace
+   mkdir test-workspace
+   cp -r templates/repo/* test-workspace/
+   cp -r templates/next test-workspace/apps/web
+   cd test-workspace
+   pnpm install
+   pnpm --filter web build
+   ```
+
+### Common Mistakes to Avoid
+
+1. ❌ **Creating duplicate configuration files in `templates/next`**
+   - Don't create `lib/auth.ts` or `lib/auth-client.ts`
+   - These belong in `templates/repo/packages/auth/`
+
+2. ❌ **Adding dependencies that are already in workspace packages**
+   - Check `templates/repo/packages/*/package.json` first
+   - Use `workspace:*` references instead
+
+3. ❌ **Using wrong import paths**
+   - Use `@repo/auth` not `../../../packages/auth`
+   - Use `@repo/auth/server` for server-side auth
+
+4. ❌ **Mismatching auth route paths**
+   - If `basePath: "/auth"` → use `app/auth/[...all]/route.ts`
+   - If `basePath: "/api/auth"` → use `app/api/auth/[...all]/route.ts`
+
+5. ❌ **Importing from wrong entry points**
+   - Client: `import { useAuth } from "@repo/auth"`
+   - Server: `import { withAuth } from "@repo/auth/server"`
+   - Don't: `import { auth } from "@repo/auth"` (auth is server-only)
+
+### Package Exports Pattern
+
+All `templates/repo/packages/*` follow this pattern:
+
+```typescript
+// package.json
+{
+  "exports": {
+    ".": "./src/index.ts",           // Client exports
+    "./server": "./src/server.ts"    // Server exports (if needed)
+  }
+}
+```
+
+This allows dual-client/server packages like `@repo/auth`:
+- `@repo/auth` → client exports (AuthProvider, useAuth, authClient)
+- `@repo/auth/server` → server exports (auth, withAuth, handler)
+
+### Adding New Features to Templates
+
+**Example: Adding GitHub OAuth**
+
+1. **Update the workspace package** (`templates/repo/packages/auth/src/lib/auth.ts`):
+   ```typescript
+   socialProviders: {
+     google: { ... },
+     github: {  // ← Add here
+       clientId: process.env.GITHUB_CLIENT_ID as string,
+       clientSecret: process.env.GITHUB_CLIENT_SECRET as string
+     }
+   }
+   ```
+
+2. **Update example usage** (`templates/next/src/app/sign-in/page.tsx`):
+   ```typescript
+   import { useAuth } from "@repo/auth"
+   
+   export function SignIn() {
+     const { googleAuth, githubAuth } = useAuth()  // ← Use from @repo/auth
+     return (
+       <>
+         <button onClick={googleAuth}>Google</button>
+         <button onClick={githubAuth}>GitHub</button>  {/* ← Add example */}
+       </>
+     )
+   }
+   ```
+
+3. **Update documentation** (`templates/next/README.md`):
+   - Add GitHub to the list of auth methods
+   - Show environment variables needed
+   - Provide usage examples
+
+**Key principle**: Configuration goes in `templates/repo/packages/*`, usage examples go in `templates/next/`.
+
+---
+
 ## TypeScript & Code Quality Standards
 
 ### Strict TypeScript Configuration
