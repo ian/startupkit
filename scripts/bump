@@ -19,7 +19,7 @@ BUMPED_VERSION=$(pnpm recursive --filter "./packages/**" exec -- node -p "requir
 echo "Updating template references to version $BUMPED_VERSION..."
 
 # Find all package.json files in templates and update @startupkit/* package references
-find templates -name "package.json" -type f | while read -r template_file; do
+find templates -path "*/node_modules" -prune -o -name "package.json" -type f -print | while read -r template_file; do
     if grep -q "@startupkit/" "$template_file"; then
         # Update each @startupkit package reference with the new version
         sed -i '' -E "s/(\"@startupkit\/[^\"]+\": \")(\^)?[0-9]+\.[0-9]+\.[0-9]+(\",?)/\1\2$BUMPED_VERSION\3/g" "$template_file"
