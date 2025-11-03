@@ -1,6 +1,6 @@
-import path from "node:path"
 import degit from "degit"
 import inquirer from "inquirer"
+import path from "node:path"
 import { replaceInFile } from "replace-in-file"
 import { spinner } from "../lib/spinner"
 import { exec } from "../lib/system"
@@ -142,6 +142,6 @@ function opener() {
                                         
 
   StartupKit - ${process.env.VERSION}
-  From zero to scale — the startup framework for your AI dev team.
+  The Zero to One Startup Framework
 `)
 }

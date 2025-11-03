@@ -566,12 +566,39 @@ interface AnalyticsPlugin {
   useHandlers: () => Partial<AnalyticsHandlers>
 }
 
-// Handlers interface
+// Simple handlers interface (no plugins)
 interface AnalyticsHandlers {
   identify: (userId: string | null, traits?: Record<string, unknown>) => void
   track: (event: string, properties?: Record<string, unknown>) => void
   page: (name?: string, properties?: Record<string, unknown>) => void
   reset: () => void
+}
+
+// Custom handlers interface (with plugins) - receives plugins object and parameters
+interface CustomAnalyticsHandlers<TPlugins extends readonly AnalyticsPlugin[]> {
+  identify: (params: {
+    plugins: PluginsToHandlersMap<TPlugins>
+    userId: string | null
+    traits?: Record<string, unknown>
+  }) => void
+  track: (params: {
+    plugins: PluginsToHandlersMap<TPlugins>
+    event: string
+    properties?: Record<string, unknown>
+  }) => void
+  page: (params: {
+    plugins: PluginsToHandlersMap<TPlugins>
+    name?: string
+    properties?: Record<string, unknown>
+  }) => void
+  reset: (params: { 
+    plugins: PluginsToHandlersMap<TPlugins> 
+  }) => void
+}
+
+// Plugins map - strongly typed based on plugin names
+type PluginsToHandlersMap<TPlugins extends readonly AnalyticsPlugin[]> = {
+  [K in TPlugins[number]["name"]]: Partial<AnalyticsHandlers>
 }
 
 // Context interface
