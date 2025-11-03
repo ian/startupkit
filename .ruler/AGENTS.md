@@ -14,14 +14,14 @@ This is a **pnpm monorepo** built with **TypeScript**, **Next.js 16**, **React 1
 /
 ├── apps/                    # Example Next.js applications
 │   └── home/               # Marketing site for startupkit.com
-├── packages/               # Published npm packages
+├── packages/               # Published npm packages (@startupkit/*)
 │   ├── analytics/         # @startupkit/analytics npm package
 │   ├── auth/              # @startupkit/auth npm package
 │   └── cli/               # startupkit CLI tool
-├── templates/             # Scaffolding templates
+├── templates/             # Scaffolding templates (used by CLI)
 │   ├── next/              # Next.js app template
 │   ├── package/           # Generic package template
-│   ├── repo/              # Full monorepo template
+│   ├── repo/              # Full monorepo template (@repo/* packages)
 │   └── vite/              # Vite app template
 ├── config/                # Shared configurations
 │   ├── biome/             # Biome linter/formatter config
@@ -31,16 +31,20 @@ This is a **pnpm monorepo** built with **TypeScript**, **Next.js 16**, **React 1
 
 ### Package Architecture
 
-**Key packages**:
+**Published packages** (in root `packages/` - published to npm as `@startupkit/*`):
 - **`packages/cli`** - The `startupkit` CLI tool for scaffolding projects
 - **`packages/analytics`** - Published to npm as `@startupkit/analytics`
 - **`packages/auth`** - Published to npm as `@startupkit/auth`
 
-**Templates**:
-- **`templates/repo`** - Full monorepo template (most comprehensive)
+**Templates** (in `templates/` - used by CLI for scaffolding):
+- **`templates/repo`** - Full monorepo template with `@repo/*` packages (most comprehensive)
 - **`templates/next`** - Next.js app template
 - **`templates/package`** - Generic package template
 - **`templates/vite`** - Vite app template
+
+**Important distinction**:
+- `packages/*` → Published npm packages (`@startupkit/*`)
+- `templates/repo/packages/*` → Workspace packages for scaffolded projects (`@repo/*`)
 
 ---
 
@@ -214,8 +218,10 @@ export const authClient = createAuthClient({
 **In `templates/repo/packages/auth/src/server.ts`** (server export):
 ```typescript
 export { auth } from "./lib/auth"
-export async function withAuth() { ... }
-export function handler() { ... }
+export type Session = typeof auth.$Infer.Session.session
+export type User = typeof auth.$Infer.Session.user
+export const handler = auth.handler
+export async function withAuth(opts?: { flags?: boolean }) { ... }
 ```
 
 **In `templates/next/src/app/auth/[...all]/route.ts`** (usage):
@@ -461,7 +467,12 @@ The workspace uses **pnpm catalogs** to manage shared dependency versions in `pn
 
 ### Schema Location
 
-Database schema is defined in:
+Database schema is defined in `@repo/db` package:
+```
+templates/repo/packages/db/src/schema.ts
+```
+
+In a scaffolded project, this will be at:
 ```
 packages/db/src/schema.ts
 ```
@@ -525,7 +536,12 @@ If it's a ENV var meant to be used for frontend, don't prefix with EXPO_PUBLIC o
 
 ### Component Location
 
-All UI components live in:
+All UI components live in `@repo/ui` package:
+```
+templates/repo/packages/ui/src/components/
+```
+
+In a scaffolded project, this will be at:
 ```
 packages/ui/src/components/
 ```
@@ -584,7 +600,7 @@ import { withAuth, handler, auth } from "@repo/auth/server";
 // In Server Components:
 const { user, session } = await withAuth();
 
-// API route handler (app/api/auth/[...all]/route.ts):
+// API route handler (app/auth/[...all]/route.ts):
 export const { GET, POST } = handler();
 ```
 
@@ -628,18 +644,22 @@ const flags = await getFeatureFlags(userId);
 
 ### Where to Put New Files
 
+**Note**: When referencing `packages/*` below, this refers to `templates/repo/packages/*` (for template development) or the user's scaffolded project `packages/*` (for app development). This is NOT the root `packages/*` which contains published npm packages.
+
 | File Type | Location | Example |
 |-----------|----------|---------|
 | Next.js pages | `apps/{app-name}/src/app/` | `apps/web/src/app/dashboard/page.tsx` |
 | React components (app-specific) | `apps/{app-name}/src/components/` | `apps/web/src/components/header.tsx` |
-| UI components (shared) | `packages/ui/src/components/` | `packages/ui/src/components/button.tsx` |
-| Database schema | `packages/db/src/schema.ts` | Add tables to existing schema |
-| Database migrations | `packages/db/drizzle/` | Auto-generated via `pnpm db:generate` |
-| Auth logic | `packages/auth/src/` | Extend `lib/auth.ts` or add hooks |
-| Email templates | `packages/emails/src/templates/` | `packages/emails/src/templates/welcome.tsx` |
-| Utility functions | `packages/utils/src/lib/` | `packages/utils/src/lib/string.ts` |
-| Hooks | `packages/ui/src/hooks/` or app-specific hooks dir | |
+| UI components (shared) | `templates/repo/packages/ui/src/components/` | `button.tsx`, `dialog.tsx` |
+| Database schema | `templates/repo/packages/db/src/schema.ts` | Add tables to existing schema |
+| Database migrations | `templates/repo/packages/db/drizzle/` | Auto-generated via `pnpm db:generate` |
+| Auth logic | `templates/repo/packages/auth/src/` | Extend `lib/auth.ts` or add hooks |
+| Email templates | `templates/repo/packages/emails/src/templates/` | `welcome.tsx`, `verify-code.tsx` |
+| Utility functions | `templates/repo/packages/utils/src/lib/` | `string.ts`, `date.ts`, `array.ts` |
+| Hooks (shared) | `templates/repo/packages/ui/src/hooks/` | `use-is-mobile.ts` |
+| Hooks (app-specific) | `apps/{app-name}/src/hooks/` | App-specific hooks |
 | API routes | `apps/{app-name}/src/app/api/` | `apps/web/src/app/api/users/route.ts` |
+| Auth API routes | `apps/{app-name}/src/app/auth/[...all]/` | Auth handler (NOT in `/api/auth/`) |
 
 ### Creating New Apps
 
@@ -861,7 +881,7 @@ This updates `AGENTS.md`, `CLAUDE.md`, `WARP.md`, etc. at the repository root.
 
 ### Add a new database table
 
-1. Edit `packages/db/src/schema.ts`
+1. Edit `templates/repo/packages/db/src/schema.ts` (or `packages/db/src/schema.ts` in scaffolded project)
 2. Add table definition and relations
 3. Export types (`User`, `NewUser`)
 4. Generate migration: `pnpm db:generate`
@@ -870,7 +890,7 @@ This updates `AGENTS.md`, `CLAUDE.md`, `WARP.md`, etc. at the repository root.
 ### Add a new UI component
 
 1. Run: `pnpm shadcn add component-name`
-2. Component added to `packages/ui/src/components/`
+2. Component added to `templates/repo/packages/ui/src/components/` (or `packages/ui/src/components/` in scaffolded project)
 3. Import: `import { Component } from "@repo/ui/components/component-name"`
 
 ### Add a new page to Next.js app
@@ -881,7 +901,7 @@ This updates `AGENTS.md`, `CLAUDE.md`, `WARP.md`, etc. at the repository root.
 
 ### Add an email template
 
-1. Create: `packages/emails/src/templates/my-email.tsx`
+1. Create: `templates/repo/packages/emails/src/templates/my-email.tsx` (or `packages/emails/src/templates/` in scaffolded project)
 2. Use React Email components
 3. Export from `packages/emails/src/index.tsx`
 
@@ -947,14 +967,19 @@ const total = items.reduce((sum, item) => {
 
 When working on this codebase:
 
-1. ✅ **Use strict TypeScript** - No `any`, prefer `interface`, avoid `enum`
-2. ✅ **Follow Biome formatting** - Tabs, double quotes, 80-char lines
-3. ✅ **Prefer Server Components** - Minimize `"use client"`
-4. ✅ **Use workspace packages** - Import from `@repo/*`
-5. ✅ **Use pnpm catalogs** - Reference `catalog:stack`, `catalog:react19`, etc.
-6. ✅ **Database changes** → `pnpm db:generate` → `pnpm db:migrate`
-7. ✅ **UI components** → `pnpm shadcn add component-name`
-8. ✅ **Run tasks via Turbo** - `pnpm dev`, `pnpm build`, `pnpm lint:fix`
-9. ✅ **Use env wrappers** - `pnpm with-env` for dev, `pnpm with-test-env` for tests
-10. ✅ **Place files correctly** - See "File Placement Guidelines" above
-11. ✅ **No unnecessary comments** - Code should be self-documenting
+1. ✅ **Understand the dual package structure**:
+   - `packages/*` → Published npm packages (`@startupkit/*`)
+   - `templates/repo/packages/*` → Template workspace packages (`@repo/*`)
+2. ✅ **Never duplicate auth config in `templates/next`** - It imports from `@repo/auth`
+3. ✅ **Auth routes go in `app/auth/[...all]/`** - NOT `app/api/auth/[...all]/`
+4. ✅ **Use strict TypeScript** - No `any`, prefer `interface`, avoid `enum`
+5. ✅ **Follow Biome formatting** - Tabs, double quotes, 80-char lines
+6. ✅ **Prefer Server Components** - Minimize `"use client"`
+7. ✅ **Import from workspace packages** - Use `@repo/*` in templates/next
+8. ✅ **Use pnpm catalogs** - Reference `catalog:stack`, `catalog:react19`, etc.
+9. ✅ **Database changes** → `pnpm db:generate` → `pnpm db:migrate`
+10. ✅ **UI components** → `pnpm shadcn add component-name`
+11. ✅ **Run tasks via Turbo** - `pnpm dev`, `pnpm build`, `pnpm lint:fix`
+12. ✅ **Use env wrappers** - `pnpm with-env` for dev, `pnpm with-test-env` for tests
+13. ✅ **Place files correctly** - See "File Placement Guidelines" and "Templates Architecture"
+14. ✅ **No unnecessary comments** - Code should be self-documenting
