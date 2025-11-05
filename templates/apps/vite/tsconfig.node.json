@@ -3,6 +3,7 @@
   "compilerOptions": {
     "composite": true,
     "module": "ESNext",
+    "noEmit": false,
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true
   },
