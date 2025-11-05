@@ -57,7 +57,7 @@ Start the development server:
 pnpm dev
 ```
 
-Open [http://localhost:2999](http://localhost:2999) with your browser.
+Open [http://localhost:3000](http://localhost:3000) with your browser.
 
 ## Authentication
 
@@ -173,38 +173,21 @@ pnpm format       # Format code with Biome
 
 ### Email OTP Configuration
 
-Authentication is configured in the `@repo/auth` workspace package. Update `packages/auth/src/lib/auth.ts` to configure email sending:
-
-```typescript
-emailOTP({
-  async sendVerificationOTP({ email, otp }) {
-    // Replace with your email service
-    await sendEmail({
-      to: email,
-      subject: "Your verification code",
-      body: `Your code is: ${otp}`
-    })
-  }
-})
-```
+Authentication is configured in the `@repo/auth` workspace package. The email OTP sends verification codes via the `@repo/emails` package. To customize email sending, you'll need to modify the auth package in your local workspace or fork the StartupKit packages.
 
 ### Adding More OAuth Providers
 
-Add to `packages/auth/src/lib/auth.ts`:
+The `@repo/auth` package uses Better Auth and can support additional OAuth providers (GitHub, Twitter, etc.). To add more providers:
 
-```typescript
-socialProviders: {
-  google: { /* ... */ },
-  github: {
-    clientId: process.env.GITHUB_CLIENT_ID,
-    clientSecret: process.env.GITHUB_CLIENT_SECRET
-  }
-}
-```
+1. Add the required environment variables (e.g., `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`)
+2. Configure the provider in the auth package's configuration
+3. Update your sign-in UI to include the new provider button
+
+See the [Better Auth documentation](https://better-auth.com) for available providers.
 
 ### Customizing UI Components
 
-UI components are from `@repo/ui` (Shadcn components). Customize in `packages/ui/src/components/`.
+UI components are from `@repo/ui` (Shadcn components). You can override these components in your `src/components/` directory or modify the shared package.
 
 ## Learn More
 

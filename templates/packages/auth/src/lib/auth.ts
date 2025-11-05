@@ -24,12 +24,6 @@ async function sendVerificationOTP({
 	})
 }
 
-if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
-	throw new Error(
-		"Missing required environment variables: GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET must be set"
-	)
-}
-
 export const auth = betterAuth({
 	basePath: "/auth",
 	advanced: {
