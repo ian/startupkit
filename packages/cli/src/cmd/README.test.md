@@ -32,25 +32,24 @@ my-project/
 
 ## Test Coverage
 
-### 1. Structure Tests (`init.test.ts`)
+### 1. Unit Tests (`init.test.ts`)
 
-**Verifies:**
-- ✅ Repo structure files are cloned correctly
-- ✅ Packages directory is created
-- ✅ All expected packages exist
-- ✅ Each package has a `package.json`
-- ✅ UI package has correct directory structure
-- ✅ UI package exports are properly defined
+**Fast tests (no I/O):**
+- ✅ Slugify function with various inputs (spaces, special chars, etc.)
+- ✅ Path resolution for degit sources
+- ✅ Branch name handling
 
-### 2. Integration Tests (`init.integration.test.ts`)
+### 2. Full Integration Test (`init.full.test.ts`)
 
-**Verifies:**
-- ✅ Full installation creates working project
-- ✅ Package references work correctly
-- ✅ Templates can import from `@repo/*` packages
-- ✅ TypeScript paths resolve correctly
-- ✅ Tailwind and PostCSS configs export properly
-- ✅ `PROJECT` placeholders are replaced with project name
+**One project creation, comprehensive checks:**
+- ✅ Repo structure files cloned correctly
+- ✅ Packages directory created with all packages
+- ✅ PROJECT placeholders replaced
+- ✅ Drizzle schema and config exist
+- ✅ Auth package structure correct
+- ✅ UI package exports properly configured
+- ✅ pnpm-workspace.yaml valid
+- ✅ No template artifacts (.git, PLACEHOLDER)
 
 ## Key Validation Points
 

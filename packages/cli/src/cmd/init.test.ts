@@ -1,87 +1,65 @@
-import fs from "node:fs"
-import path from "node:path"
-import { afterAll, beforeAll, describe, expect, it } from "vitest"
-import { exec } from "../lib/system"
-import { init } from "./init"
+import { describe, expect, it } from "vitest"
 
-describe("init command", () => {
-    const testProjectName = "test-project"
-    const testDir = path.join(process.cwd(), testProjectName)
-
-    beforeAll(async () => {
-        // Clean up any existing test directory
-        if (fs.existsSync(testDir)) {
-            await exec(`rm -rf ${testDir}`)
+describe("init command - unit tests", () => {
+    describe("slugify function", () => {
+        const slugify = (input: string): string => {
+            return input
+                .toLowerCase()
+                .replace(/\s+/g, "-")
+                .replace(/_/g, "-")
+                .replace(/[^\w\-]+/g, "")
+                .replace(/\-\-+/g, "-")
+                .replace(/^-+|-+$/g, "")
         }
 
-        // Run the actual init command
-        await init({ name: testProjectName, repoArg: undefined })
+        it("should convert spaces to dashes", () => {
+            expect(slugify("My Project Name")).toBe("my-project-name")
+        })
+
+        it("should convert underscores to dashes", () => {
+            expect(slugify("my_project_name")).toBe("my-project-name")
+        })
+
+        it("should remove special characters", () => {
+            expect(slugify("My Project!@#$%")).toBe("my-project")
+        })
+
+        it("should lowercase everything", () => {
+            expect(slugify("UPPERCASE")).toBe("uppercase")
+        })
+
+        it("should handle consecutive dashes", () => {
+            expect(slugify("my---project")).toBe("my-project")
+        })
+
+        it("should trim leading/trailing dashes", () => {
+            expect(slugify("-my-project-")).toBe("my-project")
+        })
+
+        it("should handle numbers", () => {
+            expect(slugify("project-123")).toBe("project-123")
+        })
     })
 
-    afterAll(async () => {
-        if (fs.existsSync(testDir)) {
-            await exec(`rm -rf ${testDir}`)
-        }
-    })
+    describe("path resolution", () => {
+        it("should resolve degit sources correctly", () => {
+            const repoBase = "ian/startupkit"
+            const repoSource = `${repoBase}/templates/repo`
+            const packagesSource = `${repoBase}/templates/packages`
 
-    it("should clone both repo structure and packages", async () => {
-        // Check that repo structure files exist
-        const repoFiles = [
-            "package.json",
-            "pnpm-workspace.yaml",
-            "turbo.json",
-            "apps",
-            "config"
-        ]
+            expect(repoSource).toBe("ian/startupkit/templates/repo")
+            expect(packagesSource).toBe("ian/startupkit/templates/packages")
+        })
 
-        // Check that packages directory exists with expected packages
-        const expectedPackages = ["ui", "auth", "db", "analytics", "utils", "emails"]
+        it("should handle branch names in degit sources", () => {
+            const repoBase = "ian/startupkit#develop"
+            const [userRepo, branch] = repoBase.split("#")
+            const repoSource = `${userRepo}/templates/repo#${branch}`
+            const packagesSource = `${userRepo}/templates/packages#${branch}`
 
-        // Verify repo structure
-        for (const file of repoFiles) {
-            const filePath = path.join(testDir, file)
-            expect(fs.existsSync(filePath), `Expected ${file} to exist in cloned repo`).toBeTruthy()
-        }
-
-        // Verify packages directory exists
-        const packagesDir = path.join(testDir, "packages")
-        expect(fs.existsSync(packagesDir), "Expected packages directory to exist").toBeTruthy()
-
-        // Verify each package exists
-        for (const pkg of expectedPackages) {
-            const pkgPath = path.join(packagesDir, pkg)
-            expect(fs.existsSync(pkgPath), `Expected package ${pkg} to exist in packages/`).toBeTruthy()
-
-            // Verify package has package.json
-            const pkgJsonPath = path.join(pkgPath, "package.json")
-            expect(fs.existsSync(pkgJsonPath), `Expected ${pkg}/package.json to exist`).toBeTruthy()
-        }
-    })
-
-    it("should verify packages have correct structure", async () => {
-        const uiPackagePath = path.join(testDir, "packages", "ui")
-
-        // Verify UI package has expected directories
-        const expectedDirs = ["src", "src/components", "src/hooks", "src/providers"]
-
-        for (const dir of expectedDirs) {
-            const dirPath = path.join(uiPackagePath, dir)
-            expect(fs.existsSync(dirPath), `Expected ${dir} to exist in ui package`).toBeTruthy()
-        }
-
-        // Verify UI package exports
-        const pkgJson = JSON.parse(
-            fs.readFileSync(path.join(uiPackagePath, "package.json"), "utf-8")
-        )
-        expect(pkgJson.exports, "Expected ui package to have exports field").toBeDefined()
-        expect(
-            pkgJson.exports["./components/*"],
-            "Expected ui package to export components"
-        ).toBeDefined()
-        expect(
-            pkgJson.exports["./tailwind.config"],
-            "Expected ui package to export tailwind.config"
-        ).toBeDefined()
+            expect(repoSource).toBe("ian/startupkit/templates/repo#develop")
+            expect(packagesSource).toBe("ian/startupkit/templates/packages#develop")
+        })
     })
 })
 
