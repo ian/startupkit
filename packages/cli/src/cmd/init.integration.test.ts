@@ -1,15 +1,14 @@
-import { describe, it, after } from "node:test"
-import assert from "node:assert"
 import fs from "node:fs"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
+import { afterAll, describe, expect, it } from "vitest"
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 describe("init command integration", () => {
 	const testDir = path.join(process.cwd(), "tmp-test-init")
 
-	after(async () => {
+	afterAll(async () => {
 		if (fs.existsSync(testDir)) {
 			fs.rmSync(testDir, { recursive: true, force: true })
 		}
@@ -43,10 +42,7 @@ describe("init command integration", () => {
 		// Note: In a real test, we'd actually run the init command here
 		// For now, document the expected structure
 
-		assert.ok(
-			true,
-			"Integration test placeholder - would verify full installation"
-		)
+		expect(true, "Integration test placeholder - would verify full installation").toBeTruthy()
 	})
 
 	it("should verify packages are fully functional", async () => {
@@ -81,10 +77,7 @@ describe("init command integration", () => {
 			"./tailwind.config"
 		]
 
-		assert.ok(
-			true,
-			"Would verify all UI package files and exports exist and are correct"
-		)
+		expect(true, "Would verify all UI package files and exports exist and are correct").toBeTruthy()
 	})
 
 	it("should verify templates/apps/next references work correctly", async () => {
@@ -100,10 +93,7 @@ describe("init command integration", () => {
 		// - apps/next/tsconfig.json references ../../packages/ui
 		// - packages/ui exists with proper exports
 
-		assert.ok(
-			true,
-			"Would verify Next.js app can import from @repo/ui packages"
-		)
+		expect(true, "Would verify Next.js app can import from @repo/ui packages").toBeTruthy()
 	})
 
 	it("should replace PROJECT placeholders with project name", async () => {
@@ -115,7 +105,7 @@ describe("init command integration", () => {
 		// Check package.json name field
 		// Check other occurrences throughout the codebase
 
-		assert.ok(true, "Would verify PROJECT placeholder replacement")
+		expect(true, "Would verify PROJECT placeholder replacement").toBeTruthy()
 	})
 })
 

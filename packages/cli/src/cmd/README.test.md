@@ -89,20 +89,29 @@ export { default } from "@repo/ui/postcss.config"
 ## Running Tests
 
 ```bash
-# Run all tests
+# Run all tests (once)
 pnpm test
 
+# Run tests in watch mode
+pnpm test:watch
+
+# Run tests with coverage
+pnpm test:coverage
+
 # Run specific test file
-node --test src/cmd/init.test.ts
+pnpm vitest run src/cmd/init.test.ts
 
 # Run integration tests
-node --test src/cmd/init.integration.test.ts
+pnpm vitest run src/cmd/init.integration.test.ts
 ```
 
 ## Test Development Notes
 
-- Tests use Node's built-in test runner (no external dependencies)
+- Tests use **Vitest** for fast, modern testing experience
 - Integration tests should run the actual `init` command
-- Clean up test directories in `after()` hooks
+- Clean up test directories in `afterAll()` hooks
 - Verify both structure AND functionality
+- Use `expect().toBeTruthy()` for existence checks
+- Use `expect().toBeDefined()` for value checks
+- Vitest provides great TypeScript support and watch mode
 

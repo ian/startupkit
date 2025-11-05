@@ -1,25 +1,30 @@
-import assert from "node:assert"
 import fs from "node:fs"
 import path from "node:path"
-import { after, describe, it } from "node:test"
+import { afterAll, beforeAll, describe, expect, it } from "vitest"
 import { exec } from "../lib/system"
+import { init } from "./init"
 
 describe("init command", () => {
-    const testDir = path.join(process.cwd(), "test-project")
+    const testProjectName = "test-project"
+    const testDir = path.join(process.cwd(), testProjectName)
 
-    after(async () => {
+    beforeAll(async () => {
+        // Clean up any existing test directory
+        if (fs.existsSync(testDir)) {
+            await exec(`rm -rf ${testDir}`)
+        }
+
+        // Run the actual init command
+        await init({ name: testProjectName, repoArg: undefined })
+    })
+
+    afterAll(async () => {
         if (fs.existsSync(testDir)) {
             await exec(`rm -rf ${testDir}`)
         }
     })
 
     it("should clone both repo structure and packages", async () => {
-        // This test would run the actual init command
-        // For now, we'll just verify the expected structure
-
-        // Create a mock test directory
-        fs.mkdirSync(testDir, { recursive: true })
-
         // Check that repo structure files exist
         const repoFiles = [
             "package.json",
@@ -35,33 +40,21 @@ describe("init command", () => {
         // Verify repo structure
         for (const file of repoFiles) {
             const filePath = path.join(testDir, file)
-            assert.ok(
-                fs.existsSync(filePath),
-                `Expected ${file} to exist in cloned repo`
-            )
+            expect(fs.existsSync(filePath), `Expected ${file} to exist in cloned repo`).toBeTruthy()
         }
 
         // Verify packages directory exists
         const packagesDir = path.join(testDir, "packages")
-        assert.ok(
-            fs.existsSync(packagesDir),
-            "Expected packages directory to exist"
-        )
+        expect(fs.existsSync(packagesDir), "Expected packages directory to exist").toBeTruthy()
 
         // Verify each package exists
         for (const pkg of expectedPackages) {
             const pkgPath = path.join(packagesDir, pkg)
-            assert.ok(
-                fs.existsSync(pkgPath),
-                `Expected package ${pkg} to exist in packages/`
-            )
+            expect(fs.existsSync(pkgPath), `Expected package ${pkg} to exist in packages/`).toBeTruthy()
 
             // Verify package has package.json
             const pkgJsonPath = path.join(pkgPath, "package.json")
-            assert.ok(
-                fs.existsSync(pkgJsonPath),
-                `Expected ${pkg}/package.json to exist`
-            )
+            expect(fs.existsSync(pkgJsonPath), `Expected ${pkg}/package.json to exist`).toBeTruthy()
         }
     })
 
@@ -73,22 +66,22 @@ describe("init command", () => {
 
         for (const dir of expectedDirs) {
             const dirPath = path.join(uiPackagePath, dir)
-            assert.ok(fs.existsSync(dirPath), `Expected ${dir} to exist in ui package`)
+            expect(fs.existsSync(dirPath), `Expected ${dir} to exist in ui package`).toBeTruthy()
         }
 
         // Verify UI package exports
         const pkgJson = JSON.parse(
             fs.readFileSync(path.join(uiPackagePath, "package.json"), "utf-8")
         )
-        assert.ok(pkgJson.exports, "Expected ui package to have exports field")
-        assert.ok(
+        expect(pkgJson.exports, "Expected ui package to have exports field").toBeDefined()
+        expect(
             pkgJson.exports["./components/*"],
             "Expected ui package to export components"
-        )
-        assert.ok(
+        ).toBeDefined()
+        expect(
             pkgJson.exports["./tailwind.config"],
             "Expected ui package to export tailwind.config"
-        )
+        ).toBeDefined()
     })
 })
 
