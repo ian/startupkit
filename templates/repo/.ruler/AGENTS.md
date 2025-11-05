@@ -70,8 +70,8 @@ interface UserProps {
 **Avoid enums** - Use const objects with `as const` or string literal unions:
 ```typescript
 const Role = {
-	OWNER: "owner",
-	MEMBER: "member"
+  OWNER: "owner",
+  MEMBER: "member"
 } as const
 
 type RoleType = typeof Role[keyof typeof Role]
@@ -139,11 +139,11 @@ The workspace uses **pnpm catalogs** to manage shared dependency versions in `pn
 **Using catalogs in `package.json`**:
 ```json
 {
-	"dependencies": {
-		"next": "catalog:stack",
-		"react": "catalog:react19",
-		"lucide-react": "catalog:ui"
-	}
+  "dependencies": {
+    "next": "catalog:stack",
+    "react": "catalog:react19",
+    "lucide-react": "catalog:ui"
+  }
 }
 ```
 
@@ -186,8 +186,8 @@ pnpm db:studio
 Always export inferred types from tables:
 ```typescript
 export const users = pgTable("User", {
-	id: text("id").primaryKey(),
-	email: text("email").unique(),
+  id: text("id").primaryKey(),
+  email: text("email").unique(),
 	createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull()
 })
 
@@ -198,7 +198,7 @@ export type NewUser = typeof users.$inferInsert
 Use `relations` for joins:
 ```typescript
 export const usersRelations = relations(users, ({ many }) => ({
-	sessions: many(sessions)
+  sessions: many(sessions)
 }))
 ```
 
@@ -486,11 +486,11 @@ pnpm format       # Format code
 
 export function UserProfile({ userId }: { userId: string }) {
 	const [user, setUser] = useState(null)
-	
-	useEffect(() => {
+  
+  useEffect(() => {
 		fetch(`/api/users/${userId}`).then(/* ... */)
 	}, [userId])
-	
+  
 	return <div>{user?.name}</div>
 }
 ```
@@ -502,10 +502,10 @@ import { eq } from "drizzle-orm"
 import { users } from "@repo/db/schema"
 
 async function UserProfile({ userId }: { userId: string }) {
-	const user = await db.query.users.findFirst({
-		where: eq(users.id, userId)
+  const user = await db.query.users.findFirst({
+    where: eq(users.id, userId)
 	})
-	
+  
 	return <div>{user?.name}</div>
 }
 ```
@@ -517,10 +517,10 @@ When you need client-side state, **wrap in Suspense**:
 import { Suspense } from "react"
 
 export default function Page() {
-	return (
-		<Suspense fallback={<Loading />}>
-			<ClientComponent />
-		</Suspense>
+  return (
+    <Suspense fallback={<Loading />}>
+      <ClientComponent />
+    </Suspense>
 	)
 }
 ```
@@ -531,7 +531,7 @@ import { useQueryState } from "nuqs"
 
 function SearchComponent() {
 	const [search, setSearch] = useQueryState("q")
-	
+
 	return <input value={search ?? ""} onChange={(e) => setSearch(e.target.value)} />
 }
 ```

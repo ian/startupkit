@@ -5,12 +5,11 @@
 		"clean": "rm -rf .cache .next",
 		"build": "next build",
 		"start": "next start",
-		"dev": "next dev -p 2999",
+		"dev": "next dev",
 		"lint": "biome lint --unsafe",
 		"lint:fix": "biome lint --write --unsafe",
 		"typecheck": "tsc --noEmit",
-		"format": "biome format --write",
-		"scripts": "node ./scripts/runner.js $2"
+		"format": "biome format --write"
 	},
 	"dependencies": {
 		"@repo/analytics": "workspace:*",

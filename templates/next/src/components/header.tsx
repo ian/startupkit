@@ -16,23 +16,23 @@ import {
 } from "@repo/ui/components/dropdown-menu"
 
 export default function Header() {
-	const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
 	const { isAuthenticated, user, logout } = useAuth()
 
-	return (
-		<header className="py-6 border-b">
-			{/* Desktop Header */}
-			<Container className="hidden md:flex justify-center md:justify-between items-center">
-				<a href="/" className="flex items-center">
-					<Logo className="w-36 h-10" />
-				</a>
+  return (
+    <header className="py-6 border-b">
+      {/* Desktop Header */}
+      <Container className="hidden md:flex justify-center md:justify-between items-center">
+        <a href="/" className="flex items-center">
+          <Logo className="w-36 h-10" />
+        </a>
 
 				<div className="hidden md:flex items-center gap-4">
-					{isAuthenticated ? (
+          {isAuthenticated ? (
 						<>
 							<ButtonLink variant="secondary" href="/dashboard">
 								Dashboard
-							</ButtonLink>
+            </ButtonLink>
 							<DropdownMenu>
 								<DropdownMenuTrigger asChild>
 									<Button variant="outline" size="icon">
@@ -54,16 +54,16 @@ export default function Header() {
 					) : (
 						<ButtonLink variant="secondary" href="/sign-in">
 							Sign In
-						</ButtonLink>
-					)}
-				</div>
-			</Container>
+            </ButtonLink>
+          )}
+        </div>
+      </Container>
 
-			{/* Mobile Header */}
-			<Container className="md:hidden flex justify-center md:justify-between items-center">
-				<a href="/" className="flex items-center">
-					<Logo className="w-36 h-10" />
-				</a>
+      {/* Mobile Header */}
+      <Container className="md:hidden flex justify-center md:justify-between items-center">
+        <a href="/" className="flex items-center">
+          <Logo className="w-36 h-10" />
+        </a>
 
 				<div className="flex items-center gap-4">
 					{isAuthenticated ? (
@@ -95,20 +95,20 @@ export default function Header() {
 						</ButtonLink>
 					)}
 				</div>
-			</Container>
+      </Container>
 
 			{/* Mobile Navigation (kept for future use) */}
-			{isMenuOpen && (
-				<div className="md:hidden absolute top-16 left-0 right-0 bg-white z-50 border-b">
-					<div className="flex flex-col p-4">
-						{isAuthenticated ? (
+      {isMenuOpen && (
+        <div className="md:hidden absolute top-16 left-0 right-0 bg-white z-50 border-b">
+          <div className="flex flex-col p-4">
+            {isAuthenticated ? (
 							<ButtonLink href="/dashboard">Dashboard</ButtonLink>
-						) : (
+            ) : (
 							<ButtonLink href="/sign-in">Sign In</ButtonLink>
-						)}
-					</div>
-				</div>
-			)}
-		</header>
-	)
+            )}
+          </div>
+        </div>
+      )}
+    </header>
+  )
 }

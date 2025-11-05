@@ -1,5 +1,5 @@
 import { track } from "@repo/analytics/server"
-import { db, users } from "@repo/db"
+import * as dbSchema from "@repo/db"
 import { sendEmail } from "@repo/emails"
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
@@ -24,10 +24,34 @@ async function sendVerificationOTP({
 	})
 }
 
+if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+	throw new Error(
+		"Missing required environment variables: GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET must be set"
+	)
+}
+
 export const auth = betterAuth({
 	basePath: "/auth",
-	database: drizzleAdapter(db, {
-		provider: "pg"
+	advanced: {
+		generateId: () => crypto.randomUUID()
+	},
+	logger: {
+		disabled: false,
+		disableColors: false,
+		level: "error",
+		log: (level, message, ...args) => {
+			// Custom logging implementation
+			console.log(`[${level}] ${message}`, ...args);
+		}
+	},
+	database: drizzleAdapter(dbSchema.db, {
+		provider: "pg",
+		schema: {
+			user: dbSchema.users,
+			account: dbSchema.accounts,
+			session: dbSchema.sessions,
+			verification: dbSchema.verifications
+		}
 	}),
 	account: {
 		accountLinking: {
@@ -55,22 +79,22 @@ export const auth = betterAuth({
 			const { newSession, newUser } = ctx.context
 
 			if (newSession) {
-				await db
-					.update(users)
+				await dbSchema.db
+					.update(dbSchema.users)
 					.set({
 						lastSeenAt: new Date()
-					} as unknown as typeof users.$inferInsert)
-					.where(eq(users.id, newSession.user.id))
+					} as unknown as typeof dbSchema.users.$inferInsert)
+					.where(eq(dbSchema.users.id, newSession.user.id))
 
-				const [user] = await db
+				const [user] = await dbSchema.db
 					.select({
-						id: users.id,
-						email: users.email,
-						firstName: users.firstName,
-						lastName: users.lastName
+						id: dbSchema.users.id,
+						email: dbSchema.users.email,
+						firstName: dbSchema.users.firstName,
+						lastName: dbSchema.users.lastName
 					})
-					.from(users)
-					.where(eq(users.id, newSession.user.id))
+					.from(dbSchema.users)
+					.where(eq(dbSchema.users.id, newSession.user.id))
 					.limit(1)
 
 				if (user?.email) {
@@ -99,8 +123,11 @@ export const auth = betterAuth({
 	},
 	socialProviders: {
 		google: {
-			clientId: process.env.GOOGLE_CLIENT_ID as string,
-			clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+			clientId: process.env.GOOGLE_CLIENT_ID || "",
+			clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+			enabled: Boolean(
+				process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+			),
 			mapProfileToUser: async (profile) => {
 				return {
 					name: `${profile.given_name} ${profile.family_name}`,

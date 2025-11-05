@@ -18,7 +18,8 @@
     "release": "pnpm build:packages && pnpm --filter \"./packages/**\" -r publish --access public --no-git-checks",
     "agents.md": "ruler apply",
     "link:local": "node scripts/link-local.js link",
-    "unlink:local": "node scripts/link-local.js unlink"
+    "unlink:local": "node scripts/link-local.js unlink",
+    "pg:start": "docker run --name postgres-db --ulimit nofile=1024:1024 -e POSTGRES_PASSWORD=local -p 5432:5432 -d postgres:16"
   },
   "packageManager": "pnpm@9.6.0",
   "author": "Ian Hunter <ian@01.studio>",

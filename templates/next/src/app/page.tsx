@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo
 import { Lock, LayoutDashboard, Mail, Chrome } from "lucide-react"
 
 export default function Home() {
-	return (
+  return (
 		<Container className="py-12">
 			<div className="space-y-12">
 				<div className="text-center space-y-4">
