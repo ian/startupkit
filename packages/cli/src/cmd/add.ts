@@ -130,10 +130,19 @@ async function addApp(props: {
 		await emitter.clone(destDir)
 	})
 
-	// Recursively replace all instances of PROJECT with slug in the cloned repo
+	// Recursively replace all instances of PROJECT placeholders with slug in the cloned repo
+	let replacementPattern: RegExp
+	if (appType === "next") {
+		replacementPattern = /PROJECT_NEXT/g
+	} else if (appType === "vite") {
+		replacementPattern = /PROJECT_VITE/g
+	} else {
+		replacementPattern = /PROJECT/g
+	}
+
 	await replaceInFile({
 		files: path.join(destDir, "**/*"),
-		from: /PROJECT/g,
+		from: replacementPattern,
 		to: appSlug,
 		ignore: ["**/node_modules/**", "**/.git/**"]
 	})
