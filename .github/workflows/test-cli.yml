@@ -87,7 +87,7 @@ jobs:
           cd test-projects/test-startup
           
           echo "🔍 Testing add command..."
-          node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" add next --name "web"
+          node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" add next --name "web" --repo "ian/startupkit/templates/apps/next#${{ github.ref_name }}"
           
           test -d apps/web || exit 1
           test -f apps/web/package.json || exit 1

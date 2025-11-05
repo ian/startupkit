@@ -17,10 +17,10 @@ jobs:
       - uses: ./.github/actions/setup
       
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Install template dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
         working-directory: ./templates/repo
 
       - name: Build packages
@@ -65,7 +65,7 @@ jobs:
       - uses: ./.github/actions/setup
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Build packages
         run: pnpm --filter "./packages/**" build
