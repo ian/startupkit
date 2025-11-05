@@ -22,11 +22,14 @@ const pool =
 		allowExitOnIdle: true
 	})
 
-if (process.env.NODE_ENV !== "production") globalForDb.pool = pool
+// Only attach error listener when creating a new pool, not when reusing cached one
+if (!globalForDb.pool) {
+	pool.on("error", (err) => {
+		console.error("Unexpected database pool error", err)
+	})
+}
 
-pool.on("error", (err) => {
-	console.error("Unexpected database pool error", err)
-})
+if (process.env.NODE_ENV !== "production") globalForDb.pool = pool
 
 export const db = drizzle({ client: pool, schema })
 
