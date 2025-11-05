@@ -4,7 +4,7 @@
 	"exports": {
 		"./components/*": "./src/components/*.tsx",
 		"./hooks": "./src/hooks/index.ts",
-		"./providers": "./src/providers/index.ts",
+		"./providers": "./src/providers/index.tsx",
 		"./utils": "./src/lib/utils.ts",
 		"./postcss.config": "./postcss.config.mjs",
 		"./styles.css": "./src/styles/index.css",

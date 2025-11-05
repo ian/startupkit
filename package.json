@@ -23,6 +23,15 @@
   "packageManager": "pnpm@9.6.0",
   "author": "Ian Hunter <ian@01.studio>",
   "license": "ISC",
+  "pnpm": {
+    "overrides": {
+      "react": "19.0.0",
+      "react-dom": "19.0.0",
+      "@types/react": "19.0.1",
+      "@types/react-dom": "19.0.2",
+      "drizzle-orm": "0.38.4"
+    }
+  },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@intellectronica/ruler": "^0.3.11",
