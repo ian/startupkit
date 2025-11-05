@@ -27,14 +27,20 @@ export function buildDegitSources(repoBase: string): {
 } {
 	if (repoBase.includes("#")) {
 		const [userRepo, branch] = repoBase.split("#")
+		const normalizedRepo = userRepo
+			.replace(/\/templates\/repo$/, "")
+			.replace(/\/templates\/packages$/, "")
 		return {
-			repoSource: `${userRepo}/templates/repo#${branch}`,
-			packagesSource: `${userRepo}/templates/packages#${branch}`
+			repoSource: `${normalizedRepo}/templates/repo#${branch}`,
+			packagesSource: `${normalizedRepo}/templates/packages#${branch}`
 		}
 	}
+	const normalizedRepo = repoBase
+		.replace(/\/templates\/repo$/, "")
+		.replace(/\/templates\/packages$/, "")
 	return {
-		repoSource: `${repoBase}/templates/repo`,
-		packagesSource: `${repoBase}/templates/packages`
+		repoSource: `${normalizedRepo}/templates/repo`,
+		packagesSource: `${normalizedRepo}/templates/packages`
 	}
 }
 

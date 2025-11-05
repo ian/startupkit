@@ -1,7 +1,7 @@
-import fs from "node:fs"
-import path from "node:path"
 import degit from "degit"
 import inquirer from "inquirer"
+import fs from "node:fs"
+import path from "node:path"
 import { replaceInFile } from "replace-in-file"
 import { spinner } from "../lib/spinner"
 import { exec } from "../lib/system"
@@ -148,10 +148,11 @@ async function addApp(props: {
 		allowEmptyPaths: true
 	})
 
-	// Install dependencies
+	// Install dependencies from workspace root
+	const workspaceRoot = process.cwd()
 	await spinner(`Installing dependencies`, async () => {
-		await exec("pnpm install --no-frozen-lockfile", {
-			cwd: destDir,
+		await exec("pnpm install", {
+			cwd: workspaceRoot,
 			stdio: "inherit"
 		})
 	})
