@@ -12,8 +12,6 @@
 	},
 	"scripts": {
 		"clean": "rm -rf .turbo",
-		"build": "tailwindcss -i ./src/styles/index.css -o ./dist/styles.css",
-		"olddev": "tailwindcss -i ./src/styles/index.css -o ./dist/styles.css --watch",
 		"lint": "biome lint --unsafe",
 		"lint:fix": "biome lint --write --unsafe",
 		"typecheck": "tsc --noEmit",

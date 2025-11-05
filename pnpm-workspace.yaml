@@ -2,7 +2,8 @@ packages:
   - "apps/**"
   - "config/**"
   - "packages/**"
-  - "templates/next"
+  - "templates/apps/**"
+  - "templates/repo/config/**"
   - "templates/repo/packages/**"
 
 catalog:
