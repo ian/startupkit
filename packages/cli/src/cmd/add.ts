@@ -107,9 +107,9 @@ async function addApp(props: {
 	let templatePath: string
 
 	if (appType === "next") {
-		templatePath = repoArg || "ian/startupkit/templates/next"
+		templatePath = repoArg || "ian/startupkit/templates/apps/next"
 	} else if (appType === "vite") {
-		templatePath = repoArg || "ian/startupkit/templates/vite"
+		templatePath = repoArg || "ian/startupkit/templates/apps/vite"
 	} else if (appType === "pkg") {
 		templatePath = repoArg || "ian/startupkit/templates/package"
 	}
@@ -144,7 +144,8 @@ async function addApp(props: {
 		files: path.join(destDir, "**/*"),
 		from: replacementPattern,
 		to: appSlug,
-		ignore: ["**/node_modules/**", "**/.git/**"]
+		ignore: ["**/node_modules/**", "**/.git/**"],
+		allowEmptyPaths: true
 	})
 
 	// Install dependencies

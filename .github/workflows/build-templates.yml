@@ -91,7 +91,7 @@ jobs:
 
       - name: Install app (with branch)
         run: |
-          node $GITHUB_WORKSPACE/packages/cli/dist/cli.js add next --name next --repo "ian/startupkit/templates/next#${GITHUB_REF_NAME}"
+          node $GITHUB_WORKSPACE/packages/cli/dist/cli.js add next --name next --repo "ian/startupkit/templates/apps/next#${GITHUB_REF_NAME}"
         working-directory: ./tmp/repo
 
       - name: Verify Install
