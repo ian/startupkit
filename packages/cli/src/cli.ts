@@ -5,7 +5,7 @@ import { Command } from "commander"
 import { add } from "./cmd/add"
 import { init } from "./cmd/init"
 
-export function run() {
+export async function run() {
 	const program = new Command()
 
 	program.name("startupkit").description("The Zero to One Startup Framework")
@@ -51,7 +51,10 @@ export function run() {
 		process.exit(0)
 	}
 
-	program.parse()
+	await program.parseAsync()
 }
 
-run()
+run().catch((error) => {
+	console.error(error)
+	process.exit(1)
+})
