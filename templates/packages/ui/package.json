@@ -15,7 +15,6 @@
 		"lint": "biome lint --unsafe",
 		"lint:fix": "biome lint --write --unsafe",
 		"typecheck": "tsc --noEmit",
-		"postinstall": "pnpm build",
 		"storybook": "storybook dev -p 6006"
 	},
 	"keywords": [],
