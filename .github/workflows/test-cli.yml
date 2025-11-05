@@ -72,7 +72,7 @@ jobs:
           
           echo "📦 Installing dependencies..."
           cd test-startup
-          pnpm install
+          pnpm install --no-frozen-lockfile
           
           echo "🔍 Running typecheck..."
           pnpm typecheck
