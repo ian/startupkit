@@ -63,6 +63,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       icon,
       iconPosition = 'start',
       children,
+      disabled,
       ...props
     },
     ref,
@@ -72,7 +73,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
-        disabled={loading || props.disabled}
+        disabled={loading || disabled}
         {...props}
       >
         {loading ? (

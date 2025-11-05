@@ -1,17 +1,8 @@
 import { describe, expect, it } from "vitest"
+import { buildDegitSources, slugify } from "./init"
 
 describe("init command - unit tests", () => {
 	describe("slugify function", () => {
-		const slugify = (input: string): string => {
-			return input
-				.toLowerCase()
-				.replace(/\s+/g, "-")
-				.replace(/_/g, "-")
-				.replace(/[^\w\-]+/g, "")
-				.replace(/\-\-+/g, "-")
-				.replace(/^-+|-+$/g, "")
-		}
-
 		it("should convert spaces to dashes", () => {
 			expect(slugify("My Project Name")).toBe("my-project-name")
 		})
@@ -41,24 +32,28 @@ describe("init command - unit tests", () => {
 		})
 	})
 
-	describe("path resolution", () => {
-		it("should resolve degit sources correctly", () => {
-			const repoBase = "ian/startupkit"
-			const repoSource = `${repoBase}/templates/repo`
-			const packagesSource = `${repoBase}/templates/packages`
+	describe("buildDegitSources", () => {
+		it("should resolve degit sources correctly without branch", () => {
+			const result = buildDegitSources("ian/startupkit")
 
-			expect(repoSource).toBe("ian/startupkit/templates/repo")
-			expect(packagesSource).toBe("ian/startupkit/templates/packages")
+			expect(result.repoSource).toBe("ian/startupkit/templates/repo")
+			expect(result.packagesSource).toBe("ian/startupkit/templates/packages")
 		})
 
 		it("should handle branch names in degit sources", () => {
-			const repoBase = "ian/startupkit#develop"
-			const [userRepo, branch] = repoBase.split("#")
-			const repoSource = `${userRepo}/templates/repo#${branch}`
-			const packagesSource = `${userRepo}/templates/packages#${branch}`
+			const result = buildDegitSources("ian/startupkit#develop")
 
-			expect(repoSource).toBe("ian/startupkit/templates/repo#develop")
-			expect(packagesSource).toBe("ian/startupkit/templates/packages#develop")
+			expect(result.repoSource).toBe("ian/startupkit/templates/repo#develop")
+			expect(result.packagesSource).toBe(
+				"ian/startupkit/templates/packages#develop"
+			)
+		})
+
+		it("should handle different repository paths", () => {
+			const result = buildDegitSources("user/repo#main")
+
+			expect(result.repoSource).toBe("user/repo/templates/repo#main")
+			expect(result.packagesSource).toBe("user/repo/templates/packages#main")
 		})
 	})
 })

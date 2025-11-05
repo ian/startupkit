@@ -11,7 +11,7 @@ type Answers = {
 	key?: string
 } & Record<string, any>
 
-function slugify(input: string): string {
+export function slugify(input: string): string {
 	return input
 		.toLowerCase()
 		.replace(/\s+/g, "-")
@@ -19,6 +19,23 @@ function slugify(input: string): string {
 		.replace(/[^\w\-]+/g, "")
 		.replace(/\-\-+/g, "-")
 		.replace(/^-+|-+$/g, "")
+}
+
+export function buildDegitSources(repoBase: string): {
+	repoSource: string
+	packagesSource: string
+} {
+	if (repoBase.includes("#")) {
+		const [userRepo, branch] = repoBase.split("#")
+		return {
+			repoSource: `${userRepo}/templates/repo#${branch}`,
+			packagesSource: `${userRepo}/templates/packages#${branch}`
+		}
+	}
+	return {
+		repoSource: `${repoBase}/templates/repo`,
+		packagesSource: `${repoBase}/templates/packages`
+	}
 }
 
 export async function init(props: {
@@ -76,17 +93,7 @@ export async function init(props: {
 	const repoBase = props.repoArg || "ian/startupkit"
 	const destDir = path.resolve(process.cwd(), key)
 
-	let repoSource: string
-	let packagesSource: string
-
-	if (repoBase.includes("#")) {
-		const [userRepo, branch] = repoBase.split("#")
-		repoSource = `${userRepo}/templates/repo#${branch}`
-		packagesSource = `${userRepo}/templates/packages#${branch}`
-	} else {
-		repoSource = `${repoBase}/templates/repo`
-		packagesSource = `${repoBase}/templates/packages`
-	}
+	const { repoSource, packagesSource } = buildDegitSources(repoBase)
 
 	await spinner(`Cloning template into ${destDir}`, async () => {
 		const repoEmitter = degit(repoSource, {
