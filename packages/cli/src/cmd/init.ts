@@ -104,10 +104,10 @@ export async function init(props: {
 		await packagesEmitter.clone(path.join(destDir, "packages"))
 	})
 
-	// Recursively replace all instances of PROJECT with slug in the cloned repo
+	// Recursively replace all instances of PROJECT and PROJECT_VITE with slug
 	await replaceInFile({
 		files: `${destDir}/**/*`,
-		from: /PROJECT/g,
+		from: [/PROJECT_VITE/g, /PROJECT/g],
 		to: slug,
 		ignore: ["**/node_modules/**", "**/.git/**"],
 		allowEmptyPaths: true

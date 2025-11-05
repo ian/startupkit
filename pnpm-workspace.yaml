@@ -2,6 +2,7 @@ packages:
   - "apps/**"
   - "config/**"
   - "packages/**"
+  - "!packages/cli/tmp/**"
   # these are just to allow us to run template projects locally
   - "templates/apps/**"
   - "templates/packages/**"
