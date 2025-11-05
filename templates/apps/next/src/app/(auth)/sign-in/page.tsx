@@ -14,7 +14,7 @@ import { Input } from '@repo/ui/components/input';
 import { Label } from '@repo/ui/components/label';
 import { toast } from '@repo/ui/components/toast';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function SignInPage() {
   const router = useRouter();
@@ -25,10 +25,11 @@ export default function SignInPage() {
   const [step, setStep] = useState<'email' | 'code'>('email');
   const [isLoading, setIsLoading] = useState(false);
 
-  if (isAuthenticated) {
-    router.push('/dashboard');
-    return null;
-  }
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/dashboard');
+    }
+  }, [isAuthenticated, router]);
 
   const handleSendCode = async (e: React.FormEvent) => {
     e.preventDefault();
