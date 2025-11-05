@@ -7,8 +7,7 @@ import { cn } from '../lib/utils';
 const buttonVariants = cva(
   cn(
     'inline-flex items-center gap-1 justify-center whitespace-nowrap font-medium ring-offset-background transition-colors disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
-    'focus-visible:outline-none focus-visible:ring-none',
-    // "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ",
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
   ),
   {
     variants: {
@@ -62,6 +61,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       asChild = false,
       loading = false,
       icon,
+      iconPosition = 'start',
       children,
       ...props
     },
@@ -104,8 +104,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           </>
         ) : (
           <>
-            {icon}
+            {iconPosition === 'start' && icon}
             {children}
+            {iconPosition === 'end' && icon}
           </>
         )}
       </Comp>
