@@ -36,6 +36,7 @@
 		"build": "rollup -c",
 		"build:watch": "rollup -c -w",
 		"cli": "node dist/cli.js",
+		"test": "node --test src/**/*.test.ts",
 		"typecheck": "tsc --noEmit",
 		"lint": "biome check",
 		"lint:fix": "biome check --write"

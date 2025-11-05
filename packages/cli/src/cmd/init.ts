@@ -72,31 +72,36 @@ export async function init(props: {
 	// Show the collected attributes
 	const attrs = { name: projectName, key }
 
-	// --- USE DEGit TO CLONE ONLY THE SUBDIRECTORY ---
-	const repoBase = props.repoArg || "ian/startupkit/templates/repo"
+	// --- USE DEGit TO CLONE THE REPO STRUCTURE AND PACKAGES ---
+	const repoBase = props.repoArg || "ian/startupkit"
 	const destDir = path.resolve(process.cwd(), key)
 
-	let degitSource: string
+	let repoSource: string
+	let packagesSource: string
 
 	if (repoBase.includes("#")) {
 		const [userRepo, branch] = repoBase.split("#")
-		// If the path already includes /templates/repo, don't add it again
-		if (userRepo.includes("/templates/repo")) {
-			degitSource = `${userRepo}#${branch}`
-		} else {
-			degitSource = `${userRepo}/templates/repo#${branch}`
-		}
+		repoSource = `${userRepo}/templates/repo#${branch}`
+		packagesSource = `${userRepo}/templates/packages#${branch}`
 	} else {
-		degitSource = repoBase
+		repoSource = `${repoBase}/templates/repo`
+		packagesSource = `${repoBase}/templates/packages`
 	}
 
 	await spinner(`Cloning template into ${destDir}`, async () => {
-		const emitter = degit(degitSource, {
+		const repoEmitter = degit(repoSource, {
 			cache: false,
 			force: true,
 			verbose: false
 		})
-		await emitter.clone(destDir)
+		await repoEmitter.clone(destDir)
+
+		const packagesEmitter = degit(packagesSource, {
+			cache: false,
+			force: true,
+			verbose: false
+		})
+		await packagesEmitter.clone(path.join(destDir, "packages"))
 	})
 
 	// Recursively replace all instances of PROJECT with slug in the cloned repo
