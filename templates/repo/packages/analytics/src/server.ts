@@ -7,12 +7,17 @@ export { getFeatureFlags } from "./vendor/posthog"
 
 export type { Flags } from "./types"
 
-const posthog = new PostHog(
-	process.env.POSTHOG_API_KEY || "",
-	{
-		host: process.env.POSTHOG_HOST || "https://app.posthog.com"
+function client() {
+	const apiKey = process.env.POSTHOG_API_KEY
+
+	if (!apiKey) {
+		return null
 	}
-)
+
+	return new PostHog(apiKey, {
+		host: process.env.POSTHOG_HOST || "https://app.posthog.com"
+	})
+}
 
 /**
  * Tracks one or more analytics events server-side using PostHog.
@@ -20,6 +25,12 @@ const posthog = new PostHog(
  * @param eventData - An AnalyticsEvent object or an array of AnalyticsEvent objects to track.
  */
 export async function track(eventData: AnalyticsEvent | AnalyticsEvent[]) {
+	const posthog = client()
+
+	if (!posthog) {
+		return
+	}
+
 	const events = Array.isArray(eventData) ? eventData : [eventData]
 
 	events.forEach(({ event, ...rest }) => {
@@ -32,6 +43,5 @@ export async function track(eventData: AnalyticsEvent | AnalyticsEvent[]) {
 		})
 	})
 
-	// Flush to ensure events are sent
 	await posthog.flush()
 }
