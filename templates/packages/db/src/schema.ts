@@ -50,7 +50,7 @@ export const accounts = pgTable(
     },
     (table) => [
         index("Account_userId_idx").on(table.userId),
-        index("Account_providerId_accountId_idx").on(
+        uniqueIndex("Account_providerId_accountId_key").on(
             table.providerId,
             table.accountId
         )

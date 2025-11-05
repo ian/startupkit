@@ -1,5 +1,5 @@
 {
-  "id": "fc992ac5-be71-45ee-b033-01a97266d696",
+  "id": "7a1129e4-a4cd-47a2-b232-bb8718867c6f",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -105,8 +105,8 @@
           "method": "btree",
           "with": {}
         },
-        "Account_providerId_accountId_idx": {
-          "name": "Account_providerId_accountId_idx",
+        "Account_providerId_accountId_key": {
+          "name": "Account_providerId_accountId_key",
           "columns": [
             {
               "expression": "providerId",
@@ -121,7 +121,7 @@
               "nulls": "last"
             }
           ],
-          "isUnique": false,
+          "isUnique": true,
           "concurrently": false,
           "method": "btree",
           "with": {}

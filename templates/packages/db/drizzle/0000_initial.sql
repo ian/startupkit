@@ -77,7 +77,7 @@ ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_User_id_fk" FOREIGN KEY ("u
 ALTER TABLE "TeamMember" ADD CONSTRAINT "TeamMember_teamId_Team_id_fk" FOREIGN KEY ("teamId") REFERENCES "public"."Team"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "TeamMember" ADD CONSTRAINT "TeamMember_userId_User_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."User"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX "Account_userId_idx" ON "Account" USING btree ("userId");--> statement-breakpoint
-CREATE INDEX "Account_providerId_accountId_idx" ON "Account" USING btree ("providerId","accountId");--> statement-breakpoint
+CREATE UNIQUE INDEX "Account_providerId_accountId_key" ON "Account" USING btree ("providerId","accountId");--> statement-breakpoint
 CREATE UNIQUE INDEX "Session_token_key" ON "Session" USING btree ("token");--> statement-breakpoint
 CREATE UNIQUE INDEX "TeamMember_teamId_userId_key" ON "TeamMember" USING btree ("teamId","userId");--> statement-breakpoint
 CREATE INDEX "TeamMember_teamId_idx" ON "TeamMember" USING btree ("teamId");--> statement-breakpoint
