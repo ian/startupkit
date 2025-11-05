@@ -1,7 +1,7 @@
-import { redirect } from "next/navigation"
-import { withAuth } from "@repo/auth/server"
 import { Container } from "@/components/container"
+import { withAuth } from "@repo/auth/server"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/ui/components/card"
+import { redirect } from "next/navigation"
 
 export default async function DashboardPage() {
 	const { user, session } = await withAuth()

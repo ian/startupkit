@@ -6,7 +6,7 @@ import { UIProvider } from "@repo/ui/providers"
 import { AnalyticsProvider } from "@repo/analytics";
 import type { Flags } from "@repo/analytics/server";
 import { toast } from "@repo/ui/components/toast"
-import { AuthProvider, type User } from "@repo/auth";
+import { AuthProvider, authClient, type User } from "@repo/auth";
 
 export function Providers({
 	children,
@@ -44,7 +44,7 @@ export function Providers({
 			defaultTheme="light"
 			forcedTheme="light"
 		>
-			<AuthProvider user={user}>
+			<AuthProvider user={user} authClient={authClient}>
 				<AnalyticsProvider flags={flags}>{children}</AnalyticsProvider>
 			</AuthProvider>
 		</UIProvider>

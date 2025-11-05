@@ -1,35 +1,35 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono, Urbanist } from "next/font/google";
-import "./globals.css";
-import { Providers } from "@/app/providers";
-import { withAuth } from "@repo/auth/server";
-import { getFeatureFlags } from "@repo/analytics/server";
-import Header from "@/components/header";
-import Footer from "@/components/footer";
-import { getUrl } from "@repo/utils";
+import { Providers } from '@/app/providers';
+import Footer from '@/components/footer';
+import Header from '@/components/header';
+import { getFeatureFlags } from '@repo/analytics/server';
+import { withAuth } from '@repo/auth/server';
+import { getUrl } from '@repo/utils';
+import type { Metadata } from 'next';
+import { Geist, Geist_Mono, Urbanist } from 'next/font/google';
+import './globals.css';
 
 const geistSans = Geist({
-  variable: "--font-sans",
-  subsets: ["latin"],
+  variable: '--font-sans',
+  subsets: ['latin'],
 });
 
 const urbanistSerif = Urbanist({
-  variable: "--font-serif",
-  subsets: ["latin"],
+  variable: '--font-serif',
+  subsets: ['latin'],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-mono",
-  subsets: ["latin"],
+  variable: '--font-mono',
+  subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
-  title: "StartupKit Next Template",
-  description: "",
+  title: 'StartupKit Next Template',
+  description: '',
   metadataBase: new URL(getUrl()),
   openGraph: {
-    title: "StartupKit Next Template",
-    description: "",
+    title: 'StartupKit Next Template',
+    description: '',
     url: getUrl(),
     siteName: 'StartupKit Next Template',
     images: [
@@ -45,8 +45,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "StartupKit Next Template",
-    description: "",
+    title: 'StartupKit Next Template',
+    description: '',
     images: ['/hero/og.avif'],
   },
   icons: {
@@ -57,10 +57,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport = {
-  width: "device-width",
+  width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
-  userScalable: "no",
+  userScalable: 'no',
 };
 
 export default async function RootLayout({
@@ -73,14 +73,16 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} ${urbanistSerif.variable} antialiased`}>
-        <div className="min-h-screen bg-background flex flex-col">
-          <Header />
-          <main className="flex-grow">
-            <Providers flags={flags} user={user}>{children}</Providers>
-          </main>
-          <Footer />
-        </div>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} ${urbanistSerif.variable} antialiased`}
+      >
+        <Providers flags={flags} user={user}>
+          <div className="min-h-screen bg-background flex flex-col">
+            <Header />
+            <main className="flex-grow">{children}</main>
+            <Footer />
+          </div>
+        </Providers>
       </body>
     </html>
   );

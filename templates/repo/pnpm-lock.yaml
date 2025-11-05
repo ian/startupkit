@@ -90,8 +90,8 @@ importers:
         specifier: workspace:*
         version: link:../utils
       '@startupkit/analytics':
-        specifier: 0.5.0
-        version: 0.5.0(@openpanel/sdk@1.0.0)(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(posthog-js@1.235.5)(react@19.0.0)
+        specifier: 0.5.1
+        version: 0.5.1(@openpanel/sdk@1.0.0)(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(posthog-js@1.235.5)(react@19.0.0)
       posthog-js:
         specifier: 1.235.5
         version: 1.235.5
@@ -139,8 +139,8 @@ importers:
         specifier: workspace:*
         version: link:../utils
       '@startupkit/auth':
-        specifier: 0.5.0
-        version: 0.5.0(better-auth@1.3.27(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(drizzle-orm@0.38.4(@opentelemetry/api@1.9.0)(@types/pg@8.15.6)(@types/react@19.0.1)(kysely@0.28.8)(pg@8.16.3)(react@19.0.0))(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        specifier: 0.5.1
+        version: 0.5.1(better-auth@1.3.27(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(drizzle-orm@0.38.4(@opentelemetry/api@1.9.0)(@types/pg@8.15.6)(@types/react@19.0.1)(kysely@0.28.8)(pg@8.16.3)(react@19.0.0))(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       better-auth:
         specifier: 1.3.27
         version: 1.3.27(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -4491,8 +4491,8 @@ packages:
   '@standard-schema/spec@1.0.0':
     resolution: {integrity: sha512-m2bOd0f2RT9k8QJx1JN85cZYyH1RqFBdlwtkSlf4tBDYLCiiZnv1fIIwacK6cqwXavOydf0NPToMQgpKq+dVlA==}
 
-  '@startupkit/analytics@0.5.0':
-    resolution: {integrity: sha512-+hCTjjogvVIAx9dyucCxPlkwkBliO6HoW37lNpKk9JOK7O08a5vFYr8w/ARvNpdBBtVcXWIfX6yobJKz+8nzig==}
+  '@startupkit/analytics@0.5.1':
+    resolution: {integrity: sha512-tyxysa+jHaaaK8yB3VPLgkfBoGuXbCABKtXfg9roP2YhHmtWuVTm+jmluWn+H4YV/e75yVX/qngMRne4kPEiCA==}
     peerDependencies:
       '@openpanel/sdk': '>=1.0.0'
       next: '>=14.0.0'
@@ -4504,8 +4504,8 @@ packages:
       posthog-js:
         optional: true
 
-  '@startupkit/auth@0.5.0':
-    resolution: {integrity: sha512-ZEVaELCMD561PuVr3zCeuwd4t7imQggS7nXWBuXRFwZP1uWe1Ye02kUy7pAAuAWjgILkodSO7F/k7J9IAiGoJw==}
+  '@startupkit/auth@0.5.1':
+    resolution: {integrity: sha512-ruM8fiiL4As3A1dCVp3+GCJ7032rg9w/1ryXErowU50U4eOD7pWez6rdx8uZRcjCSyl/FNhlk7i1pEkXtP8loQ==}
     peerDependencies:
       better-auth: '>=1.3.0'
       drizzle-orm: '>=0.38.0'
@@ -13114,7 +13114,7 @@ snapshots:
 
   '@standard-schema/spec@1.0.0': {}
 
-  '@startupkit/analytics@0.5.0(@openpanel/sdk@1.0.0)(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(posthog-js@1.235.5)(react@19.0.0)':
+  '@startupkit/analytics@0.5.1(@openpanel/sdk@1.0.0)(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(posthog-js@1.235.5)(react@19.0.0)':
     dependencies:
       next: 16.0.0(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       react: 19.0.0
@@ -13122,7 +13122,7 @@ snapshots:
       '@openpanel/sdk': 1.0.0
       posthog-js: 1.235.5
 
-  '@startupkit/auth@0.5.0(better-auth@1.3.27(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(drizzle-orm@0.38.4(@opentelemetry/api@1.9.0)(@types/pg@8.15.6)(@types/react@19.0.1)(kysely@0.28.8)(pg@8.16.3)(react@19.0.0))(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+  '@startupkit/auth@0.5.1(better-auth@1.3.27(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(drizzle-orm@0.38.4(@opentelemetry/api@1.9.0)(@types/pg@8.15.6)(@types/react@19.0.1)(kysely@0.28.8)(pg@8.16.3)(react@19.0.0))(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
       better-auth: 1.3.27(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       drizzle-orm: 0.38.4(@opentelemetry/api@1.9.0)(@types/pg@8.15.6)(@types/react@19.0.1)(kysely@0.28.8)(pg@8.16.3)(react@19.0.0)
