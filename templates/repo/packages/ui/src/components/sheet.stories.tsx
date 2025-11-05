@@ -1,6 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import * as React from "react";
-import { Button } from "./button";
+import type { Meta, StoryObj } from '@storybook/react';
+import { Button } from './button';
 import {
   Sheet,
   SheetClose,
@@ -10,12 +9,12 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "./sheet";
+} from './sheet';
 
 const meta: Meta<typeof Sheet> = {
-  title: "UI/Sheet",
+  title: 'UI/Sheet',
   component: Sheet,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
 };
 
 export default meta;
@@ -37,8 +36,8 @@ export const Default: Story = {
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
             <p className="text-sm">
-              This is the main content area of the sheet.
-              You can add form elements or any other content here.
+              This is the main content area of the sheet. You can add form
+              elements or any other content here.
             </p>
           </div>
         </div>

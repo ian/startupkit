@@ -1,18 +1,17 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import * as React from "react";
-import { ScrollArea } from "./scroll-area";
+import type { Meta, StoryObj } from '@storybook/react';
+import { ScrollArea } from './scroll-area';
 
 const meta: Meta<typeof ScrollArea> = {
-  title: "UI/ScrollArea",
+  title: 'UI/ScrollArea',
   component: ScrollArea,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
 };
 
 export default meta;
 type Story = StoryObj<typeof ScrollArea>;
 
 const tags = Array.from({ length: 50 }).map(
-  (_, i, a) => `v1.2.0-beta.${a.length - i}`
+  (_, i, a) => `v1.2.0-beta.${a.length - i}`,
 );
 
 export const Default: Story = {
@@ -32,7 +31,7 @@ export const Default: Story = {
 
 const horizontalItems = Array.from({ length: 15 }).map((_, i) => ({
   id: `horizontal-item-${i + 1000}`, // Using a base offset to create stable IDs
-  label: `Item ${i + 1}`
+  label: `Item ${i + 1}`,
 }));
 
 export const HorizontalScrolling: Story = {

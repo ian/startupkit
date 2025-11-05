@@ -1,11 +1,10 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import * as React from "react";
-import { Markdown } from "./markdown";
+import type { Meta, StoryObj } from '@storybook/react';
+import { Markdown } from './markdown';
 
 const meta: Meta<typeof Markdown> = {
-  title: "UI/Markdown",
+  title: 'UI/Markdown',
   component: Markdown,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
 };
 
 export default meta;

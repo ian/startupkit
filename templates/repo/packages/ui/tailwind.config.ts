@@ -8,7 +8,6 @@ const config: Config = {
 	darkMode: ["class"],
 	content: [
 		"./src/**/*.{js,ts,jsx,tsx,mdx}",
-		"../../packages/ai/src/**/*.{ts,tsx}",
 		"../../packages/ui/src/**/*.{ts,tsx}"
 	],
 	theme: {

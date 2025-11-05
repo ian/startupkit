@@ -1,19 +1,18 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import * as React from "react";
+import type { Meta, StoryObj } from '@storybook/react';
 import {
   Breadcrumb,
+  BreadcrumbEllipsis,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-  BreadcrumbEllipsis,
-} from "./breadcrumb";
+} from './breadcrumb';
 
 const meta: Meta<typeof Breadcrumb> = {
-  title: "UI/Breadcrumb",
+  title: 'UI/Breadcrumb',
   component: Breadcrumb,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
 };
 
 export default meta;
@@ -52,7 +51,9 @@ export const WithEllipsis: Story = {
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbLink href="/components/breadcrumb">Breadcrumb</BreadcrumbLink>
+          <BreadcrumbLink href="/components/breadcrumb">
+            Breadcrumb
+          </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>

@@ -1,5 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import * as React from "react";
+import type { Meta, StoryObj } from '@storybook/react';
 import {
   Select,
   SelectContent,
@@ -9,12 +8,12 @@ import {
   SelectSeparator,
   SelectTrigger,
   SelectValue,
-} from "./select";
+} from './select';
 
 const meta: Meta<typeof Select> = {
-  title: "UI/Select",
+  title: 'UI/Select',
   component: Select,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
 };
 
 export default meta;
@@ -86,7 +85,9 @@ export const DisabledOptions: Story = {
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="option1">Option 1</SelectItem>
-        <SelectItem value="option2" disabled>Option 2 (Disabled)</SelectItem>
+        <SelectItem value="option2" disabled>
+          Option 2 (Disabled)
+        </SelectItem>
         <SelectItem value="option3">Option 3</SelectItem>
       </SelectContent>
     </Select>

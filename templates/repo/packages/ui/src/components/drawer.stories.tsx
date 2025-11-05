@@ -1,6 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import * as React from "react";
-import { Button } from "./button";
+import type { Meta, StoryObj } from '@storybook/react';
+import { Button } from './button';
 import {
   Drawer,
   DrawerClose,
@@ -10,12 +9,12 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "./drawer";
+} from './drawer';
 
 const meta: Meta<typeof Drawer> = {
-  title: "UI/Drawer",
+  title: 'UI/Drawer',
   component: Drawer,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
 };
 
 export default meta;
@@ -37,8 +36,8 @@ export const Default: Story = {
         <div className="p-4 pb-0">
           <div className="flex items-center justify-center space-y-4">
             <p className="text-center text-sm">
-              This is the main content area of the drawer.
-              You can add form elements or any other content here.
+              This is the main content area of the drawer. You can add form
+              elements or any other content here.
             </p>
           </div>
         </div>

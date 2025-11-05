@@ -1,5 +1,6 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import * as React from "react";
+import type { Meta, StoryObj } from '@storybook/react';
+import { Home, Mail, Plus, Search, Settings, Users } from 'lucide-react';
+import { Button } from './button';
 import {
   Sidebar,
   SidebarContent,
@@ -16,14 +17,12 @@ import {
   SidebarProvider,
   SidebarSeparator,
   SidebarTrigger,
-} from "./sidebar";
-import { Button } from "./button";
-import { Home, Settings, Users, Mail, Plus, Search } from "lucide-react";
+} from './sidebar';
 
 const meta: Meta<typeof SidebarProvider> = {
-  title: "UI/Sidebar",
+  title: 'UI/Sidebar',
   component: SidebarProvider,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
 };
 
 export default meta;
@@ -39,14 +38,22 @@ export const Default: Story = {
               <h2 className="text-lg font-semibold">Dashboard</h2>
               <SidebarTrigger />
             </div>
-            <SidebarInput placeholder="Search..." leftIcon={<Search className="h-4 w-4" />} />
+            <SidebarInput
+              placeholder="Search..."
+              leftIcon={<Search className="h-4 w-4" />}
+            />
           </SidebarHeader>
           <SidebarContent>
             <SidebarGroup>
               <div className="flex items-center justify-between relative">
-                <SidebarGroupLabel className="flex-grow">Main Navigation</SidebarGroupLabel>
+                <SidebarGroupLabel className="flex-grow">
+                  Main Navigation
+                </SidebarGroupLabel>
                 <div className="relative right-0 top-0">
-                  <SidebarGroupAction asChild className="!absolute !right-0 !top-0">
+                  <SidebarGroupAction
+                    asChild
+                    className="!absolute !right-0 !top-0"
+                  >
                     <Button variant="ghost" size="icon">
                       <Plus className="h-4 w-4" />
                     </Button>

@@ -1,10 +1,9 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import * as React from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { Button } from "./button";
-import { Input } from "./input";
+import { zodResolver } from '@hookform/resolvers/zod';
+import type { Meta, StoryObj } from '@storybook/react';
+import * as React from 'react';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
+import { Button } from './button';
 import {
   Form,
   FormControl,
@@ -13,12 +12,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "./form";
+} from './form';
+import { Input } from './input';
 
 const meta: Meta<typeof Form> = {
-  title: "UI/Form",
+  title: 'UI/Form',
   component: Form,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
 };
 
 export default meta;
@@ -26,10 +26,10 @@ type Story = StoryObj<typeof Form>;
 
 const formSchema = z.object({
   username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
+    message: 'Username must be at least 2 characters.',
   }),
   email: z.string().email({
-    message: "Please enter a valid email address.",
+    message: 'Please enter a valid email address.',
   }),
 });
 
@@ -37,8 +37,8 @@ const BasicFormExample = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
-      email: "",
+      username: '',
+      email: '',
     },
   });
 
@@ -48,7 +48,10 @@ const BasicFormExample = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 max-w-md">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-8 max-w-md"
+      >
         <FormField
           control={form.control}
           name="username"
@@ -91,8 +94,8 @@ const FormWithErrors = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "a", // This will trigger validation error
-      email: "invalid-email", // This will trigger validation error
+      username: 'a', // This will trigger validation error
+      email: 'invalid-email', // This will trigger validation error
     },
   });
 
@@ -106,7 +109,10 @@ const FormWithErrors = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 max-w-md">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-8 max-w-md"
+      >
         <FormField
           control={form.control}
           name="username"

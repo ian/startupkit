@@ -1,11 +1,10 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import * as React from "react";
-import { Separator } from "./separator";
+import type { Meta, StoryObj } from '@storybook/react';
+import { Separator } from './separator';
 
 const meta: Meta<typeof Separator> = {
-  title: "UI/Separator",
+  title: 'UI/Separator',
   component: Separator,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
 };
 
 export default meta;
@@ -16,12 +15,16 @@ export const Horizontal: Story = {
     <div>
       <div className="space-y-1">
         <h4 className="text-sm font-medium leading-none">Content Above</h4>
-        <p className="text-sm text-muted-foreground">Description above the separator</p>
+        <p className="text-sm text-muted-foreground">
+          Description above the separator
+        </p>
       </div>
       <Separator className="my-4" />
       <div className="space-y-1">
         <h4 className="text-sm font-medium leading-none">Content Below</h4>
-        <p className="text-sm text-muted-foreground">Description below the separator</p>
+        <p className="text-sm text-muted-foreground">
+          Description below the separator
+        </p>
       </div>
     </div>
   ),

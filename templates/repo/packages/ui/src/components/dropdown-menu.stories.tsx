@@ -1,5 +1,7 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import * as React from "react";
+import type { Meta, StoryObj } from '@storybook/react';
+import { CreditCard, LogOut, Settings, User } from 'lucide-react';
+import * as React from 'react';
+import { Button } from './button';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -15,14 +17,12 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "./dropdown-menu";
-import { Button } from "./button";
-import { User, Settings, CreditCard, LogOut } from "lucide-react";
+} from './dropdown-menu';
 
 const meta: Meta<typeof DropdownMenu> = {
-  title: "UI/DropdownMenu",
+  title: 'UI/DropdownMenu',
   component: DropdownMenu,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
 };
 
 export default meta;
@@ -105,7 +105,7 @@ export const WithCheckboxItems: Story = {
 
 export const WithRadioItems: Story = {
   render: () => {
-    const [position, setPosition] = React.useState("bottom");
+    const [position, setPosition] = React.useState('bottom');
 
     return (
       <DropdownMenu>

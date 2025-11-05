@@ -1,13 +1,12 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import * as React from "react";
-import { Label } from "./label";
-import { Input } from "./input";
-import { Checkbox } from "./checkbox";
+import type { Meta, StoryObj } from '@storybook/react';
+import { Checkbox } from './checkbox';
+import { Input } from './input';
+import { Label } from './label';
 
 const meta: Meta<typeof Label> = {
-  title: "UI/Label",
+  title: 'UI/Label',
   component: Label,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
 };
 
 export default meta;
@@ -38,7 +37,10 @@ export const WithCheckbox: Story = {
 export const Required: Story = {
   render: () => (
     <div className="grid w-full max-w-sm items-center gap-1.5">
-      <Label htmlFor="username" className="after:content-['*'] after:ml-0.5 after:text-red-500">
+      <Label
+        htmlFor="username"
+        className="after:content-['*'] after:ml-0.5 after:text-red-500"
+      >
         Username
       </Label>
       <Input id="username" placeholder="Username" />

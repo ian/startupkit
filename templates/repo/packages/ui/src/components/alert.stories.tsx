@@ -1,12 +1,15 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import * as React from "react";
-import { Alert, AlertDescription, AlertTitle } from "./alert";
-import { ExclamationTriangleIcon, InfoCircledIcon, CheckCircledIcon } from "@radix-ui/react-icons";
+import {
+  CheckCircledIcon,
+  ExclamationTriangleIcon,
+  InfoCircledIcon,
+} from '@radix-ui/react-icons';
+import type { Meta, StoryObj } from '@storybook/react';
+import { Alert, AlertDescription, AlertTitle } from './alert';
 
 const meta: Meta<typeof Alert> = {
-  title: "UI/Alert",
+  title: 'UI/Alert',
   component: Alert,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
 };
 
 export default meta;
@@ -52,9 +55,7 @@ export const WithoutTitle: Story = {
   render: () => (
     <Alert>
       <InfoCircledIcon className="h-4 w-4" />
-      <AlertDescription>
-        This is an alert without a title.
-      </AlertDescription>
+      <AlertDescription>This is an alert without a title.</AlertDescription>
     </Alert>
   ),
 };

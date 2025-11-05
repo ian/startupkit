@@ -1,6 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import * as React from "react";
-import { Button } from "./button";
+import type { Meta, StoryObj } from '@storybook/react';
+import { Button } from './button';
 import {
   Card,
   CardContent,
@@ -8,12 +7,12 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "./card";
+} from './card';
 
 const meta: Meta<typeof Card> = {
-  title: "UI/Card",
+  title: 'UI/Card',
   component: Card,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
 };
 
 export default meta;

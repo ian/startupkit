@@ -1,13 +1,17 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import * as React from "react";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./collapsible";
-import { Button } from "./button";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import type { Meta, StoryObj } from '@storybook/react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
+import * as React from 'react';
+import { Button } from './button';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from './collapsible';
 
 const meta: Meta<typeof Collapsible> = {
-  title: "UI/Collapsible",
+  title: 'UI/Collapsible',
   component: Collapsible,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
 };
 
 export default meta;
@@ -24,9 +28,7 @@ export const Default: Story = {
         className="w-[350px] space-y-2"
       >
         <div className="flex items-center justify-between space-x-4 px-4">
-          <h4 className="text-sm font-semibold">
-            Collapsible Demo
-          </h4>
+          <h4 className="text-sm font-semibold">Collapsible Demo</h4>
           <CollapsibleTrigger asChild>
             <Button variant="ghost" size="sm" className="w-9 p-0">
               {isOpen ? (

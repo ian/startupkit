@@ -1,12 +1,11 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import * as React from "react";
-import { Input } from "./input";
-import { Search, Mail, Lock } from "lucide-react";
+import type { Meta, StoryObj } from '@storybook/react';
+import { Lock, Mail, Search } from 'lucide-react';
+import { Input } from './input';
 
 const meta: Meta<typeof Input> = {
-  title: "UI/Input",
+  title: 'UI/Input',
   component: Input,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
 };
 
 export default meta;
@@ -18,19 +17,13 @@ export const Default: Story = {
 
 export const WithLeftIcon: Story = {
   render: () => (
-    <Input
-      placeholder="Search..."
-      leftIcon={<Search className="h-4 w-4" />}
-    />
+    <Input placeholder="Search..." leftIcon={<Search className="h-4 w-4" />} />
   ),
 };
 
 export const WithRightIcon: Story = {
   render: () => (
-    <Input
-      placeholder="Email"
-      rightIcon={<Mail className="h-4 w-4" />}
-    />
+    <Input placeholder="Email" rightIcon={<Mail className="h-4 w-4" />} />
   ),
 };
 
@@ -54,12 +47,7 @@ export const Disabled: Story = {
 };
 
 export const Invalid: Story = {
-  render: () => (
-    <Input
-      placeholder="Invalid input"
-      aria-invalid={true}
-    />
-  ),
+  render: () => <Input placeholder="Invalid input" aria-invalid={true} />,
 };
 
 export const WithType: Story = {
