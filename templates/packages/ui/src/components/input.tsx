@@ -26,7 +26,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <div
         className={cn(
           'flex items-center border border-input rounded-md bg-background focus-within:border-current',
-          ariaInvalid === true && 'border-destructive bg-destructive/10',
+          ariaInvalid && ariaInvalid !== 'false' && 'border-destructive bg-destructive/10',
           className,
         )}
       >
