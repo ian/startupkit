@@ -41,7 +41,7 @@ export const auth = betterAuth({
 		level: "error",
 		log: (level, message, ...args) => {
 			// Custom logging implementation
-			console.log(`[${level}] ${message}`, ...args);
+			console.log(`[${level}] ${message}`, ...args)
 		}
 	},
 	database: drizzleAdapter(dbSchema.db, {

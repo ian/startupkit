@@ -51,7 +51,14 @@ describe("CLI init - Full Test Suite", () => {
 			const packagesDir = path.join(projectPath, "packages")
 			expect(fs.existsSync(packagesDir)).toBeTruthy()
 
-			const expectedPackages = ["ui", "auth", "db", "analytics", "utils", "emails"]
+			const expectedPackages = [
+				"ui",
+				"auth",
+				"db",
+				"analytics",
+				"utils",
+				"emails"
+			]
 
 			for (const pkg of expectedPackages) {
 				const pkgPath = path.join(packagesDir, pkg)
@@ -105,7 +112,10 @@ describe("CLI init - Full Test Suite", () => {
 		})
 
 		it("should have auth library and provider", () => {
-			const authLibPath = path.join(projectPath, "packages/auth/src/lib/auth.ts")
+			const authLibPath = path.join(
+				projectPath,
+				"packages/auth/src/lib/auth.ts"
+			)
 			const authProviderPath = path.join(
 				projectPath,
 				"packages/auth/src/components/provider.tsx"
@@ -160,4 +170,3 @@ describe("CLI init - Full Test Suite", () => {
 		})
 	})
 })
-

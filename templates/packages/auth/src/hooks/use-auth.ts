@@ -16,4 +16,3 @@ interface UseAuthReturn {
 export function useAuth(): UseAuthReturn {
 	return useStartupKitAuth() as UseAuthReturn
 }
-
