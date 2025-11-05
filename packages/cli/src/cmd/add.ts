@@ -151,7 +151,7 @@ async function addApp(props: {
 	// Install dependencies from workspace root
 	const workspaceRoot = process.cwd()
 	await spinner(`Installing dependencies`, async () => {
-		await exec("pnpm install", {
+		await exec("pnpm install --no-frozen-lockfile", {
 			cwd: workspaceRoot,
 			stdio: "inherit"
 		})

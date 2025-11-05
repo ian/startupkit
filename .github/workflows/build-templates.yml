@@ -42,7 +42,7 @@ jobs:
       - name: Reinstall with local packages
         run: |
           rm -rf node_modules pnpm-lock.yaml
-          pnpm install
+          pnpm install --no-frozen-lockfile
         working-directory: ./tmp/repo
 
       - name: Verify Install
@@ -86,7 +86,7 @@ jobs:
       - name: Reinstall with local packages
         run: |
           rm -rf node_modules pnpm-lock.yaml
-          pnpm install
+          pnpm install --no-frozen-lockfile
         working-directory: ./tmp/repo
 
       - name: Install app (with branch)
@@ -95,7 +95,7 @@ jobs:
         working-directory: ./tmp/repo
 
       - name: Reinstall after adding app
-        run: pnpm install
+        run: pnpm install --no-frozen-lockfile
         working-directory: ./tmp/repo
 
       - name: Verify Install
