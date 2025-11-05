@@ -39,7 +39,7 @@ my-project/
 - ✅ Path resolution for degit sources
 - ✅ Branch name handling
 
-### 2. Full Integration Test (`init.full.test.ts`)
+### 2. Full Integration Test (`init.integration.test.ts`)
 
 **One project creation, comprehensive checks:**
 - ✅ Repo structure files cloned correctly
