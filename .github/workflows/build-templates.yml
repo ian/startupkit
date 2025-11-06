@@ -1,0 +1,112 @@
+name: Build Template
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+
+jobs:
+  build-repo-template:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2 
+      - uses: ./.github/actions/setup
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install template dependencies
+        run: pnpm install --frozen-lockfile
+        working-directory: ./templates/repo
+
+      - name: Build packages
+        run: pnpm --filter "./packages/**" build
+
+      - name: Add working directory
+        run: mkdir -p ./tmp
+
+      - name: Install repo (with branch)
+        run: |
+          node $GITHUB_WORKSPACE/packages/cli/dist/cli.js init --name repo --repo "ian/startupkit/templates/repo#${GITHUB_REF_NAME}"
+        working-directory: ./tmp
+
+      - name: Link local packages for testing
+        run: |
+          echo "🔗 Linking local @startupkit/* packages..."
+          node "$GITHUB_WORKSPACE/scripts/link-local.js" link "tmp/repo" "$GITHUB_WORKSPACE/packages"
+
+      - name: Reinstall with local packages
+        run: |
+          rm -rf node_modules pnpm-lock.yaml
+          pnpm install --no-frozen-lockfile
+        working-directory: ./tmp/repo
+
+      - name: Verify Install
+        run: |
+          node $GITHUB_WORKSPACE/packages/cli/dist/post-install-check.js --mode repo
+        working-directory: ./tmp/repo
+
+      - name: Lint
+        run: pnpm run lint
+        working-directory: ./tmp/repo
+
+      - name: Typecheck
+        run: pnpm run typecheck
+        working-directory: ./tmp/repo
+
+  build-next-template:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2 
+      - uses: ./.github/actions/setup
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm --filter "./packages/**" build
+
+      - name: Add working directory
+        run: mkdir -p ./tmp
+
+      - name: Install repo (with branch)
+        run: |
+          node $GITHUB_WORKSPACE/packages/cli/dist/cli.js init --name repo --repo "ian/startupkit/templates/repo#${GITHUB_REF_NAME}"
+        working-directory: ./tmp
+
+      - name: Link local packages for testing
+        run: |
+          echo "🔗 Linking local @startupkit/* packages..."
+          node "$GITHUB_WORKSPACE/scripts/link-local.js" link "tmp/repo" "$GITHUB_WORKSPACE/packages"
+
+      - name: Reinstall with local packages
+        run: |
+          rm -rf node_modules pnpm-lock.yaml
+          pnpm install --no-frozen-lockfile
+        working-directory: ./tmp/repo
+
+      - name: Install app (with branch)
+        run: |
+          node $GITHUB_WORKSPACE/packages/cli/dist/cli.js add next --name next --repo "ian/startupkit/templates/apps/next#${GITHUB_REF_NAME}"
+        working-directory: ./tmp/repo
+
+      - name: Reinstall after adding app
+        run: pnpm install --no-frozen-lockfile
+        working-directory: ./tmp/repo
+
+      - name: Verify Install
+        run: |
+          node $GITHUB_WORKSPACE/packages/cli/dist/post-install-check.js --mode app
+        working-directory: ./tmp/repo/apps/next
+
+      - name: Lint
+        run: pnpm --filter "./apps/next" run lint
+        working-directory: ./tmp/repo
+
+      - name: Typecheck
+        run: pnpm --filter "./apps/next" run typecheck
+        working-directory: ./tmp/repo

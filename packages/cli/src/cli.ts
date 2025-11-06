@@ -5,7 +5,7 @@ import { Command } from "commander"
 import { add } from "./cmd/add"
 import { init } from "./cmd/init"
 
-export function run() {
+export async function run() {
 	const program = new Command()
 
 	program.name("startupkit").description("The Zero to One Startup Framework")
@@ -16,8 +16,8 @@ export function run() {
 
 		.option("--name <name>", "Name of the app")
 		.option("--repo <repo>", "Template repo to use")
-		.action((options) => {
-			init({ name: options.name, repoArg: options.repo })
+		.action(async (options) => {
+			await init({ name: options.name, repoArg: options.repo })
 		})
 
 	program
@@ -25,8 +25,8 @@ export function run() {
 		.description("Add a new app to the apps/ folder")
 		.option("--name <name>", "Name of the app")
 		.option("--repo <repo>", "Template repo to use")
-		.action((type, options) => {
-			add({ type, nameArg: options.name, repoArg: options.repo })
+		.action(async (type, options) => {
+			await add({ type, nameArg: options.name, repoArg: options.repo })
 		})
 
 	// program
@@ -51,7 +51,10 @@ export function run() {
 		process.exit(0)
 	}
 
-	program.parse()
+	await program.parseAsync()
 }
 
-run()
+run().catch((error) => {
+	console.error(error)
+	process.exit(1)
+})

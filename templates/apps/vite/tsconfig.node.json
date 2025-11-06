@@ -1,0 +1,11 @@
+{
+  "extends": "@repo/tsconfig/base.json",
+  "compilerOptions": {
+    "composite": true,
+    "module": "ESNext",
+    "noEmit": false,
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["vite.config.ts"]
+}

@@ -107,9 +107,9 @@ async function addApp(props: {
 	let templatePath: string
 
 	if (appType === "next") {
-		templatePath = repoArg || "ian/startupkit/templates/next"
+		templatePath = repoArg || "ian/startupkit/templates/apps/next"
 	} else if (appType === "vite") {
-		templatePath = repoArg || "ian/startupkit/templates/vite"
+		templatePath = repoArg || "ian/startupkit/templates/apps/vite"
 	} else if (appType === "pkg") {
 		templatePath = repoArg || "ian/startupkit/templates/package"
 	}
@@ -130,18 +130,29 @@ async function addApp(props: {
 		await emitter.clone(destDir)
 	})
 
-	// Recursively replace all instances of PROJECT with slug in the cloned repo
+	// Recursively replace all instances of PROJECT placeholders with slug in the cloned repo
+	let replacementPattern: RegExp
+	if (appType === "next") {
+		replacementPattern = /PROJECT_NEXT/g
+	} else if (appType === "vite") {
+		replacementPattern = /PROJECT_VITE/g
+	} else {
+		replacementPattern = /PROJECT/g
+	}
+
 	await replaceInFile({
 		files: path.join(destDir, "**/*"),
-		from: /PROJECT/g,
+		from: replacementPattern,
 		to: appSlug,
-		ignore: ["**/node_modules/**", "**/.git/**"]
+		ignore: ["**/node_modules/**", "**/.git/**"],
+		allowEmptyPaths: true
 	})
 
-	// Install dependencies
+	// Install dependencies from workspace root
+	const workspaceRoot = process.cwd()
 	await spinner(`Installing dependencies`, async () => {
 		await exec("pnpm install --no-frozen-lockfile", {
-			cwd: destDir,
+			cwd: workspaceRoot,
 			stdio: "inherit"
 		})
 	})

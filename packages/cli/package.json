@@ -9,17 +9,8 @@
 		"type": "git",
 		"url": "https://github.com/ian/startupkit"
 	},
-	"keywords": [
-		"startup",
-		"boostrap",
-		"boilerplate",
-		"analytics",
-		"auth"
-	],
-	"files": [
-		"dist",
-		"templates"
-	],
+	"keywords": ["startup", "boostrap", "boilerplate", "analytics", "auth"],
+	"files": ["dist", "templates"],
 	"type": "module",
 	"main": "dist/cli.js",
 	"bin": {
@@ -36,6 +27,9 @@
 		"build": "rollup -c",
 		"build:watch": "rollup -c -w",
 		"cli": "node dist/cli.js",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"test:coverage": "vitest run --coverage",
 		"typecheck": "tsc --noEmit",
 		"lint": "biome check",
 		"lint:fix": "biome check --write"
@@ -52,7 +46,9 @@
 		"@rollup/plugin-json": "6.1.0",
 		"@rollup/plugin-node-resolve": "16.0.1",
 		"@types/node": "22.15.3",
+		"@vitest/coverage-v8": "^2.1.8",
 		"inquirer": "12.6.0",
-		"rollup-plugin-command": "^1.1.3"
+		"rollup-plugin-command": "^1.1.3",
+		"vitest": "^2.1.8"
 	}
 }

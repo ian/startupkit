@@ -19,8 +19,8 @@
 		"@repo/utils": "workspace:*"
 	},
 	"devDependencies": {
-		"@repo/biome": "workspace:*",
-		"@repo/tsconfig": "workspace:*",
+		"@config/biome": "workspace:*",
+		"@config/tsconfig": "workspace:*",
 		"@types/node": "catalog:stack"
 	}
 }

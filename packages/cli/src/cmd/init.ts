@@ -11,7 +11,7 @@ type Answers = {
 	key?: string
 } & Record<string, any>
 
-function slugify(input: string): string {
+export function slugify(input: string): string {
 	return input
 		.toLowerCase()
 		.replace(/\s+/g, "-")
@@ -19,6 +19,29 @@ function slugify(input: string): string {
 		.replace(/[^\w\-]+/g, "")
 		.replace(/\-\-+/g, "-")
 		.replace(/^-+|-+$/g, "")
+}
+
+export function buildDegitSources(repoBase: string): {
+	repoSource: string
+	packagesSource: string
+} {
+	if (repoBase.includes("#")) {
+		const [userRepo, branch] = repoBase.split("#")
+		const normalizedRepo = userRepo
+			.replace(/\/templates\/repo$/, "")
+			.replace(/\/templates\/packages$/, "")
+		return {
+			repoSource: `${normalizedRepo}/templates/repo#${branch}`,
+			packagesSource: `${normalizedRepo}/templates/packages#${branch}`
+		}
+	}
+	const normalizedRepo = repoBase
+		.replace(/\/templates\/repo$/, "")
+		.replace(/\/templates\/packages$/, "")
+	return {
+		repoSource: `${normalizedRepo}/templates/repo`,
+		packagesSource: `${normalizedRepo}/templates/packages`
+	}
 }
 
 export async function init(props: {
@@ -72,37 +95,32 @@ export async function init(props: {
 	// Show the collected attributes
 	const attrs = { name: projectName, key }
 
-	// --- USE DEGit TO CLONE ONLY THE SUBDIRECTORY ---
-	const repoBase = props.repoArg || "ian/startupkit/templates/repo"
+	// --- USE DEGit TO CLONE THE REPO STRUCTURE AND PACKAGES ---
+	const repoBase = props.repoArg || "ian/startupkit"
 	const destDir = path.resolve(process.cwd(), key)
 
-	let degitSource: string
-
-	if (repoBase.includes("#")) {
-		const [userRepo, branch] = repoBase.split("#")
-		// If the path already includes /templates/repo, don't add it again
-		if (userRepo.includes("/templates/repo")) {
-			degitSource = `${userRepo}#${branch}`
-		} else {
-			degitSource = `${userRepo}/templates/repo#${branch}`
-		}
-	} else {
-		degitSource = repoBase
-	}
+	const { repoSource, packagesSource } = buildDegitSources(repoBase)
 
 	await spinner(`Cloning template into ${destDir}`, async () => {
-		const emitter = degit(degitSource, {
+		const repoEmitter = degit(repoSource, {
 			cache: false,
 			force: true,
 			verbose: false
 		})
-		await emitter.clone(destDir)
+		await repoEmitter.clone(destDir)
+
+		const packagesEmitter = degit(packagesSource, {
+			cache: false,
+			force: true,
+			verbose: false
+		})
+		await packagesEmitter.clone(path.join(destDir, "packages"))
 	})
 
-	// Recursively replace all instances of PROJECT with slug in the cloned repo
+	// Recursively replace all instances of PROJECT and PROJECT_VITE with slug
 	await replaceInFile({
 		files: `${destDir}/**/*`,
-		from: /PROJECT/g,
+		from: [/PROJECT_VITE/g, /PROJECT/g],
 		to: slug,
 		ignore: ["**/node_modules/**", "**/.git/**"],
 		allowEmptyPaths: true
@@ -110,7 +128,7 @@ export async function init(props: {
 
 	// Install dependencies
 	await spinner(`Installing dependencies`, async () => {
-		await exec("pnpm install", { cwd: destDir })
+		await exec("pnpm install --no-frozen-lockfile", { cwd: destDir })
 	})
 
 	console.log(`\nProject initialized at: ${destDir}`)
