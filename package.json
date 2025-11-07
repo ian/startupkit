@@ -7,6 +7,7 @@
   "private": true,
   "scripts": {
     "clean": "pnpm --stream -r run clean",
+    "nuke": "find . -name 'node_modules' -type d -exec rm -rf {} +",
     "build": "pnpm build:packages && pnpm --stream -r --filter \"./apps/**\" run build",
     "build:packages": "pnpm --stream -r --filter \"./packages/**\" run build",
     "dev": "turbo run dev --continue --ui stream",
@@ -29,7 +30,8 @@
       "react-dom": "19.0.0",
       "@types/react": "19.0.1",
       "@types/react-dom": "19.0.2",
-      "drizzle-orm": "0.38.4"
+      "drizzle-orm": "0.38.4",
+      "prettier": "3.4.2"
     }
   },
   "devDependencies": {
@@ -39,6 +41,8 @@
     "@rollup/plugin-swc": "^0.3.1",
     "@swc/core": "^1.7.6",
     "glob": "^11.0.3",
+    "pg": "^8.13.1",
+    "prettier": "3.4.2",
     "rollup": "^4.20.0",
     "rollup-plugin-esbuild": "^6.1.1",
     "rollup-preserve-directives": "^1.1.1",

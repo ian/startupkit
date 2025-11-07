@@ -25,6 +25,7 @@
 		"react-dom": "catalog:react19"
 	},
 	"devDependencies": {
+		"@config/nextjs": "workspace:*",
 		"@repo/biome": "workspace:*",
 		"@repo/tsconfig": "workspace:*",
 		"@types/node": "catalog:stack",

@@ -31,6 +31,7 @@
 	},
 	"devDependencies": {
 		"@config/biome": "workspace:*",
+		"@config/nextjs": "workspace:*",
 		"@config/tsconfig": "workspace:*",
 		"@types/node": "catalog:stack",
 		"@types/react": "catalog:react19",
