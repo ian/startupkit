@@ -447,7 +447,6 @@ async function addApp(options: AddOptions): Promise<void> {
 				console.log(errorOutput)
 			}
 		}
-		process.exit(1)
 	}
 
 	console.log(`\n✅ App added successfully at: apps/${slug}`)
