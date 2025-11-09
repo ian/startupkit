@@ -10,7 +10,7 @@ Each app template includes a `startupkit.config.ts` file that declares its depen
 import type { StartupKitConfig } from "@startupkit/cli/config"
 
 const config: StartupKitConfig = {
-	type: "app", // or "package"
+	type: "app",
 	dependencies: {
 		packages: ["analytics", "auth", "db", "ui", "utils"],
 		config: ["nextjs", "biome", "typescript"],
