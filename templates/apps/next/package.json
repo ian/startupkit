@@ -30,6 +30,7 @@
 		"@repo/tsconfig": "workspace:*",
 		"@types/node": "catalog:stack",
 		"@types/react": "catalog:react19",
-		"@types/react-dom": "catalog:react19"
+		"@types/react-dom": "catalog:react19",
+		"startupkit": "workspace:*"
 	}
 }

@@ -90,6 +90,7 @@
 		"autoprefixer": "catalog:ui",
 		"next": "catalog:stack",
 		"postcss": "catalog:ui",
+		"startupkit": "workspace:*",
 		"storybook": "8.5.3",
 		"tailwindcss": "catalog:ui"
 	}

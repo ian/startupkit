@@ -38,6 +38,7 @@
 		"@types/react-dom": "catalog:react19",
 		"next": "catalog:stack",
 		"react": "catalog:react19",
-		"react-dom": "catalog:react19"
+		"react-dom": "catalog:react19",
+		"startupkit": "workspace:*"
 	}
 }

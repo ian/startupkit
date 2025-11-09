@@ -1,24 +1,49 @@
+/**
+ * Add command - Scaffolds new apps into a StartupKit workspace with automatic dependency resolution.
+ *
+ * Key features:
+ * - Detects and installs missing workspace packages (@repo/*)
+ * - Detects and installs missing config packages (@config/*)
+ * - Clones templates from GitHub using degit
+ * - Replaces placeholder names with user-provided app names
+ */
+
 import degit from 'degit';
 import inquirer from 'inquirer';
 import fs from 'node:fs';
 import path from 'node:path';
+import type { StartupKitConfig } from '../config';
 import { spinner } from '../lib/spinner';
 import { exec } from '../lib/system';
 
-const APP_TYPES = [
+const TEMPLATE_TYPES = [
   { name: 'Next.js', value: 'next' },
-  { name: 'Expo (maybe)', value: 'expo' },
-  { name: 'Capacitor Mobile', value: 'capacitor' },
-  { name: 'Electron', value: 'electron' },
   { name: 'Vite', value: 'vite' },
-  { name: 'Astro', value: 'astro' },
-  { name: 'Hono', value: 'hono' },
-  { name: 'Fastify', value: 'fastify' },
+  new inquirer.Separator('---- coming soon ----'),
+  { name: 'Expo', value: 'expo', disabled: true },
+  { name: 'Capacitor Mobile', value: 'capacitor', disabled: true },
+  { name: 'Electron', value: 'electron', disabled: true },
+  { name: 'Astro', value: 'astro', disabled: true },
+  { name: 'Hono', value: 'hono', disabled: true },
+  { name: 'Fastify', value: 'fastify', disabled: true },
 ];
 
-const PACKAGE_TYPES = [{ name: 'Package', value: 'pkg' }];
+interface AddOptions {
+  type?: string;
+  name?: string;
+  repo?: string;
+}
 
-// Slugify copied from init
+interface TemplateInfo {
+  type: string;
+  templatePath: string;
+  replacementPattern: RegExp;
+}
+
+/**
+ * Converts a user-provided name into a URL-safe slug.
+ * Example: "My Cool App" → "my-cool-app"
+ */
 function slugify(input: string): string {
   return input
     .toLowerCase()
@@ -29,45 +54,255 @@ function slugify(input: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
-function printComingSoon(type: string) {
-  console.log(`\n${type} support coming soon, we've recorded your vote!`);
+/**
+ * Determines the workspace root directory.
+ * Handles cases where user runs the command from /apps or /packages subdirectories.
+ */
+function getWorkspaceRoot(): string {
+  const cwd = process.cwd();
+  const cwdBase = path.basename(cwd);
+  return cwdBase === 'apps' || cwdBase === 'packages' ? path.dirname(cwd) : cwd;
 }
 
-function checkWorkspacePackages(workspaceRoot: string): boolean {
-  const requiredPackages = [
-    'packages/analytics',
-    'packages/auth',
-    'packages/db',
-    'packages/ui',
-    'packages/utils',
-    'config/nextjs',
-  ];
+/**
+ * Returns template configuration for a given app type.
+ * @param appType - The type of app to add (e.g., 'next', 'vite')
+ * @param repoArg - Optional custom GitHub repo path for the template
+ */
+function getTemplateInfo(appType: string, repoArg?: string): TemplateInfo {
+  const templates: Record<string, TemplateInfo> = {
+    next: {
+      type: 'next',
+      templatePath: repoArg || 'ian/startupkit/templates/apps/next',
+      replacementPattern: /PROJECT_NEXT/g,
+    },
+    vite: {
+      type: 'vite',
+      templatePath: repoArg || 'ian/startupkit/templates/apps/vite',
+      replacementPattern: /PROJECT_VITE/g,
+    },
+  };
 
-  const missingPackages = requiredPackages.filter(
-    (pkg) => !fs.existsSync(path.join(workspaceRoot, pkg)),
-  );
+  const template = templates[appType];
+  if (!template) {
+    throw new Error(`Unknown template type: ${appType}`);
+  }
+  return template;
+}
 
-  if (missingPackages.length > 0) {
-    console.error(
-      '\n❌ Error: This workspace is missing required packages for StartupKit apps.',
-    );
-    console.error('\nMissing packages:');
-    for (const pkg of missingPackages) {
-      console.error(`  - ${pkg}`);
+/**
+ * Loads and parses the startupkit.config.ts file from a template.
+ *
+ * Since templates are remote GitHub repos, we:
+ * 1. Clone the template to a temp directory
+ * 2. Read and parse the config file using regex (can't import TS directly)
+ * 3. Clean up the temp directory
+ * 4. Return the parsed dependency information
+ *
+ * @param templatePath - GitHub repo path (e.g., 'ian/startupkit/templates/apps/next')
+ * @returns Parsed config or null if config doesn't exist
+ */
+async function loadTemplateConfig(
+  templatePath: string,
+): Promise<StartupKitConfig | null> {
+  try {
+    const tempDir = path.join(process.cwd(), '.startupkit-temp');
+    if (!fs.existsSync(tempDir)) {
+      fs.mkdirSync(tempDir, { recursive: true });
     }
-    console.error(
-      '\n💡 To fix this, initialize a new StartupKit workspace with:',
-    );
-    console.error('   npx startupkit init');
-    console.error(
-      "\n   Or run this command inside a workspace that was created with 'startupkit init'.",
-    );
-    return false;
+
+    const emitter = degit(templatePath, {
+      cache: false,
+      force: true,
+      verbose: false,
+    });
+    await emitter.clone(tempDir);
+
+    const configPath = path.join(tempDir, 'startupkit.config.ts');
+    if (!fs.existsSync(configPath)) {
+      return null;
+    }
+
+    const configContent = fs.readFileSync(configPath, 'utf-8');
+
+    // Parse dependencies using regex since we can't import TypeScript directly
+    const packageMatch = configContent.match(/packages:\s*\[(.*?)\]/s)?.[1];
+    const configMatch = configContent.match(/config:\s*\[(.*?)\]/s)?.[1];
+
+    const packages = packageMatch
+      ? packageMatch
+          .split(',')
+          .map((p) => p.trim().replace(/['"]/g, ''))
+          .filter(Boolean)
+      : [];
+
+    const config = configMatch
+      ? configMatch
+          .split(',')
+          .map((c) => c.trim().replace(/['"]/g, ''))
+          .filter(Boolean)
+      : [];
+
+    fs.rmSync(tempDir, { recursive: true, force: true });
+
+    return {
+      type: configContent.includes('"app"') ? 'app' : 'package',
+      dependencies: {
+        packages: packages.length > 0 ? packages : undefined,
+        config: config.length > 0 ? config : undefined,
+      },
+    };
+  } catch (error) {
+    console.error('Failed to load template config:', error);
+    return null;
+  }
+}
+
+interface MissingDependencies {
+  packages: string[];
+  config: string[];
+}
+
+/**
+ * Checks which dependencies declared in the template config are missing from the workspace.
+ * Scans for:
+ * - packages/* - Workspace packages like @repo/auth, @repo/db
+ * - config/* - Config packages like @config/nextjs, @config/typescript
+ *
+ * @returns Lists of missing package and config dependencies
+ */
+function checkMissingDependencies(
+  config: StartupKitConfig | null,
+  workspaceRoot: string,
+): MissingDependencies {
+  const missing: MissingDependencies = {
+    packages: [],
+    config: [],
+  };
+
+  if (!config?.dependencies) {
+    return missing;
   }
 
-  return true;
+  if (config.dependencies.packages) {
+    for (const pkg of config.dependencies.packages) {
+      const pkgPath = path.join(workspaceRoot, 'packages', pkg);
+      if (!fs.existsSync(pkgPath)) {
+        missing.packages.push(pkg);
+      }
+    }
+  }
+
+  if (config.dependencies.config) {
+    for (const cfg of config.dependencies.config) {
+      const cfgPath = path.join(workspaceRoot, 'config', cfg);
+      if (!fs.existsSync(cfgPath)) {
+        missing.config.push(cfg);
+      }
+    }
+  }
+
+  return missing;
 }
 
+/**
+ * Prompts user to install missing dependencies and performs the installation.
+ *
+ * Installation process:
+ * 1. Display what's missing to the user
+ * 2. Ask for confirmation
+ * 3. Clone each missing package/config from GitHub templates
+ * 4. Run pnpm install to link everything together
+ *
+ * If user declines, the command exits with error.
+ */
+async function installMissingDependencies(
+  missing: MissingDependencies,
+  workspaceRoot: string,
+): Promise<void> {
+  const totalMissing = missing.packages.length + missing.config.length;
+
+  if (totalMissing === 0) {
+    return;
+  }
+
+  console.log(
+    `\n⚠️  This template requires ${totalMissing} workspace ${totalMissing === 1 ? 'dependency' : 'dependencies'} that are not installed:\n`,
+  );
+
+  if (missing.packages.length > 0) {
+    console.log('  Packages:');
+    for (const pkg of missing.packages) {
+      console.log(`    - @repo/${pkg}`);
+    }
+  }
+
+  if (missing.config.length > 0) {
+    console.log('  Config:');
+    for (const cfg of missing.config) {
+      console.log(`    - @config/${cfg}`);
+    }
+  }
+
+  const { shouldInstall } = await inquirer.prompt([
+    {
+      type: 'confirm',
+      name: 'shouldInstall',
+      message: 'Would you like to install these dependencies now?',
+      default: true,
+    },
+  ]);
+
+  if (!shouldInstall) {
+    console.log(
+      '\n❌ Cannot proceed without required dependencies. Exiting...',
+    );
+    process.exit(1);
+  }
+
+  for (const pkg of missing.packages) {
+    await spinner(`Installing @repo/${pkg}`, async () => {
+      const templatePath = `ian/startupkit/templates/packages/${pkg}`;
+      const destDir = path.join(workspaceRoot, 'packages', pkg);
+
+      const emitter = degit(templatePath, {
+        cache: false,
+        force: true,
+        verbose: false,
+      });
+      await emitter.clone(destDir);
+    });
+  }
+
+  for (const cfg of missing.config) {
+    await spinner(`Installing @config/${cfg}`, async () => {
+      const templatePath = `ian/startupkit/templates/repo/config/${cfg}`;
+      const destDir = path.join(workspaceRoot, 'config', cfg);
+
+      const emitter = degit(templatePath, {
+        cache: false,
+        force: true,
+        verbose: false,
+      });
+      await emitter.clone(destDir);
+    });
+  }
+
+  await spinner('Installing dependencies', async () => {
+    await exec('pnpm install --no-frozen-lockfile', {
+      cwd: workspaceRoot,
+      stdio: 'pipe',
+    });
+  });
+
+  console.log('✅ All dependencies installed successfully\n');
+}
+
+/**
+ * Recursively replaces placeholder text in all files within a directory.
+ * Used to replace PROJECT_NEXT, PROJECT_VITE, etc. with the actual app name.
+ * Skips node_modules and .git directories, and silently skips binary files.
+ */
 function replaceInDirectory(
   dir: string,
   pattern: RegExp,
@@ -91,142 +326,99 @@ function replaceInDirectory(
         if (content !== newContent) {
           fs.writeFileSync(fullPath, newContent, 'utf8');
         }
-      } catch (error) {
+      } catch {
         // Skip binary files or files that can't be read as text
       }
     }
   }
 }
 
-async function addApp(props: {
-  type?: string;
-  nameArg?: string;
-  repoArg?: string;
-}) {
-  const { type, nameArg, repoArg } = props;
+/**
+ * Main command function to add a new app to the workspace.
+ *
+ * Workflow:
+ * 1. Prompt for app type if not provided (Next.js, Vite, etc.)
+ * 2. Prompt for app name if not provided
+ * 3. Check template dependencies (@repo/auth, @repo/db, etc.)
+ * 4. Install any missing dependencies automatically
+ * 5. Clone the template from GitHub
+ * 6. Replace placeholder names with actual app name
+ * 7. Run pnpm install to set everything up
+ *
+ * @param options - Command line options (type, name, repo)
+ */
+async function addApp(options: AddOptions): Promise<void> {
+  const { type, name: nameArg, repo: repoArg } = options;
 
-  // If no type specified, show interactive select
   let appType = type;
   if (!appType) {
-    const allTypes = [...APP_TYPES, ...PACKAGE_TYPES];
     const { selected } = await inquirer.prompt([
       {
         type: 'list',
         name: 'selected',
-        message: 'Which type would you like to add?',
-        choices: allTypes.map((t) => ({ name: t.name, value: t.value })),
+        message: 'Which app would you like to add?',
+        choices: TEMPLATE_TYPES,
       },
     ]);
     appType = selected;
   }
 
-  if (!['next', 'vite', 'pkg'].includes(appType)) {
-    printComingSoon(appType);
+  if (!['next', 'vite'].includes(appType)) {
+    console.log(`\n${appType} support coming soon, we've recorded your vote!`);
     return;
   }
 
-  // Determine template type
-  let templateType = 'app';
-  if (appType === 'pkg') {
-    templateType = 'package';
-  }
+  const templateInfo = getTemplateInfo(appType, repoArg);
 
-  // Ask for name if not provided
   let itemName = nameArg;
   if (!itemName) {
-    const itemTypeLabel = templateType === 'package' ? 'package' : 'app';
     const { inputName } = await inquirer.prompt([
       {
         type: 'input',
         name: 'inputName',
-        message: `What is the name of your ${itemTypeLabel}?`,
-        validate: (input: string) =>
-          input ? true : `${itemTypeLabel} name is required`,
+        message: 'What is the name of your app?',
+        validate: (input: string) => (input ? true : 'App name is required'),
       },
     ]);
     itemName = inputName;
   }
-  const appSlug = slugify(itemName);
 
-  // Determine where to place the new directory
-  let destDir: string;
-  const cwd = process.cwd();
-  const cwdBase = path.basename(cwd);
-
-  if (templateType === 'package') {
-    if (cwdBase === 'packages') {
-      destDir = path.resolve(cwd, appSlug);
-    } else {
-      destDir = path.resolve(cwd, 'packages', appSlug);
-    }
-  } else {
-    if (cwdBase === 'apps') {
-      destDir = path.resolve(cwd, appSlug);
-    } else {
-      destDir = path.resolve(cwd, 'apps', appSlug);
-    }
-  }
-
-  // Validate workspace for app templates that require workspace packages
-  if (appType === 'next' || appType === 'vite') {
-    const workspaceRoot = cwdBase === 'apps' ? path.dirname(cwd) : cwd;
-    if (!checkWorkspacePackages(workspaceRoot)) {
-      process.exit(1);
-    }
-  }
-
-  // Determine template path
-  let templatePath: string;
-
-  if (appType === 'next') {
-    templatePath = repoArg || 'ian/startupkit/templates/apps/next';
-  } else if (appType === 'vite') {
-    templatePath = repoArg || 'ian/startupkit/templates/apps/vite';
-  } else if (appType === 'pkg') {
-    templatePath = repoArg || 'ian/startupkit/templates/package';
-  }
+  const slug = slugify(itemName);
+  const workspaceRoot = getWorkspaceRoot();
+  const destDir = path.join(workspaceRoot, 'apps', slug);
 
   if (fs.existsSync(destDir)) {
     console.error(
-      `\nError: ${destDir} already exists. Please remove it or choose a different app name.`,
+      `\n❌ Error: ${destDir} already exists. Please remove it or choose a different name.`,
     );
     process.exit(1);
   }
 
-  await spinner(`Cloning template into ${destDir}`, async () => {
-    const emitter = degit(templatePath, {
+  console.log('\n🔍 Checking template dependencies...');
+  const config = await loadTemplateConfig(templateInfo.templatePath);
+
+  const missing = checkMissingDependencies(config, workspaceRoot);
+  await installMissingDependencies(missing, workspaceRoot);
+
+  await spinner(`Cloning template into apps/${slug}`, async () => {
+    const emitter = degit(templateInfo.templatePath, {
       cache: false,
       force: true,
-      verbose: true,
+      verbose: false,
     });
     await emitter.clone(destDir);
   });
 
-  // Recursively replace all instances of PROJECT placeholders with slug in the cloned repo
-  let replacementPattern: RegExp;
-  if (appType === 'next') {
-    replacementPattern = /PROJECT_NEXT/g;
-  } else if (appType === 'vite') {
-    replacementPattern = /PROJECT_VITE/g;
-  } else {
-    replacementPattern = /PROJECT/g;
-  }
+  replaceInDirectory(destDir, templateInfo.replacementPattern, slug);
 
-  replaceInDirectory(destDir, replacementPattern, appSlug);
-
-  // Install dependencies from workspace root
-  const workspaceRoot = process.cwd();
-  await spinner(`Installing dependencies`, async () => {
+  await spinner('Installing dependencies', async () => {
     await exec('pnpm install --no-frozen-lockfile', {
       cwd: workspaceRoot,
-      stdio: 'inherit',
+      stdio: 'pipe',
     });
   });
 
-  // Note: pnpm should automatically link workspace dependencies when installing in a workspace
-
-  const itemTypeLabel = templateType === 'package' ? 'Package' : 'App';
-  console.log(`\n${itemTypeLabel} added at: ${destDir}`);
+  console.log(`\n✅ App added successfully at: apps/${slug}`);
 }
 
 export { addApp as add };
