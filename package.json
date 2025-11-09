@@ -13,6 +13,8 @@
     "dev": "turbo run dev --continue --ui stream",
     "link:local": "node scripts/link-local.js link",
     "unlink:local": "node scripts/link-local.js unlink",
+    "format": "turbo run format --continue --ui stream",
+    "format:fix": "turbo run format:fix --continue --ui stream",
     "lint": "turbo run lint --continue --ui stream",
     "lint:fix": "turbo run lint:fix --continue --ui stream",
     "typecheck": "turbo run typecheck --ui stream",
