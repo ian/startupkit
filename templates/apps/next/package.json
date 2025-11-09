@@ -6,10 +6,11 @@
 		"build": "next build",
 		"start": "next start",
 		"dev": "next dev",
+		"format": "biome format",
+		"format:fix": "biome format --write",
 		"lint": "biome lint --unsafe",
 		"lint:fix": "biome lint --write --unsafe",
-		"typecheck": "tsc --noEmit",
-		"format": "biome format --write"
+		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
 		"@repo/analytics": "workspace:*",
