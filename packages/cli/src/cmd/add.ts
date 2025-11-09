@@ -140,13 +140,24 @@ async function addApp(props: {
 		replacementPattern = /PROJECT/g
 	}
 
-	await replaceInFile({
-		files: path.join(destDir, "**/*"),
-		from: replacementPattern,
-		to: appSlug,
-		ignore: ["**/node_modules/**", "**/.git/**"],
-		allowEmptyPaths: true
-	})
+	try {
+		await replaceInFile({
+			files: "**/*",
+			from: replacementPattern,
+			to: appSlug,
+			ignore: ["**/node_modules/**", "**/.git/**"],
+			allowEmptyPaths: true,
+			cwd: destDir,
+			glob: {
+				dot: true
+			}
+		})
+	} catch (error) {
+		console.warn(
+			"Warning: Could not replace placeholders in template files:",
+			error
+		)
+	}
 
 	// Install dependencies from workspace root
 	const workspaceRoot = process.cwd()

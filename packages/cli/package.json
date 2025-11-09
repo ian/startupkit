@@ -1,6 +1,6 @@
 {
 	"name": "startupkit",
-	"version": "0.5.1",
+	"version": "0.5.3",
 	"author": "Ian Hunter <ian@01.studio>",
 	"license": "ISC",
 	"description": "The NextJS framework with everything you need to launch a SaaS product.",
@@ -9,8 +9,17 @@
 		"type": "git",
 		"url": "https://github.com/ian/startupkit"
 	},
-	"keywords": ["startup", "boostrap", "boilerplate", "analytics", "auth"],
-	"files": ["dist", "templates"],
+	"keywords": [
+		"startup",
+		"boostrap",
+		"boilerplate",
+		"analytics",
+		"auth"
+	],
+	"files": [
+		"dist",
+		"templates"
+	],
 	"type": "module",
 	"main": "dist/cli.js",
 	"bin": {
