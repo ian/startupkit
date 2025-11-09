@@ -3,7 +3,7 @@ import type { StartupKitConfig } from 'startupkit/config';
 const config: StartupKitConfig = {
   type: 'package',
   dependencies: {
-    packages: ['db'],
+    packages: ['db', 'emails'],
     config: ['biome', 'typescript'],
   },
 };

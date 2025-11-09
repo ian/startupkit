@@ -17,9 +17,6 @@
 		"typecheck": "tsc --noEmit",
 		"storybook": "storybook dev -p 6006"
 	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
 	"dependencies": {
 		"@repo/analytics": "workspace:*",
 		"@repo/db": "workspace:*",
