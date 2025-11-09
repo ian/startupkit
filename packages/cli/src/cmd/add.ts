@@ -288,14 +288,28 @@ async function installMissingDependencies(
     });
   }
 
-  await spinner('Installing dependencies', async () => {
-    await exec('pnpm install --no-frozen-lockfile', {
-      cwd: workspaceRoot,
-      stdio: 'pipe',
+  try {
+    await spinner('Installing dependencies', async () => {
+      await exec('pnpm install --no-frozen-lockfile', {
+        cwd: workspaceRoot,
+        stdio: 'pipe',
+      });
     });
-  });
-
-  console.log('✅ All dependencies installed successfully\n');
+    console.log('✅ All dependencies installed successfully\n');
+  } catch (error) {
+    console.log(
+      '\n❌ Failed to install dependencies. Please run pnpm install manually.',
+    );
+    if (error instanceof Error && 'stdout' in error) {
+      const stdout = (error as { stdout: Buffer }).stdout;
+      const errorOutput = stdout.toString('utf-8');
+      if (errorOutput) {
+        console.log('\nError details:');
+        console.log(errorOutput);
+      }
+    }
+    process.exit(1);
+  }
 }
 
 /**
@@ -411,12 +425,32 @@ async function addApp(options: AddOptions): Promise<void> {
 
   replaceInDirectory(destDir, templateInfo.replacementPattern, slug);
 
-  await spinner('Installing dependencies', async () => {
-    await exec('pnpm install --no-frozen-lockfile', {
-      cwd: workspaceRoot,
-      stdio: 'pipe',
+  try {
+    await spinner('Installing dependencies', async () => {
+      await exec('pnpm install --no-frozen-lockfile', {
+        cwd: workspaceRoot,
+        stdio: 'pipe',
+      });
     });
-  });
+  } catch (error) {
+    console.log(
+      `\n⚠️  App added but dependency installation failed. You may need to run 'pnpm install' manually.`,
+    );
+    if (error instanceof Error && 'stdout' in error) {
+      const stdout = (error as { stdout: Buffer }).stdout;
+      const errorOutput = stdout.toString('utf-8');
+      if (errorOutput.includes('ERR_PNPM_CATALOG')) {
+        console.log(
+          '\n💡 Tip: This usually happens when catalog dependencies are not properly configured.',
+        );
+        console.log('   Try running: pnpm install --no-frozen-lockfile\n');
+      } else {
+        console.log('\nError details:');
+        console.log(errorOutput);
+      }
+    }
+    process.exit(1);
+  }
 
   console.log(`\n✅ App added successfully at: apps/${slug}`);
 }

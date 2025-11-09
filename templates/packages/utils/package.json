@@ -34,7 +34,6 @@
 	"devDependencies": {
 		"@repo/biome": "workspace:*",
 		"@repo/tsconfig": "workspace:*",
-		"@types/node": "catalog:stack",
-		"startupkit": "workspace:*"
+		"@types/node": "catalog:stack"
 	}
 }

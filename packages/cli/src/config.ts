@@ -7,7 +7,7 @@
  *
  * @example
  * ```typescript
- * import type { StartupKitConfig } from "@startupkit/cli/config"
+ * import type { StartupKitConfig } from "startupkit/config"
  *
  * const config: StartupKitConfig = {
  *   type: "app",

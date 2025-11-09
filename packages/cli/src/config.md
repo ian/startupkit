@@ -7,7 +7,7 @@ The StartupKit CLI includes an automatic dependency management system that ensur
 Each app template includes a `startupkit.config.ts` file that declares its dependencies:
 
 ```typescript
-import type { StartupKitConfig } from "@startupkit/cli/config"
+import type { StartupKitConfig } from "startupkit/config"
 
 const config: StartupKitConfig = {
 	type: "app",
@@ -100,7 +100,7 @@ $ npx startupkit add next --name web
 If you're creating custom app templates or forking StartupKit templates, add a `startupkit.config.ts` file at the root:
 
 ```typescript
-import type { StartupKitConfig } from "@startupkit/cli/config"
+import type { StartupKitConfig } from "startupkit/config"
 
 const config: StartupKitConfig = {
 	type: "app",

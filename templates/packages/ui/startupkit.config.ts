@@ -1,11 +1,10 @@
-import type { StartupKitConfig } from "@startupkit/cli/config"
+import type { StartupKitConfig } from 'startupkit/config';
 
 const config: StartupKitConfig = {
-	type: "package",
-	dependencies: {
-		config: ["biome", "typescript"],
-	},
-}
+  type: 'package',
+  dependencies: {
+    config: ['biome', 'typescript'],
+  },
+};
 
-export default config
-
+export default config;

@@ -25,7 +25,6 @@
 		"@types/node": "catalog:stack",
 		"@types/react": "catalog:react19",
 		"@types/react-dom": "catalog:react19",
-		"react-email": "4.0.3",
-		"startupkit": "workspace:*"
+		"react-email": "4.0.3"
 	}
 }

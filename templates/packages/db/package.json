@@ -27,7 +27,6 @@
 		"@repo/tsconfig": "workspace:*",
 		"@types/node": "catalog:stack",
 		"@types/pg": "^8.11.10",
-		"drizzle-kit": "^0.30.2",
-		"startupkit": "workspace:*"
+		"drizzle-kit": "^0.30.2"
 	}
 }
