@@ -21,15 +21,15 @@
  * ```
  */
 export interface StartupKitConfig {
-  /** Template type: "app" for applications, "package" for workspace packages */
-  type: 'app' | 'package';
-  /** Optional dependencies required by this template */
-  dependencies?: {
-    /** Workspace packages (e.g., "auth", "db") - installed to packages/* */
-    packages?: string[];
-    /** Config packages (e.g., "nextjs", "typescript") - installed to config/* */
-    config?: string[];
-  };
+	/** Template type: "app" for applications, "package" for workspace packages */
+	type: "app" | "package"
+	/** Optional dependencies required by this template */
+	dependencies?: {
+		/** Workspace packages (e.g., "auth", "db") - installed to packages/* */
+		packages?: string[]
+		/** Config packages (e.g., "nextjs", "typescript") - installed to config/* */
+		config?: string[]
+	}
 }
 
 /**
@@ -51,12 +51,12 @@ export interface StartupKitConfig {
  * ```
  */
 export async function loadConfig(
-  configPath: string,
+	configPath: string
 ): Promise<StartupKitConfig | null> {
-  try {
-    const { default: config } = await import(configPath);
-    return config;
-  } catch {
-    return null;
-  }
+	try {
+		const { default: config } = await import(configPath)
+		return config
+	} catch {
+		return null
+	}
 }
