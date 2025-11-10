@@ -1,5 +1,5 @@
 import { Providers } from "@/app/providers"
-import { defaultMetadata } from "@/app/(seo)/metadata"
+import { metadata as defaultMetadata } from "@/lib/metadata"
 import { getFeatureFlags } from "@repo/analytics/server"
 import { withAuth } from "@repo/auth/server"
 import { Geist, Geist_Mono, Urbanist } from "next/font/google"

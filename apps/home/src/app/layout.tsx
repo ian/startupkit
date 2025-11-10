@@ -1,4 +1,4 @@
-import { defaultMetadata } from "@/app/(seo)/metadata"
+import { metadata as defaultMetadata } from "@/lib/metadata"
 import {
 	Noto_Sans_Mono as FontMono,
 	Noto_Sans as FontSans,
