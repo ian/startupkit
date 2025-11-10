@@ -1,4 +1,4 @@
-export { generateMetadata, defaultMetadata } from "./metadata"
+export { generateMetadata } from "./metadata"
 export type { GenerateMetadataParams } from "./metadata"
 
 export {
