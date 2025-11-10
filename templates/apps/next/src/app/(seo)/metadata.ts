@@ -17,19 +17,18 @@ export function generateMetadata({
 	noIndex = false
 }: GenerateMetadataParams): Metadata {
 	const baseUrl = getUrl()
-	const url = `${baseUrl}${path}`
 
 	const metadata: Metadata = {
 		title,
 		description,
 		metadataBase: new URL(baseUrl),
 		alternates: {
-			canonical: url
+			canonical: getUrl(path)
 		},
 		openGraph: {
 			title,
 			description,
-			url,
+			url: getUrl(path),
 			siteName: "StartupKit",
 			images: [
 				{
@@ -76,7 +75,7 @@ export const defaultMetadata: Metadata = {
 	],
 	authors: [{ name: "StartupKit" }],
 	creator: "StartupKit",
-	metadataBase: new URL(getUrl()),
+	metadataBase: getUrl(),
 	openGraph: {
 		type: "website",
 		locale: "en_US",
@@ -84,7 +83,7 @@ export const defaultMetadata: Metadata = {
 		siteName: "StartupKit",
 		images: [
 			{
-				url: "/hero/og.avif",
+				url: getUrl("hero/og.avif"),
 				width: 1200,
 				height: 630,
 				alt: "StartupKit Next Template"
@@ -96,9 +95,9 @@ export const defaultMetadata: Metadata = {
 		creator: "@startupkit"
 	},
 	icons: {
-		icon: "/favicon.ico",
-		shortcut: "/favicon-16x16.png",
-		apple: "/apple-touch-icon.png"
+		icon: getUrl("favicon.ico"),
+		shortcut: getUrl("favicon-16x16.png"),
+		apple: getUrl("apple-touch-icon.png")
 	},
-	manifest: "/site.webmanifest"
+	manifest: getUrl("site.webmanifest")
 }
