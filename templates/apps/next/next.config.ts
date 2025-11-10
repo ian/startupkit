@@ -1,5 +1,5 @@
-import { withMonorepoConfig } from "@config/nextjs"
-import type { NextConfig } from "next"
+import { withMonorepoConfig } from "@repo/nextjs";
+import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
 	transpilePackages: [

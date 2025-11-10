@@ -1,6 +1,6 @@
 {
 	"name": "startupkit",
-	"version": "0.5.1",
+	"version": "0.5.4",
 	"author": "Ian Hunter <ian@01.studio>",
 	"license": "ISC",
 	"description": "The NextJS framework with everything you need to launch a SaaS product.",
@@ -19,6 +19,10 @@
 	"exports": {
 		".": {
 			"default": "./dist/cli.js"
+		},
+		"./config": {
+			"types": "./src/config.ts",
+			"default": "./dist/config.js"
 		},
 		"./package.json": "./package.json"
 	},

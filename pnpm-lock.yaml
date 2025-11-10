@@ -19,9 +19,6 @@ catalogs:
       specifier: 3.24.1
       version: 3.24.1
   ui:
-    '@hookform/resolvers':
-      specifier: 3.9.1
-      version: 3.9.1
     autoprefixer:
       specifier: 10.4.20
       version: 10.4.20
@@ -316,10 +313,10 @@ importers:
         specifier: workspace:*
         version: link:../../packages/utils
       framer-motion:
-        specifier: catalog:ui
-        version: 12.23.24(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        specifier: 12.9.4
+        version: 12.9.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       lucide-react:
-        specifier: catalog:ui
+        specifier: 0.446.0
         version: 0.446.0(react@19.0.0)
       next:
         specifier: catalog:stack
@@ -334,12 +331,12 @@ importers:
         specifier: 19.0.0
         version: 19.0.0(react@19.0.0)
     devDependencies:
-      '@config/nextjs':
-        specifier: workspace:*
-        version: link:../../../config/nextjs
       '@repo/biome':
         specifier: workspace:*
         version: link:../../repo/config/biome
+      '@repo/nextjs':
+        specifier: workspace:*
+        version: link:../../repo/config/nextjs
       '@repo/tsconfig':
         specifier: workspace:*
         version: link:../../repo/config/typescript
@@ -411,7 +408,7 @@ importers:
         specifier: workspace:*
         version: link:../utils
       '@startupkit/analytics':
-        specifier: 0.5.1
+        specifier: 0.5.4
         version: link:../../../packages/analytics
       posthog-js:
         specifier: 1.235.5
@@ -460,7 +457,7 @@ importers:
         specifier: workspace:*
         version: link:../utils
       '@startupkit/auth':
-        specifier: 0.5.1
+        specifier: 0.5.4
         version: link:../../../packages/auth
       better-auth:
         specifier: 1.3.27
@@ -565,7 +562,7 @@ importers:
   templates/packages/ui:
     dependencies:
       '@hookform/resolvers':
-        specifier: catalog:ui
+        specifier: 3.9.1
         version: 3.9.1(react-hook-form@7.54.1(react@19.0.0))
       '@radix-ui/react-alert-dialog':
         specifier: 1.1.2
@@ -640,10 +637,10 @@ importers:
         specifier: 2.1.1
         version: 2.1.1
       framer-motion:
-        specifier: catalog:ui
-        version: 12.23.24(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        specifier: 12.9.4
+        version: 12.9.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       lucide-react:
-        specifier: catalog:ui
+        specifier: 0.446.0
         version: 0.446.0(react@19.0.0)
       next-themes:
         specifier: 0.3.0
@@ -743,19 +740,19 @@ importers:
         specifier: 19.0.2
         version: 19.0.2(@types/react@19.0.1)
       autoprefixer:
-        specifier: catalog:ui
+        specifier: 10.4.20
         version: 10.4.20(postcss@8.4.47)
       next:
         specifier: catalog:stack
         version: 16.0.0(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       postcss:
-        specifier: catalog:ui
+        specifier: 8.4.47
         version: 8.4.47
       storybook:
         specifier: 8.5.3
         version: 8.5.3(prettier@3.4.2)
       tailwindcss:
-        specifier: catalog:ui
+        specifier: 3.4.14
         version: 3.4.14
 
   templates/packages/utils:
@@ -820,6 +817,8 @@ importers:
         version: 22.12.0
 
   templates/repo/config/biome: {}
+
+  templates/repo/config/nextjs: {}
 
   templates/repo/config/typescript: {}
 
@@ -7511,6 +7510,20 @@ packages:
 
   framer-motion@12.23.24:
     resolution: {integrity: sha512-HMi5HRoRCTou+3fb3h9oTLyJGBxHfW+HnNE25tAXOvVx/IvwMHK0cx7IR4a2ZU6sh3IX1Z+4ts32PcYBOqka8w==}
+    peerDependencies:
+      '@emotion/is-prop-valid': '*'
+      react: 19.0.0
+      react-dom: 19.0.0
+    peerDependenciesMeta:
+      '@emotion/is-prop-valid':
+        optional: true
+      react:
+        optional: true
+      react-dom:
+        optional: true
+
+  framer-motion@12.9.4:
+    resolution: {integrity: sha512-yaeGDmGQ3eCQEwZ95/pRQMaSh/Q4E2CK6JYOclG/PdjyQad0MULJ+JFVV8911Fl5a6tF6o0wgW8Dpl5Qx4Adjg==}
     peerDependencies:
       '@emotion/is-prop-valid': '*'
       react: 19.0.0
@@ -16402,8 +16415,8 @@ snapshots:
       next: 16.0.0(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       node-polyfill-webpack-plugin: 2.0.1(webpack@5.102.1(@swc/core@1.15.0)(esbuild@0.24.2))
       pnp-webpack-plugin: 1.7.0(typescript@5.9.2)
-      postcss: 8.5.6
-      postcss-loader: 8.2.0(postcss@8.5.6)(typescript@5.9.2)(webpack@5.102.1(@swc/core@1.15.0)(esbuild@0.24.2))
+      postcss: 8.4.47
+      postcss-loader: 8.2.0(postcss@8.4.47)(typescript@5.9.2)(webpack@5.102.1(@swc/core@1.15.0)(esbuild@0.24.2))
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
       react-refresh: 0.14.2
@@ -17879,12 +17892,12 @@ snapshots:
 
   css-loader@6.11.0(webpack@5.102.1(@swc/core@1.15.0)(esbuild@0.24.2)):
     dependencies:
-      icss-utils: 5.1.0(postcss@8.5.6)
-      postcss: 8.5.6
-      postcss-modules-extract-imports: 3.1.0(postcss@8.5.6)
-      postcss-modules-local-by-default: 4.2.0(postcss@8.5.6)
-      postcss-modules-scope: 3.2.1(postcss@8.5.6)
-      postcss-modules-values: 4.0.0(postcss@8.5.6)
+      icss-utils: 5.1.0(postcss@8.4.47)
+      postcss: 8.4.47
+      postcss-modules-extract-imports: 3.1.0(postcss@8.4.47)
+      postcss-modules-local-by-default: 4.2.0(postcss@8.4.47)
+      postcss-modules-scope: 3.2.1(postcss@8.4.47)
+      postcss-modules-values: 4.0.0(postcss@8.4.47)
       postcss-value-parser: 4.2.0
       semver: 7.7.3
     optionalDependencies:
@@ -18638,6 +18651,15 @@ snapshots:
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
 
+  framer-motion@12.9.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+    dependencies:
+      motion-dom: 12.23.23
+      motion-utils: 12.23.6
+      tslib: 2.8.1
+    optionalDependencies:
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
+
   fs-extra@10.1.0:
     dependencies:
       graceful-fs: 4.2.11
@@ -18963,9 +18985,9 @@ snapshots:
     dependencies:
       safer-buffer: 2.1.2
 
-  icss-utils@5.1.0(postcss@8.5.6):
+  icss-utils@5.1.0(postcss@8.4.47):
     dependencies:
-      postcss: 8.5.6
+      postcss: 8.4.47
 
   ieee754@1.2.1: {}
 
@@ -20877,37 +20899,37 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  postcss-loader@8.2.0(postcss@8.5.6)(typescript@5.9.2)(webpack@5.102.1(@swc/core@1.15.0)(esbuild@0.24.2)):
+  postcss-loader@8.2.0(postcss@8.4.47)(typescript@5.9.2)(webpack@5.102.1(@swc/core@1.15.0)(esbuild@0.24.2)):
     dependencies:
       cosmiconfig: 9.0.0(typescript@5.9.2)
       jiti: 2.6.1
-      postcss: 8.5.6
+      postcss: 8.4.47
       semver: 7.7.3
     optionalDependencies:
       webpack: 5.102.1(@swc/core@1.15.0)(esbuild@0.24.2)
     transitivePeerDependencies:
       - typescript
 
-  postcss-modules-extract-imports@3.1.0(postcss@8.5.6):
+  postcss-modules-extract-imports@3.1.0(postcss@8.4.47):
     dependencies:
-      postcss: 8.5.6
+      postcss: 8.4.47
 
-  postcss-modules-local-by-default@4.2.0(postcss@8.5.6):
+  postcss-modules-local-by-default@4.2.0(postcss@8.4.47):
     dependencies:
-      icss-utils: 5.1.0(postcss@8.5.6)
-      postcss: 8.5.6
+      icss-utils: 5.1.0(postcss@8.4.47)
+      postcss: 8.4.47
       postcss-selector-parser: 7.1.0
       postcss-value-parser: 4.2.0
 
-  postcss-modules-scope@3.2.1(postcss@8.5.6):
+  postcss-modules-scope@3.2.1(postcss@8.4.47):
     dependencies:
-      postcss: 8.5.6
+      postcss: 8.4.47
       postcss-selector-parser: 7.1.0
 
-  postcss-modules-values@4.0.0(postcss@8.5.6):
+  postcss-modules-values@4.0.0(postcss@8.4.47):
     dependencies:
-      icss-utils: 5.1.0(postcss@8.5.6)
-      postcss: 8.5.6
+      icss-utils: 5.1.0(postcss@8.4.47)
+      postcss: 8.4.47
 
   postcss-nested@6.2.0(postcss@8.4.47):
     dependencies:
@@ -21545,7 +21567,7 @@ snapshots:
       adjust-sourcemap-loader: 4.0.0
       convert-source-map: 1.9.0
       loader-utils: 2.0.4
-      postcss: 8.5.6
+      postcss: 8.4.47
       source-map: 0.6.1
 
   resolve@1.22.11:

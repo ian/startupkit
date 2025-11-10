@@ -18,15 +18,15 @@
 		"@repo/db": "workspace:*",
 		"@repo/ui": "workspace:*",
 		"@repo/utils": "workspace:*",
-		"framer-motion": "catalog:ui",
-		"lucide-react": "catalog:ui",
+		"framer-motion": "12.9.4",
+		"lucide-react": "0.446.0",
 		"next": "catalog:stack",
 		"nuqs": "2.2.2",
 		"react": "catalog:react19",
 		"react-dom": "catalog:react19"
 	},
 	"devDependencies": {
-		"@config/nextjs": "workspace:*",
+		"@repo/nextjs": "workspace:*",
 		"@repo/biome": "workspace:*",
 		"@repo/tsconfig": "workspace:*",
 		"@types/node": "catalog:stack",

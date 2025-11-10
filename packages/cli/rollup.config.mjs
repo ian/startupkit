@@ -13,11 +13,14 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const pkg = JSON.parse(
 	readFileSync(pathResolve(__dirname, "package.json"), "utf-8")
-) // Read package.json
-const external = Object.keys(pkg.dependencies, pkg.devDependencies)
+)
+const external = Object.keys({
+	...pkg.dependencies,
+	...pkg.devDependencies
+})
 
 export default {
-	input: ["src/cli.ts", "src/post-install-check.ts"],
+	input: ["src/cli.ts", "src/config.ts", "src/post-install-check.ts"],
 	output: [
 		{
 			dir: "dist/",

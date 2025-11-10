@@ -25,6 +25,11 @@ find templates -path "*/node_modules" -prune -o -name "package.json" -type f -pr
         sed -i '' -E "s/(\"@startupkit\/[^\"]+\": \")(\^)?[0-9]+\.[0-9]+\.[0-9]+(\",?)/\1\2$BUMPED_VERSION\3/g" "$template_file"
         echo "  Updated $template_file"
     fi
+    # Also update the startupkit CLI package reference (without @ prefix)
+    if grep -q "\"startupkit\":" "$template_file"; then
+        sed -i '' -E "s/(\"startupkit\": \")(\^)?[0-9]+\.[0-9]+\.[0-9]+(\",?)/\1\2$BUMPED_VERSION\3/g" "$template_file"
+        echo "  Updated startupkit CLI version in $template_file"
+    fi
 done
 
 git add .

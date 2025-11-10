@@ -26,7 +26,7 @@ export async function run() {
 		.option("--name <name>", "Name of the app")
 		.option("--repo <repo>", "Template repo to use")
 		.action(async (type, options) => {
-			await add({ type, nameArg: options.name, repoArg: options.repo })
+			await add({ type, name: options.name, repo: options.repo })
 		})
 
 	// program

@@ -440,6 +440,18 @@ pnpm --filter @startupkit/analytics build
 pnpm --filter startupkit build
 ```
 
+### Publishing to npm
+
+🚨 **CRITICAL: AI agents must NEVER run publish commands.**
+
+Publishing packages to npm (`pnpm publish`, `npm publish`, or any variant) must **ONLY** be performed by humans. This includes:
+- ❌ `pnpm publish`
+- ❌ `npm publish`
+- ❌ `pnpm --filter @startupkit/* publish`
+- ❌ Any automated publishing scripts or CI commands
+
+If a user requests package publishing, inform them that this must be done manually and cannot be automated by AI agents.
+
 ### Dependency Catalogs
 
 The workspace uses **pnpm catalogs** to manage shared dependency versions in `pnpm-workspace.yaml`:
@@ -985,3 +997,4 @@ When working on this codebase:
 12. ✅ **Use env wrappers** - `pnpm with-env` for dev, `pnpm with-test-env` for tests
 13. ✅ **Place files correctly** - See "File Placement Guidelines" and "Templates Architecture"
 14. ✅ **No unnecessary comments** - Code should be self-documenting
+15. 🚨 **NEVER publish to npm** - Publishing packages (`pnpm publish`, `npm publish`) must ONLY be done by humans, never by AI agents

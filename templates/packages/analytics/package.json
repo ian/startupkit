@@ -21,7 +21,7 @@
 		"@openpanel/sdk": "1.0.0",
 		"@repo/db": "workspace:*",
 		"@repo/utils": "workspace:*",
-		"@startupkit/analytics": "0.5.1",
+		"@startupkit/analytics": "0.5.4",
 		"posthog-js": "1.235.5",
 		"posthog-node": "4.2.1"
 	},
