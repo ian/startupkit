@@ -18,7 +18,7 @@
 		"@repo/db": "workspace:*",
 		"@repo/ui": "workspace:*",
 		"@repo/utils": "workspace:*",
-		"@startupkit/seo": "workspace:*",
+		"@startupkit/seo": "0.5.4",
 		"framer-motion": "12.9.4",
 		"lucide-react": "0.446.0",
 		"next": "catalog:stack",
