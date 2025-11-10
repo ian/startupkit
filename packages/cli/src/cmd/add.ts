@@ -8,36 +8,36 @@
  * - Replaces placeholder names with user-provided app names
  */
 
-import degit from 'degit';
-import inquirer from 'inquirer';
-import fs from 'node:fs';
-import path from 'node:path';
-import type { StartupKitConfig } from '../config';
-import { spinner } from '../lib/spinner';
-import { exec } from '../lib/system';
+import fs from "node:fs"
+import path from "node:path"
+import degit from "degit"
+import inquirer from "inquirer"
+import type { StartupKitConfig } from "../config"
+import { spinner } from "../lib/spinner"
+import { exec } from "../lib/system"
 
 const TEMPLATE_TYPES = [
-  { name: 'Next.js', value: 'next' },
-  { name: 'Vite', value: 'vite' },
-  new inquirer.Separator('---- coming soon ----'),
-  { name: 'Expo', value: 'expo', disabled: true },
-  { name: 'Capacitor Mobile', value: 'capacitor', disabled: true },
-  { name: 'Electron', value: 'electron', disabled: true },
-  { name: 'Astro', value: 'astro', disabled: true },
-  { name: 'Hono', value: 'hono', disabled: true },
-  { name: 'Fastify', value: 'fastify', disabled: true },
-];
+	{ name: "Next.js", value: "next" },
+	{ name: "Vite", value: "vite" },
+	new inquirer.Separator("---- coming soon ----"),
+	{ name: "Expo", value: "expo", disabled: true },
+	{ name: "Capacitor Mobile", value: "capacitor", disabled: true },
+	{ name: "Electron", value: "electron", disabled: true },
+	{ name: "Astro", value: "astro", disabled: true },
+	{ name: "Hono", value: "hono", disabled: true },
+	{ name: "Fastify", value: "fastify", disabled: true }
+]
 
 interface AddOptions {
-  type?: string;
-  name?: string;
-  repo?: string;
+	type?: string
+	name?: string
+	repo?: string
 }
 
 interface TemplateInfo {
-  type: string;
-  templatePath: string;
-  replacementPattern: RegExp;
+	type: string
+	templatePath: string
+	replacementPattern: RegExp
 }
 
 /**
@@ -45,13 +45,13 @@ interface TemplateInfo {
  * Example: "My Cool App" → "my-cool-app"
  */
 function slugify(input: string): string {
-  return input
-    .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/_/g, '-')
-    .replace(/[^\w\-]+/g, '')
-    .replace(/\-\-+/g, '-')
-    .replace(/^-+|-+$/g, '');
+	return input
+		.toLowerCase()
+		.replace(/\s+/g, "-")
+		.replace(/_/g, "-")
+		.replace(/[^\w\-]+/g, "")
+		.replace(/\-\-+/g, "-")
+		.replace(/^-+|-+$/g, "")
 }
 
 /**
@@ -59,9 +59,9 @@ function slugify(input: string): string {
  * Handles cases where user runs the command from /apps or /packages subdirectories.
  */
 function getWorkspaceRoot(): string {
-  const cwd = process.cwd();
-  const cwdBase = path.basename(cwd);
-  return cwdBase === 'apps' || cwdBase === 'packages' ? path.dirname(cwd) : cwd;
+	const cwd = process.cwd()
+	const cwdBase = path.basename(cwd)
+	return cwdBase === "apps" || cwdBase === "packages" ? path.dirname(cwd) : cwd
 }
 
 /**
@@ -70,24 +70,24 @@ function getWorkspaceRoot(): string {
  * @param repoArg - Optional custom GitHub repo path for the template
  */
 function getTemplateInfo(appType: string, repoArg?: string): TemplateInfo {
-  const templates: Record<string, TemplateInfo> = {
-    next: {
-      type: 'next',
-      templatePath: repoArg || 'ian/startupkit/templates/apps/next',
-      replacementPattern: /PROJECT_NEXT/g,
-    },
-    vite: {
-      type: 'vite',
-      templatePath: repoArg || 'ian/startupkit/templates/apps/vite',
-      replacementPattern: /PROJECT_VITE/g,
-    },
-  };
+	const templates: Record<string, TemplateInfo> = {
+		next: {
+			type: "next",
+			templatePath: repoArg || "ian/startupkit/templates/apps/next",
+			replacementPattern: /PROJECT_NEXT/g
+		},
+		vite: {
+			type: "vite",
+			templatePath: repoArg || "ian/startupkit/templates/apps/vite",
+			replacementPattern: /PROJECT_VITE/g
+		}
+	}
 
-  const template = templates[appType];
-  if (!template) {
-    throw new Error(`Unknown template type: ${appType}`);
-  }
-  return template;
+	const template = templates[appType]
+	if (!template) {
+		throw new Error(`Unknown template type: ${appType}`)
+	}
+	return template
 }
 
 /**
@@ -103,64 +103,64 @@ function getTemplateInfo(appType: string, repoArg?: string): TemplateInfo {
  * @returns Parsed config or null if config doesn't exist
  */
 async function loadTemplateConfig(
-  templatePath: string,
+	templatePath: string
 ): Promise<StartupKitConfig | null> {
-  try {
-    const tempDir = path.join(process.cwd(), '.startupkit-temp');
-    if (!fs.existsSync(tempDir)) {
-      fs.mkdirSync(tempDir, { recursive: true });
-    }
+	try {
+		const tempDir = path.join(process.cwd(), ".startupkit-temp")
+		if (!fs.existsSync(tempDir)) {
+			fs.mkdirSync(tempDir, { recursive: true })
+		}
 
-    const emitter = degit(templatePath, {
-      cache: false,
-      force: true,
-      verbose: false,
-    });
-    await emitter.clone(tempDir);
+		const emitter = degit(templatePath, {
+			cache: false,
+			force: true,
+			verbose: false
+		})
+		await emitter.clone(tempDir)
 
-    const configPath = path.join(tempDir, 'startupkit.config.ts');
-    if (!fs.existsSync(configPath)) {
-      return null;
-    }
+		const configPath = path.join(tempDir, "startupkit.config.ts")
+		if (!fs.existsSync(configPath)) {
+			return null
+		}
 
-    const configContent = fs.readFileSync(configPath, 'utf-8');
+		const configContent = fs.readFileSync(configPath, "utf-8")
 
-    // Parse dependencies using regex since we can't import TypeScript directly
-    const packageMatch = configContent.match(/packages:\s*\[(.*?)\]/s)?.[1];
-    const configMatch = configContent.match(/config:\s*\[(.*?)\]/s)?.[1];
+		// Parse dependencies using regex since we can't import TypeScript directly
+		const packageMatch = configContent.match(/packages:\s*\[(.*?)\]/s)?.[1]
+		const configMatch = configContent.match(/config:\s*\[(.*?)\]/s)?.[1]
 
-    const packages = packageMatch
-      ? packageMatch
-          .split(',')
-          .map((p) => p.trim().replace(/['"]/g, ''))
-          .filter(Boolean)
-      : [];
+		const packages = packageMatch
+			? packageMatch
+					.split(",")
+					.map((p) => p.trim().replace(/['"]/g, ""))
+					.filter(Boolean)
+			: []
 
-    const config = configMatch
-      ? configMatch
-          .split(',')
-          .map((c) => c.trim().replace(/['"]/g, ''))
-          .filter(Boolean)
-      : [];
+		const config = configMatch
+			? configMatch
+					.split(",")
+					.map((c) => c.trim().replace(/['"]/g, ""))
+					.filter(Boolean)
+			: []
 
-    fs.rmSync(tempDir, { recursive: true, force: true });
+		fs.rmSync(tempDir, { recursive: true, force: true })
 
-    return {
-      type: configContent.includes('"app"') ? 'app' : 'package',
-      dependencies: {
-        packages: packages.length > 0 ? packages : undefined,
-        config: config.length > 0 ? config : undefined,
-      },
-    };
-  } catch (error) {
-    console.error('Failed to load template config:', error);
-    return null;
-  }
+		return {
+			type: configContent.includes('"app"') ? "app" : "package",
+			dependencies: {
+				packages: packages.length > 0 ? packages : undefined,
+				config: config.length > 0 ? config : undefined
+			}
+		}
+	} catch (error) {
+		console.error("Failed to load template config:", error)
+		return null
+	}
 }
 
 interface MissingDependencies {
-  packages: string[];
-  config: string[];
+	packages: string[]
+	config: string[]
 }
 
 /**
@@ -172,37 +172,37 @@ interface MissingDependencies {
  * @returns Lists of missing package and config dependencies
  */
 function checkMissingDependencies(
-  config: StartupKitConfig | null,
-  workspaceRoot: string,
+	config: StartupKitConfig | null,
+	workspaceRoot: string
 ): MissingDependencies {
-  const missing: MissingDependencies = {
-    packages: [],
-    config: [],
-  };
+	const missing: MissingDependencies = {
+		packages: [],
+		config: []
+	}
 
-  if (!config?.dependencies) {
-    return missing;
-  }
+	if (!config?.dependencies) {
+		return missing
+	}
 
-  if (config.dependencies.packages) {
-    for (const pkg of config.dependencies.packages) {
-      const pkgPath = path.join(workspaceRoot, 'packages', pkg);
-      if (!fs.existsSync(pkgPath)) {
-        missing.packages.push(pkg);
-      }
-    }
-  }
+	if (config.dependencies.packages) {
+		for (const pkg of config.dependencies.packages) {
+			const pkgPath = path.join(workspaceRoot, "packages", pkg)
+			if (!fs.existsSync(pkgPath)) {
+				missing.packages.push(pkg)
+			}
+		}
+	}
 
-  if (config.dependencies.config) {
-    for (const cfg of config.dependencies.config) {
-      const cfgPath = path.join(workspaceRoot, 'config', cfg);
-      if (!fs.existsSync(cfgPath)) {
-        missing.config.push(cfg);
-      }
-    }
-  }
+	if (config.dependencies.config) {
+		for (const cfg of config.dependencies.config) {
+			const cfgPath = path.join(workspaceRoot, "config", cfg)
+			if (!fs.existsSync(cfgPath)) {
+				missing.config.push(cfg)
+			}
+		}
+	}
 
-  return missing;
+	return missing
 }
 
 /**
@@ -217,99 +217,97 @@ function checkMissingDependencies(
  * If user declines, the command exits with error.
  */
 async function installMissingDependencies(
-  missing: MissingDependencies,
-  workspaceRoot: string,
+	missing: MissingDependencies,
+	workspaceRoot: string
 ): Promise<void> {
-  const totalMissing = missing.packages.length + missing.config.length;
+	const totalMissing = missing.packages.length + missing.config.length
 
-  if (totalMissing === 0) {
-    return;
-  }
+	if (totalMissing === 0) {
+		return
+	}
 
-  console.log(
-    `\n⚠️  This template requires ${totalMissing} workspace ${totalMissing === 1 ? 'dependency' : 'dependencies'} that are not installed:\n`,
-  );
+	console.log(
+		`\n⚠️  This template requires ${totalMissing} workspace ${totalMissing === 1 ? "dependency" : "dependencies"} that are not installed:\n`
+	)
 
-  if (missing.packages.length > 0) {
-    console.log('  Packages:');
-    for (const pkg of missing.packages) {
-      console.log(`    - @repo/${pkg}`);
-    }
-  }
+	if (missing.packages.length > 0) {
+		console.log("  Packages:")
+		for (const pkg of missing.packages) {
+			console.log(`    - @repo/${pkg}`)
+		}
+	}
 
-  if (missing.config.length > 0) {
-    console.log('  Config:');
-    for (const cfg of missing.config) {
-      console.log(`    - @config/${cfg}`);
-    }
-  }
+	if (missing.config.length > 0) {
+		console.log("  Config:")
+		for (const cfg of missing.config) {
+			console.log(`    - @config/${cfg}`)
+		}
+	}
 
-  const { shouldInstall } = await inquirer.prompt([
-    {
-      type: 'confirm',
-      name: 'shouldInstall',
-      message: 'Would you like to install these dependencies now?',
-      default: true,
-    },
-  ]);
+	const { shouldInstall } = await inquirer.prompt([
+		{
+			type: "confirm",
+			name: "shouldInstall",
+			message: "Would you like to install these dependencies now?",
+			default: true
+		}
+	])
 
-  if (!shouldInstall) {
-    console.log(
-      '\n❌ Cannot proceed without required dependencies. Exiting...',
-    );
-    process.exit(1);
-  }
+	if (!shouldInstall) {
+		console.log("\n❌ Cannot proceed without required dependencies. Exiting...")
+		process.exit(1)
+	}
 
-  for (const pkg of missing.packages) {
-    await spinner(`Installing @repo/${pkg}`, async () => {
-      const templatePath = `ian/startupkit/templates/packages/${pkg}`;
-      const destDir = path.join(workspaceRoot, 'packages', pkg);
+	for (const pkg of missing.packages) {
+		await spinner(`Installing @repo/${pkg}`, async () => {
+			const templatePath = `ian/startupkit/templates/packages/${pkg}`
+			const destDir = path.join(workspaceRoot, "packages", pkg)
 
-      const emitter = degit(templatePath, {
-        cache: false,
-        force: true,
-        verbose: false,
-      });
-      await emitter.clone(destDir);
-    });
-  }
+			const emitter = degit(templatePath, {
+				cache: false,
+				force: true,
+				verbose: false
+			})
+			await emitter.clone(destDir)
+		})
+	}
 
-  for (const cfg of missing.config) {
-    await spinner(`Installing @config/${cfg}`, async () => {
-      const templatePath = `ian/startupkit/templates/repo/config/${cfg}`;
-      const destDir = path.join(workspaceRoot, 'config', cfg);
+	for (const cfg of missing.config) {
+		await spinner(`Installing @config/${cfg}`, async () => {
+			const templatePath = `ian/startupkit/templates/repo/config/${cfg}`
+			const destDir = path.join(workspaceRoot, "config", cfg)
 
-      const emitter = degit(templatePath, {
-        cache: false,
-        force: true,
-        verbose: false,
-      });
-      await emitter.clone(destDir);
-    });
-  }
+			const emitter = degit(templatePath, {
+				cache: false,
+				force: true,
+				verbose: false
+			})
+			await emitter.clone(destDir)
+		})
+	}
 
-  try {
-    await spinner('Installing dependencies', async () => {
-      await exec('pnpm install --no-frozen-lockfile', {
-        cwd: workspaceRoot,
-        stdio: 'pipe',
-      });
-    });
-    console.log('✅ All dependencies installed successfully\n');
-  } catch (error) {
-    console.log(
-      '\n❌ Failed to install dependencies. Please run pnpm install manually.',
-    );
-    if (error instanceof Error && 'stdout' in error) {
-      const stdout = (error as { stdout: Buffer }).stdout;
-      const errorOutput = stdout.toString('utf-8');
-      if (errorOutput) {
-        console.log('\nError details:');
-        console.log(errorOutput);
-      }
-    }
-    process.exit(1);
-  }
+	try {
+		await spinner("Installing dependencies", async () => {
+			await exec("pnpm install --no-frozen-lockfile", {
+				cwd: workspaceRoot,
+				stdio: "pipe"
+			})
+		})
+		console.log("✅ All dependencies installed successfully\n")
+	} catch (error) {
+		console.log(
+			"\n❌ Failed to install dependencies. Please run pnpm install manually."
+		)
+		if (error instanceof Error && "stdout" in error) {
+			const stdout = (error as { stdout: Buffer }).stdout
+			const errorOutput = stdout.toString("utf-8")
+			if (errorOutput) {
+				console.log("\nError details:")
+				console.log(errorOutput)
+			}
+		}
+		process.exit(1)
+	}
 }
 
 /**
@@ -318,33 +316,33 @@ async function installMissingDependencies(
  * Skips node_modules and .git directories, and silently skips binary files.
  */
 function replaceInDirectory(
-  dir: string,
-  pattern: RegExp,
-  replacement: string,
+	dir: string,
+	pattern: RegExp,
+	replacement: string
 ): void {
-  const entries = fs.readdirSync(dir, { withFileTypes: true });
+	const entries = fs.readdirSync(dir, { withFileTypes: true })
 
-  for (const entry of entries) {
-    const fullPath = path.join(dir, entry.name);
+	for (const entry of entries) {
+		const fullPath = path.join(dir, entry.name)
 
-    if (entry.name === 'node_modules' || entry.name === '.git') {
-      continue;
-    }
+		if (entry.name === "node_modules" || entry.name === ".git") {
+			continue
+		}
 
-    if (entry.isDirectory()) {
-      replaceInDirectory(fullPath, pattern, replacement);
-    } else if (entry.isFile()) {
-      try {
-        const content = fs.readFileSync(fullPath, 'utf8');
-        const newContent = content.replace(pattern, replacement);
-        if (content !== newContent) {
-          fs.writeFileSync(fullPath, newContent, 'utf8');
-        }
-      } catch {
-        // Skip binary files or files that can't be read as text
-      }
-    }
-  }
+		if (entry.isDirectory()) {
+			replaceInDirectory(fullPath, pattern, replacement)
+		} else if (entry.isFile()) {
+			try {
+				const content = fs.readFileSync(fullPath, "utf8")
+				const newContent = content.replace(pattern, replacement)
+				if (content !== newContent) {
+					fs.writeFileSync(fullPath, newContent, "utf8")
+				}
+			} catch {
+				// Skip binary files or files that can't be read as text
+			}
+		}
+	}
 }
 
 /**
@@ -362,97 +360,96 @@ function replaceInDirectory(
  * @param options - Command line options (type, name, repo)
  */
 async function addApp(options: AddOptions): Promise<void> {
-  const { type, name: nameArg, repo: repoArg } = options;
+	const { type, name: nameArg, repo: repoArg } = options
 
-  let appType = type;
-  if (!appType) {
-    const { selected } = await inquirer.prompt([
-      {
-        type: 'list',
-        name: 'selected',
-        message: 'Which app would you like to add?',
-        choices: TEMPLATE_TYPES,
-      },
-    ]);
-    appType = selected;
-  }
+	let appType = type
+	if (!appType) {
+		const { selected } = await inquirer.prompt([
+			{
+				type: "list",
+				name: "selected",
+				message: "Which app would you like to add?",
+				choices: TEMPLATE_TYPES
+			}
+		])
+		appType = selected
+	}
 
-  if (!['next', 'vite'].includes(appType)) {
-    console.log(`\n${appType} support coming soon, we've recorded your vote!`);
-    return;
-  }
+	if (!["next", "vite"].includes(appType)) {
+		console.log(`\n${appType} support coming soon, we've recorded your vote!`)
+		return
+	}
 
-  const templateInfo = getTemplateInfo(appType, repoArg);
+	const templateInfo = getTemplateInfo(appType, repoArg)
 
-  let itemName = nameArg;
-  if (!itemName) {
-    const { inputName } = await inquirer.prompt([
-      {
-        type: 'input',
-        name: 'inputName',
-        message: 'What is the name of your app?',
-        validate: (input: string) => (input ? true : 'App name is required'),
-      },
-    ]);
-    itemName = inputName;
-  }
+	let itemName = nameArg
+	if (!itemName) {
+		const { inputName } = await inquirer.prompt([
+			{
+				type: "input",
+				name: "inputName",
+				message: "What is the name of your app?",
+				validate: (input: string) => (input ? true : "App name is required")
+			}
+		])
+		itemName = inputName
+	}
 
-  const slug = slugify(itemName);
-  const workspaceRoot = getWorkspaceRoot();
-  const destDir = path.join(workspaceRoot, 'apps', slug);
+	const slug = slugify(itemName)
+	const workspaceRoot = getWorkspaceRoot()
+	const destDir = path.join(workspaceRoot, "apps", slug)
 
-  if (fs.existsSync(destDir)) {
-    console.error(
-      `\n❌ Error: ${destDir} already exists. Please remove it or choose a different name.`,
-    );
-    process.exit(1);
-  }
+	if (fs.existsSync(destDir)) {
+		console.error(
+			`\n❌ Error: ${destDir} already exists. Please remove it or choose a different name.`
+		)
+		process.exit(1)
+	}
 
-  console.log('\n🔍 Checking template dependencies...');
-  const config = await loadTemplateConfig(templateInfo.templatePath);
+	console.log("\n🔍 Checking template dependencies...")
+	const config = await loadTemplateConfig(templateInfo.templatePath)
 
-  const missing = checkMissingDependencies(config, workspaceRoot);
-  await installMissingDependencies(missing, workspaceRoot);
+	const missing = checkMissingDependencies(config, workspaceRoot)
+	await installMissingDependencies(missing, workspaceRoot)
 
-  await spinner(`Cloning template into apps/${slug}`, async () => {
-    const emitter = degit(templateInfo.templatePath, {
-      cache: false,
-      force: true,
-      verbose: false,
-    });
-    await emitter.clone(destDir);
-  });
+	await spinner(`Cloning template into apps/${slug}`, async () => {
+		const emitter = degit(templateInfo.templatePath, {
+			cache: false,
+			force: true,
+			verbose: false
+		})
+		await emitter.clone(destDir)
+	})
 
-  replaceInDirectory(destDir, templateInfo.replacementPattern, slug);
+	replaceInDirectory(destDir, templateInfo.replacementPattern, slug)
 
-  try {
-    await spinner('Installing dependencies', async () => {
-      await exec('pnpm install --no-frozen-lockfile', {
-        cwd: workspaceRoot,
-        stdio: 'pipe',
-      });
-    });
-  } catch (error) {
-    console.log(
-      `\n⚠️  App added but dependency installation failed. You may need to run 'pnpm install' manually.`,
-    );
-    if (error instanceof Error && 'stdout' in error) {
-      const stdout = (error as { stdout: Buffer }).stdout;
-      const errorOutput = stdout.toString('utf-8');
-      if (errorOutput.includes('ERR_PNPM_CATALOG')) {
-        console.log(
-          '\n💡 Tip: This usually happens when catalog dependencies are not properly configured.',
-        );
-        console.log('   Try running: pnpm install --no-frozen-lockfile\n');
-      } else {
-        console.log('\nError details:');
-        console.log(errorOutput);
-      }
-    }
-    process.exit(1);
-  }
+	try {
+		await spinner("Installing dependencies", async () => {
+			await exec("pnpm install --no-frozen-lockfile", {
+				cwd: workspaceRoot,
+				stdio: "pipe"
+			})
+		})
+	} catch (error) {
+		console.log(
+			`\n⚠️  App added but dependency installation failed. You may need to run 'pnpm install' manually.`
+		)
+		if (error instanceof Error && "stdout" in error) {
+			const stdout = (error as { stdout: Buffer }).stdout
+			const errorOutput = stdout.toString("utf-8")
+			if (errorOutput.includes("ERR_PNPM_CATALOG")) {
+				console.log(
+					"\n💡 Tip: This usually happens when catalog dependencies are not properly configured."
+				)
+				console.log("   Try running: pnpm install --no-frozen-lockfile\n")
+			} else {
+				console.log("\nError details:")
+				console.log(errorOutput)
+			}
+		}
+	}
 
-  console.log(`\n✅ App added successfully at: apps/${slug}`);
+	console.log(`\n✅ App added successfully at: apps/${slug}`)
 }
 
-export { addApp as add };
+export { addApp as add }

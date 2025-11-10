@@ -1,8 +1,8 @@
 import fs from "node:fs"
 import path from "node:path"
 import { afterAll, beforeAll, describe, expect, it } from "vitest"
-import { init } from "./init"
 import { add } from "./add"
+import { init } from "./init"
 
 describe("CLI add - Full Integration Test Suite", () => {
 	const testDir = path.join(process.cwd(), "tmp/test-add-workspace")
@@ -264,4 +264,3 @@ describe("CLI add - Full Integration Test Suite", () => {
 		}, 120000)
 	})
 })
-

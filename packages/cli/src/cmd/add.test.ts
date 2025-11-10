@@ -1,7 +1,6 @@
 import fs from "node:fs"
 import path from "node:path"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
-import { add } from "./add"
 
 const slugify = (input: string): string => {
 	return input
@@ -419,4 +418,3 @@ function replaceInDirectoryHelper(
 		}
 	}
 }
-
