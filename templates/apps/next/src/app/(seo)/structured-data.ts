@@ -1,23 +1,11 @@
 import { getUrl } from "@repo/utils"
-
-interface OrganizationSchema {
-	name: string
-	url: string
-	logo?: string
-	description?: string
-	sameAs?: string[]
-}
-
-interface WebsiteSchema {
-	name: string
-	url: string
-	description: string
-}
-
-interface BreadcrumbItem {
-	name: string
-	url: string
-}
+import type {
+	Article,
+	BreadcrumbList,
+	Organization,
+	WebSite,
+	WithContext
+} from "schema-dts"
 
 export function generateOrganizationSchema({
 	name,
@@ -25,7 +13,13 @@ export function generateOrganizationSchema({
 	logo,
 	description,
 	sameAs = []
-}: OrganizationSchema) {
+}: {
+	name: string
+	url: string
+	logo?: string
+	description?: string
+	sameAs?: string[]
+}): WithContext<Organization> {
 	return {
 		"@context": "https://schema.org",
 		"@type": "Organization",
@@ -41,7 +35,11 @@ export function generateWebsiteSchema({
 	name,
 	url,
 	description
-}: WebsiteSchema) {
+}: {
+	name: string
+	url: string
+	description: string
+}): WithContext<WebSite> {
 	return {
 		"@context": "https://schema.org",
 		"@type": "WebSite",
@@ -51,7 +49,9 @@ export function generateWebsiteSchema({
 	}
 }
 
-export function generateBreadcrumbSchema(items: BreadcrumbItem[]) {
+export function generateBreadcrumbSchema(
+	items: { name: string; url: string }[]
+): WithContext<BreadcrumbList> {
 	return {
 		"@context": "https://schema.org",
 		"@type": "BreadcrumbList",
@@ -78,7 +78,7 @@ export function generateArticleSchema({
 	dateModified?: string
 	authorName: string
 	imageUrl: string
-}) {
+}): WithContext<Article> {
 	return {
 		"@context": "https://schema.org",
 		"@type": "Article",

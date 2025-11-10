@@ -23,7 +23,8 @@
 		"next": "catalog:stack",
 		"nuqs": "2.2.2",
 		"react": "catalog:react19",
-		"react-dom": "catalog:react19"
+		"react-dom": "catalog:react19",
+		"schema-dts": "1.1.2"
 	},
 	"devDependencies": {
 		"@repo/nextjs": "workspace:*",
