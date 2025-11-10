@@ -1,4 +1,7 @@
-import { generateOrganizationSchema, generateWebsiteSchema } from "@startupkit/seo"
+import {
+	generateOrganizationSchema,
+	generateWebsiteSchema
+} from "@startupkit/seo"
 import { getUrl } from "@repo/utils"
 
 export {
@@ -25,4 +28,3 @@ export const defaultWebsiteSchema = generateWebsiteSchema({
 	url: getUrl(),
 	description: "Build and ship your SaaS faster with StartupKit"
 })
-

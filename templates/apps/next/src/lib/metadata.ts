@@ -19,4 +19,3 @@ export const metadata = defaultMetadata({
 		"Tailwind CSS"
 	]
 })
-
