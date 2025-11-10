@@ -24,7 +24,7 @@ JSON-LD structured data helpers for rich search results. Includes schemas for:
 
 ### Complete Example
 
-See `example-usage.tsx` for a full working example. Here's how to use both metadata and structured data together:
+Here's how to use both metadata and structured data together:
 
 ```typescript
 import { generateMetadata } from '@/app/(seo)/metadata';

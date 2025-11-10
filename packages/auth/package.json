@@ -26,8 +26,8 @@
 		"build": "rollup -c && tsc --emitDeclarationOnly",
 		"build:watch": "npx chokidar-cli \"src/**/*\" -c \"pnpm run build\" --initial",
 		"typecheck": "tsc --noEmit",
-		"format": "biome format",
-		"format:fix": "biome format --write",
+		"format": "biome format src",
+		"format:fix": "biome format --write src",
 		"lint": "biome check",
 		"lint:fix": "biome check --write"
 	},
