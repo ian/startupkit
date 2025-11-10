@@ -97,7 +97,7 @@ export function generateArticleSchema({
 export const defaultOrganizationSchema = generateOrganizationSchema({
 	name: "StartupKit",
 	url: getUrl(),
-	logo: `${getUrl()}/logo.png`,
+	logo: getUrl("logo.png"),
 	description: "Build and ship your SaaS faster with StartupKit",
 	sameAs: [
 		"https://twitter.com/startupkit",
