@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next"
 
 export function generateRobots({
 	baseUrl,
-	disallowPaths = ["/api/", "/dashboard/", "/auth/"]
+	disallowPaths = ["/api", "/dashboard", "/auth"]
 }: {
 	baseUrl: string
 	disallowPaths?: string[]

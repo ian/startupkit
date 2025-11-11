@@ -25,6 +25,6 @@ export function generateSitemap({
 		url: `${baseUrl}${baseUrl.endsWith("/") ? "" : "/"}${route.path.startsWith("/") ? route.path.slice(1) : route.path}`,
 		lastModified: route.lastModified || new Date(),
 		changeFrequency: route.changeFrequency || "daily",
-		priority: route.priority || 1
+		priority: route.priority ?? 1
 	}))
 }

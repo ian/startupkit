@@ -4,7 +4,8 @@ export default {
 	input: "src/index.ts",
 	output: {
 		dir: "dist/esm",
-		format: "esm"
+		format: "esm",
+		sourcemap: true
 	},
 	external: ["next/navigation", "schema-dts"],
 	plugins: [

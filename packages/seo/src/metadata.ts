@@ -117,8 +117,9 @@ export function generateMetadata(params: GenerateMetadataParams): Metadata {
 	const keywords = "keywords" in params ? params.keywords : undefined
 	const icons = "icons" in params ? params.icons : undefined
 	const manifest = "manifest" in params ? params.manifest : undefined
+	const normalizedBaseUrl = baseUrl.replace(/\/$/, "")
 	const fullPath = path
-		? `${baseUrl}${path.startsWith("/") ? "" : "/"}${path}`
+		? `${normalizedBaseUrl}${path.startsWith("/") ? path : `/${path}`}`
 		: baseUrl
 
 	const metadata: Metadata = {
