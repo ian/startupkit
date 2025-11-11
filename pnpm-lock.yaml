@@ -329,7 +329,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/utils
       '@startupkit/seo':
-        specifier: workspace:*
+        specifier: 0.5.4
         version: link:../../../packages/seo
       framer-motion:
         specifier: 12.9.4
