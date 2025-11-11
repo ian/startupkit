@@ -2,7 +2,7 @@
 // Imports directly from posthog-node
 
 import { PostHog } from "posthog-node"
-import type { AnalyticsEvent, AuthEvent } from "./types"
+import type { TrackableEvent } from "./types"
 export { getFeatureFlags } from "./vendor/posthog"
 
 export type { Flags } from "./types"
@@ -21,10 +21,10 @@ function client() {
 
 /**
  * Tracks one or more analytics events server-side using PostHog.
- * 
+ *
  * @param eventData - An AnalyticsEvent object or an array of AnalyticsEvent objects to track.
  */
-export async function track(eventData: AnalyticsEvent | AnalyticsEvent[]) {
+export async function track(eventData: TrackableEvent | TrackableEvent[]) {
 	const posthog = client()
 
 	if (!posthog) {
@@ -33,11 +33,9 @@ export async function track(eventData: AnalyticsEvent | AnalyticsEvent[]) {
 
 	const events = Array.isArray(eventData) ? eventData : [eventData]
 
-	events.forEach(({ event, ...rest }) => {
-		const { user, ...properties } = rest as AuthEvent
-
+	events.forEach(({ event, userId, anonymousId, ...properties }) => {
 		posthog.capture({
-			distinctId: user.id,
+			distinctId: userId ?? anonymousId,
 			event,
 			properties
 		})
