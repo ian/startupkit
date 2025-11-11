@@ -94,6 +94,11 @@ jobs:
           node $GITHUB_WORKSPACE/packages/cli/dist/cli.js add next --name next --repo "ian/startupkit/templates/apps/next#${GITHUB_REF_NAME}"
         working-directory: ./tmp/repo
 
+      - name: Link local packages in app
+        run: |
+          echo "🔗 Linking local @startupkit/* packages in apps/next..."
+          node "$GITHUB_WORKSPACE/scripts/link-local.js" link "tmp/repo" "$GITHUB_WORKSPACE/packages"
+
       - name: Reinstall after adding app
         run: pnpm install --no-frozen-lockfile
         working-directory: ./tmp/repo
