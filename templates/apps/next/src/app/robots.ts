@@ -5,6 +5,6 @@ import type { MetadataRoute } from "next"
 export default function robots(): MetadataRoute.Robots {
 	return generateRobots({
 		baseUrl: getUrl(),
-		disallowPaths: ["/api/", "/dashboard/", "/auth/"]
+		disallowPaths: ["/api", "/dashboard", "/auth"]
 	})
 }
