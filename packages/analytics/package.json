@@ -20,6 +20,8 @@
 		"clean": "rm -rf ./dist ./.turbo",
 		"build": "rollup -c && tsc --emitDeclarationOnly",
 		"typecheck": "tsc --noEmit",
+		"format": "biome format",
+		"format:fix": "biome format --write",
 		"lint": "biome check",
 		"lint:fix": "biome check --write"
 	},

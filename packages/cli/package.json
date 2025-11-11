@@ -35,6 +35,8 @@
 		"test:watch": "vitest",
 		"test:coverage": "vitest run --coverage",
 		"typecheck": "tsc --noEmit",
+		"format": "biome format",
+		"format:fix": "biome format --write",
 		"lint": "biome check",
 		"lint:fix": "biome check --write"
 	},

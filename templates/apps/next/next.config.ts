@@ -1,8 +1,13 @@
-import { withMonorepoConfig } from "@repo/nextjs";
-import type { NextConfig } from "next";
+import { withMonorepoConfig } from "@repo/nextjs"
+import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
-	transpilePackages: ["@repo/analytics", "@repo/auth", "@repo/ui", "@repo/utils"]
-};
+	transpilePackages: [
+		"@repo/analytics",
+		"@repo/auth",
+		"@repo/ui",
+		"@repo/utils"
+	]
+}
 
-export default withMonorepoConfig(nextConfig);
+export default withMonorepoConfig(nextConfig)

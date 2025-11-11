@@ -14,6 +14,17 @@
         "!.next/template/**"
       ]
     },
+    "format": {
+      "outputs": [
+        ".cache/.format"
+      ],
+      "outputLogs": "new-only"
+    },
+    "format:fix": {
+      "outputs": [
+        ".cache/.format"
+      ]
+    },
     "lint": {
       "outputs": [
         ".cache/.lint"
