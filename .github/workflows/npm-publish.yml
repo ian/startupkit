@@ -136,10 +136,27 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: Update template references
+        run: |
+          echo "📝 Updating @startupkit/* and startupkit references in templates..."
+          
+          # Find all package.json files in templates and update startupkit package references
+          find templates -name "package.json" -type f | while read file; do
+            # Update @startupkit/* package versions (handles both "x.x.x" and "^x.x.x" formats)
+            sed -i 's/"@startupkit\/\([^"]*\)": "\^*[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*"/"@startupkit\/\1": "^'"$VERSION"'"/g' "$file"
+            # Update startupkit CLI version
+            sed -i 's/"startupkit": "\^*[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*"/"startupkit": "^'"$VERSION"'"/g' "$file"
+          done
+          
+          # Show what was updated
+          echo "🔍 Updated template references:"
+          grep -r '"@startupkit/\|"startupkit":' templates --include="package.json" || echo "  (none found)"
+
       - name: Commit version bumps
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add packages/*/package.json
+          git add templates/*/package.json templates/*/*/package.json templates/*/*/*/package.json 2>/dev/null || true
           git commit -m "chore: bump package versions to $VERSION [skip ci]" || echo "No changes to commit"
-          git push origin HEAD:main 
+          git push origin HEAD:main
