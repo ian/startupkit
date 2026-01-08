@@ -7,6 +7,7 @@
       "Bash(chmod:*)",
       "Bash(curl:*)",
       "Bash(deadcode:*)",
+      "Bash(docker-compose:*)",
       "Bash(docker:*)",
       "Bash(echo:*)",
       "Bash(find:*)",
@@ -22,6 +23,7 @@
       "Bash(npm:*)",
       "Bash(npx:*)",
       "Bash(pkill:*)",
+      "Bash(pnpm:*)",
       "Bash(poetry:*)",
       "Bash(python3:*)",
       "Bash(python:*)",
@@ -32,11 +34,10 @@
       "Bash(tail:*)",
       "Bash(touch:*)",
       "Bash(tree:*)",
+      "Bash(xargs:*)",
       "Update(*)",
       "Update(*:*)",
-      "Write(*)",
-      "Bash(xargs:*)",
-      "Bash(docker-compose:*)"
+      "Write(*)"
     ],
     "deny": []
   }
