@@ -1,6 +1,6 @@
 {
 	"name": "startupkit",
-	"version": "0.5.4",
+	"version": "0.6.0",
 	"author": "Ian Hunter <ian@01.studio>",
 	"license": "ISC",
 	"description": "The NextJS framework with everything you need to launch a SaaS product.",
@@ -44,6 +44,7 @@
 		"commander": "13.1.0",
 		"create-next-app": "15.3.1",
 		"degit": "^2.8.4",
+		"inquirer": "12.6.0",
 		"ora": "8.2.0",
 		"replace-in-file": "^8.3.0",
 		"validate-package-exports": "0.9.0"
@@ -53,7 +54,6 @@
 		"@rollup/plugin-node-resolve": "16.0.1",
 		"@types/node": "22.15.3",
 		"@vitest/coverage-v8": "^2.1.8",
-		"inquirer": "12.6.0",
 		"rollup-plugin-command": "^1.1.3",
 		"vitest": "^2.1.8"
 	}

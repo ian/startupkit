@@ -134,4 +134,12 @@ jobs:
           
           echo "✅ All packages published!"
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }} 
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Commit version bumps
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add packages/*/package.json
+          git commit -m "chore: bump package versions to $VERSION [skip ci]" || echo "No changes to commit"
+          git push origin HEAD:main 

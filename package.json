@@ -1,6 +1,5 @@
 {
   "name": "startupkit",
-  "version": "0.0.0",
   "private": true,
   "author": "Ian Hunter <ian@01.studio>",
   "description": "The 0 to 1000 SaaS Startup Framework",
