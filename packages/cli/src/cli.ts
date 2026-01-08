@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 import { Command } from "commander"
-// import { update } from "./cmd/update";
 import { add } from "./cmd/add"
 import { init } from "./cmd/init"
+import { upgrade } from "./cmd/upgrade"
 
 export async function run() {
 	const program = new Command()
@@ -29,14 +29,20 @@ export async function run() {
 			await add({ type, name: options.name, repo: options.repo })
 		})
 
-	// program
-	//   .command("up")
-	//   .alias("update")
-	//   .alias("upgrade")
-	//   .description("Update all startupkit packages to the latest version")
-	//   .action(() => {
-	//     update();
-	//   });
+	program
+		.command("upgrade")
+		.alias("up")
+		.description("Upgrade StartupKit packages and config to latest versions")
+		.option("--packages", "Only upgrade @startupkit/* npm packages")
+		.option("--config", "Only sync config files from latest template")
+		.option("--dry-run", "Show what would be upgraded without making changes")
+		.action(async (options) => {
+			await upgrade({
+				packages: options.packages,
+				config: options.config,
+				dryRun: options.dryRun
+			})
+		})
 
 	program
 		.command("help")
