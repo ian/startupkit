@@ -166,6 +166,11 @@ export async function init(props: {
 		await exec("pnpm install --no-frozen-lockfile", { cwd: destDir })
 	})
 
+	// Generate AI agent instructions
+	await spinner(`Generating AI agent instructions`, async () => {
+		await exec("pnpm agents.md", { cwd: destDir })
+	})
+
 	console.log(`\nProject initialized at: ${isCurrentDir ? "." : destDir}`)
 }
 

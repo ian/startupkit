@@ -449,6 +449,11 @@ async function addApp(options: AddOptions): Promise<void> {
 		}
 	}
 
+	// Regenerate AI agent instructions
+	await spinner("Regenerating AI agent instructions", async () => {
+		await exec("pnpm agents.md", { cwd: workspaceRoot, stdio: "pipe" })
+	})
+
 	console.log(`\n✅ App added successfully at: apps/${slug}`)
 }
 
