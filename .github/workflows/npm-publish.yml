@@ -1,21 +1,8 @@
 name: Publish to NPM
 
 on:
-  workflow_dispatch:
-    inputs:
-      version_type:
-        description: 'Version increment type'
-        required: true
-        default: 'patch'
-        type: choice
-        options:
-          - patch
-          - minor
-          - major
-      packages_filter:
-        description: 'Filter packages to publish (comma-separated, leave empty for all)'
-        required: false
-        type: string
+  release:
+    types: [published]
 
 jobs:
   publish:
@@ -26,6 +13,14 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract version from release tag
+        run: |
+          TAG_NAME="${{ github.event.release.tag_name }}"
+          # Remove 'v' prefix if present (e.g., v1.2.3 -> 1.2.3)
+          VERSION="${TAG_NAME#v}"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "📦 Publishing version: $VERSION"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -41,38 +36,22 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Configure git
+      - name: Set package versions
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Increment version
-        run: |
-          # Get the version type from input, default to patch
-          VERSION_TYPE="${{ github.event.inputs.version_type || 'patch' }}"
-          
-          # Increment version for all packages
-          pnpm -r exec -- npm version $VERSION_TYPE --no-git-tag-version
-          
-          # Get the new version from the first package found
-          NEW_VERSION=$(find packages -name "package.json" -exec node -p "require('{}').version" \; | head -1)
-          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
-          
-          # Commit version changes
-          git add .
-          git commit -m "chore: bump version to $NEW_VERSION"
+          echo "📝 Setting all packages to version $VERSION..."
+          pnpm -r exec -- npm version $VERSION --no-git-tag-version --allow-same-version
 
       - name: Verify package versions
-        if: env.NEW_VERSION
         run: |
-          echo "🔍 Verifying package versions were updated correctly..."
+          echo "🔍 Verifying package versions..."
           find packages -name "package.json" -exec node -e "
             const pkg = require('{}');
-            const expectedVersion = '$NEW_VERSION';
+            const expectedVersion = '$VERSION';
             if (pkg.version === expectedVersion) {
-              console.log('✅ ' + pkg.name + ' version is correct: ' + pkg.version);
+              console.log('✅ ' + pkg.name + '@' + pkg.version);
             } else {
               console.log('❌ ' + pkg.name + ' version mismatch: expected ' + expectedVersion + ', got ' + pkg.version);
+              process.exit(1);
             }
           " \;
 
@@ -81,32 +60,13 @@ jobs:
 
       - name: List packages to be published
         run: |
-          echo "📦 Packages that will be published:"
-          echo "🔍 Trigger: ${{ github.event_name }}"
-          if [ -n "$NEW_VERSION" ]; then
-            echo "📌 Target version: $NEW_VERSION"
-          fi
-          
-          if [ -n "${{ github.event.inputs.packages_filter }}" ]; then
-            echo "🔍 Filtering packages: ${{ github.event.inputs.packages_filter }}"
-            IFS=',' read -ra FILTERS <<< "${{ github.event.inputs.packages_filter }}"
-            for filter in "${FILTERS[@]}"; do
-              find packages -name "package.json" -path "*${filter}*" -exec node -e "
-                const pkg = require('{}');
-                if (!pkg.private) {
-                  console.log('✅ ' + pkg.name + '@' + pkg.version);
-                }
-              " \;
-            done
-          else
-            echo "📋 All non-private packages:"
-            find packages -name "package.json" -exec node -e "
-              const pkg = require('{}');
-              if (!pkg.private) {
-                console.log('✅ ' + pkg.name + '@' + pkg.version);
-              }
-            " \;
-          fi
+          echo "📦 Packages to publish (version $VERSION):"
+          find packages -name "package.json" -exec node -e "
+            const pkg = require('{}');
+            if (!pkg.private) {
+              console.log('  • ' + pkg.name + '@' + pkg.version);
+            }
+          " \;
 
       - name: Generate OTP code
         run: |
@@ -157,34 +117,21 @@ jobs:
 
       - name: Publish to NPM
         run: |
-          # Always use OTP for 2FA
-          OTP_FLAG="--otp $OTP_CODE"
-          echo "🔐 Using 2FA authentication with OTP: $OTP_CODE"
+          echo "🔐 Using 2FA authentication with OTP"
+          echo "🚀 Publishing all packages..."
           
-          if [ -n "${{ github.event.inputs.packages_filter }}" ]; then
-            echo "🎯 Publishing filtered packages..."
-            IFS=',' read -ra FILTERS <<< "${{ github.event.inputs.packages_filter }}"
-            for filter in "${FILTERS[@]}"; do
-              echo "Publishing packages matching: ${filter}"
-              pnpm --filter "*${filter}*" publish --access public --no-git-checks $OTP_FLAG
-            done
-          else
-            echo "🚀 Publishing all packages..."
-            if [ -n "$OTP_FLAG" ]; then
-              # For 2FA, we need to publish each package individually with OTP
-              echo "Publishing packages individually with 2FA..."
-              find packages -name "package.json" -exec dirname {} \; | while read package_dir; do
-                package_name=$(node -p "require('./$package_dir/package.json').name")
-                if [ "$(node -p "require('./$package_dir/package.json').private || false")" != "true" ]; then
-                  echo "📦 Publishing $package_name..."
-                  cd "$package_dir"
-                  npm publish --access public $OTP_FLAG
-                  cd - > /dev/null
-                fi
-              done
-            else
-              pnpm run release
+          find packages -name "package.json" -exec dirname {} \; | while read package_dir; do
+            package_name=$(node -p "require('./$package_dir/package.json').name")
+            is_private=$(node -p "require('./$package_dir/package.json').private || false")
+            
+            if [ "$is_private" != "true" ]; then
+              echo "📦 Publishing $package_name@$VERSION..."
+              cd "$package_dir"
+              npm publish --access public --otp $OTP_CODE
+              cd - > /dev/null
             fi
-          fi
+          done
+          
+          echo "✅ All packages published!"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }} 
