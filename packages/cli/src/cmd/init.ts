@@ -5,12 +5,6 @@ import { replaceInFile } from "replace-in-file"
 import { spinner } from "../lib/spinner"
 import { exec } from "../lib/system"
 
-type Answers = {
-	name: string
-	customizeKey: boolean
-	key?: string
-} & Record<string, any>
-
 export function slugify(input: string): string {
 	return input
 		.toLowerCase()
@@ -19,6 +13,27 @@ export function slugify(input: string): string {
 		.replace(/[^\w\-]+/g, "")
 		.replace(/\-\-+/g, "-")
 		.replace(/^-+|-+$/g, "")
+}
+
+export interface ResolveDestDirOptions {
+	dir?: string
+	key: string
+	cwd: string
+	promptedDirectory?: string
+}
+
+export function resolveDestDir(options: ResolveDestDirOptions): string {
+	const { dir, key, cwd, promptedDirectory } = options
+
+	if (dir) {
+		return path.resolve(cwd, dir)
+	}
+
+	if (promptedDirectory !== undefined) {
+		return path.resolve(cwd, promptedDirectory)
+	}
+
+	return path.resolve(cwd, key)
 }
 
 export function buildDegitSources(repoBase: string): {
@@ -47,6 +62,7 @@ export function buildDegitSources(repoBase: string): {
 export async function init(props: {
 	name?: string
 	repoArg?: string
+	dir?: string
 }) {
 	opener()
 
@@ -70,7 +86,6 @@ export async function init(props: {
 
 	let key = slug
 	if (promptedForName) {
-		// Only prompt to customize key if name was prompted
 		const { customizeKey } = await inquirer.prompt([
 			{
 				type: "confirm",
@@ -92,16 +107,36 @@ export async function init(props: {
 		}
 	}
 
-	// Show the collected attributes
-	const attrs = { name: projectName, key }
+	// Step 2: Determine destination directory
+	let promptedDirectory: string | undefined
+	if (!props.dir && promptedForName) {
+		const { directory } = await inquirer.prompt([
+			{
+				type: "input",
+				name: "directory",
+				message: "Where should we create the project?",
+				default: `./${key}`,
+				filter: (input: string) => input.trim()
+			}
+		])
+		promptedDirectory = directory
+	}
+
+	const cwd = process.cwd()
+	const destDir = resolveDestDir({
+		dir: props.dir,
+		key,
+		cwd,
+		promptedDirectory
+	})
+
+	const isCurrentDir = destDir === cwd
 
 	// --- USE DEGit TO CLONE THE REPO STRUCTURE AND PACKAGES ---
 	const repoBase = props.repoArg || "ian/startupkit"
-	const destDir = path.resolve(process.cwd(), key)
-
 	const { repoSource, packagesSource } = buildDegitSources(repoBase)
 
-	await spinner(`Cloning template into ${destDir}`, async () => {
+	await spinner(`Cloning template into ${isCurrentDir ? "current directory" : destDir}`, async () => {
 		const repoEmitter = degit(repoSource, {
 			cache: false,
 			force: true,
@@ -121,7 +156,7 @@ export async function init(props: {
 	await replaceInFile({
 		files: `${destDir}/**/*`,
 		from: [/PROJECT_VITE/g, /PROJECT/g],
-		to: slug,
+		to: key,
 		ignore: ["**/node_modules/**", "**/.git/**"],
 		allowEmptyPaths: true
 	})
@@ -131,7 +166,7 @@ export async function init(props: {
 		await exec("pnpm install --no-frozen-lockfile", { cwd: destDir })
 	})
 
-	console.log(`\nProject initialized at: ${destDir}`)
+	console.log(`\nProject initialized at: ${isCurrentDir ? "." : destDir}`)
 }
 
 function opener() {

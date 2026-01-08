@@ -13,11 +13,11 @@ export async function run() {
 	program
 		.command("init")
 		.description("Initialize a new project or setup")
-
 		.option("--name <name>", "Name of the app")
 		.option("--repo <repo>", "Template repo to use")
+		.option("--dir <dir>", "Directory to create project in (use . for current)")
 		.action(async (options) => {
-			await init({ name: options.name, repoArg: options.repo })
+			await init({ name: options.name, repoArg: options.repo, dir: options.dir })
 		})
 
 	program

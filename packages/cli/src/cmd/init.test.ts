@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { buildDegitSources, slugify } from "./init"
+import { buildDegitSources, resolveDestDir, slugify } from "./init"
 
 describe("init command - unit tests", () => {
 	describe("slugify function", () => {
@@ -54,6 +54,82 @@ describe("init command - unit tests", () => {
 
 			expect(result.repoSource).toBe("user/repo/templates/repo#main")
 			expect(result.packagesSource).toBe("user/repo/templates/packages#main")
+		})
+	})
+
+	describe("resolveDestDir", () => {
+		const cwd = "/home/user/projects"
+
+		it("should use --dir flag when provided", () => {
+			const result = resolveDestDir({
+				dir: ".",
+				key: "my-project",
+				cwd
+			})
+			expect(result).toBe("/home/user/projects")
+		})
+
+		it("should use --dir flag with relative path", () => {
+			const result = resolveDestDir({
+				dir: "./existing-app",
+				key: "my-project",
+				cwd
+			})
+			expect(result).toBe("/home/user/projects/existing-app")
+		})
+
+		it("should use --dir flag with absolute path", () => {
+			const result = resolveDestDir({
+				dir: "/tmp/my-app",
+				key: "my-project",
+				cwd
+			})
+			expect(result).toBe("/tmp/my-app")
+		})
+
+		it("should use prompted directory when provided", () => {
+			const result = resolveDestDir({
+				key: "my-project",
+				cwd,
+				promptedDirectory: "."
+			})
+			expect(result).toBe("/home/user/projects")
+		})
+
+		it("should use prompted directory with custom path", () => {
+			const result = resolveDestDir({
+				key: "my-project",
+				cwd,
+				promptedDirectory: "./custom-dir"
+			})
+			expect(result).toBe("/home/user/projects/custom-dir")
+		})
+
+		it("should default to key as directory name when no dir or prompt", () => {
+			const result = resolveDestDir({
+				key: "my-project",
+				cwd
+			})
+			expect(result).toBe("/home/user/projects/my-project")
+		})
+
+		it("should prioritize --dir over prompted directory", () => {
+			const result = resolveDestDir({
+				dir: "/explicit/path",
+				key: "my-project",
+				cwd,
+				promptedDirectory: "./prompted-path"
+			})
+			expect(result).toBe("/explicit/path")
+		})
+
+		it("should handle empty string prompted directory as current dir", () => {
+			const result = resolveDestDir({
+				key: "my-project",
+				cwd,
+				promptedDirectory: ""
+			})
+			expect(result).toBe("/home/user/projects")
 		})
 	})
 })
