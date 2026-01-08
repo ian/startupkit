@@ -8,7 +8,14 @@ export type AuthEvent = UserSignedIn | UserSignedUp | UserSignedOut
 export type IdentityOptions = { userId: string; anonymousId?: string }
 
 export type TrackableEvent = IdentityOptions &
-	(TeamCreated | TeamJoined | TeamSwitched)
+	(
+		| TeamCreated
+		| TeamJoined
+		| TeamSwitched
+		| { event: "USER_SIGNED_IN"; user: AuthUser }
+		| { event: "USER_SIGNED_UP"; user: AuthUser }
+		| { event: "USER_SIGNED_OUT"; user: AuthUser }
+	)
 
 // ####################################
 // Auth

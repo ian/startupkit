@@ -94,6 +94,7 @@ export const auth = betterAuth({
 				if (user?.email) {
 					await track({
 						event: newUser ? "USER_SIGNED_UP" : "USER_SIGNED_IN",
+						userId: user.id,
 						user: {
 							id: user.id,
 							email: user.email,
