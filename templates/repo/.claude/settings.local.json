@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(/Users/ian/.claude/plugins/cache/claude-code-plugins/ralph-wiggum/1.0.0/scripts/setup-ralph-loop.sh)",
+      "Bash(PORT=:*)",
+      "Bash(cat:*)",
+      "Bash(chmod:*)",
+      "Bash(curl:*)",
+      "Bash(deadcode:*)",
+      "Bash(docker:*)",
+      "Bash(echo:*)",
+      "Bash(find:*)",
+      "Bash(git:*)",
+      "Bash(go:*)",
+      "Bash(grep:*)",
+      "Bash(head:*)",
+      "Bash(ls:*)",
+      "Bash(lsof:*)",
+      "Bash(make:*)",
+      "Bash(mkdir:*)",
+      "Bash(mv:*)",
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(pkill:*)",
+      "Bash(poetry:*)",
+      "Bash(python3:*)",
+      "Bash(python:*)",
+      "Bash(rg:*)",
+      "Bash(sed:*)",
+      "Bash(source:*)",
+      "Bash(sqlite3:*)",
+      "Bash(tail:*)",
+      "Bash(touch:*)",
+      "Bash(tree:*)",
+      "Update(*)",
+      "Update(*:*)",
+      "Write(*)",
+      "Bash(xargs:*)",
+      "Bash(docker-compose:*)"
+    ],
+    "deny": []
+  }
+}
