@@ -40,14 +40,14 @@ export function Footer() {
 									Documentation
 								</a>
 							</li>
-							<li>
+							{/* <li>
 								<a
 									href="/blog"
 									className="text-zinc-400 hover:text-white transition-colors text-sm"
 								>
 									Blog
 								</a>
-							</li>
+							</li> */}
 							<li>
 								<a
 									href="#getting"

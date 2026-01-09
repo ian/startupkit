@@ -17,7 +17,7 @@ export function Navigation() {
 							Docs
 						</Link>
 						<a
-							href="https://discord.gg/startupkit"
+							href="https://discord.gg/gRmD4TJCas"
 							target="_blank"
 							rel="noopener noreferrer"
 							className="text-sm font-normal text-zinc-300 hover:text-white transition-colors"
