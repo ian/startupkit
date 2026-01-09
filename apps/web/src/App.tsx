@@ -6,11 +6,13 @@ import { Footer } from "./components/footer"
 import { HeroSection } from "./components/hero-section"
 import { Navigation } from "./components/navigation"
 import { ProblemSection } from "./components/problem-section"
+import { SEO } from "./components/seo"
 import { ServicesSection } from "./components/services-section"
 
 export default function App() {
 	return (
 		<div className="min-h-screen bg-black text-white">
+			<SEO />
 			<Navigation />
 
 			<main className="container mx-auto px-6 py-20">

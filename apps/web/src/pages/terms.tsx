@@ -1,9 +1,15 @@
 import { ArrowLeft, Github } from "lucide-react"
 import { Link } from "react-router-dom"
+import { SEO } from "../components/seo"
 
 export function TermsPage() {
 	return (
 		<div className="min-h-screen bg-black text-white">
+			<SEO
+				title="Terms of Service"
+				description="Read the Terms of Service for StartupKit. Learn about the MIT license and usage terms."
+				path="/terms"
+			/>
 			<nav className="border-b border-zinc-800">
 				<div className="container mx-auto px-6 py-4">
 					<div className="flex items-center justify-between">
