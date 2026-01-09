@@ -1,0 +1,96 @@
+---
+title: "StartupKit CLI"
+description: "Command-line tool for scaffolding StartupKit projects."
+---
+
+Command-line tool for scaffolding StartupKit projects.
+
+[**startupkit.com**](https://startupkit.com) | [GitHub](https://github.com/ian/startupkit) | [Documentation](https://startupkit.com)
+
+## What is StartupKit?
+
+StartupKit is a meta-framework for building SaaS applications. It's built on **Next.js 16**, **React 19**, **TypeScript**, and **Turbo** with authentication, analytics, database, and UI components pre-configured. Perfect for startups that want to focus on building features instead of infrastructure.
+
+## Quick Start
+
+### Create a New Project
+
+```bash
+npx startupkit init
+```
+
+## Commands
+
+### `init`
+
+Initialize a new StartupKit project.
+
+```bash
+npx startupkit init
+npx startupkit init --name my-project
+```
+
+**Options:**
+- `--name <name>` - Project name (prompts if not provided)
+- `--repo <repo>` - Custom template repository
+
+**What it does:**
+- Clones the complete monorepo template
+- Installs all dependencies
+- Sets up workspace packages
+
+### `add`
+
+Add an app or package to your workspace.
+
+```bash
+npx startupkit add
+npx startupkit add next --name dashboard
+npx startupkit add vite --name landing
+npx startupkit add pkg --name shared-utils
+```
+
+**Options:**
+- `--name <name>` - App/package name
+- `--repo <repo>` - Custom template repository
+
+**Templates:**
+- `next` - Full-stack Next.js application
+- `vite` - Lightweight Vite application
+- `pkg` - Shared workspace package
+
+### `help`
+
+Show help information.
+
+```bash
+npx startupkit help
+```
+
+## Examples
+
+**Create a new project:**
+
+```bash
+npx startupkit init --name my-saas
+cd my-saas
+pnpm dev
+```
+
+**Add a marketing site:**
+
+```bash
+npx startupkit add next --name marketing
+```
+
+**Add a shared package:**
+
+```bash
+npx startupkit add pkg --name api-client
+```
+
+## Resources
+
+- [Documentation](https://startupkit.com)
+- [GitHub](https://github.com/ian/startupkit)
+- [Issues](https://github.com/ian/startupkit/issues)

@@ -1,0 +1,196 @@
+---
+title: Deployment
+description: Deploy your StartupKit application to production
+---
+
+# Deployment
+
+StartupKit is optimized for deployment on [Vercel](https://vercel.com), but works with any platform that supports Next.js.
+
+## Vercel (Recommended)
+
+### 1. Connect Repository
+
+1. Push your code to GitHub
+2. Go to [vercel.com/new](https://vercel.com/new)
+3. Import your repository
+4. Vercel auto-detects Next.js and configures the build
+
+### 2. Configure Project
+
+For monorepos, set the root directory:
+
+- **Root Directory**: `apps/web`
+- **Framework Preset**: Next.js (auto-detected)
+
+### 3. Environment Variables
+
+Add your environment variables in the Vercel dashboard:
+
+```bash
+# Database
+DATABASE_URL=postgresql://...
+
+# Authentication
+BETTER_AUTH_SECRET=...
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+
+# Analytics
+NEXT_PUBLIC_POSTHOG_API_KEY=...
+NEXT_PUBLIC_POSTHOG_HOST=...
+```
+
+### 4. Deploy
+
+Click "Deploy" and Vercel will:
+
+1. Install dependencies
+2. Build the application
+3. Deploy to a global edge network
+
+## Database Setup
+
+### Neon (Recommended)
+
+1. Create a database at [neon.tech](https://neon.tech)
+2. Copy the connection string
+3. Add as `DATABASE_URL` environment variable
+
+### Run Migrations
+
+Before first deployment, run migrations:
+
+```bash
+pnpm db:push
+```
+
+Or use Drizzle migrations:
+
+```bash
+pnpm db:migrate
+```
+
+## Domain Configuration
+
+### Custom Domain
+
+1. Go to your Vercel project settings
+2. Navigate to "Domains"
+3. Add your custom domain
+4. Update DNS records as instructed
+
+### Update Environment Variables
+
+Update your auth configuration with the production URL:
+
+```bash
+NEXT_PUBLIC_APP_URL=https://yourdomain.com
+```
+
+## Production Checklist
+
+Before going live, verify:
+
+- [ ] Environment variables are set
+- [ ] Database is provisioned and migrated
+- [ ] Authentication providers are configured
+- [ ] Analytics is tracking correctly
+- [ ] SEO metadata is configured
+- [ ] Error monitoring is set up (optional)
+
+## Monitoring
+
+### Error Tracking
+
+Consider adding error tracking with:
+
+- [Sentry](https://sentry.io) - Error monitoring
+- [LogRocket](https://logrocket.com) - Session replay
+
+### Analytics Dashboard
+
+View your analytics in:
+
+- PostHog dashboard
+- Google Analytics console
+- Vercel Analytics (built-in)
+
+## Other Platforms
+
+### Docker
+
+Create a `Dockerfile`:
+
+```dockerfile
+FROM node:20-alpine AS base
+
+FROM base AS deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+COPY package.json pnpm-lock.yaml ./
+RUN corepack enable pnpm && pnpm install --frozen-lockfile
+
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+RUN corepack enable pnpm && pnpm build
+
+FROM base AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+
+EXPOSE 3000
+ENV PORT=3000
+CMD ["node", "server.js"]
+```
+
+### Railway / Render
+
+Both platforms support Next.js:
+
+1. Connect your repository
+2. Set root directory to `apps/web`
+3. Add environment variables
+4. Deploy
+
+## CI/CD
+
+### GitHub Actions
+
+The template includes a CI workflow:
+
+```yaml
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm build
+```
+
+## Next Steps
+
+- [PostHog Setup](https://posthog.com/docs/getting-started/install) - Analytics dashboard
+- [Neon Docs](https://neon.tech/docs) - Database management
+- [Vercel Docs](https://vercel.com/docs) - Advanced deployment options

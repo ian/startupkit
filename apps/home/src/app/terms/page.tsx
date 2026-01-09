@@ -1,22 +1,22 @@
+import type { Metadata } from "next"
+import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
-import { Link } from "react-router-dom"
-import { Footer } from "../components/footer"
-import { Navigation } from "../components/navigation"
-import { SEO } from "../components/seo"
+import { Footer } from "@/components/footer"
+import { Navigation } from "@/components/navigation"
 
-export function TermsPage() {
+export const metadata: Metadata = {
+	title: "Terms of Service",
+	description:
+		"Read the Terms of Service for StartupKit. Learn about the MIT license and usage terms."
+}
+
+export default function TermsPage() {
 	return (
-		<div className="min-h-screen bg-black text-white">
-			<SEO
-				title="Terms of Service"
-				description="Read the Terms of Service for StartupKit. Learn about the MIT license and usage terms."
-				path="/terms"
-			/>
+		<>
 			<Navigation />
-
 			<main className="container mx-auto px-6 py-20 max-w-3xl">
 				<Link
-					to="/"
+					href="/"
 					className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors mb-8"
 				>
 					<ArrowLeft className="w-4 h-4" />
@@ -50,10 +50,10 @@ export function TermsPage() {
 					<section className="space-y-4">
 						<h2 className="text-2xl font-medium text-white">Disclaimer</h2>
 						<p>
-							The software is provided "as is", without warranty of any kind,
-							express or implied, including but not limited to the warranties of
-							merchantability, fitness for a particular purpose and
-							noninfringement.
+							The software is provided &ldquo;as is&rdquo;, without warranty of
+							any kind, express or implied, including but not limited to the
+							warranties of merchantability, fitness for a particular purpose
+							and noninfringement.
 						</p>
 					</section>
 
@@ -89,8 +89,7 @@ export function TermsPage() {
 					</section>
 				</div>
 			</main>
-
 			<Footer />
-		</div>
+		</>
 	)
 }

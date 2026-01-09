@@ -1,0 +1,218 @@
+---
+title: Analytics Setup
+description: Configure analytics providers with StartupKit
+---
+
+# Analytics Setup
+
+StartupKit includes a provider-agnostic analytics system with built-in plugins for popular services.
+
+## Supported Providers
+
+- **PostHog** - Product analytics, feature flags, session recordings
+- **Google Analytics** - GA4 integration
+- **OpenPanel** - Privacy-focused analytics
+- **Ahrefs** - SEO and traffic analytics
+
+## Basic Setup
+
+### 1. Install Dependencies
+
+```bash
+pnpm add posthog-js  # If using PostHog
+```
+
+### 2. Configure Plugins
+
+Create your analytics configuration:
+
+```tsx title="apps/web/src/lib/analytics.ts"
+import {
+  PostHogPlugin,
+  GoogleAnalyticsPlugin,
+  OpenPanelPlugin
+} from "@repo/analytics"
+
+export const analyticsPlugins = [
+  PostHogPlugin({
+    apiKey: process.env.NEXT_PUBLIC_POSTHOG_API_KEY!,
+    apiHost: process.env.NEXT_PUBLIC_POSTHOG_HOST
+  }),
+  GoogleAnalyticsPlugin({
+    measurementId: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID!
+  }),
+  OpenPanelPlugin({
+    clientId: process.env.NEXT_PUBLIC_OPENPANEL_CLIENT_ID!
+  })
+]
+```
+
+### 3. Set Up Provider
+
+Add `AnalyticsProvider` to your app:
+
+```tsx title="apps/web/src/app/providers.tsx"
+"use client"
+
+import { AnalyticsProvider } from "@repo/analytics"
+import { analyticsPlugins } from "@/lib/analytics"
+
+export function Providers({ children, flags }) {
+  return (
+    <AnalyticsProvider flags={flags} plugins={analyticsPlugins}>
+      {children}
+    </AnalyticsProvider>
+  )
+}
+```
+
+## Using Analytics
+
+### Track Events
+
+```tsx
+"use client"
+
+import { useAnalytics } from "@repo/analytics"
+
+export function PricingPage() {
+  const { track } = useAnalytics()
+
+  const handlePlanSelect = (plan: string) => {
+    track("PLAN_SELECTED", {
+      plan,
+      source: "pricing_page"
+    })
+  }
+
+  return (
+    <button onClick={() => handlePlanSelect("pro")}>
+      Select Pro Plan
+    </button>
+  )
+}
+```
+
+### Identify Users
+
+```tsx
+"use client"
+
+import { useAnalytics } from "@repo/analytics"
+import { useEffect } from "react"
+
+export function UserIdentifier({ user }) {
+  const { identify } = useAnalytics()
+
+  useEffect(() => {
+    if (user) {
+      identify(user.id, {
+        email: user.email,
+        name: user.name,
+        plan: user.plan
+      })
+    }
+  }, [user, identify])
+
+  return null
+}
+```
+
+### Feature Flags
+
+```tsx
+"use client"
+
+import { useFlag } from "@repo/analytics"
+
+export function NewFeature() {
+  const isEnabled = useFlag("new-feature")
+
+  if (!isEnabled) return null
+
+  return <div>New Feature!</div>
+}
+```
+
+## Advanced Configuration
+
+### Custom Event Routing
+
+Send different events to different providers:
+
+```tsx
+const plugins = [
+  PostHogPlugin({ apiKey: "..." }),
+  GoogleAnalyticsPlugin({ measurementId: "..." })
+] as const
+
+<AnalyticsProvider
+  flags={flags}
+  plugins={plugins}
+  handlers={{
+    track: ({ plugins, event, properties }) => {
+      // All events to PostHog
+      plugins.PostHog.track?.(event, properties)
+      
+      // Only purchase events to GA
+      if (event.startsWith("PURCHASE_")) {
+        plugins.GoogleAnalytics.track?.(event, properties)
+      }
+    }
+  }}
+>
+  {children}
+</AnalyticsProvider>
+```
+
+### Debug Mode
+
+Log all events in development:
+
+```tsx
+<AnalyticsProvider
+  flags={flags}
+  plugins={plugins}
+  handlers={{
+    track: ({ plugins, event, properties }) => {
+      if (process.env.NODE_ENV === "development") {
+        console.log("📊 Analytics:", event, properties)
+      }
+      plugins.PostHog.track?.(event, properties)
+    }
+  }}
+>
+  {children}
+</AnalyticsProvider>
+```
+
+## Environment Variables
+
+```bash
+# PostHog
+NEXT_PUBLIC_POSTHOG_API_KEY=phc_...
+NEXT_PUBLIC_POSTHOG_HOST=https://app.posthog.com
+
+# Google Analytics
+NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+
+# OpenPanel
+NEXT_PUBLIC_OPENPANEL_CLIENT_ID=your-client-id
+```
+
+## Auto Page Tracking
+
+Page views are tracked automatically with Next.js App Router. The system:
+
+- Filters out route groups like `(dashboard)`
+- Replaces long numeric IDs with `:id`
+- Tracks on route changes
+
+Example:
+- Input: `/dashboard/(settings)/profile/abc123def456`
+- Tracked as: `/dashboard/profile/:id`
+
+## Next Steps
+
+- [Packages: Analytics](/docs/packages/analytics) - Full API reference
+- [PostHog Docs](https://posthog.com/docs) - PostHog configuration

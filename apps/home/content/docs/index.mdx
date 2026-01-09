@@ -1,0 +1,77 @@
+---
+title: Introduction
+description: Welcome to StartupKit - The startup stack for the AI era
+---
+
+# Welcome to StartupKit
+
+StartupKit is a meta-framework for building SaaS applications. It's built on **Next.js**, **React 19**, **TypeScript**, and **Turbo** with authentication, analytics, database, and UI components pre-configured.
+
+## Why StartupKit?
+
+Building a SaaS from scratch means spending weeks on boilerplate:
+
+- Setting up authentication
+- Configuring analytics
+- Building UI components
+- Optimizing for SEO
+- Managing a monorepo
+
+StartupKit gives you all of this out of the box, so you can focus on what matters: **building your product**.
+
+## Quick Start
+
+Get started with a single command:
+
+```bash
+npx startupkit init
+```
+
+This will:
+1. Clone the complete monorepo template
+2. Install all dependencies
+3. Set up workspace packages
+
+Then start the development server:
+
+```bash
+cd my-project
+pnpm dev
+```
+
+## What's Included
+
+### Packages
+
+StartupKit includes several packages that work together:
+
+- **[@startupkit/analytics](/docs/packages/analytics)** - Provider-agnostic analytics with plugins for PostHog, Google Analytics, OpenPanel, and more
+- **[@startupkit/auth](/docs/packages/auth)** - Lightweight authentication wrappers around Better Auth
+- **[@startupkit/cli](/docs/packages/cli)** - Command-line tool for scaffolding projects
+- **[@startupkit/seo](/docs/packages/seo)** - SEO utilities including metadata, structured data, sitemaps
+
+### Project Structure
+
+```
+my-project/
+├── apps/
+│   └── web/           # Your Next.js application
+├── packages/
+│   ├── analytics/     # @repo/analytics
+│   ├── auth/          # @repo/auth
+│   ├── db/            # @repo/db (Drizzle ORM)
+│   ├── ui/            # @repo/ui (Shadcn components)
+│   └── utils/         # @repo/utils
+├── turbo.json
+└── package.json
+```
+
+## AI-Ready
+
+StartupKit is designed to work seamlessly with AI coding assistants. Clear patterns, consistent conventions, and well-documented code make it easy for tools like Cursor, GitHub Copilot, and Claude to understand and extend your codebase.
+
+## Next Steps
+
+- [Installation](/docs/getting-started/installation) - Detailed installation guide
+- [Project Structure](/docs/getting-started/project-structure) - Understanding the monorepo layout
+- [Packages](/docs/packages/analytics) - Deep dive into each package

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import Link from "next/link"
 import { GitHubStarButton } from "./github-star-button"
 import { Logo } from "./logo"
 
@@ -10,7 +10,7 @@ export function Navigation() {
 					<Logo />
 					<div className="hidden md:flex items-center gap-8">
 						<Link
-							to="/docs"
+							href="/docs"
 							className="text-sm font-normal text-zinc-300 hover:text-white transition-colors"
 						>
 							Docs

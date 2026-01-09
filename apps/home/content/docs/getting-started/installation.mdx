@@ -1,0 +1,74 @@
+---
+title: Installation
+description: Get started with StartupKit in minutes
+---
+
+# Installation
+
+StartupKit uses a CLI to scaffold new projects. The CLI sets up a complete monorepo with all packages pre-configured.
+
+## Prerequisites
+
+Before you begin, make sure you have:
+
+- **Node.js 20+** - [Download](https://nodejs.org)
+- **pnpm 9+** - Install with `npm install -g pnpm`
+
+## Create a New Project
+
+Run the CLI to create a new project:
+
+```bash
+npx startupkit init
+```
+
+You'll be prompted to enter a project name:
+
+```
+? Project name: my-saas
+```
+
+The CLI will:
+1. Clone the complete monorepo template
+2. Install all dependencies with pnpm
+3. Set up workspace packages
+
+## Start Development
+
+Navigate to your project and start the development server:
+
+```bash
+cd my-saas
+pnpm dev
+```
+
+This starts all apps in the monorepo. Your main app will be available at `http://localhost:3000`.
+
+## Environment Variables
+
+Copy the example environment file:
+
+```bash
+cp apps/web/.env.example apps/web/.env.local
+```
+
+Required environment variables:
+
+```bash
+# Database
+DATABASE_URL=postgresql://...
+
+# Authentication (Better Auth)
+BETTER_AUTH_SECRET=your-secret-key
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+
+# Analytics (optional)
+NEXT_PUBLIC_POSTHOG_API_KEY=your-posthog-key
+NEXT_PUBLIC_POSTHOG_HOST=https://app.posthog.com
+```
+
+## Next Steps
+
+- [Quickstart](/docs/getting-started/quickstart) - Build your first feature
+- [Project Structure](/docs/getting-started/project-structure) - Understand the codebase

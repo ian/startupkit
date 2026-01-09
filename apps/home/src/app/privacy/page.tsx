@@ -1,22 +1,22 @@
+import type { Metadata } from "next"
+import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
-import { Link } from "react-router-dom"
-import { Footer } from "../components/footer"
-import { Navigation } from "../components/navigation"
-import { SEO } from "../components/seo"
+import { Footer } from "@/components/footer"
+import { Navigation } from "@/components/navigation"
 
-export function PrivacyPage() {
+export const metadata: Metadata = {
+	title: "Privacy Policy",
+	description:
+		"Learn how StartupKit collects, uses, and protects your personal information. Read our privacy policy."
+}
+
+export default function PrivacyPage() {
 	return (
-		<div className="min-h-screen bg-black text-white">
-			<SEO
-				title="Privacy Policy"
-				description="Learn how StartupKit collects, uses, and protects your personal information. Read our privacy policy."
-				path="/privacy"
-			/>
+		<>
 			<Navigation />
-
 			<main className="container mx-auto px-6 py-20 max-w-3xl">
 				<Link
-					to="/"
+					href="/"
 					className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors mb-8"
 				>
 					<ArrowLeft className="w-4 h-4" />
@@ -31,9 +31,9 @@ export function PrivacyPage() {
 					<section className="space-y-4">
 						<h2 className="text-2xl font-medium text-white">Introduction</h2>
 						<p>
-							This privacy policy describes how StartupKit ("we", "us", or
-							"our") collects, uses, and shares information about you when you
-							use our website and services.
+							This privacy policy describes how StartupKit (&ldquo;we&rdquo;,
+							&ldquo;us&rdquo;, or &ldquo;our&rdquo;) collects, uses, and shares
+							information about you when you use our website and services.
 						</p>
 					</section>
 
@@ -78,8 +78,7 @@ export function PrivacyPage() {
 					</section>
 				</div>
 			</main>
-
 			<Footer />
-		</div>
+		</>
 	)
 }

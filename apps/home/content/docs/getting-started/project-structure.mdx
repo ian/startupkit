@@ -1,0 +1,160 @@
+---
+title: Project Structure
+description: Understanding the StartupKit monorepo layout
+---
+
+# Project Structure
+
+StartupKit uses a **monorepo** architecture powered by [Turborepo](https://turbo.build/repo). This allows you to share code between apps while keeping everything in a single repository.
+
+## Directory Overview
+
+```
+my-project/
+├── apps/
+│   └── web/                 # Main Next.js application
+├── packages/
+│   ├── analytics/           # @repo/analytics - Analytics hooks
+│   ├── auth/                # @repo/auth - Authentication
+│   ├── db/                  # @repo/db - Database (Drizzle)
+│   ├── ui/                  # @repo/ui - UI components
+│   └── utils/               # @repo/utils - Shared utilities
+├── config/
+│   ├── biome/               # Biome (linting/formatting) config
+│   ├── nextjs/              # Shared Next.js config
+│   └── typescript/          # Shared TypeScript configs
+├── turbo.json               # Turborepo configuration
+├── pnpm-workspace.yaml      # pnpm workspace configuration
+└── package.json             # Root package.json
+```
+
+## Apps
+
+The `apps/` directory contains deployable applications:
+
+### `apps/web`
+
+Your main Next.js application with:
+
+- **App Router** - Modern Next.js routing
+- **Server Components** - RSC by default
+- **Authentication** - Better Auth integration
+- **Analytics** - PostHog, GA4, etc.
+- **Database** - Drizzle ORM with PostgreSQL
+
+```
+apps/web/
+├── src/
+│   ├── app/                 # Next.js App Router
+│   │   ├── (auth)/          # Auth routes (sign-in, etc.)
+│   │   ├── (main)/          # Main app routes
+│   │   └── api/             # API routes
+│   ├── components/          # App-specific components
+│   └── lib/                 # App-specific utilities
+├── drizzle/                 # Database migrations
+└── public/                  # Static assets
+```
+
+## Packages
+
+The `packages/` directory contains shared code:
+
+### `@repo/analytics`
+
+Analytics hooks and providers:
+
+```tsx
+import { useAnalytics } from "@repo/analytics"
+
+const { track, identify } = useAnalytics()
+```
+
+### `@repo/auth`
+
+Authentication context and hooks:
+
+```tsx
+import { useAuth } from "@repo/auth"
+
+const { user, isAuthenticated, logout } = useAuth()
+```
+
+### `@repo/db`
+
+Database client and schema:
+
+```tsx
+import { db } from "@repo/db"
+import { users } from "@repo/db/schema"
+```
+
+### `@repo/ui`
+
+Shadcn-based UI components:
+
+```tsx
+import { Button } from "@repo/ui/button"
+import { Card } from "@repo/ui/card"
+```
+
+### `@repo/utils`
+
+Shared utilities:
+
+```tsx
+import { cn, getUrl } from "@repo/utils"
+```
+
+## Configuration
+
+### `turbo.json`
+
+Defines the task pipeline:
+
+```json
+{
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "dist/**"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {},
+    "typecheck": {}
+  }
+}
+```
+
+### `pnpm-workspace.yaml`
+
+Defines workspace packages:
+
+```yaml
+packages:
+  - "apps/*"
+  - "packages/*"
+  - "config/*"
+```
+
+## Adding New Packages
+
+Use the CLI to add new apps or packages:
+
+```bash
+# Add a new Next.js app
+npx startupkit add next --name dashboard
+
+# Add a new Vite app
+npx startupkit add vite --name landing
+
+# Add a new package
+npx startupkit add pkg --name shared-utils
+```
+
+## Next Steps
+
+- [Packages Overview](/docs/packages/analytics) - Explore each package
+- [Guides](/docs/guides/authentication) - Step-by-step tutorials

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import Link from "next/link"
 import { Logo } from "./logo"
 
 export function Footer() {
@@ -14,7 +14,7 @@ export function Footer() {
 						<ul className="space-y-3">
 							<li>
 								<Link
-									to="/#features"
+									href="/#features"
 									className="text-zinc-400 hover:text-white transition-colors text-sm"
 								>
 									Features
@@ -22,7 +22,7 @@ export function Footer() {
 							</li>
 							<li>
 								<Link
-									to="/changelog"
+									href="/changelog"
 									className="text-zinc-400 hover:text-white transition-colors text-sm"
 								>
 									Changelog
@@ -35,23 +35,15 @@ export function Footer() {
 						<ul className="space-y-3">
 							<li>
 								<Link
-									to="/docs"
+									href="/docs"
 									className="text-zinc-400 hover:text-white transition-colors text-sm"
 								>
 									Documentation
 								</Link>
 							</li>
-							{/* <li>
-								<Link
-									to="/blog"
-									className="text-zinc-400 hover:text-white transition-colors text-sm"
-								>
-									Blog
-								</Link>
-							</li> */}
 							<li>
 								<Link
-									to="#getting"
+									href="#getting"
 									className="text-zinc-400 hover:text-white transition-colors text-sm"
 								>
 									Getting Started
@@ -101,13 +93,13 @@ export function Footer() {
 					</p>
 					<div className="flex items-center gap-6">
 						<Link
-							to="/privacy"
+							href="/privacy"
 							className="text-zinc-500 hover:text-white transition-colors text-sm"
 						>
 							Privacy
 						</Link>
 						<Link
-							to="/terms"
+							href="/terms"
 							className="text-zinc-500 hover:text-white transition-colors text-sm"
 						>
 							Terms

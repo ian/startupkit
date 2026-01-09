@@ -1,0 +1,108 @@
+---
+title: Quickstart
+description: Build your first feature with StartupKit in 5 minutes
+---
+
+# Quickstart
+
+This guide will walk you through building your first feature with StartupKit.
+
+## 1. Create a New Page
+
+Create a new page in your app:
+
+```tsx title="apps/web/src/app/dashboard/page.tsx"
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
+import { redirect } from "next/navigation"
+
+export default async function DashboardPage() {
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
+
+  if (!session) {
+    redirect("/sign-in")
+  }
+
+  return (
+    <div className="container mx-auto py-10">
+      <h1 className="text-3xl font-bold">
+        Welcome, {session.user.name}
+      </h1>
+    </div>
+  )
+}
+```
+
+## 2. Add Analytics
+
+Track page views and events with the analytics package:
+
+```tsx title="apps/web/src/app/dashboard/client.tsx"
+"use client"
+
+import { useAnalytics } from "@repo/analytics"
+
+export function DashboardClient() {
+  const { track } = useAnalytics()
+
+  const handleAction = () => {
+    track("DASHBOARD_ACTION", {
+      action: "button_click",
+      timestamp: Date.now()
+    })
+  }
+
+  return (
+    <button onClick={handleAction}>
+      Track Action
+    </button>
+  )
+}
+```
+
+## 3. Use UI Components
+
+Import pre-built components from the UI package:
+
+```tsx
+import { Button } from "@repo/ui/button"
+import { Card, CardHeader, CardTitle, CardContent } from "@repo/ui/card"
+
+export function MyComponent() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>My Feature</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Button>Get Started</Button>
+      </CardContent>
+    </Card>
+  )
+}
+```
+
+## 4. Query the Database
+
+Use Drizzle ORM for type-safe database queries:
+
+```tsx
+import { db } from "@repo/db"
+import { users } from "@repo/db/schema"
+import { eq } from "drizzle-orm"
+
+export async function getUser(userId: string) {
+  const user = await db.query.users.findFirst({
+    where: eq(users.id, userId)
+  })
+  return user
+}
+```
+
+## Next Steps
+
+- [Project Structure](/docs/getting-started/project-structure) - Deep dive into the codebase
+- [Authentication](/docs/guides/authentication) - Set up sign-in flows
+- [Analytics](/docs/packages/analytics) - Configure analytics providers

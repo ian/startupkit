@@ -1,5 +1,6 @@
 import { cva } from "class-variance-authority"
-import { Link } from "react-router-dom"
+import Link from "next/link"
+import Image from "next/image"
 
 const logoVariants = cva("w-auto", {
 	variants: {
@@ -27,6 +28,12 @@ const textVariants = cva("font-semibold", {
 	}
 })
 
+const sizeToPixels = {
+	sm: 24,
+	md: 40,
+	lg: 64
+}
+
 interface LogoProps {
 	icon?: boolean
 	size?: "sm" | "md" | "lg"
@@ -34,10 +41,12 @@ interface LogoProps {
 
 export function Logo({ icon = false, size = "md" }: LogoProps) {
 	return (
-		<Link to="/" className="flex items-center">
-			<img
+		<Link href="/" className="flex items-center">
+			<Image
 				src="/startupkit-logo.png"
 				alt="StartupKit"
+				width={sizeToPixels[size]}
+				height={sizeToPixels[size]}
 				className={logoVariants({ size })}
 			/>
 			{!icon && <span className={textVariants({ size })}>startupkit</span>}
