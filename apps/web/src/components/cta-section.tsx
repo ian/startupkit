@@ -7,9 +7,9 @@ export function CTASection() {
 				Get started
 			</p>
 			<h2 className="text-4xl md:text-5xl font-semibold tracking-tight mb-6 text-balance">
-				Stop configuring.
+				Stop burning tokens.
 				<br />
-				Start building.
+				Start shipping faster.
 			</h2>
 			<p className="text-zinc-400 text-lg mb-8 max-w-xl mx-auto">
 				One command. Production-ready monorepo. All the infrastructure you
