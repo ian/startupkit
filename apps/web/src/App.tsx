@@ -20,6 +20,7 @@ import {
 	Sparkles
 } from "lucide-react"
 import { useState } from "react"
+import { Link } from "react-router-dom"
 
 function PackageRow({
 	name,
@@ -102,28 +103,32 @@ export default function App() {
 							<span className="text-xl font-semibold">startupkit</span>
 						</div>
 						<div className="hidden md:flex items-center gap-8">
-							<a
-								href="#"
-								className="text-sm font-normal text-zinc-300 hover:text-white transition-colors"
-							>
-								Docs
-							</a>
-							<a
-								href="#"
-								className="text-sm font-normal text-zinc-300 hover:text-white transition-colors"
-							>
-								Community
-							</a>
-							<a
-								href="#"
-								className="flex items-center gap-2 text-sm font-normal text-zinc-300 hover:text-white transition-colors px-3 py-1.5 rounded-lg bg-zinc-800/50 hover:bg-zinc-800/70"
-							>
-								<Github className="w-4 h-4" />
-								<span>Star</span>
-								<span className="px-2 py-0.5 bg-zinc-800 rounded text-xs font-medium">
-									568
-								</span>
-							</a>
+						<Link
+							to="/docs"
+							className="text-sm font-normal text-zinc-300 hover:text-white transition-colors"
+						>
+							Docs
+						</Link>
+						<a
+							href="https://discord.gg/startupkit"
+							target="_blank"
+							rel="noopener noreferrer"
+							className="text-sm font-normal text-zinc-300 hover:text-white transition-colors"
+						>
+							Community
+						</a>
+						<a
+							href="https://github.com/01-studio/startupkit"
+							target="_blank"
+							rel="noopener noreferrer"
+							className="flex items-center gap-2 text-sm font-normal text-zinc-300 hover:text-white transition-colors px-3 py-1.5 rounded-lg bg-zinc-800/50 hover:bg-zinc-800/70"
+						>
+							<Github className="w-4 h-4" />
+							<span>Star</span>
+							<span className="px-2 py-0.5 bg-zinc-800 rounded text-xs font-medium">
+								568
+							</span>
+						</a>
 						</div>
 					</div>
 				</div>
@@ -1024,18 +1029,18 @@ export default function App() {
 							</a>
 						</p>
 						<div className="flex items-center gap-6">
-							<a
-								href="/privacy"
+							<Link
+								to="/privacy"
 								className="text-zinc-500 hover:text-white transition-colors text-sm"
 							>
 								Privacy
-							</a>
-							<a
-								href="/terms"
+							</Link>
+							<Link
+								to="/terms"
 								className="text-zinc-500 hover:text-white transition-colors text-sm"
 							>
 								Terms
-							</a>
+							</Link>
 						</div>
 					</div>
 				</div>
