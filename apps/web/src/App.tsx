@@ -938,7 +938,7 @@ export default function App() {
 							<ul className="space-y-3">
 								<li>
 									<a
-										href="#"
+										href="/#features"
 										className="text-zinc-400 hover:text-white transition-colors text-sm"
 									>
 										Features
@@ -946,15 +946,7 @@ export default function App() {
 								</li>
 								<li>
 									<a
-										href="#"
-										className="text-zinc-400 hover:text-white transition-colors text-sm"
-									>
-										Pricing
-									</a>
-								</li>
-								<li>
-									<a
-										href="#"
+										href="/changelog"
 										className="text-zinc-400 hover:text-white transition-colors text-sm"
 									>
 										Changelog
@@ -967,7 +959,7 @@ export default function App() {
 							<ul className="space-y-3">
 								<li>
 									<a
-										href="#"
+										href="/docs"
 										className="text-zinc-400 hover:text-white transition-colors text-sm"
 									>
 										Documentation
@@ -975,7 +967,7 @@ export default function App() {
 								</li>
 								<li>
 									<a
-										href="#"
+										href="/blog"
 										className="text-zinc-400 hover:text-white transition-colors text-sm"
 									>
 										Blog
@@ -983,7 +975,7 @@ export default function App() {
 								</li>
 								<li>
 									<a
-										href="#"
+										href="#getting"
 										className="text-zinc-400 hover:text-white transition-colors text-sm"
 									>
 										Getting Started
@@ -996,7 +988,7 @@ export default function App() {
 							<ul className="space-y-3">
 								<li>
 									<a
-										href="#"
+										href="https://discord.gg/gRmD4TJCas"
 										className="text-zinc-400 hover:text-white transition-colors text-sm"
 									>
 										Discord
@@ -1004,7 +996,7 @@ export default function App() {
 								</li>
 								<li>
 									<a
-										href="#"
+										href="https://github.com/ian/startupkit"
 										className="text-zinc-400 hover:text-white transition-colors text-sm"
 									>
 										GitHub
@@ -1012,7 +1004,7 @@ export default function App() {
 								</li>
 								<li>
 									<a
-										href="#"
+										href="https://x.com/01stdio"
 										className="text-zinc-400 hover:text-white transition-colors text-sm"
 									>
 										Twitter
@@ -1033,13 +1025,13 @@ export default function App() {
 						</p>
 						<div className="flex items-center gap-6">
 							<a
-								href="#"
+								href="/privacy"
 								className="text-zinc-500 hover:text-white transition-colors text-sm"
 							>
 								Privacy
 							</a>
 							<a
-								href="#"
+								href="/terms"
 								className="text-zinc-500 hover:text-white transition-colors text-sm"
 							>
 								Terms
