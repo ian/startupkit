@@ -9,7 +9,7 @@
 		"type": "git",
 		"url": "https://github.com/ian/startupkit"
 	},
-	"keywords": ["startup", "boostrap", "boilerplate", "analytics", "auth"],
+	"keywords": ["startup", "bootstrap", "boilerplate", "analytics", "auth"],
 	"files": ["dist", "templates"],
 	"type": "module",
 	"main": "dist/cli.js",
