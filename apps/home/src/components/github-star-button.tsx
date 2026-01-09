@@ -5,7 +5,11 @@ export function GitHubStarButton() {
 	const [starCount, setStarCount] = useState<number | null>(null)
 
 	useEffect(() => {
-		fetch("https://api.github.com/repos/ian/startupkit")
+		const controller = new AbortController()
+
+		fetch("https://api.github.com/repos/ian/startupkit", {
+			signal: controller.signal
+		})
 			.then((res) => res.json())
 			.then((data) => {
 				if (typeof data.stargazers_count === "number") {
@@ -13,6 +17,8 @@ export function GitHubStarButton() {
 				}
 			})
 			.catch(() => {})
+
+		return () => controller.abort()
 	}, [])
 
 	return (

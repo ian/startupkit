@@ -109,8 +109,8 @@ export function ProblemSection() {
 						</div>
 						<div className="mt-8 pt-6 border-t border-zinc-800">
 							<p className="text-zinc-300 text-sm">
-								Start at <span className="text-white font-semibold">70%</span>
-								. AI handles the details, not the foundation.
+								Start at <span className="text-white font-semibold">70%</span>.
+								AI handles the details, not the foundation.
 							</p>
 						</div>
 					</div>

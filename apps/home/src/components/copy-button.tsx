@@ -6,9 +6,13 @@ export function CopyButton({ text }: { text: string }) {
 	const [copied, setCopied] = useState(false)
 
 	const handleCopy = async () => {
-		await navigator.clipboard.writeText(text)
-		setCopied(true)
-		setTimeout(() => setCopied(false), 2000)
+		try {
+			await navigator.clipboard.writeText(text)
+			setCopied(true)
+			setTimeout(() => setCopied(false), 2000)
+		} catch {
+			console.error("Failed to copy to clipboard")
+		}
 	}
 
 	return (
@@ -17,7 +21,7 @@ export function CopyButton({ text }: { text: string }) {
 			className={`w-28 px-6 py-4 h-auto rounded-xl text-base font-medium transition-all border-0 ${
 				copied
 					? "bg-emerald-500 hover:bg-emerald-500 text-white"
-					: "bg-[#4B4DF5] hover:bg-[#3b3dd5] text-white"
+					: "bg-brand hover:bg-brand-hover text-white"
 			}`}
 		>
 			{copied ? (

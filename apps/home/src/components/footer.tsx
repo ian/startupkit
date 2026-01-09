@@ -13,20 +13,20 @@ export function Footer() {
 						<h3 className="text-white font-semibold mb-4">Product</h3>
 						<ul className="space-y-3">
 							<li>
-								<a
-									href="/#features"
+								<Link
+									to="/#features"
 									className="text-zinc-400 hover:text-white transition-colors text-sm"
 								>
 									Features
-								</a>
+								</Link>
 							</li>
 							<li>
-								<a
-									href="/changelog"
+								<Link
+									to="/changelog"
 									className="text-zinc-400 hover:text-white transition-colors text-sm"
 								>
 									Changelog
-								</a>
+								</Link>
 							</li>
 						</ul>
 					</div>
@@ -34,28 +34,28 @@ export function Footer() {
 						<h3 className="text-white font-semibold mb-4">Resources</h3>
 						<ul className="space-y-3">
 							<li>
-								<a
-									href="/docs"
+								<Link
+									to="/docs"
 									className="text-zinc-400 hover:text-white transition-colors text-sm"
 								>
 									Documentation
-								</a>
+								</Link>
 							</li>
 							{/* <li>
-								<a
-									href="/blog"
+								<Link
+									to="/blog"
 									className="text-zinc-400 hover:text-white transition-colors text-sm"
 								>
 									Blog
-								</a>
+								</Link>
 							</li> */}
 							<li>
-								<a
-									href="#getting"
+								<Link
+									to="#getting"
 									className="text-zinc-400 hover:text-white transition-colors text-sm"
 								>
 									Getting Started
-								</a>
+								</Link>
 							</li>
 						</ul>
 					</div>

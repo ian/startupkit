@@ -99,12 +99,14 @@ export function SEO({
 			)}
 
 			{/* Structured Data */}
-			<script type="application/ld+json">
-				{JSON.stringify(organizationSchema)}
-			</script>
-			<script type="application/ld+json">
-				{JSON.stringify(websiteSchema)}
-			</script>
+			<script
+				type="application/ld+json"
+				dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+			/>
+			<script
+				type="application/ld+json"
+				dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+			/>
 		</Helmet>
 	)
 }

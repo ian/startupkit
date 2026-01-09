@@ -18,6 +18,10 @@ catalogs:
     zod:
       specifier: 3.24.1
       version: 3.24.1
+  ui:
+    tailwindcss-animate:
+      specifier: 1.0.7
+      version: 1.0.7
 
 overrides:
   react: 19.0.0
@@ -80,8 +84,11 @@ importers:
         specifier: ^0.6.0
         version: 0.6.1
 
-  apps/web:
+  apps/home:
     dependencies:
+      '@fontsource-variable/inter':
+        specifier: ^5.2.8
+        version: 5.2.8
       '@radix-ui/react-accordion':
         specifier: 1.2.2
         version: 1.2.2(@types/react-dom@19.0.2(@types/react@19.0.1))(@types/react@19.0.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -140,6 +147,9 @@ importers:
       tailwindcss:
         specifier: 3.4.14
         version: 3.4.14
+      tailwindcss-animate:
+        specifier: catalog:ui
+        version: 1.0.7(tailwindcss@3.4.14)
       typescript:
         specifier: catalog:stack
         version: 5.9.2
@@ -2550,6 +2560,9 @@ packages:
 
   '@floating-ui/utils@0.2.10':
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
+
+  '@fontsource-variable/inter@5.2.8':
+    resolution: {integrity: sha512-kOfP2D+ykbcX/P3IFnokOhVRNoTozo5/JxhAIVYLpea/UBmCQ/YWPBfWIDuBImXX/15KH+eKh4xpEUyS2sQQGQ==}
 
   '@hexagon/base64@1.1.28':
     resolution: {integrity: sha512-lhqDEAvWixy3bZ+UOYbPwUbBkwBq5C1LAJ/xPC8Oi+lL54oyakv/npbA0aU2hgCsx/1NUd4IBvV03+aUBWxerw==}
@@ -12842,6 +12855,8 @@ snapshots:
       react-dom: 19.0.0(react@19.0.0)
 
   '@floating-ui/utils@0.2.10': {}
+
+  '@fontsource-variable/inter@5.2.8': {}
 
   '@hexagon/base64@1.1.28': {}
 

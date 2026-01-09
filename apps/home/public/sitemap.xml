@@ -2,20 +2,14 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 	<url>
 		<loc>https://startupkit.com/</loc>
-		<lastmod>2026-01-09</lastmod>
-		<changefreq>daily</changefreq>
 		<priority>1.0</priority>
 	</url>
 	<url>
 		<loc>https://startupkit.com/privacy</loc>
-		<lastmod>2026-01-09</lastmod>
-		<changefreq>monthly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
 		<loc>https://startupkit.com/terms</loc>
-		<lastmod>2026-01-09</lastmod>
-		<changefreq>monthly</changefreq>
 		<priority>0.5</priority>
 	</url>
 </urlset>

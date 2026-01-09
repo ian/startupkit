@@ -1,3 +1,4 @@
+import { INIT_COMMAND } from "../lib/constants"
 import { CopyButton } from "./copy-button"
 import { TerminalDemo } from "./terminal-demo"
 
@@ -18,9 +19,9 @@ export function HeroSection() {
 				<div className="flex items-center gap-3 max-w-md">
 					<div className="bg-zinc-900 border border-zinc-800 rounded-xl px-5 py-4 font-mono text-sm text-zinc-300">
 						<span className="text-zinc-500 mr-2">{">"}</span>
-						<span>npx startupkit init</span>
+						<span>{INIT_COMMAND}</span>
 					</div>
-					<CopyButton text="npx startupkit init" />
+					<CopyButton text={INIT_COMMAND} />
 				</div>
 			</div>
 

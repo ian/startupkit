@@ -1,4 +1,5 @@
 import { Check } from "lucide-react"
+import { INIT_COMMAND } from "../lib/constants"
 
 function PackageRow({ name, description }: { name: string; description: string }) {
 	return (
@@ -22,7 +23,7 @@ export function TerminalDemo() {
 			</div>
 			<div className="p-5 space-y-4">
 				<div className="text-zinc-400">
-					<span className="text-emerald-500">$</span> npx startupkit init
+					<span className="text-emerald-500">$</span> {INIT_COMMAND}
 				</div>
 				<div className="text-zinc-500 pt-2">Setting up your monorepo...</div>
 				<div className="space-y-3 pt-2">

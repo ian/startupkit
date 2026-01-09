@@ -14,11 +14,12 @@ export function ServicesSection() {
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 				<div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 text-center">
 					<div className="flex justify-center mb-4">
-						<svg
-							className="w-12 h-12 text-white"
-							viewBox="0 0 180 180"
-							fill="currentColor"
-						>
+					<svg
+						className="w-12 h-12 text-white"
+						viewBox="0 0 180 180"
+						fill="currentColor"
+						aria-hidden="true"
+					>
 							<mask
 								id="mask0_nextjs"
 								maskUnits="userSpaceOnUse"

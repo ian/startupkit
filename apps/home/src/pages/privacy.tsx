@@ -1,5 +1,7 @@
-import { ArrowLeft, Github } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import { Link } from "react-router-dom"
+import { Footer } from "../components/footer"
+import { Navigation } from "../components/navigation"
 import { SEO } from "../components/seo"
 
 export function PrivacyPage() {
@@ -10,43 +12,7 @@ export function PrivacyPage() {
 				description="Learn how StartupKit collects, uses, and protects your personal information. Read our privacy policy."
 				path="/privacy"
 			/>
-			<nav className="border-b border-zinc-800">
-				<div className="container mx-auto px-6 py-4">
-					<div className="flex items-center justify-between">
-						<Link to="/" className="flex items-center gap-2">
-							<span className="text-xl font-semibold">startupkit</span>
-						</Link>
-						<div className="hidden md:flex items-center gap-8">
-							<Link
-								to="/docs"
-								className="text-sm font-normal text-zinc-300 hover:text-white transition-colors"
-							>
-								Docs
-							</Link>
-							<a
-								href="https://discord.gg/startupkit"
-								target="_blank"
-								rel="noopener noreferrer"
-								className="text-sm font-normal text-zinc-300 hover:text-white transition-colors"
-							>
-								Community
-							</a>
-							<a
-								href="https://github.com/01-studio/startupkit"
-								target="_blank"
-								rel="noopener noreferrer"
-								className="flex items-center gap-2 text-sm font-normal text-zinc-300 hover:text-white transition-colors px-3 py-1.5 rounded-lg bg-zinc-800/50 hover:bg-zinc-800/70"
-							>
-								<Github className="w-4 h-4" />
-								<span>Star</span>
-								<span className="px-2 py-0.5 bg-zinc-800 rounded text-xs font-medium">
-									568
-								</span>
-							</a>
-						</div>
-					</div>
-				</div>
-			</nav>
+			<Navigation />
 
 			<main className="container mx-auto px-6 py-20 max-w-3xl">
 				<Link
@@ -113,35 +79,7 @@ export function PrivacyPage() {
 				</div>
 			</main>
 
-			<footer className="border-t border-zinc-800 mt-32">
-				<div className="container mx-auto px-6 py-8">
-					<div className="flex flex-col md:flex-row items-center justify-between gap-4">
-						<p className="text-zinc-500 text-sm">
-							Built by{" "}
-							<a
-								href="https://01.studio"
-								className="text-zinc-400 hover:text-white transition-colors"
-							>
-								01
-							</a>
-						</p>
-						<div className="flex items-center gap-6">
-							<Link
-								to="/privacy"
-								className="text-zinc-500 hover:text-white transition-colors text-sm"
-							>
-								Privacy
-							</Link>
-							<Link
-								to="/terms"
-								className="text-zinc-500 hover:text-white transition-colors text-sm"
-							>
-								Terms
-							</Link>
-						</div>
-					</div>
-				</div>
-			</footer>
+			<Footer />
 		</div>
 	)
 }

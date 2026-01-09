@@ -15,7 +15,7 @@ export function BentoFeaturesSection() {
 	return (
 		<section className="my-48 max-w-6xl mx-auto">
 			<div className="text-center mb-16">
-				<p className="text-[#4B4DF5] text-sm font-semibold mb-3">
+				<p className="text-brand text-sm font-semibold mb-3">
 					Everything you need
 				</p>
 				<h2 className="text-4xl md:text-5xl font-normal tracking-tight text-balance">
@@ -31,7 +31,7 @@ export function BentoFeaturesSection() {
 				{/* Row 1: Auth (66%) + Analytics (33%) */}
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-3">
 					<div className="md:col-span-2 bg-zinc-900 p-8 rounded-tl-3xl rounded-tr-lg rounded-bl-lg rounded-br-lg">
-						<div className="flex items-center gap-2 text-[#4B4DF5] mb-4">
+						<div className="flex items-center gap-2 text-brand mb-4">
 							<Shield className="w-5 h-5" />
 							<span className="text-xs font-semibold font-mono tracking-wider">
 								AUTH
@@ -61,7 +61,7 @@ export function BentoFeaturesSection() {
 						</div>
 					</div>
 					<div className="bg-zinc-900 p-8 rounded-tl-lg rounded-tr-3xl rounded-bl-lg rounded-br-lg">
-						<div className="flex items-center gap-2 text-[#4B4DF5] mb-4">
+						<div className="flex items-center gap-2 text-brand mb-4">
 							<BarChart3 className="w-5 h-5" />
 							<span className="text-xs font-semibold font-mono tracking-wider">
 								ANALYTICS
@@ -92,7 +92,7 @@ export function BentoFeaturesSection() {
 				{/* Row 2: SEO + Database */}
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-3">
 					<div className="bg-zinc-900 p-8 rounded-lg">
-						<div className="flex items-center gap-2 text-[#4B4DF5] mb-4">
+						<div className="flex items-center gap-2 text-brand mb-4">
 							<Search className="w-5 h-5" />
 							<span className="text-xs font-semibold font-mono tracking-wider">
 								SEO
@@ -107,7 +107,7 @@ export function BentoFeaturesSection() {
 						</p>
 					</div>
 					<div className="md:col-span-2 bg-zinc-900 p-8 rounded-lg">
-						<div className="flex items-center gap-2 text-[#4B4DF5] mb-4">
+						<div className="flex items-center gap-2 text-brand mb-4">
 							<Database className="w-5 h-5" />
 							<span className="text-xs font-semibold font-mono tracking-wider">
 								DATABASE
@@ -132,7 +132,7 @@ export function BentoFeaturesSection() {
 				{/* Row 3: UI Components (66%) + Email (33%) */}
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-3">
 					<div className="md:col-span-2 bg-zinc-900 p-8 rounded-lg">
-						<div className="flex items-center gap-2 text-[#4B4DF5] mb-4">
+						<div className="flex items-center gap-2 text-brand mb-4">
 							<Palette className="w-5 h-5" />
 							<span className="text-xs font-semibold font-mono tracking-wider">
 								UI COMPONENTS
@@ -173,7 +173,7 @@ export function BentoFeaturesSection() {
 						</div>
 					</div>
 					<div className="bg-zinc-900 p-8 rounded-lg">
-						<div className="flex items-center gap-2 text-[#4B4DF5] mb-4">
+						<div className="flex items-center gap-2 text-brand mb-4">
 							<Mail className="w-5 h-5" />
 							<span className="text-xs font-semibold font-mono tracking-wider">
 								EMAIL
@@ -192,7 +192,7 @@ export function BentoFeaturesSection() {
 				{/* Row 4: Monorepo + Linting + AGENTS */}
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-3">
 					<div className="bg-zinc-900 p-8 rounded-bl-3xl rounded-tl-lg rounded-tr-lg rounded-br-lg">
-						<div className="flex items-center gap-2 text-[#4B4DF5] mb-4">
+						<div className="flex items-center gap-2 text-brand mb-4">
 							<GitBranch className="w-5 h-5" />
 							<span className="text-xs font-semibold font-mono tracking-wider">
 								MONOREPO
@@ -207,7 +207,7 @@ export function BentoFeaturesSection() {
 					</div>
 					<div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-3">
 						<div className="bg-zinc-900 p-8 rounded-lg">
-							<div className="flex items-center gap-2 text-[#4B4DF5] mb-4">
+							<div className="flex items-center gap-2 text-brand mb-4">
 								<Sparkles className="w-5 h-5" />
 								<span className="text-xs font-semibold font-mono tracking-wider">
 									LINTING
@@ -222,7 +222,7 @@ export function BentoFeaturesSection() {
 							</p>
 						</div>
 						<div className="bg-zinc-900 p-8 rounded-tr-lg rounded-br-3xl rounded-tl-lg rounded-bl-lg">
-							<div className="flex items-center gap-2 text-[#4B4DF5] mb-4">
+							<div className="flex items-center gap-2 text-brand mb-4">
 								<Bot className="w-5 h-5" />
 								<span className="text-xs font-semibold font-mono tracking-wider">
 									AGENTS
