@@ -136,21 +136,24 @@ export async function init(props: {
 	const repoBase = props.repoArg || "ian/startupkit"
 	const { repoSource, packagesSource } = buildDegitSources(repoBase)
 
-	await spinner(`Cloning template into ${isCurrentDir ? "current directory" : destDir}`, async () => {
-		const repoEmitter = degit(repoSource, {
-			cache: false,
-			force: true,
-			verbose: false
-		})
-		await repoEmitter.clone(destDir)
+	await spinner(
+		`Cloning template into ${isCurrentDir ? "current directory" : destDir}`,
+		async () => {
+			const repoEmitter = degit(repoSource, {
+				cache: false,
+				force: true,
+				verbose: false
+			})
+			await repoEmitter.clone(destDir)
 
-		const packagesEmitter = degit(packagesSource, {
-			cache: false,
-			force: true,
-			verbose: false
-		})
-		await packagesEmitter.clone(path.join(destDir, "packages"))
-	})
+			const packagesEmitter = degit(packagesSource, {
+				cache: false,
+				force: true,
+				verbose: false
+			})
+			await packagesEmitter.clone(path.join(destDir, "packages"))
+		}
+	)
 
 	// Recursively replace all instances of PROJECT and PROJECT_VITE with slug
 	await replaceInFile({
