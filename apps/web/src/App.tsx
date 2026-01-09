@@ -8,7 +8,6 @@ import { CopyButton } from "./components/copy-button"
 import { DrizzleCodeSnippet } from "./components/drizzle-code-snippet"
 import { GitHubStarButton } from "./components/github-star-button"
 import { TerminalDemo } from "./components/terminal-demo"
-import { Button } from "./components/ui/button"
 import {
 	BarChart3,
 	Bot,
