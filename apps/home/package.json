@@ -4,7 +4,7 @@
 	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
-		"clean": "rm -rf dist .turbo",
+		"clean": "rm -rf out .turbo",
 		"dev": "vite --port 3001",
 		"build": "tsc && vite build",
 		"preview": "vite preview",
