@@ -208,7 +208,10 @@ describe("upgrade command - unit tests", () => {
 
 	describe("getUpgradeCommand function", () => {
 		it("should generate pnpm upgrade command", () => {
-			const result = getUpgradeCommand("pnpm", ["startupkit", "@startupkit/auth"])
+			const result = getUpgradeCommand("pnpm", [
+				"startupkit",
+				"@startupkit/auth"
+			])
 
 			expect(result).toBe("pnpm up startupkit@latest @startupkit/auth@latest")
 		})
@@ -220,7 +223,10 @@ describe("upgrade command - unit tests", () => {
 		})
 
 		it("should generate bun update command without @latest", () => {
-			const result = getUpgradeCommand("bun", ["startupkit", "@startupkit/auth"])
+			const result = getUpgradeCommand("bun", [
+				"startupkit",
+				"@startupkit/auth"
+			])
 
 			expect(result).toBe("bun update startupkit @startupkit/auth")
 		})

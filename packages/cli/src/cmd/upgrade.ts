@@ -115,7 +115,10 @@ async function upgradeConfig(
 	)
 
 	if (existingConfigs.length === 0) {
-		return { success: false, message: "No upgradeable config directories found" }
+		return {
+			success: false,
+			message: "No upgradeable config directories found"
+		}
 	}
 
 	if (dryRun) {
@@ -224,7 +227,9 @@ export async function upgrade(options: UpgradeOptions = {}): Promise<void> {
 				console.log(`   📁 Configs: ${result.configs.join(", ")}`)
 			}
 			if (options.dryRun) {
-				console.log("   🔍 Would sync from ian/startupkit/templates/repo/config")
+				console.log(
+					"   🔍 Would sync from ian/startupkit/templates/repo/config"
+				)
 			} else if (result.updated) {
 				for (const config of result.updated) {
 					console.log(`   ✅ Updated config/${config}`)
@@ -242,6 +247,8 @@ export async function upgrade(options: UpgradeOptions = {}): Promise<void> {
 	console.log("\n✨ Upgrade complete!\n")
 
 	if (!options.dryRun && doPackages) {
-		console.log("💡 Tip: Run your test suite to verify everything works correctly.")
+		console.log(
+			"💡 Tip: Run your test suite to verify everything works correctly."
+		)
 	}
 }

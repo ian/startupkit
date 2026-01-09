@@ -1,8 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Meta, StoryObj } from '@storybook/react';
 import * as React from 'react';
+import type { Resolver } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
-import * as z from 'zod';
+import { z } from 'zod';
 import { Button } from './button';
 import {
   Form,
@@ -33,16 +34,21 @@ const formSchema = z.object({
   }),
 });
 
+type FormValues = z.infer<typeof formSchema>;
+const resolver = zodResolver(
+  formSchema as unknown as Parameters<typeof zodResolver>[0]
+) as Resolver<FormValues>;
+
 const BasicFormExample = () => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<FormValues>({
+    resolver,
     defaultValues: {
       username: '',
       email: '',
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: FormValues) {
     console.log(values);
   }
 
@@ -91,11 +97,11 @@ const BasicFormExample = () => {
 };
 
 const FormWithErrors = () => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<FormValues>({
+    resolver,
     defaultValues: {
-      username: 'a', // This will trigger validation error
-      email: 'invalid-email', // This will trigger validation error
+      username: 'a',
+      email: 'invalid-email',
     },
   });
 
@@ -103,7 +109,7 @@ const FormWithErrors = () => {
     form.trigger();
   }, [form]);
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: FormValues) {
     console.log(values);
   }
 
