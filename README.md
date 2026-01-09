@@ -1,12 +1,45 @@
 # StartupKit
 
-The Zero to One Startup Framework - Bootstrap production-ready SaaS projects in seconds.
+The startup stack for the AI era.
 
 [**startupkit.com**](https://startupkit.com) | [GitHub](https://github.com/ian/startupkit) | [Documentation](https://startupkit.com)
 
 ## What is StartupKit?
 
-StartupKit is a meta-framework for building SaaS applications. It's built on **Next.js 16**, **React 19**, **TypeScript**, and **Turbo** with authentication, analytics, database, and UI components pre-configured. Perfect for startups that want to focus on building features instead of infrastructure.
+StartupKit is a meta-framework for building SaaS applications. Built for founders who move fast, loved by the AI tools that help them. Pre-configured auth, analytics, database, and UI components with clear patterns your copilot can follow.
+
+One command to start:
+
+```bash
+npx startupkit init
+```
+
+## Why StartupKit?
+
+### AI Needs Constraints to Be Useful
+
+Without structure, every project becomes a different architecture. That's **AI slop**.
+
+| Without StartupKit | With StartupKit |
+|-------------------|-----------------|
+| Where should auth logic live? | `@repo/auth` → Better Auth, ready |
+| Prisma or Drizzle? Which pattern? | `@repo/db` → Drizzle + Postgres, configured |
+| App router or pages? RSC or client? | Next.js 16 App Router, RSC by default |
+| How do I structure shared code? | Monorepo → share everything |
+| Which analytics provider? | `@repo/analytics` → Provider-agnostic hooks |
+
+**Start at 70%.** AI handles the details, not the foundation.
+
+### Built for the New Era of Development
+
+StartupKit is designed to work seamlessly with AI development tools:
+
+- ✅ **Devin** ready
+- ✅ **Claude** ready  
+- ✅ **Amp** ready
+- ✅ **OpenCode** ready
+
+Every project includes `AGENTS.md` with clear conventions, file placement guidelines, and architecture patterns that AI tools understand.
 
 ## Quick Start
 
@@ -23,11 +56,14 @@ Visit [http://localhost:3000](http://localhost:3000)
 
 ### 📦 Pre-Built Packages
 
-- **`@startupkit/auth`** - Authentication with Better Auth (Google OAuth, Email OTP)
-- **`@startupkit/analytics`** - Provider-agnostic analytics hooks and context
-- **`@startupkit/utils`** - Common utilities for SaaS applications
+- **`@repo/auth`** - Authentication with Better Auth (Google OAuth, Email OTP)
+- **`@repo/analytics`** - Provider-agnostic analytics hooks and context
+- **`@repo/db`** - Database with Drizzle ORM + PostgreSQL
+- **`@repo/ui`** - 60+ Shadcn components, pre-configured
+- **`@repo/emails`** - Email templates with React Email
+- **`@repo/utils`** - Common utilities for SaaS applications
 
-### 🏗️ Monorepo Setup
+### 🏗️ Monorepo Architecture
 
 - **pnpm workspaces** - Efficient dependency management
 - **Turbo** - Fast task orchestration (build, dev, lint)
@@ -46,18 +82,12 @@ Visit [http://localhost:3000](http://localhost:3000)
 - **PostgreSQL** - Production-ready database setup
 - **Migrations** - Version-controlled schema changes
 
-### 📧 Email
-
-- **React Email** - Beautiful email templates with React
-- **Resend** - Transactional email delivery
-
 ## Project Structure
 
 ```
 my-project/
 ├── apps/
-│   ├── web/              # Main Next.js application
-│   └── mobile/           # Optional: Expo/React Native
+│   └── web/              # Main Next.js application
 ├── packages/
 │   ├── analytics/        # Analytics implementation
 │   ├── auth/             # Authentication setup
@@ -68,6 +98,7 @@ my-project/
 ├── config/
 │   ├── biome/            # Linter configuration
 │   └── typescript/       # TypeScript configs
+├── AGENTS.md             # AI development guidelines
 └── pnpm-workspace.yaml   # Workspace definition
 ```
 
@@ -104,6 +135,14 @@ pnpm lint:fix             # Fix issues
 pnpm typecheck            # Type check all packages
 ```
 
+## Add New Services
+
+Expand your monorepo with new apps instantly:
+
+- **Next.js** - Full-stack React framework ✅
+- **Vite** - Lightning fast frontend tooling ✅
+- **Expo** - React Native for mobile (coming soon)
+
 ## Environment Setup
 
 Configure your environment variables in `.env.local`:
@@ -132,18 +171,6 @@ NEXT_PUBLIC_POSTHOG_HOST=https://app.posthog.com
 - **Monorepo:** pnpm + Turbo
 - **Linting:** Biome
 
-## Why StartupKit?
-
-**⚡ Ship Faster** - Skip weeks of setup. Authentication, database, analytics, and UI components are pre-configured and ready to use.
-
-**🏗️ Production Ready** - Built with best practices: TypeScript strict mode, type-safe database queries, secure authentication, and optimized builds.
-
-**🔧 Fully Customizable** - You own the code. Extend, modify, or replace any part of the framework. No vendor lock-in.
-
-**📦 Monorepo Architecture** - Share code between apps effortlessly. Build once, import everywhere.
-
-**🚀 Optimized for AI Development** - Clear structure and conventions make it easy for AI assistants to navigate and build features.
-
 ## Support & Resources
 
 - **Website:** [startupkit.com](https://startupkit.com)
@@ -156,5 +183,4 @@ ISC © 2025 01 Studio
 
 ---
 
-**Built for founders, optimized for AI.** 🚀
-
+**Stop burning tokens. Start shipping faster.** 🚀
