@@ -1,0 +1,35 @@
+{
+	"name": "home",
+	"private": true,
+	"scripts": {
+		"clean": "rm -rf .cache .next",
+		"build": "next build",
+		"start": "next start",
+		"dev": "next dev --port 3001",
+		"format": "biome format",
+		"format:fix": "biome format --write",
+		"lint": "biome lint --unsafe",
+		"lint:fix": "biome lint --write --unsafe",
+		"typecheck": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@repo/analytics": "workspace:*",
+		"@repo/ui": "workspace:*",
+		"@repo/utils": "workspace:*",
+		"@startupkit/seo": "^0.6.1",
+		"framer-motion": "12.9.4",
+		"lucide-react": "0.446.0",
+		"next": "catalog:stack",
+		"nuqs": "2.2.2",
+		"react": "catalog:react19",
+		"react-dom": "catalog:react19"
+	},
+	"devDependencies": {
+		"@repo/nextjs": "workspace:*",
+		"@repo/biome": "workspace:*",
+		"@repo/tsconfig": "workspace:*",
+		"@types/node": "catalog:stack",
+		"@types/react": "catalog:react19",
+		"@types/react-dom": "catalog:react19"
+	}
+}

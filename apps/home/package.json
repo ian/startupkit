@@ -1,5 +1,5 @@
 {
-	"name": "home",
+	"name": "old-home",
 	"private": true,
 	"scripts": {
 		"clean": "rm -rf .next .turbo",
