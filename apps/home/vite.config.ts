@@ -12,6 +12,9 @@ export default defineConfig({
 			"@": path.resolve(__dirname, "./src")
 		}
 	},
+	build: {
+		outDir: "out"
+	},
 	server: {
 		port: 3001
 	}
