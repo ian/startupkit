@@ -1,12 +1,10 @@
-"use client"
-
 import {
 	Accordion,
 	AccordionContent,
 	AccordionItem,
 	AccordionTrigger
-} from "@repo/ui/components/accordion"
-import { Button } from "@repo/ui/components/button"
+} from "./components/ui/accordion"
+import { Button } from "./components/ui/button"
 import {
 	BarChart3,
 	Bot,
@@ -21,7 +19,6 @@ import {
 	Shield,
 	Sparkles
 } from "lucide-react"
-import Image from "next/image"
 import { useState } from "react"
 
 function PackageRow({
@@ -94,7 +91,7 @@ function CopyButton({ text }: { text: string }) {
 	)
 }
 
-export default function Home() {
+export default function App() {
 	return (
 		<div className="min-h-screen bg-black text-white">
 			{/* Navigation */}
@@ -197,11 +194,9 @@ export default function Home() {
 					</p>
 					<div className="flex items-center justify-center gap-16 flex-wrap">
 						<div className="flex items-center gap-3">
-							<Image
+							<img
 								src="/images/devin-logo.png"
 								alt="Devin"
-								width={120}
-								height={40}
 								className="h-10 w-auto object-contain"
 							/>
 							<span className="flex items-center gap-1 text-zinc-500 text-sm font-medium">
@@ -210,11 +205,9 @@ export default function Home() {
 							</span>
 						</div>
 						<div className="flex items-center gap-3">
-							<Image
+							<img
 								src="/images/claude-logo.png"
 								alt="Claude"
-								width={100}
-								height={24}
 								className="h-6 w-auto object-contain brightness-0 invert"
 							/>
 							<span className="flex items-center gap-1 text-zinc-500 text-sm font-medium">
@@ -223,11 +216,9 @@ export default function Home() {
 							</span>
 						</div>
 						<div className="flex items-center gap-3">
-							<Image
+							<img
 								src="/images/amp-logo.png"
 								alt="Amp"
-								width={80}
-								height={32}
 								className="h-8 w-auto object-contain brightness-0 invert"
 							/>
 							<span className="flex items-center gap-1 text-zinc-500 text-sm font-medium">
@@ -236,11 +227,9 @@ export default function Home() {
 							</span>
 						</div>
 						<div className="flex items-center gap-3">
-							<Image
+							<img
 								src="/images/opencode-logo.png"
 								alt="OpenCode"
-								width={100}
-								height={24}
 								className="h-6 w-auto object-contain"
 							/>
 							<span className="flex items-center gap-1 text-zinc-500 text-sm font-medium">
@@ -259,8 +248,7 @@ export default function Home() {
 						</h2>
 						<p className="text-lg text-zinc-400 max-w-2xl mx-auto">
 							Without structure, every project becomes a different architecture.
-							That&apos;s{" "}
-							<span className="text-white font-medium">AI slop</span>.
+							That's <span className="text-white font-medium">AI slop</span>.
 						</p>
 					</div>
 
@@ -432,18 +420,14 @@ export default function Home() {
 									single hook.
 								</p>
 								<div className="flex items-center gap-3 mb-4">
-									<Image
+									<img
 										src="/images/posthog-logo.svg"
 										alt="PostHog"
-										width={48}
-										height={16}
 										className="h-4 w-auto opacity-60"
 									/>
-									<Image
+									<img
 										src="/images/google-analytics-logo.svg"
 										alt="Google Analytics"
-										width={48}
-										height={16}
 										className="h-4 w-auto opacity-60"
 									/>
 								</div>
@@ -478,7 +462,7 @@ export default function Home() {
 									Type-safe from schema to query.
 								</h3>
 								<p className="text-sm text-zinc-400 leading-relaxed mb-4">
-									Drizzle ORM with Postgres. Migrations that don&apos;t break.
+									Drizzle ORM with Postgres. Migrations that don't break.
 									Query your data with full TypeScript inference.
 								</p>
 								<div className="bg-zinc-950 rounded-lg p-4 font-mono text-sm overflow-visible">
@@ -603,32 +587,24 @@ export default function Home() {
 									customizable. Dark mode included.
 								</p>
 								<div className="flex items-center gap-4 mb-6">
-									<Image
+									<img
 										src="/images/shadcn-ui-logo.svg"
 										alt="shadcn/ui"
-										width={48}
-										height={16}
 										className="h-4 w-auto opacity-60"
 									/>
-									<Image
+									<img
 										src="/images/tailwind-logo.svg"
 										alt="Tailwind CSS"
-										width={48}
-										height={16}
 										className="h-4 w-auto opacity-60"
 									/>
-									<Image
+									<img
 										src="/images/lucide-logo.svg"
 										alt="Lucide"
-										width={48}
-										height={16}
 										className="h-4 w-auto opacity-60"
 									/>
-									<Image
+									<img
 										src="/images/framer-motion-logo.svg"
 										alt="Framer Motion"
-										width={48}
-										height={16}
 										className="h-4 w-auto opacity-60"
 									/>
 								</div>
@@ -785,11 +761,9 @@ export default function Home() {
 						</div>
 						<div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 text-center">
 							<div className="flex justify-center mb-4">
-								<Image
+								<img
 									src="/images/vite-logo.png"
 									alt="Vite"
-									width={48}
-									height={48}
 									className="w-12 h-12 object-contain"
 								/>
 							</div>
@@ -804,11 +778,9 @@ export default function Home() {
 						</div>
 						<div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 text-center opacity-60">
 							<div className="flex justify-center mb-4">
-								<Image
+								<img
 									src="/images/expo-logo.png"
 									alt="Expo"
-									width={48}
-									height={48}
 									className="w-12 h-12 object-contain brightness-0 invert"
 								/>
 							</div>
@@ -857,13 +829,13 @@ export default function Home() {
 								Most boilerplates are templates you clone and fight with.
 								StartupKit is an architecture—a monorepo with shared packages,
 								clear conventions, and patterns designed for AI-assisted
-								development. You&apos;re not just getting code, you&apos;re
-								getting structure.
+								development. You're not just getting code, you're getting
+								structure.
 							</AccordionContent>
 						</AccordionItem>
 						<AccordionItem value="item-4" className="border-zinc-800">
 							<AccordionTrigger className="text-white text-base font-medium hover:no-underline">
-								What&apos;s the tech stack?
+								What's the tech stack?
 							</AccordionTrigger>
 							<AccordionContent className="text-zinc-400">
 								Next.js 16, React 19, TypeScript (strict mode), Tailwind CSS,
@@ -875,9 +847,9 @@ export default function Home() {
 								Do I own the code?
 							</AccordionTrigger>
 							<AccordionContent className="text-zinc-400">
-								100%. Once you run `npx startupkit init`, it&apos;s your
-								codebase. No runtime dependencies on us. Fork it, modify it,
-								delete the parts you don&apos;t need.
+								100%. Once you run `npx startupkit init`, it's your codebase. No
+								runtime dependencies on us. Fork it, modify it, delete the parts
+								you don't need.
 							</AccordionContent>
 						</AccordionItem>
 						<AccordionItem value="item-6" className="border-zinc-800">
@@ -885,13 +857,13 @@ export default function Home() {
 								Can I swap out the defaults?
 							</AccordionTrigger>
 							<AccordionContent className="text-zinc-400">
-								Yes. Don&apos;t like Drizzle? Use Prisma. Prefer Clerk over
-								Better Auth? Swap it. The packages are yours to modify.
+								Yes. Don't like Drizzle? Use Prisma. Prefer Clerk over Better
+								Auth? Swap it. The packages are yours to modify.
 							</AccordionContent>
 						</AccordionItem>
 						<AccordionItem value="item-7" className="border-zinc-800">
 							<AccordionTrigger className="text-white text-base font-medium hover:no-underline">
-								What do you mean by &quot;AI-ready&quot;?
+								What do you mean by "AI-ready"?
 							</AccordionTrigger>
 							<AccordionContent className="text-zinc-400">
 								Clear file structure, consistent patterns, TypeScript strict

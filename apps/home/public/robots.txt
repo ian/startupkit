@@ -1,6 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /private
-
-Sitemap: https://startupkit.com/sitemap.xml
-

@@ -1,35 +1,37 @@
 {
 	"name": "home",
 	"private": true,
+	"version": "0.0.0",
+	"type": "module",
 	"scripts": {
-		"clean": "rm -rf .cache .next",
-		"build": "next build",
-		"start": "next start",
-		"dev": "next dev --port 3001",
-		"format": "biome format",
-		"format:fix": "biome format --write",
+		"clean": "rm -rf dist .turbo",
+		"dev": "vite --port 3001",
+		"build": "tsc && vite build",
+		"preview": "vite preview",
 		"lint": "biome lint --unsafe",
 		"lint:fix": "biome lint --write --unsafe",
-		"typecheck": "tsc --noEmit"
+		"typecheck": "tsc --noEmit",
+		"format": "biome format --write"
 	},
 	"dependencies": {
-		"@repo/analytics": "workspace:*",
-		"@repo/ui": "workspace:*",
-		"@repo/utils": "workspace:*",
-		"@startupkit/seo": "^0.6.1",
-		"framer-motion": "12.9.4",
+		"@radix-ui/react-accordion": "1.2.2",
+		"class-variance-authority": "0.7.1",
+		"clsx": "2.1.1",
 		"lucide-react": "0.446.0",
-		"next": "catalog:stack",
-		"nuqs": "2.2.2",
 		"react": "catalog:react19",
-		"react-dom": "catalog:react19"
+		"react-dom": "catalog:react19",
+		"tailwind-merge": "2.6.0"
 	},
 	"devDependencies": {
-		"@repo/nextjs": "workspace:*",
 		"@repo/biome": "workspace:*",
 		"@repo/tsconfig": "workspace:*",
-		"@types/node": "catalog:stack",
 		"@types/react": "catalog:react19",
-		"@types/react-dom": "catalog:react19"
+		"@types/react-dom": "catalog:react19",
+		"@vitejs/plugin-react": "^4.3.1",
+		"autoprefixer": "10.4.20",
+		"postcss": "8.4.47",
+		"tailwindcss": "3.4.14",
+		"typescript": "catalog:stack",
+		"vite": "^5.4.10"
 	}
 }
