@@ -1,4 +1,4 @@
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Github } from "lucide-react"
 import { Link } from "react-router-dom"
 
 export function PrivacyPage() {
@@ -10,6 +10,34 @@ export function PrivacyPage() {
 						<Link to="/" className="flex items-center gap-2">
 							<span className="text-xl font-semibold">startupkit</span>
 						</Link>
+						<div className="hidden md:flex items-center gap-8">
+							<Link
+								to="/docs"
+								className="text-sm font-normal text-zinc-300 hover:text-white transition-colors"
+							>
+								Docs
+							</Link>
+							<a
+								href="https://discord.gg/startupkit"
+								target="_blank"
+								rel="noopener noreferrer"
+								className="text-sm font-normal text-zinc-300 hover:text-white transition-colors"
+							>
+								Community
+							</a>
+							<a
+								href="https://github.com/01-studio/startupkit"
+								target="_blank"
+								rel="noopener noreferrer"
+								className="flex items-center gap-2 text-sm font-normal text-zinc-300 hover:text-white transition-colors px-3 py-1.5 rounded-lg bg-zinc-800/50 hover:bg-zinc-800/70"
+							>
+								<Github className="w-4 h-4" />
+								<span>Star</span>
+								<span className="px-2 py-0.5 bg-zinc-800 rounded text-xs font-medium">
+									568
+								</span>
+							</a>
+						</div>
 					</div>
 				</div>
 			</nav>

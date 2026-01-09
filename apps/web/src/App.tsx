@@ -4,6 +4,7 @@ import {
 	AccordionItem,
 	AccordionTrigger
 } from "./components/ui/accordion"
+import { GitHubStarButton } from "./components/github-star-button"
 import { Button } from "./components/ui/button"
 import {
 	BarChart3,
@@ -12,7 +13,6 @@ import {
 	Copy,
 	Database,
 	GitBranch,
-	Github,
 	Mail,
 	Palette,
 	Search,
@@ -117,18 +117,7 @@ export default function App() {
 						>
 							Community
 						</a>
-						<a
-							href="https://github.com/01-studio/startupkit"
-							target="_blank"
-							rel="noopener noreferrer"
-							className="flex items-center gap-2 text-sm font-normal text-zinc-300 hover:text-white transition-colors px-3 py-1.5 rounded-lg bg-zinc-800/50 hover:bg-zinc-800/70"
-						>
-							<Github className="w-4 h-4" />
-							<span>Star</span>
-							<span className="px-2 py-0.5 bg-zinc-800 rounded text-xs font-medium">
-								568
-							</span>
-						</a>
+						<GitHubStarButton />
 						</div>
 					</div>
 				</div>
@@ -175,9 +164,9 @@ export default function App() {
 								<PackageRow name="@repo/auth" description="Better Auth configured" />
 								<PackageRow name="@repo/analytics" description="PostHog, GA4 ready" />
 								<PackageRow name="@repo/db" description="Drizzle + Postgres" />
-								<PackageRow name="@repo/ui" description="60+ Shadcn components" />
 								<PackageRow name="@repo/emails" description="React Email templates" />
 								<PackageRow name="@repo/seo" description="Meta, OG, sitemap" />
+								<PackageRow name="@repo/ui" description="60+ Shadcn components" />
 							</div>
 							<div className="pt-4 border-t border-zinc-800 mt-4">
 								<div className="flex items-center gap-2 text-emerald-500">
