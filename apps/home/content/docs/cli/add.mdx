@@ -1,0 +1,227 @@
+---
+title: Adding Apps
+description: How to add new applications to your StartupKit workspace
+---
+
+The `add` command scaffolds new applications into your monorepo's `apps/` directory.
+
+## Basic Usage
+
+```bash
+npx startupkit add
+```
+
+This launches an interactive menu to select your app type:
+
+```
+? Which app would you like to add?
+❯ Next.js
+  Vite
+  ---- coming soon ----
+  Expo (disabled)
+  Capacitor Mobile (disabled)
+  Electron (disabled)
+```
+
+## Supported App Types
+
+| Type | Command | Description |
+|------|---------|-------------|
+| Next.js | `startupkit add next` | Full-stack React with App Router |
+| Vite | `startupkit add vite` | Fast React SPA |
+
+### Coming Soon
+
+Vote for the features you want to see next!
+
+| Type | Description | Vote |
+|------|-------------|------|
+| Expo | React Native mobile apps | [👍 Vote](https://startupkit.featurebase.app/p/expo) |
+| Capacitor | Cross-platform mobile apps | [👍 Vote](https://startupkit.featurebase.app/p/capacitor) |
+| Electron | Desktop applications | [👍 Vote](https://startupkit.featurebase.app/p/electron) |
+| Tauri | Lightweight desktop apps | [👍 Vote](https://startupkit.featurebase.app/p/tauri) |
+| Astro | Content-focused websites | [👍 Vote](https://startupkit.featurebase.app/p/astro) |
+| Hono | Edge-first API server | [👍 Vote](https://startupkit.featurebase.app/p/hono) |
+| Plasmo | Browser extensions | [👍 Vote](https://startupkit.featurebase.app/p/chrome-extension) |
+
+Have another idea? [Request a template →](https://startupkit.featurebase.app/)
+
+## Command Options
+
+```bash
+npx startupkit add [type] [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `type` | App type: `next` or `vite` |
+| `--name <name>` | App name (skips prompt) |
+| `--repo <repo>` | Custom template repository |
+
+## Examples
+
+### Add a Next.js App
+
+```bash
+npx startupkit add next --name web
+```
+
+Creates `apps/web/` with a Next.js application.
+
+### Add a Vite App
+
+```bash
+npx startupkit add vite --name marketing
+```
+
+Creates `apps/marketing/` with a Vite SPA.
+
+### Non-Interactive Mode
+
+```bash
+npx startupkit add next --name dashboard
+```
+
+## Automatic Dependency Resolution
+
+When you add an app, the CLI automatically:
+
+1. **Checks template dependencies** - Reads `startupkit.config.ts` from the template
+2. **Detects missing packages** - Scans your workspace for required `@repo/*` packages
+3. **Prompts to install** - Offers to install any missing dependencies
+
+Example output:
+
+```
+🔍 Checking template dependencies...
+
+⚠️  This template requires 3 workspace dependencies that are not installed:
+
+  Packages:
+    - @repo/auth
+    - @repo/db
+    - @repo/ui
+
+? Would you like to install these dependencies now? (Y/n)
+```
+
+If you decline, the command exits—apps require their dependencies to function.
+
+## What Gets Created
+
+A Next.js app includes:
+
+```
+apps/web/
+├── src/
+│   ├── app/
+│   │   ├── layout.tsx
+│   │   ├── page.tsx
+│   │   └── providers.tsx
+│   ├── components/
+│   └── lib/
+├── public/
+├── next.config.ts
+├── tailwind.config.ts
+├── tsconfig.json
+└── package.json
+```
+
+The app is pre-configured with:
+
+- **@repo/ui** - Shadcn components
+- **@repo/auth** - Authentication hooks
+- **@repo/analytics** - Analytics tracking
+- **@config/typescript** - Shared TypeScript config
+- **@config/biome** - Linting and formatting
+
+## Template Configuration
+
+Each app template includes a `startupkit.config.ts` that declares dependencies:
+
+```typescript
+import type { StartupKitConfig } from "startupkit"
+
+export default {
+  type: "app",
+  dependencies: {
+    packages: ["auth", "db", "ui", "analytics"],
+    config: ["typescript", "nextjs", "biome"]
+  }
+} satisfies StartupKitConfig
+```
+
+## Running Multiple Apps
+
+After adding apps, run them all:
+
+```bash
+pnpm dev
+```
+
+Or run specific apps:
+
+```bash
+pnpm dev --filter web
+pnpm dev --filter dashboard
+```
+
+Turbo handles caching and parallel execution automatically.
+
+## Custom Templates
+
+Use your own templates with `--repo`:
+
+```bash
+npx startupkit add next --repo myorg/my-next-template
+```
+
+Your template should:
+- Include a `startupkit.config.ts` declaring dependencies
+- Use `PROJECT_NEXT` as the placeholder name (for Next.js templates)
+- Use `PROJECT_VITE` as the placeholder name (for Vite templates)
+
+## App Naming
+
+The app name you provide is converted to a URL-safe slug:
+
+| Input | Slug |
+|-------|------|
+| `My Dashboard` | `my-dashboard` |
+| `Admin_Panel` | `admin-panel` |
+| `Web App 2.0` | `web-app-20` |
+
+The slug becomes:
+- Directory name: `apps/my-dashboard/`
+- Package name in `package.json`
+
+## Troubleshooting
+
+### "Directory already exists"
+
+Choose a different name or remove the existing directory:
+
+```bash
+rm -rf apps/web
+npx startupkit add next --name web
+```
+
+### Missing Dependencies Error
+
+If the CLI reports missing `@repo/*` packages, accept the prompt to install them, or manually install:
+
+```bash
+# Clone missing package manually
+npx degit ian/startupkit/templates/packages/auth packages/auth
+pnpm install
+```
+
+### pnpm Catalog Errors
+
+If you see `ERR_PNPM_CATALOG` errors:
+
+```bash
+pnpm install --no-frozen-lockfile
+```
+
+See [Troubleshooting](/docs/cli/troubleshooting) for more solutions.

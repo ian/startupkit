@@ -7,6 +7,7 @@ import {
 } from "fumadocs-ui/page"
 import { notFound } from "next/navigation"
 import defaultMdxComponents from "fumadocs-ui/mdx"
+import * as Twoslash from "fumadocs-twoslash/ui"
 import type { Metadata } from "next"
 import type { MDXContent } from "mdx/types"
 
@@ -20,6 +21,11 @@ interface PageData {
 	toc: { title: string; url: string; depth: number }[]
 	full?: boolean
 	body: MDXContent
+}
+
+const mdxComponents = {
+	...defaultMdxComponents,
+	...Twoslash
 }
 
 export default async function Page({ params }: PageProps) {
@@ -36,7 +42,7 @@ export default async function Page({ params }: PageProps) {
 			<DocsTitle>{pageData.title}</DocsTitle>
 			<DocsDescription>{pageData.description}</DocsDescription>
 			<DocsBody>
-				<MDX components={{ ...defaultMdxComponents }} />
+				<MDX components={mdxComponents} />
 			</DocsBody>
 		</DocsPage>
 	)

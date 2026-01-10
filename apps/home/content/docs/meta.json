@@ -2,11 +2,16 @@
 	"title": "Documentation",
 	"pages": [
 		"index",
-		"---Getting Started---",
-		"getting-started/...",
+		"...getting-started",
+		"---CLI---",
+		"cli/index",
+		"cli/init",
+		"cli/add",
+		"cli/upgrade",
+		"cli/troubleshooting",
 		"---Packages---",
-		"packages/...",
-		"---Guides---",
-		"guides/..."
+		"analytics",
+		"auth",
+		"seo"
 	]
 }

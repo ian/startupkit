@@ -1,0 +1,164 @@
+---
+title: Creating Projects
+description: How to create a new StartupKit project with the init command
+---
+
+The `init` command scaffolds a complete StartupKit monorepo with all packages and configuration.
+
+## Basic Usage
+
+```bash
+npx startupkit init
+```
+
+This launches an interactive wizard that prompts for:
+
+1. **Project name** - Display name (e.g., "My SaaS App")
+2. **Project key** - URL-safe slug, auto-generated from name (e.g., `my-saas-app`)
+3. **Directory** - Where to create the project (defaults to `./<project-key>`)
+
+## Command Options
+
+```bash
+npx startupkit init [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `--name <name>` | Project name (skips prompt) |
+| `--dir <dir>` | Directory to create project in (use `.` for current) |
+| `--repo <repo>` | Custom template repository |
+
+## Examples
+
+### Non-Interactive Mode
+
+Skip all prompts by providing options:
+
+```bash
+npx startupkit init --name "My App" --dir ./my-app
+```
+
+### Initialize in Current Directory
+
+```bash
+npx startupkit init --dir .
+```
+
+### Use Custom Template
+
+```bash
+npx startupkit init --repo myorg/my-template
+```
+
+## What Happens During Init
+
+1. **Clone template** - Downloads the StartupKit template from GitHub
+2. **Install packages** - Clones all workspace packages to `/packages`
+3. **Replace placeholders** - Updates `PROJECT` placeholders with your project key
+4. **Install dependencies** - Runs `pnpm install`
+5. **Generate AGENTS.md** - Creates AI agent instructions for your codebase
+
+## Post-Init Steps
+
+After initialization, you'll want to:
+
+### 1. Set Up Environment Variables
+
+```bash
+cd my-project
+cp .env.example .env.local
+```
+
+Edit `.env.local` with your configuration:
+
+```bash
+# Database
+DATABASE_URL=postgresql://...
+
+# Auth
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+BETTER_AUTH_SECRET=...
+
+# Analytics
+POSTHOG_API_KEY=...
+```
+
+### 2. Set Up Database
+
+```bash
+pnpm db:push    # Push schema to database
+# or
+pnpm db:migrate # Run migrations
+```
+
+### 3. Start Development
+
+```bash
+pnpm dev
+```
+
+### 4. Add Your First App
+
+```bash
+npx startupkit add next --name web
+```
+
+## Project Key Conventions
+
+The project key is used throughout your codebase:
+
+- Package names: `@my-project/ui`
+- Import paths: `import { Button } from "@my-project/ui"`
+- Database schema prefixes
+- URL slugs
+
+Choose a short, memorable key. It's difficult to change later.
+
+## Template Structure
+
+The init command clones from `ian/startupkit/templates/repo` by default:
+
+```
+templates/
+├── repo/           # Base monorepo structure
+│   ├── .github/
+│   ├── .ruler/
+│   ├── config/
+│   ├── turbo.json
+│   └── package.json
+└── packages/       # Workspace packages
+    ├── analytics/
+    ├── auth/
+    ├── db/
+    ├── emails/
+    ├── ui/
+    └── utils/
+```
+
+## Troubleshooting
+
+### "Directory already exists"
+
+The CLI won't overwrite existing directories. Either:
+- Choose a different directory
+- Remove the existing directory first
+
+### Network/Clone Errors
+
+The CLI uses [degit](https://github.com/Rich-Harris/degit) to clone templates. If you see network errors:
+- Check your internet connection
+- Try again (GitHub rate limits can cause temporary failures)
+- Use `--repo` to specify an alternative source
+
+### pnpm Install Failures
+
+If dependency installation fails:
+
+```bash
+cd my-project
+pnpm install --no-frozen-lockfile
+```
+
+See [Troubleshooting](/docs/cli/troubleshooting) for more solutions.

@@ -1,4 +1,11 @@
 {
-	"title": "Getting Started",
-	"pages": ["installation", "quickstart", "project-structure"]
+	"title": "Introduction",
+	"pages": [
+		"quickstart",
+		"what-is",
+		"comparisons",
+		"installation",
+		"guides"
+	],
+	"defaultOpen": true
 }

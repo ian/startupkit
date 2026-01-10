@@ -1,0 +1,11 @@
+{
+	"title": "Analytics",
+	"icon": "ChartBar",
+	"pages": [
+		"index",
+		"tracking-events",
+		"identifying-users",
+		"feature-flags"
+	],
+	"defaultOpen": true
+}

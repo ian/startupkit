@@ -15,14 +15,22 @@ export function Navigation() {
 						>
 							Docs
 						</Link>
-						<a
+						<Link
 							href="https://discord.gg/gRmD4TJCas"
 							target="_blank"
 							rel="noopener noreferrer"
 							className="text-sm font-normal text-zinc-300 hover:text-white transition-colors"
 						>
 							Community
-						</a>
+						</Link>
+						<Link
+							href="https://startupkit.featurebase.app/roadmap"
+							target="_blank"
+							rel="noopener noreferrer"
+							className="text-sm font-normal text-zinc-300 hover:text-white transition-colors"
+						>
+							Roadmap
+						</Link>
 						<GitHubStarButton />
 					</div>
 				</div>

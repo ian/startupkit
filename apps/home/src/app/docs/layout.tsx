@@ -1,6 +1,7 @@
 import "./docs.css"
 import { DocsLayout } from "fumadocs-ui/layouts/docs"
 import type { ReactNode } from "react"
+import Image from "next/image"
 import { source } from "@/app/source"
 
 export default function Layout({ children }: { children: ReactNode }) {
@@ -8,11 +9,25 @@ export default function Layout({ children }: { children: ReactNode }) {
 		<DocsLayout
 			tree={source.pageTree}
 			nav={{
-				title: "StartupKit",
+				title: (
+					<div className="flex items-center gap-2">
+						<Image
+							src="/startupkit-logo.png"
+							alt="StartupKit"
+							width={28}
+							height={28}
+							className="h-7 w-auto"
+						/>
+						<span className="font-semibold">startupkit</span>
+					</div>
+				),
 				url: "/"
 			}}
 			sidebar={{
-				collapsible: true
+				enabled: true,
+				collapsible: true,
+				tabs: false,
+				defaultOpenLevel: 2
 			}}
 			links={[
 				{
@@ -20,13 +35,18 @@ export default function Layout({ children }: { children: ReactNode }) {
 					url: "/"
 				},
 				{
-					text: "GitHub",
+					text: "Github",
 					url: "https://github.com/ian/startupkit",
 					external: true
 				},
 				{
 					text: "Discord",
 					url: "https://discord.gg/gRmD4TJCas",
+					external: true
+				},
+				{
+					text: "Roadmap",
+					url: "https://startupkit.featurebase.app/roadmap",
 					external: true
 				}
 			]}

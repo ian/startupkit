@@ -1,0 +1,277 @@
+---
+title: Feature Flags
+description: How to use feature flags with @startupkit/analytics
+---
+
+Control feature rollouts and run experiments with feature flags. Flags are passed through the `AnalyticsProvider` and accessible via hooks.
+
+## Setup
+
+### 1. Fetch Flags Server-Side
+
+```tsx title="app/layout.tsx"
+import { getFeatureFlags } from "@repo/analytics/server"
+import { Providers } from "./providers"
+
+export default async function RootLayout({ children }) {
+  const flags = await getFeatureFlags(userId)
+
+  return (
+    <html>
+      <body>
+        <Providers flags={flags}>
+          {children}
+        </Providers>
+      </body>
+    </html>
+  )
+}
+```
+
+### 2. Pass to Provider
+
+```tsx title="app/providers.tsx"
+"use client"
+
+import { AnalyticsProvider } from "@startupkit/analytics"
+
+export function Providers({ children, flags }) {
+  return (
+    <AnalyticsProvider flags={flags} plugins={plugins}>
+      {children}
+    </AnalyticsProvider>
+  )
+}
+```
+
+## Using Flags
+
+### useFlag Hook
+
+Check a single flag:
+
+```tsx
+"use client"
+
+import { useFlag } from "@startupkit/analytics"
+
+export function NewFeature() {
+  const isEnabled = useFlag("new-dashboard")
+
+  if (!isEnabled) return null
+
+  return <div>Welcome to the new dashboard!</div>
+}
+```
+
+### useAnalytics Hook
+
+Access all flags at once:
+
+```tsx
+"use client"
+
+import { useAnalytics } from "@startupkit/analytics"
+
+export function FeatureGate() {
+  const { flags } = useAnalytics()
+
+  return (
+    <div>
+      {flags["feature-a"] && <FeatureA />}
+      {flags["feature-b"] && <FeatureB />}
+    </div>
+  )
+}
+```
+
+## Flag Types
+
+Flags can be boolean or string values:
+
+```typescript
+interface Flags {
+  "new-dashboard": boolean       // On/off
+  "pricing-variant": "A" | "B"   // A/B test
+  "api-version": "v1" | "v2"     // Gradual rollout
+}
+```
+
+### Boolean Flags
+
+```tsx
+const showBanner = useFlag("show-banner")
+
+if (showBanner) {
+  return <Banner />
+}
+```
+
+### String/Variant Flags
+
+```tsx
+const variant = useFlag("checkout-variant")
+
+switch (variant) {
+  case "A":
+    return <CheckoutA />
+  case "B":
+    return <CheckoutB />
+  default:
+    return <CheckoutDefault />
+}
+```
+
+## Server-Side Flag Checks
+
+Check flags in Server Components or API routes:
+
+```tsx title="app/dashboard/page.tsx"
+import { getFeatureFlags } from "@repo/analytics/server"
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
+
+export default async function DashboardPage() {
+  const session = await auth.api.getSession({ headers: await headers() })
+  const flags = await getFeatureFlags(session?.user?.id)
+
+  if (flags["new-dashboard"]) {
+    return <NewDashboard />
+  }
+
+  return <LegacyDashboard />
+}
+```
+
+## Type Safety
+
+Define your flags for better TypeScript support:
+
+```typescript title="types/flags.ts"
+export interface Flags {
+  "new-dashboard": boolean
+  "dark-mode": boolean
+  "checkout-variant": "control" | "variant-a" | "variant-b"
+}
+```
+
+Then use with the hook:
+
+```tsx
+import { useAnalytics } from "@startupkit/analytics"
+import type { Flags } from "@/types/flags"
+
+export function MyComponent() {
+  const { flags } = useAnalytics() as { flags: Flags }
+
+  // TypeScript knows the flag types
+  if (flags["new-dashboard"]) {
+    // ...
+  }
+}
+```
+
+## Common Patterns
+
+### Gradual Rollout
+
+Roll out a feature to a percentage of users:
+
+```tsx
+// In PostHog, set "new-feature" to 10% rollout
+const hasNewFeature = useFlag("new-feature")
+
+return hasNewFeature ? <NewFeature /> : <OldFeature />
+```
+
+### Beta Access
+
+Gate features for beta users:
+
+```tsx
+const isBetaUser = useFlag("beta-access")
+
+if (isBetaUser) {
+  return (
+    <div>
+      <BetaBadge />
+      <BetaFeatures />
+    </div>
+  )
+}
+```
+
+### A/B Testing
+
+Run experiments:
+
+```tsx
+const variant = useFlag("pricing-experiment")
+
+// Track which variant was shown
+useEffect(() => {
+  track("EXPERIMENT_VIEWED", {
+    experiment: "pricing-experiment",
+    variant
+  })
+}, [variant, track])
+
+return variant === "A" ? <PricingA /> : <PricingB />
+```
+
+### Kill Switch
+
+Disable a feature instantly:
+
+```tsx
+const isFeatureEnabled = useFlag("feature-x-enabled")
+
+if (!isFeatureEnabled) {
+  return <MaintenanceMessage />
+}
+
+return <FeatureX />
+```
+
+## Fallback Values
+
+When flags are loading or unavailable:
+
+```tsx
+const isEnabled = useFlag("new-feature")
+
+// isEnabled is null if flags haven't loaded
+if (isEnabled === null) {
+  return <LoadingState />
+}
+
+if (isEnabled) {
+  return <NewFeature />
+}
+
+return <DefaultFeature />
+```
+
+## PostHog Integration
+
+If using PostHog, flags are fetched automatically:
+
+```tsx title="lib/analytics-server.ts"
+import { PostHog } from "posthog-node"
+
+const posthog = new PostHog(process.env.POSTHOG_API_KEY!)
+
+export async function getFeatureFlags(userId?: string) {
+  if (!userId) return {}
+  
+  const flags = await posthog.getAllFlags(userId)
+  return flags
+}
+```
+
+See [PostHog setup](/docs/analytics/providers/posthog) for full configuration.
+
+## Next Steps
+
+- [PostHog provider](/docs/analytics/providers/posthog) - Configure PostHog feature flags
+- [Custom routing](/docs/analytics/advanced/custom-routing) - Route events based on flags

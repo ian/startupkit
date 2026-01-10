@@ -11,6 +11,7 @@ const DOCS_DIR = join(__dirname, "..", "content", "docs", "packages")
 interface PackageInfo {
 	name: string
 	slug: string
+	icon: string
 	readmePath: string
 	outputPath: string
 }
@@ -19,24 +20,28 @@ const packages: PackageInfo[] = [
 	{
 		name: "@startupkit/analytics",
 		slug: "analytics",
+		icon: "BarChart3",
 		readmePath: join(PACKAGES_DIR, "analytics", "README.md"),
 		outputPath: join(DOCS_DIR, "analytics.mdx")
 	},
 	{
 		name: "@startupkit/auth",
 		slug: "auth",
+		icon: "Shield",
 		readmePath: join(PACKAGES_DIR, "auth", "README.md"),
 		outputPath: join(DOCS_DIR, "auth.mdx")
 	},
 	{
 		name: "@startupkit/cli",
 		slug: "cli",
+		icon: "Terminal",
 		readmePath: join(PACKAGES_DIR, "cli", "README.md"),
 		outputPath: join(DOCS_DIR, "cli.mdx")
 	},
 	{
 		name: "@startupkit/seo",
 		slug: "seo",
+		icon: "Search",
 		readmePath: join(PACKAGES_DIR, "seo", "README.md"),
 		outputPath: join(DOCS_DIR, "seo.mdx")
 	}
@@ -104,7 +109,7 @@ function escapeForMDX(content: string): string {
 	return result.join("\n")
 }
 
-function transformReadme(content: string, packageName: string): string {
+function transformReadme(content: string, pkg: PackageInfo): string {
 	let transformed = content
 
 	transformed = transformed.replace(/^#\s+.+$/m, "")
@@ -119,6 +124,7 @@ function transformReadme(content: string, packageName: string): string {
 	const frontmatter = `---
 title: "${title}"
 description: "${description}"
+icon: ${pkg.icon}
 ---
 
 `
@@ -134,7 +140,7 @@ async function syncPackage(pkg: PackageInfo): Promise<void> {
 		}
 
 		const content = await readFile(pkg.readmePath, "utf-8")
-		const transformed = transformReadme(content, pkg.name)
+		const transformed = transformReadme(content, pkg)
 
 		await mkdir(dirname(pkg.outputPath), { recursive: true })
 		await writeFile(pkg.outputPath, transformed)

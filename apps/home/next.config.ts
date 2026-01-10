@@ -3,7 +3,8 @@ import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
 	transpilePackages: ["@startupkit/seo"],
-	reactStrictMode: true
+	reactStrictMode: true,
+	serverExternalPackages: ["typescript", "twoslash"]
 }
 
 const withMDX = createMDX()

@@ -3,8 +3,6 @@ title: Introduction
 description: Welcome to StartupKit - The startup stack for the AI era
 ---
 
-# Welcome to StartupKit
-
 StartupKit is a meta-framework for building SaaS applications. It's built on **Next.js**, **React 19**, **TypeScript**, and **Turbo** with authentication, analytics, database, and UI components pre-configured.
 
 ## Why StartupKit?
@@ -45,10 +43,10 @@ pnpm dev
 
 StartupKit includes several packages that work together:
 
-- **[@startupkit/analytics](/docs/packages/analytics)** - Provider-agnostic analytics with plugins for PostHog, Google Analytics, OpenPanel, and more
-- **[@startupkit/auth](/docs/packages/auth)** - Lightweight authentication wrappers around Better Auth
-- **[@startupkit/cli](/docs/packages/cli)** - Command-line tool for scaffolding projects
-- **[@startupkit/seo](/docs/packages/seo)** - SEO utilities including metadata, structured data, sitemaps
+- **[@startupkit/analytics](/docs/analytics)** - Provider-agnostic analytics with plugins for PostHog, Google Analytics, and OpenPanel
+- **[@startupkit/auth](/docs/auth)** - Authentication wrappers built on Better Auth
+- **[@startupkit/cli](/docs/cli)** - Command-line tool for scaffolding and managing projects
+- **[@startupkit/seo](/docs/seo)** - SEO utilities including metadata, structured data, and sitemaps
 
 ### Project Structure
 
@@ -60,8 +58,13 @@ my-project/
 │   ├── analytics/     # @repo/analytics
 │   ├── auth/          # @repo/auth
 │   ├── db/            # @repo/db (Drizzle ORM)
+│   ├── emails/        # @repo/emails (React Email)
 │   ├── ui/            # @repo/ui (Shadcn components)
 │   └── utils/         # @repo/utils
+├── config/
+│   ├── biome/         # @config/biome
+│   ├── nextjs/        # @config/nextjs
+│   └── typescript/    # @config/typescript
 ├── turbo.json
 └── package.json
 ```
@@ -70,8 +73,13 @@ my-project/
 
 StartupKit is designed to work seamlessly with AI coding assistants. Clear patterns, consistent conventions, and well-documented code make it easy for tools like Cursor, GitHub Copilot, and Claude to understand and extend your codebase.
 
+Every project includes an `AGENTS.md` file that explains your codebase structure to AI tools.
+
 ## Next Steps
 
 - [Installation](/docs/getting-started/installation) - Detailed installation guide
-- [Project Structure](/docs/getting-started/project-structure) - Understanding the monorepo layout
-- [Packages](/docs/packages/analytics) - Deep dive into each package
+- [Quickstart](/docs/getting-started/quickstart) - Get up and running in 5 minutes
+- [CLI](/docs/cli) - Learn the command-line tools
+- [Analytics](/docs/analytics) - Set up event tracking
+- [Auth](/docs/auth) - Configure authentication
+- [SEO](/docs/seo) - Optimize for search engines

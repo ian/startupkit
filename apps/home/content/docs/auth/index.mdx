@@ -1,0 +1,128 @@
+---
+title: Auth Overview
+description: Authentication with @startupkit/auth built on Better Auth
+---
+
+`@startupkit/auth` provides React hooks and context for authentication, built on [Better Auth](https://better-auth.com).
+
+## Features
+
+- **Email OTP** - One-time password via email
+- **Google OAuth** - Sign in with Google
+- **Session management** - 7-day sessions with auto-refresh
+- **React hooks** - `useAuth()` for components
+- **Server utilities** - Session checking in Server Components
+
+## Quick Setup
+
+### 1. Configure Better Auth
+
+```tsx title="lib/auth.ts"
+import { betterAuth } from "better-auth"
+import { drizzleAdapter } from "better-auth/adapters/drizzle"
+import { nextCookies } from "better-auth/next-js"
+import { emailOTP } from "better-auth/plugins"
+import { db } from "@repo/db"
+
+export const auth = betterAuth({
+  basePath: "/auth",
+  database: drizzleAdapter(db, { provider: "pg" }),
+  plugins: [
+    emailOTP({
+      sendVerificationOTP: async ({ email, otp }) => {
+        await sendEmail({ to: email, subject: "Your code", body: otp })
+      }
+    }),
+    nextCookies()
+  ],
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!
+    }
+  }
+})
+```
+
+### 2. Create API Route
+
+```tsx title="app/auth/[...all]/route.ts"
+import { auth } from "@/lib/auth"
+import { toNextJsHandler } from "better-auth/next-js"
+
+export const { GET, POST } = toNextJsHandler(auth.handler)
+```
+
+### 3. Create Auth Client
+
+```tsx title="lib/auth-client.ts"
+import { createAuthClient } from "better-auth/react"
+import { emailOTPClient } from "better-auth/client/plugins"
+
+export const authClient = createAuthClient({
+  basePath: "/auth",
+  plugins: [emailOTPClient()]
+})
+```
+
+### 4. Add Provider
+
+```tsx title="app/providers.tsx"
+"use client"
+
+import { AuthProvider } from "@startupkit/auth"
+import { authClient } from "@/lib/auth-client"
+
+export function Providers({ children, user }) {
+  return (
+    <AuthProvider authClient={authClient} user={user}>
+      {children}
+    </AuthProvider>
+  )
+}
+```
+
+### 5. Use in Components
+
+```tsx
+"use client"
+
+import { useAuth } from "@startupkit/auth"
+
+export function Header() {
+  const { isAuthenticated, user, logout } = useAuth()
+
+  if (!isAuthenticated) {
+    return <a href="/sign-in">Sign In</a>
+  }
+
+  return (
+    <div>
+      <span>Welcome, {user.name}</span>
+      <button onClick={logout}>Sign Out</button>
+    </div>
+  )
+}
+```
+
+## Authentication Methods
+
+| Method | Description |
+|--------|-------------|
+| [Email OTP](/docs/auth/email-otp) | Send one-time codes via email |
+| [Google OAuth](/docs/auth/google-oauth) | Sign in with Google account |
+
+## How Sessions Work
+
+- **Duration**: 7 days by default
+- **Refresh**: Automatically refreshed every 24 hours
+- **Storage**: Stored in database via Drizzle adapter
+- **Cookies**: HTTP-only secure cookies
+
+See [Session Management](/docs/auth/session-management) for configuration options.
+
+## Next Steps
+
+- [Email OTP setup](/docs/auth/email-otp) - Configure email authentication
+- [Google OAuth setup](/docs/auth/google-oauth) - Configure Google sign-in
+- [Protecting routes](/docs/auth/protecting-routes) - Secure your pages and APIs

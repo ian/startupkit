@@ -1,0 +1,287 @@
+---
+title: Troubleshooting
+description: Common CLI issues and how to resolve them
+---
+
+Solutions to common issues when using the StartupKit CLI.
+
+## Installation Issues
+
+### "command not found: startupkit"
+
+If you installed globally but the command isn't found:
+
+```bash
+# Check if it's installed
+npm list -g startupkit
+
+# Reinstall globally
+npm install -g startupkit
+
+# Or use npx instead
+npx startupkit init
+```
+
+### Permission Denied
+
+On macOS/Linux, you may need to fix npm permissions:
+
+```bash
+# Option 1: Use a node version manager (recommended)
+# Install nvm: https://github.com/nvm-sh/nvm
+
+# Option 2: Change npm's default directory
+mkdir ~/.npm-global
+npm config set prefix '~/.npm-global'
+export PATH=~/.npm-global/bin:$PATH
+```
+
+## Init Command Issues
+
+### "Directory already exists"
+
+The CLI won't overwrite existing directories:
+
+```bash
+# Remove the directory first
+rm -rf my-project
+
+# Or use a different name
+npx startupkit init --name "My Project 2"
+```
+
+### Clone/Network Errors
+
+If template cloning fails:
+
+```bash
+# Check internet connection
+ping github.com
+
+# Try again (GitHub rate limits can cause temporary failures)
+npx startupkit init
+
+# Clear degit cache
+rm -rf ~/.degit
+npx startupkit init
+```
+
+### "Failed to load template config"
+
+The CLI couldn't read the template's configuration:
+
+```bash
+# Try with a specific repo
+npx startupkit init --repo ian/startupkit
+
+# Or clone manually
+git clone https://github.com/ian/startupkit.git
+cp -r startupkit/templates/repo my-project
+```
+
+## Dependency Installation Issues
+
+### pnpm Not Found
+
+```bash
+# Install pnpm
+npm install -g pnpm
+
+# Or use corepack (Node.js 16+)
+corepack enable
+corepack prepare pnpm@latest --activate
+```
+
+### ERR_PNPM_CATALOG
+
+Catalog dependency errors usually mean the workspace isn't properly configured:
+
+```bash
+# Try installing without lockfile
+pnpm install --no-frozen-lockfile
+
+# If that fails, clear the cache
+rm -rf node_modules
+rm pnpm-lock.yaml
+pnpm install
+```
+
+### Peer Dependency Warnings
+
+Warnings about peer dependencies are usually safe to ignore:
+
+```bash
+# Suppress warnings
+pnpm install --ignore-peercheck
+
+# Or force installation
+pnpm install --force
+```
+
+### "Cannot find module '@repo/...'"
+
+Missing workspace packages:
+
+```bash
+# Reinstall dependencies
+pnpm install
+
+# If still missing, the package might not exist
+ls packages/
+
+# Add missing package manually
+npx degit ian/startupkit/templates/packages/auth packages/auth
+pnpm install
+```
+
+## Add Command Issues
+
+### "Template type not found"
+
+Only `next` and `vite` are currently supported:
+
+```bash
+# Supported types
+npx startupkit add next
+npx startupkit add vite
+```
+
+### Missing @repo/* Dependencies
+
+When the CLI detects missing dependencies:
+
+1. **Accept the prompt** - Let the CLI install them
+2. **Or install manually**:
+
+```bash
+# Clone specific package
+npx degit ian/startupkit/templates/packages/ui packages/ui
+pnpm install
+```
+
+### App Name Conflicts
+
+If an app with that name exists:
+
+```bash
+# Check existing apps
+ls apps/
+
+# Remove if needed
+rm -rf apps/web
+
+# Add again
+npx startupkit add next --name web
+```
+
+## Upgrade Command Issues
+
+### "No packages to upgrade"
+
+You may not have any `@startupkit/*` packages installed:
+
+```bash
+# Check what's installed
+pnpm list @startupkit/*
+
+# Install packages first
+pnpm add @startupkit/analytics @startupkit/auth @startupkit/seo
+```
+
+### Config Sync Overwrote My Changes
+
+Restore from git:
+
+```bash
+git checkout -- turbo.json
+git checkout -- biome.jsonc
+```
+
+Or use `--dry-run` first:
+
+```bash
+npx startupkit upgrade --config --dry-run
+```
+
+## Build/Runtime Issues
+
+### TypeScript Errors After Init
+
+Run type checking to see all errors:
+
+```bash
+pnpm typecheck
+```
+
+Common fixes:
+
+```bash
+# Regenerate types
+pnpm db:generate  # For Drizzle types
+
+# Clear TypeScript cache
+rm -rf .next
+rm -rf node_modules/.cache
+```
+
+### "Module not found" in IDE
+
+Your IDE may need to restart after init:
+
+1. Close your editor
+2. Reopen the project
+3. Wait for TypeScript to initialize
+
+Or reload the window:
+- **VS Code**: `Cmd/Ctrl + Shift + P` → "Reload Window"
+- **Cursor**: Same as VS Code
+
+### Turbo Cache Issues
+
+If builds seem stale:
+
+```bash
+# Clear Turbo cache
+rm -rf .turbo
+rm -rf node_modules/.cache/turbo
+
+# Rebuild everything
+pnpm build --force
+```
+
+## Environment Issues
+
+### Missing Environment Variables
+
+```bash
+# Copy example env file
+cp .env.example .env.local
+
+# Check what's needed
+cat .env.example
+```
+
+### Database Connection Failed
+
+```bash
+# Test your connection string
+psql $DATABASE_URL
+
+# Common fixes:
+# - Check DATABASE_URL format: postgresql://user:pass@host:5432/db
+# - Ensure database exists
+# - Check firewall/network access
+```
+
+## Getting Help
+
+If none of these solutions work:
+
+1. **Check GitHub Issues**: [github.com/ian/startupkit/issues](https://github.com/ian/startupkit/issues)
+2. **Search existing issues** before creating a new one
+3. **Include details** when reporting:
+   - Node.js version (`node --version`)
+   - pnpm version (`pnpm --version`)
+   - Operating system
+   - Full error message
+   - Steps to reproduce

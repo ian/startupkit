@@ -1,0 +1,13 @@
+{
+	"title": "Auth",
+	"icon": "Lock",
+	"pages": [
+		"index",
+		"email-otp",
+		"google-oauth",
+		"protecting-routes",
+		"session-management",
+		"hooks-reference"
+	],
+	"defaultOpen": true
+}

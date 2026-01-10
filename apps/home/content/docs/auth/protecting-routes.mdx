@@ -1,0 +1,341 @@
+---
+title: Protecting Routes
+description: How to secure pages and API routes with authentication
+---
+
+Restrict access to authenticated users in Server Components, Client Components, and API routes.
+
+## Server Components
+
+Check authentication in Server Components using the Better Auth API:
+
+```tsx title="app/dashboard/page.tsx"
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
+import { redirect } from "next/navigation"
+
+export default async function DashboardPage() {
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
+
+  if (!session) {
+    redirect("/sign-in")
+  }
+
+  return (
+    <div>
+      <h1>Welcome, {session.user.name}</h1>
+      {/* Dashboard content */}
+    </div>
+  )
+}
+```
+
+## Client Components
+
+Use the `useAuth` hook for client-side checks:
+
+```tsx title="components/protected-content.tsx"
+"use client"
+
+import { useAuth } from "@startupkit/auth"
+import { useRouter } from "next/navigation"
+import { useEffect } from "react"
+
+export function ProtectedContent({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated, isLoading } = useAuth()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.push("/sign-in")
+    }
+  }, [isAuthenticated, isLoading, router])
+
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
+
+  if (!isAuthenticated) {
+    return null
+  }
+
+  return <>{children}</>
+}
+```
+
+## API Routes
+
+Protect API routes by checking the session:
+
+```tsx title="app/api/user/route.ts"
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
+import { NextResponse } from "next/server"
+
+export async function GET() {
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
+
+  if (!session) {
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401 }
+    )
+  }
+
+  return NextResponse.json({ user: session.user })
+}
+
+export async function POST(request: Request) {
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
+
+  if (!session) {
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401 }
+    )
+  }
+
+  const body = await request.json()
+  
+  // Process authenticated request
+  return NextResponse.json({ success: true })
+}
+```
+
+## Server Actions
+
+Protect server actions:
+
+```tsx title="app/actions/profile.ts"
+"use server"
+
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
+
+export async function updateProfile(data: { name: string }) {
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
+
+  if (!session) {
+    throw new Error("Unauthorized")
+  }
+
+  // Update profile for session.user.id
+  await db.update(users)
+    .set({ name: data.name })
+    .where(eq(users.id, session.user.id))
+
+  return { success: true }
+}
+```
+
+## Layout-Level Protection
+
+Protect all pages under a layout:
+
+```tsx title="app/(dashboard)/layout.tsx"
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
+import { redirect } from "next/navigation"
+
+export default async function DashboardLayout({
+  children
+}: {
+  children: React.ReactNode
+}) {
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
+
+  if (!session) {
+    redirect("/sign-in")
+  }
+
+  return (
+    <div>
+      <nav>Dashboard Nav</nav>
+      {children}
+    </div>
+  )
+}
+```
+
+Now all pages in `app/(dashboard)/` are protected.
+
+## Middleware
+
+For more complex auth logic, use Next.js middleware:
+
+```tsx title="middleware.ts"
+import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
+
+export function middleware(request: NextRequest) {
+  const sessionToken = request.cookies.get("better-auth.session_token")
+
+  // Protect dashboard routes
+  if (request.nextUrl.pathname.startsWith("/dashboard")) {
+    if (!sessionToken) {
+      return NextResponse.redirect(new URL("/sign-in", request.url))
+    }
+  }
+
+  // Redirect authenticated users away from auth pages
+  if (request.nextUrl.pathname.startsWith("/sign-in")) {
+    if (sessionToken) {
+      return NextResponse.redirect(new URL("/dashboard", request.url))
+    }
+  }
+
+  return NextResponse.next()
+}
+
+export const config = {
+  matcher: ["/dashboard/:path*", "/sign-in"]
+}
+```
+
+## Role-Based Access
+
+Protect routes based on user roles:
+
+```tsx title="app/admin/page.tsx"
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
+import { redirect } from "next/navigation"
+
+export default async function AdminPage() {
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
+
+  if (!session) {
+    redirect("/sign-in")
+  }
+
+  if (session.user.role !== "admin") {
+    redirect("/dashboard") // Not authorized
+  }
+
+  return <div>Admin Panel</div>
+}
+```
+
+## Creating a Protected Route Helper
+
+Abstract the pattern into a reusable function:
+
+```tsx title="lib/auth-utils.ts"
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
+import { redirect } from "next/navigation"
+
+export async function requireAuth() {
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
+
+  if (!session) {
+    redirect("/sign-in")
+  }
+
+  return session
+}
+
+export async function requireAdmin() {
+  const session = await requireAuth()
+
+  if (session.user.role !== "admin") {
+    redirect("/dashboard")
+  }
+
+  return session
+}
+```
+
+Use in pages:
+
+```tsx title="app/dashboard/settings/page.tsx"
+import { requireAuth } from "@/lib/auth-utils"
+
+export default async function SettingsPage() {
+  const { user } = await requireAuth()
+
+  return <div>Settings for {user.name}</div>
+}
+```
+
+## Handling Loading States
+
+Show loading UI while checking auth:
+
+```tsx
+"use client"
+
+import { useAuth } from "@startupkit/auth"
+import { Skeleton } from "@repo/ui/skeleton"
+
+export function Dashboard() {
+  const { isAuthenticated, isLoading, user } = useAuth()
+
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-32 w-full" />
+      </div>
+    )
+  }
+
+  if (!isAuthenticated) {
+    return <SignInPrompt />
+  }
+
+  return <DashboardContent user={user} />
+}
+```
+
+## Redirect After Login
+
+Redirect users back to their intended destination:
+
+```tsx title="app/sign-in/page.tsx"
+"use client"
+
+import { useSearchParams } from "next/navigation"
+
+export default function SignInPage() {
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get("redirect") || "/dashboard"
+
+  // After successful sign-in, redirect to `redirectTo`
+}
+```
+
+In your protected routes:
+
+```tsx
+import { redirect } from "next/navigation"
+
+export default async function ProtectedPage() {
+  const session = await auth.api.getSession({ headers: await headers() })
+
+  if (!session) {
+    redirect("/sign-in?redirect=/protected-page")
+  }
+
+  // ...
+}
+```
+
+## Next Steps
+
+- [Session management](/docs/auth/session-management) - Configure session duration
+- [useAuth reference](/docs/auth/hooks-reference) - Full hook API

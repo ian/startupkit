@@ -1,0 +1,86 @@
+---
+title: What is StartupKit
+description: Learn what StartupKit is and why it was built
+icon: CircleHelp
+---
+
+StartupKit is a **meta-framework** for building SaaS applications. It provides a complete foundation with authentication, analytics, database, and UI components pre-configured so you can focus on building your product.
+
+## The Problem
+
+Building a SaaS from scratch means spending weeks on boilerplate:
+
+- Setting up authentication flows
+- Configuring analytics providers
+- Building and styling UI components
+- Optimizing for SEO
+- Managing a monorepo structure
+- Wiring up databases and ORMs
+
+By the time you've got the basics working, you've lost momentum and haven't written a single line of product code.
+
+## The Solution
+
+StartupKit gives you everything you need out of the box:
+
+| Feature | What You Get |
+|---------|--------------|
+| **Authentication** | Email OTP, OAuth providers, session management via Better Auth |
+| **Analytics** | Provider-agnostic tracking with PostHog, Google Analytics, OpenPanel plugins |
+| **Database** | Drizzle ORM with PostgreSQL, ready-to-use schemas |
+| **UI Components** | Full Shadcn/ui library pre-configured with Tailwind |
+| **Emails** | React Email templates with Resend integration |
+| **SEO** | Metadata, sitemaps, robots.txt, structured data utilities |
+| **Monorepo** | Turborepo with shared configs, packages, and apps |
+
+## Design Principles
+
+### 1. No Lock-in
+
+Every package in StartupKit wraps standard, well-maintained libraries. If you outgrow a component, you can eject and use the underlying library directly:
+
+- Auth → Better Auth
+- Analytics → PostHog / GA / OpenPanel SDKs
+- Database → Drizzle ORM
+- UI → Shadcn/ui + Radix
+
+### 2. AI-Ready
+
+StartupKit is designed for the AI coding era. Clear patterns, consistent conventions, and well-documented code make it easy for tools like Cursor, GitHub Copilot, and Claude to understand and extend your codebase.
+
+Every project includes an `AGENTS.md` file that explains your codebase structure to AI tools.
+
+### 3. Production-Ready
+
+This isn't a starter template you'll throw away. StartupKit uses the same architecture patterns used by production applications serving millions of users.
+
+## Who Is This For?
+
+StartupKit is ideal for:
+
+- **Solo founders** who want to ship fast without compromising on quality
+- **Small teams** who need a shared foundation to build on
+- **Developers** who are tired of reinventing the wheel for every project
+- **Anyone** building a SaaS, internal tool, or web application
+
+## Tech Stack
+
+StartupKit is built on proven technologies:
+
+- **Framework**: Next.js 15 with App Router
+- **Language**: TypeScript (strict mode)
+- **React**: React 19 with Server Components
+- **Styling**: Tailwind CSS v4
+- **Components**: Shadcn/ui + Radix primitives
+- **Database**: PostgreSQL + Drizzle ORM
+- **Auth**: Better Auth
+- **Monorepo**: Turborepo + pnpm workspaces
+- **Linting**: Biome
+
+## Next Steps
+
+Ready to get started?
+
+- [Quick Start](/docs/getting-started/quickstart) - Get running in 5 minutes
+- [Manual Installation](/docs/getting-started/installation) - Step-by-step setup guide
+- [Comparisons](/docs/getting-started/comparisons) - See how StartupKit compares to alternatives

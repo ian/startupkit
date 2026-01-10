@@ -1,0 +1,358 @@
+---
+title: useAuth Reference
+description: Complete API reference for the useAuth hook
+---
+
+The `useAuth` hook provides authentication state and methods in client components.
+
+## Import
+
+```tsx
+import { useAuth } from "@startupkit/auth"
+```
+
+## Basic Usage
+
+```tsx
+"use client"
+
+import { useAuth } from "@startupkit/auth"
+
+export function MyComponent() {
+  const {
+    isAuthenticated,
+    isLoading,
+    user,
+    logout,
+    sendAuthCode,
+    verifyAuthCode,
+    googleAuth
+  } = useAuth()
+
+  // ...
+}
+```
+
+## Return Values
+
+### isAuthenticated
+
+```tsx
+isAuthenticated: boolean
+```
+
+Whether the user is currently signed in.
+
+```tsx
+if (isAuthenticated) {
+  return <Dashboard />
+}
+return <SignInPrompt />
+```
+
+### isLoading
+
+```tsx
+isLoading: boolean
+```
+
+Whether the auth state is being determined. Always check this before `isAuthenticated` to avoid flashing content.
+
+```tsx
+if (isLoading) {
+  return <Skeleton />
+}
+if (!isAuthenticated) {
+  return <SignIn />
+}
+```
+
+### user
+
+```tsx
+user: User | null | undefined
+```
+
+The current user object. `null` if not authenticated, `undefined` while loading.
+
+```tsx
+interface User {
+  id: string
+  email: string
+  name: string
+  firstName?: string
+  lastName?: string
+  image?: string
+  emailVerified: boolean
+  createdAt: Date
+  updatedAt: Date
+}
+```
+
+Usage:
+
+```tsx
+if (user) {
+  return <span>Welcome, {user.name}</span>
+}
+```
+
+## Methods
+
+### logout()
+
+```tsx
+logout: () => Promise<void>
+```
+
+Signs out the current user and redirects to home.
+
+```tsx
+<button onClick={logout}>Sign Out</button>
+```
+
+Or with custom handling:
+
+```tsx
+const handleLogout = async () => {
+  await logout()
+  // Additional cleanup if needed
+}
+```
+
+### sendAuthCode()
+
+```tsx
+sendAuthCode: (email: string) => Promise<void>
+```
+
+Sends a one-time password to the specified email.
+
+```tsx
+const [email, setEmail] = useState("")
+
+const handleSend = async () => {
+  try {
+    await sendAuthCode(email)
+    // Show code input
+  } catch (error) {
+    // Handle error (invalid email, rate limited, etc.)
+  }
+}
+```
+
+### verifyAuthCode()
+
+```tsx
+verifyAuthCode: (email: string, code: string) => Promise<void>
+```
+
+Verifies the OTP code and creates a session.
+
+```tsx
+const handleVerify = async () => {
+  try {
+    await verifyAuthCode(email, code)
+    // User is now signed in, redirected automatically
+  } catch (error) {
+    // Invalid or expired code
+  }
+}
+```
+
+### googleAuth()
+
+```tsx
+googleAuth: () => Promise<void>
+```
+
+Initiates Google OAuth sign-in flow.
+
+```tsx
+<button onClick={googleAuth}>
+  Sign in with Google
+</button>
+```
+
+## AuthProvider
+
+The `useAuth` hook requires the `AuthProvider` wrapper:
+
+```tsx title="app/providers.tsx"
+"use client"
+
+import { AuthProvider } from "@startupkit/auth"
+import { authClient } from "@/lib/auth-client"
+
+interface ProvidersProps {
+  children: React.ReactNode
+  user?: User
+}
+
+export function Providers({ children, user }: ProvidersProps) {
+  return (
+    <AuthProvider authClient={authClient} user={user}>
+      {children}
+    </AuthProvider>
+  )
+}
+```
+
+### AuthProvider Props
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `children` | `ReactNode` | Child components |
+| `authClient` | `AuthClient` | Better Auth client instance |
+| `user` | `User` | Initial user (from server) |
+| `onIdentify` | `(user: User) => void` | Called when user signs in |
+| `onReset` | `() => void` | Called on logout |
+
+### Integration with Analytics
+
+```tsx
+<AuthProvider
+  authClient={authClient}
+  user={user}
+  onIdentify={(user) => {
+    // Identify user in analytics
+    analytics.identify(user.id, {
+      email: user.email,
+      name: user.name
+    })
+  }}
+  onReset={() => {
+    // Reset analytics identity
+    analytics.reset()
+  }}
+>
+  {children}
+</AuthProvider>
+```
+
+## TypeScript
+
+### Custom User Type
+
+Extend the user type with additional fields:
+
+```tsx
+interface CustomUser {
+  id: string
+  email: string
+  name: string
+  plan: "free" | "pro" | "enterprise"
+  teamId: string
+}
+
+// In your component
+const { user } = useAuth() as { user: CustomUser | null }
+```
+
+### Type Definitions
+
+```tsx
+interface AuthContextType {
+  isAuthenticated: boolean
+  isLoading: boolean
+  user: User | null | undefined
+  logout: () => Promise<void>
+  sendAuthCode: (email: string) => Promise<void>
+  verifyAuthCode: (email: string, code: string) => Promise<void>
+  googleAuth: () => Promise<void>
+}
+```
+
+## Common Patterns
+
+### Protected Component
+
+```tsx
+"use client"
+
+import { useAuth } from "@startupkit/auth"
+
+export function ProtectedFeature() {
+  const { isAuthenticated, isLoading } = useAuth()
+
+  if (isLoading) return <Skeleton />
+  if (!isAuthenticated) return null
+
+  return <Feature />
+}
+```
+
+### Auth-Dependent UI
+
+```tsx
+"use client"
+
+import { useAuth } from "@startupkit/auth"
+
+export function Header() {
+  const { isAuthenticated, user, logout } = useAuth()
+
+  return (
+    <header>
+      <Logo />
+      <nav>
+        {isAuthenticated ? (
+          <>
+            <span>{user?.name}</span>
+            <button onClick={logout}>Sign Out</button>
+          </>
+        ) : (
+          <a href="/sign-in">Sign In</a>
+        )}
+      </nav>
+    </header>
+  )
+}
+```
+
+### Redirect After Auth
+
+```tsx
+"use client"
+
+import { useAuth } from "@startupkit/auth"
+import { useRouter } from "next/navigation"
+import { useEffect } from "react"
+
+export function AuthRedirect({ redirectTo = "/dashboard" }) {
+  const { isAuthenticated, isLoading } = useAuth()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      router.push(redirectTo)
+    }
+  }, [isAuthenticated, isLoading, redirectTo, router])
+
+  return null
+}
+```
+
+## Error Handling
+
+All auth methods can throw errors:
+
+```tsx
+try {
+  await sendAuthCode(email)
+} catch (error) {
+  if (error.message.includes("rate limit")) {
+    setError("Too many attempts. Please wait.")
+  } else if (error.message.includes("invalid email")) {
+    setError("Please enter a valid email.")
+  } else {
+    setError("Something went wrong. Please try again.")
+  }
+}
+```
+
+## Next Steps
+
+- [Email OTP setup](/docs/auth/email-otp) - Configure email authentication
+- [Google OAuth setup](/docs/auth/google-oauth) - Configure social sign-in
+- [Protecting routes](/docs/auth/protecting-routes) - Secure your pages

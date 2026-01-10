@@ -1,4 +1,5 @@
 @import "fumadocs-ui/style.css";
+@import "fumadocs-twoslash/twoslash.css";
 
 :root {
 	--fd-background: 0 0% 0%;
@@ -52,12 +53,10 @@ body {
 	background: transparent !important;
 }
 
+/* Sidebar background styling */
 .fd-sidebar,
 [data-fd-sidebar],
-[class*="sidebar"],
-aside,
-nav[class*="fixed"],
-div[class*="sticky"] {
+aside {
 	background: black !important;
 	background-color: black !important;
 	border-color: rgb(39 39 42) !important;
@@ -70,10 +69,8 @@ aside [data-radix-scroll-area-viewport] {
 	background: black !important;
 }
 
-/* Fumadocs specific sidebar styling */
 .fd-layout > aside,
-.fd-layout aside > div,
-[class*="layout"] > aside {
+.fd-layout aside > div {
 	background: black !important;
 }
 
@@ -138,4 +135,52 @@ button, [role="button"] {
 .fd-search-dialog {
 	background: rgb(9 9 11) !important;
 	border: 1px solid rgb(39 39 42) !important;
+}
+
+/* ========================================
+   SIDEBAR STYLING
+   ======================================== */
+
+/* Hide sidebar tabs completely */
+[data-fd-sidebar-tabs],
+[class*="sidebar-tabs"],
+aside [role="tablist"] {
+	display: none !important;
+}
+
+/* Force sidebar tree to be vertical */
+[data-fd-sidebar] nav,
+[data-fd-sidebar] [data-fd-tree],
+aside nav {
+	display: flex !important;
+	flex-direction: column !important;
+	width: 100% !important;
+}
+
+/* Ensure all sidebar items stack vertically */
+[data-fd-sidebar] nav > *,
+[data-fd-sidebar] [data-fd-tree] > * {
+	display: block !important;
+	width: 100% !important;
+}
+
+/* Folder groups should also be vertical */
+[data-fd-sidebar] [data-fd-folder],
+[data-fd-sidebar] [data-collapsible] {
+	display: flex !important;
+	flex-direction: column !important;
+	width: 100% !important;
+}
+
+/* Ensure links are full width */
+aside[data-fd-sidebar] nav a,
+aside[data-fd-sidebar] nav button {
+	width: 100% !important;
+	display: flex !important;
+}
+
+/* Section separator styling */
+aside[data-fd-sidebar] [data-separator] {
+	margin: 0.75rem 0 !important;
+	width: 100% !important;
 }

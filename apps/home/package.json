@@ -4,7 +4,7 @@
 	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
-		"clean": "rm -rf .cache .next out .turbo .source",
+		"clean": "rm -rf .cache .next dist out .turbo .source",
 		"dev": "next dev --port 3001",
 		"build": "next build",
 		"start": "next start",
@@ -22,12 +22,14 @@
 		"clsx": "2.1.1",
 		"fumadocs-core": "^16.4.6",
 		"fumadocs-mdx": "^14.2.4",
+		"fumadocs-twoslash": "^3.1.12",
 		"fumadocs-ui": "^16.4.6",
 		"lucide-react": "0.446.0",
 		"next": "catalog:stack",
 		"react": "catalog:react19",
 		"react-dom": "catalog:react19",
-		"tailwind-merge": "2.6.0"
+		"tailwind-merge": "2.6.0",
+		"twoslash": "^0.3.6"
 	},
 	"devDependencies": {
 		"@repo/biome": "workspace:*",

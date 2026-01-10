@@ -1,0 +1,100 @@
+---
+title: Analytics Overview
+description: Provider-agnostic analytics with @startupkit/analytics
+---
+
+`@startupkit/analytics` provides a unified interface for tracking events across multiple analytics providers. Write once, send everywhere.
+
+## Features
+
+- **Multi-provider support** - PostHog, Google Analytics, OpenPanel, Ahrefs
+- **Automatic page tracking** - Tracks route changes in Next.js
+- **Feature flags** - Built-in support for PostHog feature flags
+- **Type-safe** - Full TypeScript support for events and properties
+- **Plugin architecture** - Easy to add or remove providers
+
+## Quick Setup
+
+### 1. Configure Plugins
+
+```tsx title="lib/analytics.ts"
+import {
+  PostHogPlugin,
+  GoogleAnalyticsPlugin
+} from "@startupkit/analytics"
+
+export const analyticsPlugins = [
+  PostHogPlugin({
+    apiKey: process.env.NEXT_PUBLIC_POSTHOG_API_KEY!
+  }),
+  GoogleAnalyticsPlugin({
+    measurementId: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID!
+  })
+]
+```
+
+### 2. Add Provider
+
+```tsx title="app/providers.tsx"
+"use client"
+
+import { AnalyticsProvider } from "@startupkit/analytics"
+import { analyticsPlugins } from "@/lib/analytics"
+
+export function Providers({ children, flags }) {
+  return (
+    <AnalyticsProvider flags={flags} plugins={analyticsPlugins}>
+      {children}
+    </AnalyticsProvider>
+  )
+}
+```
+
+### 3. Track Events
+
+```tsx
+"use client"
+
+import { useAnalytics } from "@startupkit/analytics"
+
+export function SignUpButton() {
+  const { track } = useAnalytics()
+
+  return (
+    <button onClick={() => track("SIGNUP_CLICKED", { source: "hero" })}>
+      Get Started
+    </button>
+  )
+}
+```
+
+## How It Works
+
+The `AnalyticsProvider` wraps your app and manages connections to all configured providers. When you call `track()`, the event is sent to every provider simultaneously.
+
+```mermaid
+flowchart LR
+    A[Your App] --> B[AnalyticsProvider]
+    B --> C[PostHog]
+    B --> D[Google Analytics]
+    B --> E[OpenPanel]
+```
+
+Events are fanned out automatically—no need to call each provider individually.
+
+## Provider Options
+
+| Provider | Best For |
+|----------|----------|
+| [PostHog](/docs/analytics/providers/posthog) | Product analytics, feature flags, session recordings |
+| [Google Analytics](/docs/analytics/providers/google-analytics) | Traffic analysis, marketing attribution |
+| [OpenPanel](/docs/analytics/providers/openpanel) | Privacy-focused, self-hostable |
+
+You can use one provider or all of them together.
+
+## Next Steps
+
+- [Track events](/docs/analytics/tracking-events) - Learn the tracking API
+- [Identify users](/docs/analytics/identifying-users) - Associate events with users
+- [Feature flags](/docs/analytics/feature-flags) - Control feature rollouts
+- [Set up PostHog](/docs/analytics/providers/posthog) - Full PostHog configuration

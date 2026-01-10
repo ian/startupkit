@@ -1,0 +1,296 @@
+---
+title: Page Metadata
+description: How to generate SEO metadata for your pages
+---
+
+Generate complete SEO metadata for your pages with a single function call.
+
+## Basic Usage
+
+### Individual Pages
+
+```tsx title="app/pricing/page.tsx"
+import { generateMetadata } from "@startupkit/seo"
+
+export const metadata = generateMetadata({
+  title: "Pricing",
+  description: "Simple, transparent pricing for teams of all sizes",
+  path: "/pricing",
+  baseUrl: "https://myapp.com",
+  siteName: "My App"
+})
+
+export default function PricingPage() {
+  return <div>Pricing content</div>
+}
+```
+
+### Root Layout
+
+For root layouts, include `titleTemplate` to create consistent page titles:
+
+```tsx title="app/layout.tsx"
+import { generateMetadata } from "@startupkit/seo"
+
+export const metadata = generateMetadata({
+  title: "My App",
+  description: "The best app for doing things",
+  titleTemplate: "%s | My App",
+  baseUrl: "https://myapp.com",
+  siteName: "My App",
+  twitterHandle: "@myapp",
+  keywords: ["saas", "productivity"],
+  icons: {
+    icon: [{ url: "/favicon.ico", sizes: "any" }],
+    apple: "/apple-touch-icon.png"
+  },
+  manifest: "/site.webmanifest"
+})
+```
+
+With `titleTemplate: "%s | My App"`:
+- Homepage shows: "My App"
+- Pricing page shows: "Pricing | My App"
+
+## Parameters
+
+### Common Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `title` | `string` | Yes | Page title |
+| `description` | `string` | Yes | Meta description |
+| `baseUrl` | `string` | Yes | Full base URL (e.g., `https://myapp.com`) |
+| `siteName` | `string` | Yes | Site name for OpenGraph |
+| `ogImage` | `string` | No | OpenGraph image URL (default: `/hero/og.avif`) |
+| `twitterHandle` | `string` | No | Twitter username (e.g., `@myapp`) |
+
+### Page-Specific Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `path` | `string` | Page path (e.g., `/about`) for canonical URL |
+| `noIndex` | `boolean` | Add noindex directive (exclude from search) |
+
+### Root Layout Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `titleTemplate` | `string` | Title template (e.g., `%s \| Site Name`) |
+| `keywords` | `string[]` | SEO keywords |
+| `icons` | `object` | Favicon configuration |
+| `manifest` | `string` | Web manifest path |
+
+## What Gets Generated
+
+### For Individual Pages
+
+```tsx
+generateMetadata({
+  title: "About Us",
+  description: "Learn about our company",
+  path: "/about",
+  baseUrl: "https://myapp.com",
+  siteName: "My App",
+  ogImage: "/og/about.png",
+  twitterHandle: "@myapp"
+})
+```
+
+Generates:
+
+```typescript
+{
+  title: "About Us",
+  description: "Learn about our company",
+  metadataBase: new URL("https://myapp.com"),
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://myapp.com/about",
+    siteName: "My App",
+    title: "About Us",
+    description: "Learn about our company",
+    images: [{
+      url: "/og/about.png",
+      width: 1200,
+      height: 630,
+      alt: "About Us"
+    }]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About Us",
+    description: "Learn about our company",
+    images: ["/og/about.png"],
+    creator: "@myapp"
+  },
+  alternates: {
+    canonical: "https://myapp.com/about"
+  }
+}
+```
+
+## Dynamic Metadata
+
+For dynamic pages, use `generateMetadata` as a function:
+
+```tsx title="app/blog/[slug]/page.tsx"
+import { generateMetadata as seoMetadata } from "@startupkit/seo"
+
+interface Props {
+  params: { slug: string }
+}
+
+export async function generateMetadata({ params }: Props) {
+  const post = await getPost(params.slug)
+
+  return seoMetadata({
+    title: post.title,
+    description: post.excerpt,
+    path: `/blog/${params.slug}`,
+    baseUrl: "https://myapp.com",
+    siteName: "My App",
+    ogImage: post.coverImage
+  })
+}
+```
+
+## OpenGraph Images
+
+### Default Image
+
+The default OG image path is `/hero/og.avif`. Override per-page:
+
+```tsx
+generateMetadata({
+  title: "Features",
+  description: "Explore our features",
+  ogImage: "/og/features.png",  // Custom OG image
+  // ...
+})
+```
+
+### Recommended Size
+
+- **Width**: 1200px
+- **Height**: 630px
+- **Format**: PNG, JPEG, or AVIF
+
+### Dynamic OG Images
+
+Generate OG images with Next.js:
+
+```tsx title="app/og/[...slug]/route.tsx"
+import { ImageResponse } from "next/og"
+
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const title = searchParams.get("title") ?? "My App"
+
+  return new ImageResponse(
+    (
+      <div style={{ display: "flex", fontSize: 48 }}>
+        {title}
+      </div>
+    ),
+    { width: 1200, height: 630 }
+  )
+}
+```
+
+Then use:
+
+```tsx
+generateMetadata({
+  ogImage: `/og?title=${encodeURIComponent(post.title)}`,
+  // ...
+})
+```
+
+## noIndex Pages
+
+Exclude pages from search engines:
+
+```tsx title="app/dashboard/page.tsx"
+export const metadata = generateMetadata({
+  title: "Dashboard",
+  description: "Your personal dashboard",
+  path: "/dashboard",
+  baseUrl: "https://myapp.com",
+  siteName: "My App",
+  noIndex: true  // Adds noindex, nofollow
+})
+```
+
+Common noIndex pages:
+- Dashboard/app pages
+- User settings
+- Checkout flows
+- Internal tools
+
+## Canonical URLs
+
+Canonical URLs prevent duplicate content issues:
+
+```tsx
+generateMetadata({
+  path: "/about",  // Generates canonical: https://myapp.com/about
+  // ...
+})
+```
+
+For pages with query parameters:
+
+```tsx
+// /products?category=shoes should canonicalize to /products
+generateMetadata({
+  path: "/products",  // Not /products?category=shoes
+  // ...
+})
+```
+
+## Centralized Configuration
+
+Create a helper for consistent configuration:
+
+```tsx title="lib/seo.ts"
+import { generateMetadata as seoMetadata } from "@startupkit/seo"
+
+const defaults = {
+  baseUrl: process.env.NEXT_PUBLIC_BASE_URL!,
+  siteName: "My App",
+  twitterHandle: "@myapp",
+  ogImage: "/og/default.png"
+}
+
+export function generateMetadata(params: {
+  title: string
+  description: string
+  path?: string
+  ogImage?: string
+  noIndex?: boolean
+}) {
+  return seoMetadata({
+    ...defaults,
+    ...params
+  })
+}
+```
+
+Use in pages:
+
+```tsx title="app/features/page.tsx"
+import { generateMetadata } from "@/lib/seo"
+
+export const metadata = generateMetadata({
+  title: "Features",
+  description: "Explore our powerful features",
+  path: "/features"
+})
+```
+
+## Next Steps
+
+- [Structured data](/docs/seo/structured-data) - Add JSON-LD schemas
+- [Sitemaps](/docs/seo/sitemap) - Generate sitemaps

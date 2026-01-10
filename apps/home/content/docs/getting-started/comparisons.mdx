@@ -1,0 +1,92 @@
+---
+title: Comparisons
+description: How StartupKit compares to other solutions
+icon: GitCompareArrows
+---
+
+See how StartupKit compares to other popular solutions for building SaaS applications.
+
+## vs. Create Next App
+
+| | StartupKit | Create Next App |
+|---|:---:|:---:|
+| Authentication | ✅ Built-in | ❌ DIY |
+| Analytics | ✅ Built-in | ❌ DIY |
+| Database | ✅ Configured | ❌ DIY |
+| UI Components | ✅ Shadcn/ui | ❌ DIY |
+| Monorepo | ✅ Turborepo | ❌ Single app |
+| Email | ✅ React Email | ❌ DIY |
+| SEO Utilities | ✅ Built-in | ❌ Basic |
+
+**Verdict**: Create Next App is great for learning or simple projects. StartupKit is for production SaaS applications.
+
+## vs. T3 Stack
+
+| | StartupKit | T3 Stack |
+|---|:---:|:---:|
+| Authentication | ✅ Better Auth | ✅ NextAuth |
+| Analytics | ✅ Built-in | ❌ DIY |
+| Database | ✅ Drizzle | ✅ Prisma/Drizzle |
+| UI Components | ✅ Shadcn/ui | ❌ DIY |
+| Monorepo | ✅ Built-in | ❌ Single app |
+| Type Safety | ✅ Full | ✅ Full (tRPC) |
+| API Layer | REST/Server Actions | tRPC |
+
+**Verdict**: T3 is excellent for tRPC-based apps. StartupKit provides more out-of-the-box for traditional SaaS patterns.
+
+## vs. Shipped / Shipfast / Other Boilerplates
+
+| | StartupKit | Paid Boilerplates |
+|---|:---:|:---:|
+| Price | Free | $199-499 |
+| Open Source | ✅ Yes | ❌ Usually not |
+| Updates | ✅ Continuous | ⚠️ Varies |
+| Customizable | ✅ Fully | ⚠️ Varies |
+| AI-Ready | ✅ Yes | ❌ Usually not |
+| Monorepo | ✅ Yes | ❌ Usually not |
+| CLI Tools | ✅ Yes | ❌ Usually not |
+
+**Verdict**: Paid boilerplates can be good, but StartupKit offers more flexibility and is free.
+
+## vs. Building From Scratch
+
+| | StartupKit | From Scratch |
+|---|:---:|:---:|
+| Time to First Feature | Hours | Weeks |
+| Auth Setup | 5 minutes | 2-5 days |
+| Analytics Setup | 5 minutes | 1-2 days |
+| UI Components | Ready | Days to weeks |
+| Maintenance | Shared | All on you |
+| Best Practices | Built-in | Research required |
+
+**Verdict**: Building from scratch teaches you a lot, but you'll spend weeks before writing product code.
+
+## Feature Matrix
+
+| Feature | StartupKit | Next.js | T3 | Remix | 
+|---------|:---:|:---:|:---:|:---:|
+| React 19 | ✅ | ✅ | ✅ | ✅ |
+| Server Components | ✅ | ✅ | ✅ | ⚠️ |
+| Authentication | ✅ | ❌ | ✅ | ❌ |
+| Analytics | ✅ | ❌ | ❌ | ❌ |
+| Database ORM | ✅ | ❌ | ✅ | ❌ |
+| UI Library | ✅ | ❌ | ❌ | ❌ |
+| Email Templates | ✅ | ❌ | ❌ | ❌ |
+| Monorepo | ✅ | ❌ | ❌ | ❌ |
+| CLI Tooling | ✅ | ✅ | ✅ | ✅ |
+| SEO Utilities | ✅ | ⚠️ | ❌ | ⚠️ |
+
+## When to Use Something Else
+
+StartupKit isn't the right choice for every project:
+
+- **Static sites** → Use Astro or plain Next.js
+- **Mobile apps** → Use Expo or React Native directly  
+- **E-commerce** → Consider Shopify or Medusa
+- **Heavy tRPC usage** → T3 Stack may be better
+- **Learning React** → Start with Create React App or Vite
+
+## Still Have Questions?
+
+- [Quick Start](/docs/getting-started/quickstart) - Try it yourself
+- [GitHub Discussions](https://github.com/ian/startupkit/discussions) - Ask the community

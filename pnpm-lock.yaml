@@ -103,6 +103,9 @@ importers:
       fumadocs-mdx:
         specifier: ^14.2.4
         version: 14.2.4(@types/react@19.0.1)(fumadocs-core@16.4.6(@types/react@19.0.1)(lucide-react@0.446.0(react@19.0.0))(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react-router@7.12.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)(zod@4.3.5))(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)(vite@6.4.1(@types/node@22.12.0)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.1))
+      fumadocs-twoslash:
+        specifier: ^3.1.12
+        version: 3.1.12(@types/react-dom@19.0.2(@types/react@19.0.1))(@types/react@19.0.1)(fumadocs-ui@16.4.6(@types/react-dom@19.0.2(@types/react@19.0.1))(@types/react@19.0.1)(fumadocs-core@16.4.6(@types/react@19.0.1)(lucide-react@0.446.0(react@19.0.0))(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react-router@7.12.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)(zod@4.3.5))(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(tailwindcss@4.1.18))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.9.2)
       fumadocs-ui:
         specifier: ^16.4.6
         version: 16.4.6(@types/react-dom@19.0.2(@types/react@19.0.1))(@types/react@19.0.1)(fumadocs-core@16.4.6(@types/react@19.0.1)(lucide-react@0.446.0(react@19.0.0))(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react-router@7.12.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)(zod@4.3.5))(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(tailwindcss@4.1.18)
@@ -121,6 +124,9 @@ importers:
       tailwind-merge:
         specifier: 2.6.0
         version: 2.6.0
+      twoslash:
+        specifier: ^0.3.6
+        version: 0.3.6(typescript@5.9.2)
     devDependencies:
       '@repo/biome':
         specifier: workspace:*
@@ -5392,6 +5398,11 @@ packages:
   '@shikijs/transformers@3.21.0':
     resolution: {integrity: sha512-CZwvCWWIiRRiFk9/JKzdEooakAP8mQDtBOQ1TKiCaS2E1bYtyBCOkUzS8akO34/7ufICQ29oeSfkb3tT5KtrhA==}
 
+  '@shikijs/twoslash@3.21.0':
+    resolution: {integrity: sha512-iH360udAYON2JwfIldoCiMZr9MljuQA5QRBivKLpEuEpmVCSwrR+0WTQ0eS1ptgGBdH9weFiIsA5wJDzsEzTYg==}
+    peerDependencies:
+      typescript: '>=5.5.0'
+
   '@shikijs/types@3.21.0':
     resolution: {integrity: sha512-zGrWOxZ0/+0ovPY7PvBU2gIS9tmhSUUt30jAcNV0Bq0gb2S98gwfjIs1vxlmH5zM7/4YxLamT6ChlqqAJmPPjA==}
 
@@ -6342,6 +6353,11 @@ packages:
 
   '@types/uuid@9.0.8':
     resolution: {integrity: sha512-jg+97EGIcY9AGHJJRaaPVgetKDsrTgbRjQ5Msgjh/DQKEFl0DtyRr/VCOyD1T2R1MNeWPK/u7JoGhlDZnKBAfA==}
+
+  '@typescript/vfs@1.6.2':
+    resolution: {integrity: sha512-hoBwJwcbKHmvd2QVebiytN1aELvpk9B74B4L1mFm/XT1Q/VOYAWl2vQ9AWRFtQq8zmz6enTpfTV8WRc4ATjW/g==}
+    peerDependencies:
+      typescript: '*'
 
   '@ungap/structured-clone@1.3.0':
     resolution: {integrity: sha512-WmoN8qaIAo7WTYWbAZuG8PYEhn5fkz7dZrqTBZ7dtt//lL2Gwms1IcnQ5yHqjDfX8Ft5j4YzDM23f87zBfDe9g==}
@@ -7965,6 +7981,16 @@ packages:
       vite:
         optional: true
 
+  fumadocs-twoslash@3.1.12:
+    resolution: {integrity: sha512-s+81vm0+VsWUNy49SifNjvuv5p1y98EKg3EA5wHA2sN0FQG83LRyKa840YMTw9szvQxUdM2Jc+8t7g4pxdjxVw==}
+    peerDependencies:
+      '@types/react': 19.0.1
+      fumadocs-ui: ^15.0.0 || ^16.0.0
+      react: 19.0.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+
   fumadocs-ui@16.4.6:
     resolution: {integrity: sha512-WQD+rj2AMd5umu8cB+Q2pMl/EnCXT1MAeSb4UoEZKuoiv6zOkUiBHFemNVliijuPD2dX+18HzJlgDEk4PMVDUQ==}
     peerDependencies:
@@ -8944,6 +8970,9 @@ packages:
 
   mdast-util-to-hast@13.2.0:
     resolution: {integrity: sha512-QGYKEuUsYT9ykKBCMOEDLsU5JRObWQusAolFMeko/tYPufNkRffBAQjIE+99jbA87xv6FgmjLtwjh9wBWajwAA==}
+
+  mdast-util-to-hast@13.2.1:
+    resolution: {integrity: sha512-cctsq2wp5vTsLIcaymblUriiTcZd0CwWtCbLvrOzYCDZoWyMNV8sZ7krj09FSnsiJi3WVsHLM4k6Dq/yaPyCXA==}
 
   mdast-util-to-markdown@2.1.2:
     resolution: {integrity: sha512-xj68wMTvGXVOKonmog6LwyJKrYXZPvlwabaryTjLh9LuvovB/KAH+kvi8Gjj+7rJjsFi23nkUxRQv1KqSroMqA==}
@@ -11087,6 +11116,14 @@ packages:
 
   tweetnacl@1.0.3:
     resolution: {integrity: sha512-6rt+RN7aOi1nGMyC4Xa5DdYiukl2UWCbcJft7YhxReBGQD7OAM8Pbxw6YMo4r2diNEA8FEmu32YOn9rhaiE5yw==}
+
+  twoslash-protocol@0.3.6:
+    resolution: {integrity: sha512-FHGsJ9Q+EsNr5bEbgG3hnbkvEBdW5STgPU824AHUjB4kw0Dn4p8tABT7Ncg1Ie6V0+mDg3Qpy41VafZXcQhWMA==}
+
+  twoslash@0.3.6:
+    resolution: {integrity: sha512-VuI5OKl+MaUO9UIW3rXKoPgHI3X40ZgB/j12VY6h98Ae1mCBihjPvhOPeJWlxCYcmSbmeZt5ZKkK0dsVtp+6pA==}
+    peerDependencies:
+      typescript: ^5.5.0
 
   type-fest@0.21.3:
     resolution: {integrity: sha512-t0rzBq87m3fVcduHDUFhKmyyX+9eo6WQjZvf51Ea/M0Q7+T374Jp1aUiyUl0GKxp8M/OETVHSDvmkyPgvX+X2w==}
@@ -16303,6 +16340,15 @@ snapshots:
       '@shikijs/core': 3.21.0
       '@shikijs/types': 3.21.0
 
+  '@shikijs/twoslash@3.21.0(typescript@5.9.2)':
+    dependencies:
+      '@shikijs/core': 3.21.0
+      '@shikijs/types': 3.21.0
+      twoslash: 0.3.6(typescript@5.9.2)
+      typescript: 5.9.2
+    transitivePeerDependencies:
+      - supports-color
+
   '@shikijs/types@3.21.0':
     dependencies:
       '@shikijs/vscode-textmate': 10.0.2
@@ -17704,6 +17750,13 @@ snapshots:
   '@types/unist@3.0.3': {}
 
   '@types/uuid@9.0.8': {}
+
+  '@typescript/vfs@1.6.2(typescript@5.9.2)':
+    dependencies:
+      debug: 4.4.3
+      typescript: 5.9.2
+    transitivePeerDependencies:
+      - supports-color
 
   '@ungap/structured-clone@1.3.0': {}
 
@@ -19571,6 +19624,26 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  fumadocs-twoslash@3.1.12(@types/react-dom@19.0.2(@types/react@19.0.1))(@types/react@19.0.1)(fumadocs-ui@16.4.6(@types/react-dom@19.0.2(@types/react@19.0.1))(@types/react@19.0.1)(fumadocs-core@16.4.6(@types/react@19.0.1)(lucide-react@0.446.0(react@19.0.0))(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react-router@7.12.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)(zod@4.3.5))(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(tailwindcss@4.1.18))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.9.2):
+    dependencies:
+      '@radix-ui/react-popover': 1.1.15(@types/react-dom@19.0.2(@types/react@19.0.1))(@types/react@19.0.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@shikijs/twoslash': 3.21.0(typescript@5.9.2)
+      fumadocs-ui: 16.4.6(@types/react-dom@19.0.2(@types/react@19.0.1))(@types/react@19.0.1)(fumadocs-core@16.4.6(@types/react@19.0.1)(lucide-react@0.446.0(react@19.0.0))(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react-router@7.12.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)(zod@4.3.5))(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(tailwindcss@4.1.18)
+      mdast-util-from-markdown: 2.0.2
+      mdast-util-gfm: 3.1.0
+      mdast-util-to-hast: 13.2.1
+      react: 19.0.0
+      shiki: 3.21.0
+      tailwind-merge: 3.4.0
+      twoslash: 0.3.6(typescript@5.9.2)
+    optionalDependencies:
+      '@types/react': 19.0.1
+    transitivePeerDependencies:
+      - '@types/react-dom'
+      - react-dom
+      - supports-color
+      - typescript
+
   fumadocs-ui@16.4.6(@types/react-dom@19.0.2(@types/react@19.0.1))(@types/react@19.0.1)(fumadocs-core@16.4.6(@types/react@19.0.1)(lucide-react@0.446.0(react@19.0.0))(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react-router@7.12.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)(zod@4.3.5))(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(tailwindcss@4.1.18):
     dependencies:
       '@fumadocs/ui': 16.4.6(@types/react@19.0.1)(fumadocs-core@16.4.6(@types/react@19.0.1)(lucide-react@0.446.0(react@19.0.0))(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react-router@7.12.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)(zod@4.3.5))(next@16.0.0(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(tailwindcss@4.1.18)
@@ -20688,6 +20761,18 @@ snapshots:
       unist-util-is: 6.0.1
 
   mdast-util-to-hast@13.2.0:
+    dependencies:
+      '@types/hast': 3.0.4
+      '@types/mdast': 4.0.4
+      '@ungap/structured-clone': 1.3.0
+      devlop: 1.1.0
+      micromark-util-sanitize-uri: 2.0.1
+      trim-lines: 3.0.1
+      unist-util-position: 5.0.0
+      unist-util-visit: 5.0.0
+      vfile: 6.0.3
+
+  mdast-util-to-hast@13.2.1:
     dependencies:
       '@types/hast': 3.0.4
       '@types/mdast': 4.0.4
@@ -23367,6 +23452,16 @@ snapshots:
   tween-functions@1.2.0: {}
 
   tweetnacl@1.0.3: {}
+
+  twoslash-protocol@0.3.6: {}
+
+  twoslash@0.3.6(typescript@5.9.2):
+    dependencies:
+      '@typescript/vfs': 1.6.2(typescript@5.9.2)
+      twoslash-protocol: 0.3.6
+      typescript: 5.9.2
+    transitivePeerDependencies:
+      - supports-color
 
   type-fest@0.21.3: {}
 
