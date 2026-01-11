@@ -10,10 +10,15 @@ Control feature rollouts and run experiments with feature flags. Flags are passe
 ### 1. Fetch Flags Server-Side
 
 ```tsx title="app/layout.tsx"
+import type { ReactNode } from "react"
 import { getFeatureFlags } from "@repo/analytics/server"
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
 import { Providers } from "./providers"
 
-export default async function RootLayout({ children }) {
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const session = await auth.api.getSession({ headers: await headers() })
+  const userId = session?.user?.id
   const flags = await getFeatureFlags(userId)
 
   return (
@@ -34,10 +39,11 @@ export default async function RootLayout({ children }) {
 "use client"
 
 import { AnalyticsProvider } from "@startupkit/analytics"
+import { analyticsPlugins } from "@/lib/analytics"
 
 export function Providers({ children, flags }) {
   return (
-    <AnalyticsProvider flags={flags} plugins={plugins}>
+    <AnalyticsProvider flags={flags} plugins={analyticsPlugins}>
       {children}
     </AnalyticsProvider>
   )
@@ -206,17 +212,24 @@ if (isBetaUser) {
 Run experiments:
 
 ```tsx
-const variant = useFlag("pricing-experiment")
+"use client"
 
-// Track which variant was shown
-useEffect(() => {
-  track("EXPERIMENT_VIEWED", {
-    experiment: "pricing-experiment",
-    variant
-  })
-}, [variant, track])
+import { useEffect } from "react"
+import { useAnalytics, useFlag } from "@startupkit/analytics"
 
-return variant === "A" ? <PricingA /> : <PricingB />
+function PricingExperiment() {
+  const variant = useFlag("pricing-experiment")
+  const { track } = useAnalytics()
+
+  useEffect(() => {
+    track("EXPERIMENT_VIEWED", {
+      experiment: "pricing-experiment",
+      variant
+    })
+  }, [variant, track])
+
+  return variant === "A" ? <PricingA /> : <PricingB />
+}
 ```
 
 ### Kill Switch

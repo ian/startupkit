@@ -23,7 +23,9 @@ import { generateMetadata } from "@startupkit/seo"
 export const metadata = generateMetadata({
   title: "About Us",
   description: "Learn about our company and mission",
-  url: "/about"
+  path: "/about",
+  baseUrl: "https://myapp.com",
+  siteName: "My App"
 })
 
 export default function AboutPage() {
@@ -39,7 +41,10 @@ import { generateMetadata } from "@startupkit/seo"
 
 export const metadata = generateMetadata({
   title: "My App",
-  description: "The best app for doing things"
+  description: "The best app for doing things",
+  baseUrl: "https://myapp.com",
+  siteName: "My App",
+  titleTemplate: "%s | My App"
 })
 ```
 
@@ -63,6 +68,7 @@ Add JSON-LD for rich search results:
 
 ```tsx twoslash title="app/layout.tsx"
 // @noErrors
+import type { ReactNode } from "react"
 import { 
   generateOrganizationSchema,
   generateWebsiteSchema 
@@ -74,7 +80,7 @@ const orgSchema = generateOrganizationSchema({
   logo: "https://myapp.com/logo.png"
 })
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html>
       <head>
@@ -96,11 +102,14 @@ export default function RootLayout({ children }) {
 import { generateSitemap } from "@startupkit/seo"
 
 export default function sitemap() {
-  return generateSitemap([
-    { url: "https://myapp.com", priority: 1 },
-    { url: "https://myapp.com/about", priority: 0.8 },
-    { url: "https://myapp.com/pricing", priority: 0.9 }
-  ])
+  return generateSitemap({
+    baseUrl: "https://myapp.com",
+    routes: [
+      { path: "/", priority: 1 },
+      { path: "/about", priority: 0.8 },
+      { path: "/pricing", priority: 0.9 }
+    ]
+  })
 }
 ```
 
@@ -112,8 +121,8 @@ import { generateRobots } from "@startupkit/seo"
 
 export default function robots() {
   return generateRobots({
-    rules: [{ userAgent: "*", disallow: ["/api/", "/dashboard/", "/auth/"] }],
-    sitemap: "https://myapp.com/sitemap.xml"
+    baseUrl: "https://myapp.com",
+    disallowPaths: ["/api/", "/dashboard/", "/auth/"]
   })
 }
 ```

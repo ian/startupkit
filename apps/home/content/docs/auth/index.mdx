@@ -70,10 +70,22 @@ export const authClient = createAuthClient({
 ```tsx title="app/providers.tsx"
 "use client"
 
+import type { ReactNode } from "react"
 import { AuthProvider } from "@startupkit/auth"
 import { authClient } from "@/lib/auth-client"
 
-export function Providers({ children, user }) {
+interface User {
+  id: string
+  email: string
+  name?: string
+}
+
+interface ProvidersProps {
+  children: ReactNode
+  user?: User
+}
+
+export function Providers({ children, user }: ProvidersProps) {
   return (
     <AuthProvider authClient={authClient} user={user}>
       {children}

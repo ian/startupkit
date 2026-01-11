@@ -208,14 +208,16 @@ export const auth = betterAuth({
 Users can have multiple active sessions (different devices):
 
 ```tsx
+import { sessions } from "@repo/db/schema"
+
 // Get all sessions for current user
-const sessions = await db.select()
+const userSessions = await db.select()
   .from(sessions)
   .where(eq(sessions.userId, user.id))
 
 // Display in UI
 <ul>
-  {sessions.map(session => (
+  {userSessions.map(session => (
     <li key={session.id}>
       {session.userAgent} - {session.ipAddress}
       <button onClick={() => revokeSession(session.id)}>

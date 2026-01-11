@@ -36,9 +36,13 @@ export function MyComponent() {
 ### isAuthenticated
 
 ```tsx twoslash
+"use client"
+
 import { useAuth } from "@startupkit/auth"
 
-const { isAuthenticated } = useAuth()
+function Example() {
+  const { isAuthenticated } = useAuth()
+}
 ```
 
 Whether the user is currently signed in.
@@ -53,9 +57,13 @@ return <SignInPrompt />
 ### isLoading
 
 ```tsx twoslash
+"use client"
+
 import { useAuth } from "@startupkit/auth"
 
-const { isLoading } = useAuth()
+function Example() {
+  const { isLoading } = useAuth()
+}
 ```
 
 Whether the auth state is being determined. Always check this before `isAuthenticated` to avoid flashing content.
@@ -72,9 +80,13 @@ if (!isAuthenticated) {
 ### user
 
 ```tsx twoslash
+"use client"
+
 import { useAuth } from "@startupkit/auth"
 
-const { user } = useAuth()
+function Example() {
+  const { user } = useAuth()
+}
 ```
 
 The current user object. `null` if not authenticated, `undefined` while loading.
@@ -106,9 +118,13 @@ if (user) {
 ### logout()
 
 ```tsx twoslash
+"use client"
+
 import { useAuth } from "@startupkit/auth"
 
-const { logout } = useAuth()
+function Example() {
+  const { logout } = useAuth()
+}
 ```
 
 Signs out the current user and redirects to home.
@@ -129,9 +145,13 @@ const handleLogout = async () => {
 ### sendAuthCode()
 
 ```tsx twoslash
+"use client"
+
 import { useAuth } from "@startupkit/auth"
 
-const { sendAuthCode } = useAuth()
+function Example() {
+  const { sendAuthCode } = useAuth()
+}
 ```
 
 Sends a one-time password to the specified email.
@@ -152,9 +172,13 @@ const handleSend = async () => {
 ### verifyAuthCode()
 
 ```tsx twoslash
+"use client"
+
 import { useAuth } from "@startupkit/auth"
 
-const { verifyAuthCode } = useAuth()
+function Example() {
+  const { verifyAuthCode } = useAuth()
+}
 ```
 
 Verifies the OTP code and creates a session.
@@ -173,9 +197,13 @@ const handleVerify = async () => {
 ### googleAuth()
 
 ```tsx twoslash
+"use client"
+
 import { useAuth } from "@startupkit/auth"
 
-const { googleAuth } = useAuth()
+function Example() {
+  const { googleAuth } = useAuth()
+}
 ```
 
 Initiates Google OAuth sign-in flow.
@@ -347,18 +375,23 @@ export function AuthRedirect({ redirectTo = "/dashboard" }) {
 
 ## Error Handling
 
-All auth methods can throw errors:
+All auth methods can throw errors. Always check the error type before accessing properties:
 
 ```tsx
 try {
   await sendAuthCode(email)
 } catch (error) {
-  if (error.message.includes("rate limit")) {
-    setError("Too many attempts. Please wait.")
-  } else if (error.message.includes("invalid email")) {
-    setError("Please enter a valid email.")
+  if (error instanceof Error) {
+    const message = error.message
+    if (message.includes("rate limit")) {
+      setError("Too many attempts. Please wait.")
+    } else if (message.includes("invalid email")) {
+      setError("Please enter a valid email.")
+    } else {
+      setError("Something went wrong. Please try again.")
+    }
   } else {
-    setError("Something went wrong. Please try again.")
+    setError("An unexpected error occurred.")
   }
 }
 ```

@@ -13,7 +13,7 @@ import { generateRobots } from "@startupkit/seo"
 
 export default function robots() {
   return generateRobots({
-    sitemap: "https://myapp.com/sitemap.xml"
+    baseUrl: "https://myapp.com"
   })
 }
 ```
@@ -38,19 +38,16 @@ import { generateRobots } from "@startupkit/seo"
 
 export default function robots() {
   return generateRobots({
-    rules: [{
-      userAgent: "*",
-      disallow: [
-        "/api/",
-        "/dashboard/",
-        "/auth/",
-        "/admin/",
-        "/settings/",
-        "/checkout/",
-        "/_next/"
-      ]
-    }],
-    sitemap: "https://myapp.com/sitemap.xml"
+    baseUrl: "https://myapp.com",
+    disallowPaths: [
+      "/api/",
+      "/dashboard/",
+      "/auth/",
+      "/admin/",
+      "/settings/",
+      "/checkout/",
+      "/_next/"
+    ]
   })
 }
 ```
@@ -171,7 +168,7 @@ export default function robots() {
     }
   }
 
-  return generateRobots({ sitemap: `${baseUrl}/sitemap.xml` })
+  return generateRobots({ baseUrl })
 }
 ```
 

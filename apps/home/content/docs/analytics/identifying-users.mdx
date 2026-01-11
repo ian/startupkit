@@ -83,12 +83,21 @@ A common pattern is to identify users in your providers:
 ```tsx title="app/providers.tsx"
 "use client"
 
+import type { ReactNode } from "react"
 import { AuthProvider } from "@startupkit/auth"
-import { AnalyticsProvider, useAnalytics } from "@startupkit/analytics"
+import { AnalyticsProvider } from "@startupkit/analytics"
+import { analyticsPlugins } from "@/lib/analytics"
+import { authClient } from "@/lib/auth"
 
-export function Providers({ children, user, flags }) {
+interface ProvidersProps {
+  children: ReactNode
+  user?: { id: string; email: string; name?: string }
+  flags?: Record<string, boolean | string>
+}
+
+export function Providers({ children, user, flags }: ProvidersProps) {
   return (
-    <AnalyticsProvider flags={flags} plugins={plugins}>
+    <AnalyticsProvider flags={flags} plugins={analyticsPlugins}>
       <AuthProvider 
         user={user}
         authClient={authClient}

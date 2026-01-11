@@ -12,13 +12,16 @@ Sitemaps help search engines discover and index your pages. The `generateSitemap
 import { generateSitemap } from "@startupkit/seo"
 
 export default function sitemap() {
-  return generateSitemap([
-    { url: "https://myapp.com" },
-    { url: "https://myapp.com/about" },
-    { url: "https://myapp.com/pricing" },
-    { url: "https://myapp.com/blog" },
-    { url: "https://myapp.com/contact" }
-  ])
+  return generateSitemap({
+    baseUrl: "https://myapp.com",
+    routes: [
+      { path: "/" },
+      { path: "/about" },
+      { path: "/pricing" },
+      { path: "/blog" },
+      { path: "/contact" }
+    ]
+  })
 }
 ```
 
@@ -99,17 +102,20 @@ export default async function sitemap() {
   })
 
   const blogRoutes = posts.map(post => ({
-    url: `https://myapp.com/blog/${post.slug}`,
+    path: `/blog/${post.slug}`,
     lastModified: post.updatedAt,
     changeFrequency: "weekly" as const,
     priority: 0.7
   }))
 
-  return generateSitemap([
-    { url: "https://myapp.com", priority: 1.0 },
-    { url: "https://myapp.com/blog", priority: 0.9 },
-    ...blogRoutes
-  ])
+  return generateSitemap({
+    baseUrl: "https://myapp.com",
+    routes: [
+      { path: "/", priority: 1.0 },
+      { path: "/blog", priority: 0.9 },
+      ...blogRoutes
+    ]
+  })
 }
 ```
 
@@ -123,57 +129,96 @@ export default async function sitemap() {
   const products = await fetchProducts()
 
   const productRoutes = products.map(product => ({
-    url: `https://myapp.com/products/${product.slug}`,
+    path: `/products/${product.slug}`,
     lastModified: product.updatedAt,
     priority: 0.8
   }))
 
-  return generateSitemap([
-    { url: "https://myapp.com", priority: 1.0 },
-    { url: "https://myapp.com/products", priority: 0.9 },
-    ...productRoutes
-  ])
+  return generateSitemap({
+    baseUrl: "https://myapp.com",
+    routes: [
+      { path: "/", priority: 1.0 },
+      { path: "/products", priority: 0.9 },
+      ...productRoutes
+    ]
+  })
 }
 ```
 
-## Multiple Sitemaps
+## Multiple Sitemaps (Sitemap Index)
 
-For large sites, split into multiple sitemaps:
+For large sites with more than 50,000 URLs, split into multiple sitemaps using Next.js's built-in sitemap index support:
 
 ```tsx title="app/sitemap.ts"
 import type { MetadataRoute } from "next"
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  return [
-    {
-      url: "https://myapp.com/sitemap-main.xml",
-      lastModified: new Date()
-    },
-    {
-      url: "https://myapp.com/sitemap-blog.xml",
-      lastModified: new Date()
-    }
-  ]
+export async function generateSitemaps() {
+  const totalProducts = await getProductCount()
+  const sitemapsNeeded = Math.ceil(totalProducts / 50000)
+  
+  return Array.from({ length: sitemapsNeeded }, (_, i) => ({ id: i }))
+}
+
+export default async function sitemap({ 
+  id 
+}: { 
+  id: number 
+}): Promise<MetadataRoute.Sitemap> {
+  const start = id * 50000
+  const products = await getProducts({ start, limit: 50000 })
+  
+  return products.map(product => ({
+    url: `https://myapp.com/products/${product.slug}`,
+    lastModified: product.updatedAt
+  }))
 }
 ```
 
-Then create individual sitemaps:
+This automatically generates:
+- `/sitemap.xml` — the sitemap index listing all child sitemaps
+- `/sitemap/0.xml`, `/sitemap/1.xml`, etc. — individual sitemaps with up to 50,000 URLs each
 
-```tsx twoslash title="app/sitemap-main.xml/route.ts"
-// @noErrors
-import { generateSitemap } from "@startupkit/seo"
+### Category-Based Sitemaps
 
-export async function GET() {
-  const sitemap = generateSitemap([
-    { url: "https://myapp.com" },
-    { url: "https://myapp.com/about" },
-    { url: "https://myapp.com/pricing" }
-  ])
+You can also organize sitemaps by content type:
 
-  // Convert to XML response
-  // ...
+```tsx title="app/sitemap.ts"
+import type { MetadataRoute } from "next"
+
+const categories = ["main", "blog", "products"] as const
+
+export async function generateSitemaps() {
+  return categories.map(id => ({ id }))
 }
-```
+
+export default async function sitemap({ 
+  id 
+}: { 
+  id: string 
+}): Promise<MetadataRoute.Sitemap> {
+  switch (id) {
+    case "main":
+      return [
+        { url: "https://myapp.com", priority: 1.0 },
+        { url: "https://myapp.com/about", priority: 0.8 },
+        { url: "https://myapp.com/pricing", priority: 0.9 }
+      ]
+    case "blog":
+      const posts = await getPosts()
+      return posts.map(post => ({
+        url: `https://myapp.com/blog/${post.slug}`,
+        lastModified: post.updatedAt
+      }))
+    case "products":
+      const products = await getProducts()
+      return products.map(product => ({
+        url: `https://myapp.com/products/${product.slug}`,
+        lastModified: product.updatedAt
+      }))
+    default:
+      return []
+  }
+}
 
 ## Parameters
 
@@ -181,7 +226,7 @@ export async function GET() {
 
 ```tsx
 generateSitemap({
-  baseUrl: string,
+  baseUrl: string,   // Full base URL (e.g., "https://myapp.com")
   routes: SitemapRoute[]
 })
 ```

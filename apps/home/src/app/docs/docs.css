@@ -1,25 +1,6 @@
 @import "fumadocs-ui/style.css";
 @import "fumadocs-twoslash/twoslash.css";
 
-:root {
-	--fd-background: 0 0% 0%;
-	--fd-foreground: 0 0% 98%;
-	--fd-card: 0 0% 3%;
-	--fd-card-foreground: 0 0% 98%;
-	--fd-popover: 0 0% 3%;
-	--fd-popover-foreground: 0 0% 98%;
-	--fd-primary: 239 84% 67%;
-	--fd-primary-foreground: 0 0% 98%;
-	--fd-secondary: 0 0% 10%;
-	--fd-secondary-foreground: 0 0% 98%;
-	--fd-muted: 0 0% 10%;
-	--fd-muted-foreground: 0 0% 64%;
-	--fd-accent: 0 0% 10%;
-	--fd-accent-foreground: 0 0% 98%;
-	--fd-border: 0 0% 15%;
-	--fd-ring: 239 84% 67%;
-}
-
 .dark,
 :root {
 	--fd-background: 0 0% 0%;

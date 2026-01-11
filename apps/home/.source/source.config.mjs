@@ -19,26 +19,22 @@ var source_config_default = defineConfig({
   mdxOptions: {
     rehypeCodeOptions: {
       themes: {
-        light: "github-dark",
+        light: "github-light",
         dark: "github-dark"
       },
       transformers: [
         ...rehypeCodeDefaultOptions.transformers ?? [],
         transformerTwoslash({
-          typesCache: createFileSystemTypesCache(),
+          cache: createFileSystemTypesCache(),
           twoslashOptions: {
             compilerOptions: {
               moduleResolution: 100,
-              // bundler
               module: 99,
-              // esnext
               target: 9,
-              // es2022
               strict: true,
               esModuleInterop: true,
               skipLibCheck: true,
               jsx: 4
-              // react-jsx
             },
             extraFiles: {
               "startupkit.d.ts": twoslashTypes

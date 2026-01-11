@@ -108,14 +108,26 @@ pnpm install
 
 ### Peer Dependency Warnings
 
-Warnings about peer dependencies are usually safe to ignore:
+Warnings about peer dependencies are usually safe to ignore. To suppress them:
 
 ```bash
-# Suppress warnings
-pnpm install --ignore-peercheck
+# Add to .npmrc in your project root
+echo "strict-peer-dependencies=false" >> .npmrc
 
-# Or force installation
-pnpm install --force
+# Then reinstall
+pnpm install
+```
+
+Or configure in `package.json`:
+
+```json
+{
+  "pnpm": {
+    "peerDependencyRules": {
+      "ignoreMissing": ["@types/*"]
+    }
+  }
+}
 ```
 
 ### "Cannot find module '@repo/...'"

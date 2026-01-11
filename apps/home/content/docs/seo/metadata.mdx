@@ -16,7 +16,9 @@ import { generateMetadata } from "@startupkit/seo"
 export const metadata = generateMetadata({
   title: "Pricing",
   description: "Simple, transparent pricing for teams of all sizes",
-  url: "/pricing"
+  path: "/pricing",
+  baseUrl: "https://myapp.com",
+  siteName: "My App"
 })
 
 export default function PricingPage() {
@@ -35,8 +37,10 @@ import { generateMetadata } from "@startupkit/seo"
 export const metadata = generateMetadata({
   title: "My App",
   description: "The best app for doing things",
+  baseUrl: "https://myapp.com",
   siteName: "My App",
-  twitterSite: "@myapp"
+  titleTemplate: "%s | My App",
+  twitterHandle: "@myapp"
 })
 ```
 
@@ -132,17 +136,20 @@ For dynamic pages, use `generateMetadata` as a function:
 import { generateMetadata as seoMetadata } from "@startupkit/seo"
 
 interface Props {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 export async function generateMetadata({ params }: Props) {
-  const post = await getPost(params.slug)
+  const { slug } = await params
+  const post = await getPost(slug)
 
   return seoMetadata({
     title: post.title,
     description: post.excerpt,
-    url: `/blog/${params.slug}`,
-    image: post.coverImage
+    path: `/blog/${slug}`,
+    baseUrl: "https://myapp.com",
+    siteName: "My App",
+    ogImage: post.coverImage
   })
 }
 ```
@@ -250,16 +257,17 @@ Create a helper for consistent configuration:
 import { generateMetadata as seoMetadata } from "@startupkit/seo"
 
 const defaults = {
+  baseUrl: "https://myapp.com",
   siteName: "My App",
-  twitterSite: "@myapp",
-  image: "/og/default.png"
+  twitterHandle: "@myapp",
+  ogImage: "/og/default.png"
 }
 
 export function generateMetadata(params: {
   title: string
   description: string
-  url?: string
-  image?: string
+  path?: string
+  ogImage?: string
   noIndex?: boolean
 }) {
   return seoMetadata({
