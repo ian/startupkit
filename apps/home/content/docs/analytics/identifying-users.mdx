@@ -10,7 +10,7 @@ Connect analytics events to specific users with the `identify` function. This en
 ```tsx
 "use client"
 
-import { useAnalytics } from "@startupkit/analytics"
+import { useAnalytics } from "@repo/analytics"
 import { useEffect } from "react"
 
 export function UserIdentifier({ user }) {
@@ -55,7 +55,7 @@ Call `identify()` when:
 "use client"
 
 import { useAuth } from "@startupkit/auth"
-import { useAnalytics } from "@startupkit/analytics"
+import { useAnalytics } from "@repo/analytics"
 import { useEffect } from "react"
 
 export function AuthIdentifier() {
@@ -85,7 +85,7 @@ A common pattern is to identify users in your providers:
 
 import type { ReactNode } from "react"
 import { AuthProvider } from "@startupkit/auth"
-import { AnalyticsProvider } from "@startupkit/analytics"
+import { AnalyticsProvider } from "@repo/analytics"
 import { analyticsPlugins } from "@/lib/analytics"
 import { authClient } from "@/lib/auth"
 
@@ -179,7 +179,7 @@ Clear the user identity when they sign out:
 ```tsx
 "use client"
 
-import { useAnalytics } from "@startupkit/analytics"
+import { useAnalytics } from "@repo/analytics"
 
 export function LogoutButton() {
   const { reset } = useAnalytics()

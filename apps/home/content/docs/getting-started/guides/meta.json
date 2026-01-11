@@ -1,6 +1,0 @@
-{
-	"title": "Guides",
-	"icon": "BookOpen",
-	"pages": ["project-structure", "environment-variables", "deployment"],
-	"defaultOpen": false
-}

@@ -12,7 +12,7 @@ Your project imports from `@repo/emails` (a local workspace package):
 ```
 your-project/
 ├── packages/
-│   └── emails/           # @repo/emails - local package
+│   └── emails/                 # @repo/emails - local package
 │       └── src/
 │           ├── index.tsx       # sendEmail function
 │           ├── lib/
@@ -21,22 +21,74 @@ your-project/
 │               ├── team-invite.tsx
 │               └── verify-code.tsx
 └── apps/
-    └── web/              # Imports from @repo/emails
+    └── web/                    # Imports from @repo/emails
 ```
 
 This architecture means:
-- **React components as emails** - Build emails with JSX and Tailwind
+- **React components as emails** - Build emails with JSX and [Tailwind](https://tailwindcss.com/)
 - **Type-safe props** - Full TypeScript support for template data
 - **Local preview** - Preview emails in browser during development
 - **Easy customization** - Add or modify templates as needed
 
 ## Features
 
-- **React Email** - Build emails with React components
-- **Tailwind CSS** - Style emails with familiar utility classes
+- **[React Email](https://react.email/)** - Build emails with React components
+- **[Tailwind CSS](https://tailwindcss.com/)** - Style emails with familiar utility classes
 - **Type-safe templates** - TypeScript props for each email type
 - **Dev preview** - Opens emails in browser during development
 - **Resend integration** - Production-ready email delivery
+
+## Usage
+
+### sendEmail
+
+The main function for sending emails:
+
+```ts
+import { sendEmail } from "@repo/emails"
+
+const { data, error } = await sendEmail({
+  template: "TeamInvite",    // Template name (required)
+  to: "user@example.com",    // Recipient (required)
+  from: "noreply@myapp.com", // Sender (required)
+  subject: "You're invited", // Subject line (required)
+  props: {                   // Template props (type-safe)
+    teamName: "Acme Inc",
+    inviteLink: "https://..."
+  }
+})
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `template` | `string` | Template name matching file in `templates/` |
+| `to` | `string` | Recipient email address |
+| `from` | `string` | Sender email address |
+| `subject` | `string` | Email subject line |
+| `props` | `object` | Type-safe props for the template |
+| `replyTo` | `string?` | Optional reply-to address |
+
+### Return value
+
+```ts
+interface SendEmailResult {
+  data: { id: string } | null  // Resend message ID
+  error: Error | null          // Error if failed
+}
+```
+
+### Error handling
+
+```ts
+const { data, error } = await sendEmail({ ... })
+
+if (error) {
+  console.error("Failed to send email:", error.message)
+  return
+}
+
+console.log("Email sent:", data.id)
+```
 
 ## Quick Start
 
@@ -97,7 +149,7 @@ RESEND_ENABLED=true
 
 ## Preview Templates
 
-Run the React Email dev server to preview templates with hot reload:
+Run the [React Email](https://react.email/) dev server to preview templates with hot reload:
 
 ```bash title="packages/emails"
 pnpm dev

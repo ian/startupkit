@@ -3,9 +3,11 @@
 	"icon": "ChartBar",
 	"pages": [
 		"index",
+		"analytics-provider",
 		"tracking-events",
 		"identifying-users",
-		"feature-flags"
+		"feature-flags",
+		"usage"
 	],
 	"defaultOpen": true
 }

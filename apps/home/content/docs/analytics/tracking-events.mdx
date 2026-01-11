@@ -1,6 +1,6 @@
 ---
 title: Tracking Events
-description: How to track analytics events with @startupkit/analytics
+description: How to track analytics events with @repo/analytics
 ---
 
 Track user actions and product usage with the `useAnalytics` hook.
@@ -10,7 +10,7 @@ Track user actions and product usage with the `useAnalytics` hook.
 ```tsx
 "use client"
 
-import { useAnalytics } from "@startupkit/analytics"
+import { useAnalytics } from "@repo/analytics"
 
 export function PricingCard({ plan }: { plan: string }) {
   const { track } = useAnalytics()
@@ -122,7 +122,7 @@ For events that should fire when a page loads:
 ```tsx
 "use client"
 
-import { useAnalytics } from "@startupkit/analytics"
+import { useAnalytics } from "@repo/analytics"
 import { useEffect } from "react"
 
 export function PricingPage() {
@@ -188,7 +188,7 @@ interface AnalyticsEvents {
 }
 type EventName = keyof AnalyticsEvents
 // ---cut---
-import { useAnalytics as useBaseAnalytics } from "@startupkit/analytics"
+import { useAnalytics as useBaseAnalytics } from "@repo/analytics"
 
 export function useAnalytics() {
   const analytics = useBaseAnalytics()

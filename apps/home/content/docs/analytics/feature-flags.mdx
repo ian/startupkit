@@ -1,6 +1,6 @@
 ---
 title: Feature Flags
-description: How to use feature flags with @startupkit/analytics
+description: How to use feature flags with @repo/analytics
 ---
 
 Control feature rollouts and run experiments with feature flags. Flags are passed through the `AnalyticsProvider` and accessible via hooks.
@@ -38,7 +38,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
 ```tsx title="app/providers.tsx"
 "use client"
 
-import { AnalyticsProvider } from "@startupkit/analytics"
+import { AnalyticsProvider } from "@repo/analytics"
 import { analyticsPlugins } from "@/lib/analytics"
 
 export function Providers({ children, flags }) {
@@ -59,7 +59,7 @@ Check a single flag:
 ```tsx
 "use client"
 
-import { useFlag } from "@startupkit/analytics"
+import { useFlag } from "@repo/analytics"
 
 export function NewFeature() {
   const isEnabled = useFlag("new-dashboard")
@@ -77,7 +77,7 @@ Access all flags at once:
 ```tsx
 "use client"
 
-import { useAnalytics } from "@startupkit/analytics"
+import { useAnalytics } from "@repo/analytics"
 
 export function FeatureGate() {
   const { flags } = useAnalytics()
@@ -164,7 +164,7 @@ export interface Flags {
 Then use with the hook:
 
 ```tsx
-import { useAnalytics } from "@startupkit/analytics"
+import { useAnalytics } from "@repo/analytics"
 import type { Flags } from "@/types/flags"
 
 export function MyComponent() {
@@ -215,7 +215,7 @@ Run experiments:
 "use client"
 
 import { useEffect } from "react"
-import { useAnalytics, useFlag } from "@startupkit/analytics"
+import { useAnalytics, useFlag } from "@repo/analytics"
 
 function PricingExperiment() {
   const variant = useFlag("pricing-experiment")

@@ -102,6 +102,62 @@ The starter includes tables for authentication and teams:
 | `teamMembers` | Team membership with roles |
 | `verifications` | Email verification tokens |
 
+## Type Exports
+
+Each table exports inferred types for selects and inserts:
+
+```ts
+import type { User, NewUser, Team, NewTeam } from "@repo/db"
+```
+
+| Type | Description |
+|------|-------------|
+| `User` | Select type for users table |
+| `NewUser` | Insert type for users table |
+| `Team` | Select type for teams table |
+| `NewTeam` | Insert type for teams table |
+| `TeamMember` | Select type for team members |
+| `NewTeamMember` | Insert type for team members |
+| `Account` | Select type for OAuth accounts |
+| `Session` | Select type for sessions |
+| `Verification` | Select type for verifications |
+
+### Using types in your code
+
+```ts
+import { db, users, type User, type NewUser } from "@repo/db"
+
+async function createUser(data: NewUser): Promise<User> {
+  const [user] = await db.insert(users).values(data).returning()
+  return user
+}
+
+async function getUserById(id: string): Promise<User | undefined> {
+  return db.query.users.findFirst({
+    where: (users, { eq }) => eq(users.id, id)
+  })
+}
+```
+
+### Extending the schema
+
+When you add new tables, export types using Drizzle's inference helpers:
+
+```ts title="packages/db/src/schema.ts"
+import { pgTable, text, timestamp } from "drizzle-orm/pg-core"
+
+export const posts = pgTable("Post", {
+  id: text("id").primaryKey(),
+  title: text("title").notNull(),
+  content: text("content"),
+  authorId: text("authorId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull()
+})
+
+export type Post = typeof posts.$inferSelect
+export type NewPost = typeof posts.$inferInsert
+```
+
 ## Next Steps
 
 - [Schema definition](/docs/db/schema) - Define your data models

@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"clean": "rm -rf .cache .next dist out .turbo .source",
-		"dev": "next dev --port 3001",
+		"dev": "next dev --port 6253",
 		"build": "next build",
 		"start": "next start",
 		"lint": "biome lint --unsafe",

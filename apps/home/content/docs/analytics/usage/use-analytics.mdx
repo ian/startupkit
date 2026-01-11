@@ -1,0 +1,70 @@
+---
+title: useAnalytics
+description: Hook for tracking events and identifying users
+---
+
+The main hook for analytics in client components.
+
+## Import
+
+```tsx
+import { useAnalytics } from "@repo/analytics"
+```
+
+## Usage
+
+```tsx
+"use client"
+
+import { useAnalytics } from "@repo/analytics"
+
+export function MyComponent() {
+  const { track, identify, page, reset } = useAnalytics()
+
+  return (
+    <button onClick={() => track("BUTTON_CLICKED", { id: "cta" })}>
+      Click me
+    </button>
+  )
+}
+```
+
+## Return Value
+
+| Method | Description |
+|--------|-------------|
+| [`track`](/docs/analytics/usage/track) | Track a custom event with optional properties |
+| [`identify`](/docs/analytics/usage/identify) | Associate events with a user identity |
+| [`page`](/docs/analytics/usage/page) | Track a page view (automatic in Next.js) |
+| [`reset`](/docs/analytics/usage/reset) | Clear user identity (on logout) |
+
+## Example
+
+```tsx
+"use client"
+
+import { useAnalytics } from "@repo/analytics"
+import { useAuth } from "@repo/auth"
+
+export function Dashboard() {
+  const { track, reset } = useAnalytics()
+  const { logout } = useAuth()
+
+  async function handleExport() {
+    track("EXPORT_CLICKED", { format: "csv" })
+    await exportData()
+  }
+
+  async function handleLogout() {
+    await logout()
+    reset()
+  }
+
+  return (
+    <div>
+      <button onClick={handleExport}>Export</button>
+      <button onClick={handleLogout}>Sign Out</button>
+    </div>
+  )
+}
+```

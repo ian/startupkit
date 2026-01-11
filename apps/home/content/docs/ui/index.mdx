@@ -12,7 +12,7 @@ Your project imports from `@repo/ui` (a local workspace package):
 ```
 your-project/
 ├── packages/
-│   └── ui/                # @repo/ui - local package
+│   └── ui/                     # @repo/ui - local package
 │       └── src/
 │           ├── components/     # Shadcn components
 │           │   ├── button.tsx
@@ -25,7 +25,7 @@ your-project/
 │           └── styles/
 │               └── index.css   # Tailwind styles
 └── apps/
-    └── web/               # Imports from @repo/ui
+    └── web/                    # Imports from @repo/ui
 ```
 
 This architecture means:
@@ -41,6 +41,66 @@ This architecture means:
 - **Dark mode** - Theme support via next-themes
 - **Tailwind CSS** - Consistent styling with utility classes
 - **Storybook** - Component documentation and testing
+
+## Usage
+
+### Utilities
+
+| Export | Path | Description |
+|--------|------|-------------|
+| `cn()` | `@repo/ui/utils` | Merge Tailwind classes with proper precedence |
+| `useIsMobile()` | `@repo/ui/hooks` | Detect mobile viewport |
+| `useAlert()` | `@repo/ui/providers` | Programmatic confirmation dialogs |
+| `toast` | `sonner` | Toast notifications |
+
+### cn()
+
+Merge Tailwind classes with [clsx](https://github.com/lukeed/clsx) + [tailwind-merge](https://github.com/dcastil/tailwind-merge):
+
+```tsx
+import { cn } from "@repo/ui/utils"
+
+<div className={cn(
+  "rounded-lg p-4",
+  isActive && "bg-primary",
+  className
+)} />
+```
+
+### useIsMobile()
+
+```tsx
+"use client"
+import { useIsMobile } from "@repo/ui/hooks"
+
+const isMobile = useIsMobile()
+```
+
+### useAlert()
+
+```tsx
+"use client"
+import { useAlert } from "@repo/ui/providers"
+
+const { confirm } = useAlert()
+
+const confirmed = await confirm({
+  title: "Delete item?",
+  description: "This cannot be undone.",
+  confirmText: "Delete",
+  cancelText: "Cancel"
+})
+```
+
+### toast
+
+```tsx
+import { toast } from "sonner"
+
+toast.success("Saved!")
+toast.error("Failed")
+toast("Message", { action: { label: "Undo", onClick: undo } })
+```
 
 ## Quick Start
 
@@ -123,18 +183,79 @@ import { UIProvider, useAlert } from "@repo/ui/providers"
 @import "@repo/ui/styles.css";
 ```
 
-## Available Components
+## Adding Components
 
-| Category | Components |
-|----------|------------|
-| **Buttons** | Button, ButtonLink, Toggle, ToggleGroup |
-| **Forms** | Input, Textarea, Select, Checkbox, Switch, Label, Form |
-| **Layout** | Card, Separator, ScrollArea, Collapsible |
-| **Feedback** | Alert, Skeleton, Spinner, Toast |
-| **Overlay** | Dialog, Drawer, Sheet, AlertDialog, DropdownMenu, Tooltip |
-| **Navigation** | Tabs, Breadcrumb, Sidebar |
-| **Data** | Table, Badge, Avatar |
-| **Content** | Accordion, Markdown |
+StartupKit includes commonly used components out of the box. To add more [Shadcn UI](https://ui.shadcn.com/docs/components) components:
+
+```bash
+pnpm shadcn add <component>
+```
+
+For example:
+
+```bash
+pnpm shadcn add calendar
+pnpm shadcn add command
+pnpm shadcn add carousel
+```
+
+Components are installed to `packages/ui/src/components/` and immediately available across all apps.
+
+Browse available components at [ui.shadcn.com/docs/components](https://ui.shadcn.com/docs/components).
+
+## Dark Mode
+
+StartupKit includes dark mode support via [next-themes](https://github.com/pacocoursey/next-themes). The `UIProvider` sets this up automatically.
+
+### Add a theme toggle
+
+```tsx
+"use client"
+
+import { useTheme } from "next-themes"
+import { Button } from "@repo/ui/components/button"
+import { Moon, Sun } from "lucide-react"
+
+export function ThemeToggle() {
+  const { theme, setTheme } = useTheme()
+
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+    >
+      <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+      <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+      <span className="sr-only">Toggle theme</span>
+    </Button>
+  )
+}
+```
+
+### Use theme-aware styles
+
+Tailwind's `dark:` variant works automatically:
+
+```tsx
+<div className="bg-white dark:bg-zinc-900">
+  <p className="text-zinc-900 dark:text-zinc-100">
+    Adapts to the current theme
+  </p>
+</div>
+```
+
+### Set default theme
+
+Configure the default theme in `UIProvider`:
+
+```tsx
+<UIProvider defaultTheme="dark">
+  {children}
+</UIProvider>
+```
+
+Options: `"light"`, `"dark"`, or `"system"` (default).
 
 ## Storybook
 

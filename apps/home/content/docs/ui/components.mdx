@@ -1,321 +1,98 @@
 ---
 title: Components
-description: UI component usage and examples
+description: Adding and customizing UI components
 ---
 
-The `@repo/ui` package includes 40+ pre-built components. Here are the most commonly used ones.
+StartupKit includes commonly used [Shadcn UI](https://ui.shadcn.com/) components out of the box. This guide covers how to add more components and use the included helpers.
 
-## Button
+## Adding Components
 
-```tsx
-import { Button, ButtonLink } from "@repo/ui/components/button"
+Add any Shadcn component with a single command:
 
-// Variants
-<Button>Default</Button>
-<Button variant="primary">Primary</Button>
-<Button variant="secondary">Secondary</Button>
-<Button variant="outline">Outline</Button>
-<Button variant="ghost">Ghost</Button>
-<Button variant="destructive">Destructive</Button>
-<Button variant="link">Link</Button>
-
-// Sizes
-<Button size="sm">Small</Button>
-<Button size="default">Default</Button>
-<Button size="lg">Large</Button>
-<Button size="xl">Extra Large</Button>
-<Button size="icon">🔔</Button>
-
-// With icon
-<Button icon={<PlusIcon />}>Add Item</Button>
-<Button icon={<ArrowRightIcon />} iconPosition="end">Next</Button>
-
-// Loading state
-<Button loading>Processing...</Button>
-
-// As link
-<ButtonLink href="/dashboard" variant="primary">
-  Go to Dashboard
-</ButtonLink>
+```bash
+pnpm shadcn add <component>
 ```
 
-## Input
+For example:
 
-```tsx
-import { Input } from "@repo/ui/components/input"
-import { Label } from "@repo/ui/components/label"
-
-<div className="space-y-2">
-  <Label htmlFor="email">Email</Label>
-  <Input 
-    id="email"
-    type="email" 
-    placeholder="you@example.com" 
-  />
-</div>
-
-// With validation state
-<Input className="border-red-500" />
+```bash
+pnpm shadcn add calendar
+pnpm shadcn add command
+pnpm shadcn add carousel
 ```
 
-## Card
+Components are installed to `packages/ui/src/components/` and immediately available across all apps.
 
-```tsx
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter
-} from "@repo/ui/components/card"
+### Browse available components
 
-<Card>
-  <CardHeader>
-    <CardTitle>Account Settings</CardTitle>
-    <CardDescription>Manage your account preferences</CardDescription>
-  </CardHeader>
-  <CardContent>
-    {/* Form fields */}
-  </CardContent>
-  <CardFooter className="justify-end gap-2">
-    <Button variant="outline">Cancel</Button>
-    <Button>Save</Button>
-  </CardFooter>
-</Card>
+See the full list of components at [ui.shadcn.com/docs/components](https://ui.shadcn.com/docs/components).
+
+### Add multiple components
+
+```bash
+pnpm shadcn add dialog dropdown-menu tooltip
 ```
 
-## Dialog
+## Import Pattern
+
+Components use direct path imports from `@repo/ui`:
 
 ```tsx
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter
-} from "@repo/ui/components/dialog"
-
-<Dialog>
-  <DialogTrigger asChild>
-    <Button>Open Dialog</Button>
-  </DialogTrigger>
-  <DialogContent>
-    <DialogHeader>
-      <DialogTitle>Confirm Action</DialogTitle>
-      <DialogDescription>
-        This action cannot be undone.
-      </DialogDescription>
-    </DialogHeader>
-    <DialogFooter>
-      <Button variant="outline">Cancel</Button>
-      <Button>Continue</Button>
-    </DialogFooter>
-  </DialogContent>
-</Dialog>
-```
-
-## Form
-
-Built on React Hook Form with Zod validation:
-
-```tsx
-"use client"
-
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage
-} from "@repo/ui/components/form"
-import { Input } from "@repo/ui/components/input"
 import { Button } from "@repo/ui/components/button"
+import { Card, CardHeader, CardContent } from "@repo/ui/components/card"
+import { Dialog, DialogContent, DialogTrigger } from "@repo/ui/components/dialog"
+```
 
-const schema = z.object({
-  email: z.string().email(),
-  name: z.string().min(2)
-})
+## Helpers
 
-export function MyForm() {
-  const form = useForm({
-    resolver: zodResolver(schema),
-    defaultValues: { email: "", name: "" }
-  })
+### cn() utility
 
+The `cn()` function merges Tailwind classes with proper precedence. It combines [clsx](https://github.com/lukeed/clsx) and [tailwind-merge](https://github.com/dcastil/tailwind-merge):
+
+```tsx
+import { cn } from "@repo/ui/utils"
+
+function MyComponent({ className, isActive }) {
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder="you@example.com" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit">Submit</Button>
-      </form>
-    </Form>
+    <div className={cn(
+      "rounded-lg border p-4",
+      isActive && "border-primary bg-primary/10",
+      className
+    )}>
+      Content
+    </div>
   )
 }
 ```
 
-## Select
+Use `cn()` when:
+- Merging conditional classes
+- Accepting `className` as a prop
+- Overriding default component styles
 
-```tsx
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem
-} from "@repo/ui/components/select"
+### useIsMobile hook
 
-<Select onValueChange={setValue}>
-  <SelectTrigger>
-    <SelectValue placeholder="Select a plan" />
-  </SelectTrigger>
-  <SelectContent>
-    <SelectItem value="free">Free</SelectItem>
-    <SelectItem value="pro">Pro</SelectItem>
-    <SelectItem value="enterprise">Enterprise</SelectItem>
-  </SelectContent>
-</Select>
-```
-
-## Dropdown Menu
-
-```tsx
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator
-} from "@repo/ui/components/dropdown-menu"
-
-<DropdownMenu>
-  <DropdownMenuTrigger asChild>
-    <Button variant="outline">Options</Button>
-  </DropdownMenuTrigger>
-  <DropdownMenuContent>
-    <DropdownMenuItem>Profile</DropdownMenuItem>
-    <DropdownMenuItem>Settings</DropdownMenuItem>
-    <DropdownMenuSeparator />
-    <DropdownMenuItem className="text-red-600">
-      Sign out
-    </DropdownMenuItem>
-  </DropdownMenuContent>
-</DropdownMenu>
-```
-
-## Tabs
-
-```tsx
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@repo/ui/components/tabs"
-
-<Tabs defaultValue="overview">
-  <TabsList>
-    <TabsTrigger value="overview">Overview</TabsTrigger>
-    <TabsTrigger value="analytics">Analytics</TabsTrigger>
-    <TabsTrigger value="settings">Settings</TabsTrigger>
-  </TabsList>
-  <TabsContent value="overview">
-    Overview content
-  </TabsContent>
-  <TabsContent value="analytics">
-    Analytics content
-  </TabsContent>
-  <TabsContent value="settings">
-    Settings content
-  </TabsContent>
-</Tabs>
-```
-
-## Table
-
-```tsx
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell
-} from "@repo/ui/components/table"
-
-<Table>
-  <TableHeader>
-    <TableRow>
-      <TableHead>Name</TableHead>
-      <TableHead>Email</TableHead>
-      <TableHead>Role</TableHead>
-    </TableRow>
-  </TableHeader>
-  <TableBody>
-    {users.map(user => (
-      <TableRow key={user.id}>
-        <TableCell>{user.name}</TableCell>
-        <TableCell>{user.email}</TableCell>
-        <TableCell>{user.role}</TableCell>
-      </TableRow>
-    ))}
-  </TableBody>
-</Table>
-```
-
-## Toast
+Detect mobile viewport for responsive behavior:
 
 ```tsx
 "use client"
 
-import { toast } from "sonner"
-import { Button } from "@repo/ui/components/button"
+import { useIsMobile } from "@repo/ui/hooks"
 
-export function ToastDemo() {
-  return (
-    <Button onClick={() => toast.success("Changes saved!")}>
-      Save
-    </Button>
-  )
-}
+export function ResponsiveComponent() {
+  const isMobile = useIsMobile()
 
-// Toast variants
-toast("Default message")
-toast.success("Success!")
-toast.error("Something went wrong")
-toast.warning("Warning message")
-toast.info("Info message")
-
-// With description
-toast.success("Saved", {
-  description: "Your changes have been saved."
-})
-
-// With action
-toast("File deleted", {
-  action: {
-    label: "Undo",
-    onClick: () => restoreFile()
+  if (isMobile) {
+    return <MobileView />
   }
-})
+
+  return <DesktopView />
+}
 ```
 
-## Alert Dialog
+### useAlert hook
 
-For confirmations:
+Programmatic confirmation dialogs:
 
 ```tsx
 "use client"
@@ -334,7 +111,7 @@ export function DeleteButton() {
     })
 
     if (confirmed) {
-      // Perform delete
+      await deleteItem()
     }
   }
 
@@ -342,34 +119,63 @@ export function DeleteButton() {
 }
 ```
 
-## Skeleton
+### Toast notifications
 
-Loading placeholders:
-
-```tsx
-import { Skeleton } from "@repo/ui/components/skeleton"
-
-// Loading card
-<Card>
-  <CardHeader>
-    <Skeleton className="h-6 w-48" />
-    <Skeleton className="h-4 w-32" />
-  </CardHeader>
-  <CardContent className="space-y-2">
-    <Skeleton className="h-4 w-full" />
-    <Skeleton className="h-4 w-3/4" />
-  </CardContent>
-</Card>
-
-// Loading avatar
-<Skeleton className="h-10 w-10 rounded-full" />
-```
-
-## Theme Toggle
+Show toast messages with [Sonner](https://sonner.emilkowal.ski/):
 
 ```tsx
-import { ThemeToggle } from "@repo/ui/components/theme-toggle"
+"use client"
 
-// In your header
-<ThemeToggle />
+import { toast } from "sonner"
+
+function handleSave() {
+  toast.success("Changes saved!")
+}
+
+function handleError() {
+  toast.error("Something went wrong")
+}
+
+function handleWithAction() {
+  toast("File deleted", {
+    action: {
+      label: "Undo",
+      onClick: () => restoreFile()
+    }
+  })
+}
 ```
+
+The `Toaster` component is included in `UIProvider`.
+
+## Customizing Components
+
+Since components live in `packages/ui/src/components/`, you can modify them directly:
+
+```tsx title="packages/ui/src/components/button.tsx"
+const buttonVariants = cva(
+  "inline-flex items-center justify-center rounded-md...",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground",
+        // Add your own variant
+        brand: "bg-gradient-to-r from-purple-500 to-pink-500 text-white",
+      },
+      // ...
+    },
+  }
+)
+```
+
+Changes apply across all apps in the monorepo.
+
+## Storybook
+
+Preview components in isolation:
+
+```bash
+pnpm storybook
+```
+
+Opens at `http://localhost:6006` with all components and their variants.

@@ -1,107 +1,46 @@
 ---
 title: Quick Start
-description: Build your first feature with StartupKit in 5 minutes
+description: Get up and running in under 2 minutes
 icon: Rocket
 ---
 
-This guide will walk you through building your first feature with StartupKit.
+## 1. Create your project
 
-## 1. Create a New Page
-
-Create a new page in your app:
-
-```tsx title="apps/web/src/app/dashboard/page.tsx"
-import { auth } from "@/lib/auth"
-import { headers } from "next/headers"
-import { redirect } from "next/navigation"
-
-export default async function DashboardPage() {
-  const session = await auth.api.getSession({
-    headers: await headers()
-  })
-
-  if (!session) {
-    redirect("/sign-in")
-  }
-
-  return (
-    <div className="container mx-auto py-10">
-      <h1 className="text-3xl font-bold">
-        Welcome, {session.user.name}
-      </h1>
-    </div>
-  )
-}
+```bash
+npx startupkit@latest init
 ```
 
-## 2. Add Analytics
+Follow the prompts to configure your project name and options.
 
-Track page views and events with the analytics package:
+## 2. Add a Next.js app
 
-```tsx title="apps/web/src/app/dashboard/client.tsx"
-"use client"
-
-import { useAnalytics } from "@repo/analytics"
-
-export function DashboardClient() {
-  const { track } = useAnalytics()
-
-  const handleAction = () => {
-    track("DASHBOARD_ACTION", {
-      action: "button_click",
-      timestamp: Date.now()
-    })
-  }
-
-  return (
-    <button onClick={handleAction}>
-      Track Action
-    </button>
-  )
-}
+```bash
+npx startupkit add next --name web
 ```
 
-## 3. Use UI Components
+This creates a fully configured Next.js app with authentication, analytics, database, and UI components ready to go.
 
-Import pre-built components from the UI package:
+## 3. Start developing
 
-```tsx
-import { Button } from "@repo/ui/button"
-import { Card, CardHeader, CardTitle, CardContent } from "@repo/ui/card"
-
-export function MyComponent() {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>My Feature</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Button>Get Started</Button>
-      </CardContent>
-    </Card>
-  )
-}
+```bash
+pnpm dev
 ```
 
-## 4. Query the Database
+Open [http://localhost:3000](http://localhost:3000) — you're ready to build.
 
-Use Drizzle ORM for type-safe database queries:
+## What's included
 
-```tsx
-import { db } from "@repo/db"
-import { users } from "@repo/db/schema"
-import { eq } from "drizzle-orm"
+Your new project comes with everything pre-configured:
 
-export async function getUser(userId: string) {
-  const user = await db.query.users.findFirst({
-    where: eq(users.id, userId)
-  })
-  return user
-}
-```
+- **Authentication** — Sign in with email OTP or OAuth
+- **Analytics** — Event tracking with PostHog, Google Analytics
+- **Database** — PostgreSQL with Drizzle ORM
+- **UI Components** — 40+ Shadcn components
+- **TypeScript** — Strict mode, fully typed
 
-## Next Steps
+## Next steps
 
-- [Project Structure](/docs/getting-started/guides/project-structure) - Deep dive into the codebase
-- [Authentication](/docs/auth) - Set up sign-in flows
-- [Analytics](/docs/analytics) - Configure analytics providers
+- [Project Structure](/docs/getting-started/project-structure) — Understand the monorepo layout
+- [Environment Variables](/docs/getting-started/environment-variables) — Configure API keys
+- [Authentication](/docs/auth) — Customize sign-in flows
+- [Analytics](/docs/analytics) — Set up event tracking

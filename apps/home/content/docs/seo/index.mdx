@@ -12,6 +12,104 @@ description: Search engine optimization utilities with @startupkit/seo
 - **Sitemaps** - Dynamic sitemap generation
 - **Robots.txt** - Search engine crawling rules
 
+## Usage
+
+### Functions
+
+| Function | Description |
+|----------|-------------|
+| `generateMetadata()` | Generate Next.js metadata object with OpenGraph, Twitter, canonical URL |
+| `generateSitemap()` | Generate sitemap entries for Next.js sitemap.ts |
+| `generateRobots()` | Generate robots.txt rules for Next.js robots.ts |
+| `generateOrganizationSchema()` | JSON-LD schema for organization |
+| `generateWebsiteSchema()` | JSON-LD schema for website |
+| `generateBreadcrumbSchema()` | JSON-LD schema for breadcrumbs |
+| `generateArticleSchema()` | JSON-LD schema for articles/blog posts |
+
+### generateMetadata
+
+```ts
+import { generateMetadata } from "@startupkit/seo"
+
+generateMetadata({
+  title: "Page Title",
+  description: "Page description",
+  path: "/page",           // Optional: for canonical URL
+  baseUrl: "https://...",  // Optional: base URL for canonical
+  siteName: "My App",      // Optional: site name for OpenGraph
+  titleTemplate: "%s | My App", // Optional: title template
+  image: "/og-image.png",  // Optional: OpenGraph image
+  noIndex: false           // Optional: prevent indexing
+})
+```
+
+### generateSitemap
+
+```ts
+import { generateSitemap } from "@startupkit/seo"
+
+generateSitemap({
+  baseUrl: "https://myapp.com",
+  routes: [
+    { path: "/", priority: 1, changeFrequency: "daily" },
+    { path: "/about", priority: 0.8 },
+    { path: "/blog", priority: 0.9 }
+  ]
+})
+```
+
+### generateRobots
+
+```ts
+import { generateRobots } from "@startupkit/seo"
+
+generateRobots({
+  baseUrl: "https://myapp.com",
+  disallowPaths: ["/api/", "/dashboard/"]
+})
+```
+
+### Structured Data Schemas
+
+```ts
+import {
+  generateOrganizationSchema,
+  generateWebsiteSchema,
+  generateBreadcrumbSchema,
+  generateArticleSchema
+} from "@startupkit/seo"
+
+// Organization
+generateOrganizationSchema({
+  name: "My Company",
+  url: "https://myapp.com",
+  logo: "https://myapp.com/logo.png",
+  sameAs: ["https://twitter.com/mycompany"]
+})
+
+// Website with search
+generateWebsiteSchema({
+  name: "My App",
+  url: "https://myapp.com",
+  description: "The best app"
+})
+
+// Breadcrumbs
+generateBreadcrumbSchema([
+  { name: "Home", url: "https://myapp.com" },
+  { name: "Blog", url: "https://myapp.com/blog" }
+])
+
+// Article
+generateArticleSchema({
+  headline: "Article Title",
+  description: "Article description",
+  datePublished: "2024-01-15",
+  authorName: "John Doe",
+  imageUrl: "https://myapp.com/article-image.jpg"
+})
+```
+
 ## Quick Setup
 
 ### Page Metadata

@@ -1,0 +1,93 @@
+---
+title: page
+description: Track page views
+---
+
+Track page views with optional properties.
+
+## Client
+
+Use the `useAnalytics` hook in client components:
+
+```tsx
+import { useAnalytics } from "@repo/analytics"
+
+const { page } = useAnalytics()
+```
+
+### Usage
+
+```tsx
+page(name?: string, properties?: Record<string, unknown>)
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `name` | `string` | Optional page name |
+| `properties` | `Record<string, unknown>` | Optional page properties |
+
+### Automatic tracking
+
+`AnalyticsProvider` automatically tracks page views on Next.js route changes. Manual calls are typically not needed.
+
+### Examples
+
+#### Manual page tracking
+
+```tsx
+page("Dashboard")
+```
+
+#### With properties
+
+```tsx
+page("Dashboard", {
+  section: "analytics",
+  teamId: team.id
+})
+```
+
+#### Virtual page views
+
+For single-page navigation that doesn't change the URL:
+
+```tsx
+"use client"
+
+import { useEffect } from "react"
+import { useAnalytics } from "@repo/analytics"
+
+function TabPanel({ tab }: { tab: string }) {
+  const { page } = useAnalytics()
+
+  useEffect(() => {
+    page(`Settings - ${tab}`, { tab })
+  }, [tab, page])
+
+  return <div>...</div>
+}
+```
+
+## Server
+
+Page tracking is **client-only**. Server components and actions don't have access to navigation context.
+
+For server-side page analytics, track as a custom event:
+
+```tsx
+import { track } from "@repo/analytics/server"
+
+await track({
+  event: "PAGE_VIEWED",
+  userId: user.id,
+  page: "/dashboard",
+  referrer: request.headers.get("referer")
+})
+```
+
+## When to call page manually
+
+- Tab changes within a page
+- Modal or drawer navigation
+- Multi-step wizards
+- Any navigation that doesn't change the URL

@@ -3,9 +3,11 @@
 	"pages": [
 		"quickstart",
 		"what-is",
+		"project-structure",
+		"environment-variables",
+		"deployment",
 		"comparisons",
-		"installation",
-		"guides"
+		"installation"
 	],
 	"defaultOpen": true
 }

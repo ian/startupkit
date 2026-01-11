@@ -74,6 +74,82 @@ declare module "@startupkit/analytics" {
 	export function AhrefsPlugin(config: { siteId: string }): unknown
 }
 
+declare module "@repo/db" {
+	import type { PgDatabase } from "drizzle-orm/pg-core"
+
+	export interface User {
+		id: string
+		firstName: string | null
+		lastName: string | null
+		name: string | null
+		image: string | null
+		email: string | null
+		emailVerified: boolean
+		phone: string | null
+		role: string
+		createdAt: Date
+		updatedAt: Date
+		lastSeenAt: Date | null
+	}
+
+	export interface NewUser {
+		id: string
+		firstName?: string | null
+		lastName?: string | null
+		name?: string | null
+		image?: string | null
+		email?: string | null
+		emailVerified?: boolean
+		phone?: string | null
+		role?: string
+		createdAt?: Date
+		updatedAt?: Date
+		lastSeenAt?: Date | null
+	}
+
+	export interface Team {
+		id: string
+		name: string
+		slug: string
+		createdAt: Date
+		updatedAt: Date | null
+	}
+
+	export interface NewTeam {
+		id: string
+		name: string
+		slug: string
+		createdAt?: Date
+		updatedAt?: Date | null
+	}
+
+	export interface TeamMember {
+		teamId: string
+		userId: string
+		role: "owner" | "member"
+		createdAt: Date
+		updatedAt: Date | null
+		joinedAt: Date | null
+	}
+
+	export interface NewTeamMember {
+		teamId: string
+		userId: string
+		role?: "owner" | "member"
+		createdAt?: Date
+		updatedAt?: Date | null
+		joinedAt?: Date | null
+	}
+
+	export const db: PgDatabase<Record<string, unknown>>
+	export const users: unknown
+	export const teams: unknown
+	export const teamMembers: unknown
+	export const accounts: unknown
+	export const sessions: unknown
+	export const verifications: unknown
+}
+
 declare module "@startupkit/seo" {
 	import type { Metadata } from "next"
 

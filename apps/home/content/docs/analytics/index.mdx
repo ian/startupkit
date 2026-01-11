@@ -1,9 +1,9 @@
 ---
 title: Analytics Overview
-description: Provider-agnostic analytics with @startupkit/analytics
+description: Provider-agnostic analytics with @repo/analytics
 ---
 
-`@startupkit/analytics` provides a unified interface for tracking events across multiple analytics providers. Write once, send everywhere.
+`@repo/analytics` provides a unified interface for tracking events across multiple analytics providers. Write once, send everywhere.
 
 ## Features
 
@@ -21,7 +21,7 @@ description: Provider-agnostic analytics with @startupkit/analytics
 import {
   PostHogPlugin,
   GoogleAnalyticsPlugin
-} from "@startupkit/analytics"
+} from "@repo/analytics"
 
 export const analyticsPlugins = [
   PostHogPlugin({
@@ -38,7 +38,7 @@ export const analyticsPlugins = [
 ```tsx title="app/providers.tsx"
 "use client"
 
-import { AnalyticsProvider } from "@startupkit/analytics"
+import { AnalyticsProvider } from "@repo/analytics"
 import { analyticsPlugins } from "@/lib/analytics"
 
 export function Providers({ children, flags }) {
@@ -55,7 +55,7 @@ export function Providers({ children, flags }) {
 ```tsx
 "use client"
 
-import { useAnalytics } from "@startupkit/analytics"
+import { useAnalytics } from "@repo/analytics"
 
 export function SignUpButton() {
   const { track, identify, page, reset } = useAnalytics()
@@ -81,6 +81,79 @@ flowchart LR
 ```
 
 Events are fanned out automatically—no need to call each provider individually.
+
+## Usage
+
+### useAnalytics
+
+The main hook for tracking events and identifying users:
+
+```tsx
+"use client"
+
+import { useAnalytics } from "@repo/analytics"
+
+export function MyComponent() {
+  const { track, identify, page, reset } = useAnalytics()
+
+  // ...
+}
+```
+
+| Method | Description |
+|--------|-------------|
+| `track(event, properties?)` | Track a custom event with optional properties |
+| `identify(userId, traits?)` | Associate events with a user identity |
+| `page(name?, properties?)` | Track a page view (automatic in Next.js) |
+| `reset()` | Clear user identity (on logout) |
+
+#### track
+
+```tsx
+track("BUTTON_CLICKED", { 
+  buttonId: "signup-hero",
+  variant: "primary" 
+})
+```
+
+#### identify
+
+```tsx
+identify(user.id, {
+  email: user.email,
+  plan: user.plan,
+  createdAt: user.createdAt
+})
+```
+
+#### reset
+
+```tsx
+async function handleLogout() {
+  await signOut()
+  reset()
+}
+```
+
+### useFlag
+
+Access feature flags from PostHog:
+
+```tsx
+"use client"
+
+import { useFlag } from "@repo/analytics"
+
+export function NewFeature() {
+  const isEnabled = useFlag("new-checkout-flow")
+
+  if (!isEnabled) return null
+
+  return <NewCheckoutFlow />
+}
+```
+
+See [Feature Flags](/docs/analytics/feature-flags) for setup details.
 
 ## Provider Options
 

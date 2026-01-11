@@ -71,6 +71,55 @@ my-project/
 └── package.json
 ```
 
+## Architecture
+
+StartupKit uses a **two-layer package architecture** that separates core infrastructure from your customizable code.
+
+### `@startupkit/*` — Core packages
+
+Published npm packages that provide the underlying infrastructure:
+
+```tsx
+import { PostHogPlugin, GoogleAnalyticsPlugin } from "@startupkit/analytics"
+import { generateMetadata, generateSitemap } from "@startupkit/seo"
+```
+
+These packages provide:
+- Plugin systems and adapters
+- Utility functions
+- Type definitions
+- Provider integrations
+
+You don't modify these—they're updated via npm.
+
+### `@repo/*` — Your packages
+
+Local workspace packages in your `packages/` directory that you own and customize:
+
+```tsx
+import { useAnalytics, AnalyticsProvider } from "@repo/analytics"
+import { useAuth, AuthProvider } from "@repo/auth"
+import { db, users } from "@repo/db"
+import { Button, Card } from "@repo/ui/components/button"
+```
+
+These packages:
+- Wrap `@startupkit/*` packages with your configuration
+- Contain your database schema
+- Hold your custom components
+- Include project-specific logic
+
+### Why this design?
+
+| Layer | What it provides | Who maintains it |
+|-------|------------------|------------------|
+| `@startupkit/*` | Core infrastructure, plugins, utilities | StartupKit (npm updates) |
+| `@repo/*` | Your configuration, schema, customizations | You |
+
+This lets you **receive updates** to core functionality while **keeping full control** over your implementation. When we ship improvements to `@startupkit/analytics`, you get them without losing your custom event types or provider configuration.
+
+See [Project Structure](/docs/getting-started/project-structure) for more details.
+
 ## AI-Ready
 
 StartupKit is designed to work seamlessly with AI coding assistants. Clear patterns, consistent conventions, and well-documented code make it easy for tools like Cursor, GitHub Copilot, and Claude to understand and extend your codebase.

@@ -54,6 +54,74 @@ apps/web/
 └── public/                  # Static assets
 ```
 
+## Package Namespaces
+
+StartupKit uses two package namespaces that serve different purposes:
+
+### `@startupkit/*` - Published packages
+
+These are npm packages published by StartupKit that provide **meta-functionality**:
+
+```tsx
+// Core analytics engine with plugin system
+import { PostHogPlugin, GoogleAnalyticsPlugin } from "@startupkit/analytics"
+
+// SEO utilities for Next.js
+import { generateMetadata, generateSitemap } from "@startupkit/seo"
+
+// CLI tools
+npx startupkit init
+```
+
+You typically don't modify these packages—they provide the underlying infrastructure.
+
+### `@repo/*` - Your local packages
+
+These are workspace packages in your `packages/` directory that **you own and customize**:
+
+```tsx
+// Your analytics implementation (wraps @startupkit/analytics)
+import { useAnalytics, AnalyticsProvider } from "@repo/analytics"
+
+// Your auth implementation
+import { useAuth, AuthProvider } from "@repo/auth"
+
+// Your database schema and client
+import { db, users } from "@repo/db"
+
+// Your UI components
+import { Button, Card } from "@repo/ui"
+```
+
+The `@repo/*` packages often wrap `@startupkit/*` packages, adding your project-specific configuration and customizations.
+
+### Why this architecture?
+
+| Namespace | Purpose | Modifiable |
+|-----------|---------|------------|
+| `@startupkit/*` | Core infrastructure, plugin systems, utilities | No (npm packages) |
+| `@repo/*` | Your implementation, configuration, customizations | Yes (your code) |
+
+This separation lets you:
+
+- **Receive updates** to core functionality via npm
+- **Customize behavior** in your local packages
+- **Add project-specific code** without forking
+- **Share code** across multiple apps in your monorepo
+
+### Example: Analytics
+
+```
+@startupkit/analytics          @repo/analytics
+┌─────────────────────┐       ┌─────────────────────────┐
+│ • Plugin system     │       │ • Your configured       │
+│ • PostHogPlugin     │  ──►  │   plugins               │
+│ • GAPlugin          │       │ • Custom event types    │
+│ • OpenPanelPlugin   │       │ • Server-side track()   │
+└─────────────────────┘       └─────────────────────────┘
+      (npm package)                (your code)
+```
+
 ## Packages
 
 The `packages/` directory contains shared code:
