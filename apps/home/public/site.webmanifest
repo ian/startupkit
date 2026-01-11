@@ -3,7 +3,7 @@
 	"short_name": "StartupKit",
 	"description": "Build and ship your SaaS faster with StartupKit",
 	"start_url": "/",
-	"display": "standalone",
+	"display": "browser",
 	"background_color": "#ffffff",
 	"theme_color": "#ffffff",
 	"icons": [
