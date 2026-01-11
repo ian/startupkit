@@ -1,10 +1,10 @@
 ---
 title: Environment Variables
-description: Complete reference of all environment variables used in StartupKit
+description: Managing environment variables in StartupKit
 icon: KeyRound
 ---
 
-This guide lists all environment variables used across StartupKit packages and templates.
+This guide covers how environment variables work in StartupKit and the helpers available for managing them.
 
 ## Quick Setup
 
@@ -14,190 +14,112 @@ After running `npx startupkit init`, create your environment file:
 cp .env.example .env.local
 ```
 
-Then configure the required variables for your use case.
+The `.env.example` file contains all available variables with documentation.
 
-## Database
+## Environment Files
+
+| File | Purpose | Committed to Git |
+|------|---------|------------------|
+| `.env.local` | Local development values | No |
+| `.env.test` | Test environment values | No |
+| `.env.production` | Production overrides | No |
+
+## Core Variables
+
+These variables are used across the application:
 
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `DATABASE_URL` | Yes | PostgreSQL connection string |
-
-### Format
-
-```bash
-DATABASE_URL=postgresql://user:password@host:5432/database
-```
-
-### Examples
-
-```bash
-# Local development
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/myapp
-
-# Neon
-DATABASE_URL=postgresql://user:pass@ep-xxx.us-east-1.aws.neon.tech/myapp?sslmode=require
-
-# Supabase
-DATABASE_URL=postgresql://postgres:pass@db.xxx.supabase.co:5432/postgres
-
-# Railway
-DATABASE_URL=postgresql://postgres:pass@containers-us-west-xxx.railway.app:5432/railway
-```
-
-## Authentication
-
-### Better Auth
-
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `BETTER_AUTH_SECRET` | Yes | Secret key for signing tokens |
-| `BETTER_AUTH_URL` | No | Base URL for auth (defaults to app URL) |
-
-```bash
-# Generate a secure secret
-openssl rand -base64 32
-
-BETTER_AUTH_SECRET=your-generated-secret
-```
-
-### Google OAuth
-
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `GOOGLE_CLIENT_ID` | For Google auth | OAuth client ID |
-| `GOOGLE_CLIENT_SECRET` | For Google auth | OAuth client secret |
-
-```bash
-GOOGLE_CLIENT_ID=xxx.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=GOCSPX-xxx
-```
-
-Get credentials from [Google Cloud Console](https://console.cloud.google.com/apis/credentials).
-
-## Analytics
-
-### PostHog
-
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `NEXT_PUBLIC_POSTHOG_KEY` | For PostHog | Client-side API key |
-| `NEXT_PUBLIC_POSTHOG_HOST` | No | PostHog instance URL |
-| `POSTHOG_API_KEY` | For server | Server-side API key (same as above) |
-| `POSTHOG_HOST` | No | Server-side host URL |
-
-```bash
-NEXT_PUBLIC_POSTHOG_KEY=phc_xxxxxxxxxxxx
-NEXT_PUBLIC_POSTHOG_HOST=https://app.posthog.com
-
-# Server-side (same key)
-POSTHOG_API_KEY=phc_xxxxxxxxxxxx
-POSTHOG_HOST=https://app.posthog.com
-```
-
-For EU data residency, use `https://eu.posthog.com`.
-
-### Google Analytics
-
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID` | For GA4 | GA4 measurement ID |
-
-```bash
-NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX
-```
-
-Get the ID from [Google Analytics](https://analytics.google.com) → Admin → Data Streams.
-
-### OpenPanel
-
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `NEXT_PUBLIC_OPENPANEL_CLIENT_ID` | For OpenPanel | Client ID |
-
-```bash
-NEXT_PUBLIC_OPENPANEL_CLIENT_ID=your-client-id
-```
-
-## Email
-
-### Resend
-
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `RESEND_API_KEY` | For email | Resend API key |
-| `EMAIL_FROM` | Recommended | Default sender address |
-
-```bash
-RESEND_API_KEY=re_xxxxxxxxxxxx
-EMAIL_FROM=hello@yourdomain.com
-```
-
-Get your API key from [Resend Dashboard](https://resend.com/api-keys).
-
-## Application
-
-| Variable | Required | Description |
-|----------|----------|-------------|
+| `BETTER_AUTH_SECRET` | Yes | Secret key for signing auth tokens |
 | `NEXT_PUBLIC_BASE_URL` | Recommended | Public URL of your app |
-| `NEXT_PUBLIC_APP_NAME` | No | Application name |
 
-```bash
-# Development
-NEXT_PUBLIC_BASE_URL=http://localhost:3000
-
-# Production
-NEXT_PUBLIC_BASE_URL=https://myapp.com
-NEXT_PUBLIC_APP_NAME=My App
-```
-
-## Complete Example
-
-Here's a complete `.env.local` file:
-
-```bash
-# Database
+```bash title=".env.local"
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/myapp
-
-# Auth
 BETTER_AUTH_SECRET=your-secret-key-here
-GOOGLE_CLIENT_ID=xxx.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=GOCSPX-xxx
-
-# Analytics - PostHog
-NEXT_PUBLIC_POSTHOG_KEY=phc_xxxxxxxxxxxx
-NEXT_PUBLIC_POSTHOG_HOST=https://app.posthog.com
-POSTHOG_API_KEY=phc_xxxxxxxxxxxx
-POSTHOG_HOST=https://app.posthog.com
-
-# Analytics - Google (optional)
-NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX
-
-# Email
-RESEND_API_KEY=re_xxxxxxxxxxxx
-EMAIL_FROM=hello@myapp.com
-
-# App
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
-NEXT_PUBLIC_APP_NAME=My App
 ```
 
-## Environment Naming
+Generate a secure auth secret:
+
+```bash
+openssl rand -base64 32
+```
+
+## Running with Environment Variables
+
+StartupKit includes helpers for running commands with environment variables loaded:
+
+### pnpm with-env
+
+Runs a command with `.env.local` loaded:
+
+```bash
+pnpm with-env <command>
+```
+
+Examples:
+
+```bash
+# Run database migrations with env vars
+pnpm with-env pnpm db:migrate
+
+# Run a script with env vars
+pnpm with-env node scripts/seed.js
+
+# Start the dev server (already uses with-env internally)
+pnpm dev
+```
+
+### pnpm with-test-env
+
+Runs a command with `.env.test` loaded:
+
+```bash
+pnpm with-test-env <command>
+```
+
+Examples:
+
+```bash
+# Run tests with test environment
+pnpm with-test-env pnpm test
+
+# Run a specific test file
+pnpm with-test-env vitest run src/lib/auth.test.ts
+```
+
+This is useful for:
+- Using a separate test database
+- Mocking external services
+- Isolated test configurations
+
+## Next.js Environment Rules
 
 Next.js has specific rules for environment variables:
 
 | Prefix | Availability | Use For |
 |--------|--------------|---------|
-| `NEXT_PUBLIC_` | Client + Server | Public values (API keys) |
+| `NEXT_PUBLIC_` | Client + Server | Public values (analytics keys) |
 | No prefix | Server only | Secrets, credentials |
 
 ```bash
 # Exposed to browser - safe for public API keys
 NEXT_PUBLIC_POSTHOG_KEY=phc_xxx
 
-# Server only - never exposed
+# Server only - never exposed to client
 DATABASE_URL=postgresql://...
-RESEND_API_KEY=re_xxx
+BETTER_AUTH_SECRET=xxx
 ```
+
+## Package-Specific Variables
+
+Each package has its own environment variables documented in its respective section:
+
+- **[Authentication](/docs/auth/configuration)** — OAuth providers, auth settings
+- **[Analytics](/docs/analytics)** — PostHog, Google Analytics, OpenPanel
+- **[Database](/docs/db)** — Connection strings, pooling
+- **[Emails](/docs/emails)** — Resend API keys
 
 ## Vercel Deployment
 
@@ -208,44 +130,21 @@ When deploying to Vercel:
 3. Select environments (Production, Preview, Development)
 4. Redeploy for changes to take effect
 
-### Tips
-
+Tips:
 - Use different values for Preview vs Production
 - Store secrets in Vercel, not in code
 - Link environment variables across projects for shared values
 
-## Validation
-
-Ensure all required variables are set by validating at startup:
-
-```typescript title="lib/env.ts"
-const requiredEnvVars = [
-  "DATABASE_URL",
-  "BETTER_AUTH_SECRET"
-] as const
-
-for (const envVar of requiredEnvVars) {
-  if (!process.env[envVar]) {
-    throw new Error(`Missing required environment variable: ${envVar}`)
-  }
-}
-```
-
-Or use a library like [t3-env](https://github.com/t3-oss/t3-env) for type-safe validation.
-
 ## Security Best Practices
 
-1. **Never commit `.env.local`** - It's in `.gitignore` by default
-2. **Use different secrets per environment** - Dev, staging, production
-3. **Rotate secrets regularly** - Especially after team changes
-4. **Limit access** - Only give team members access to secrets they need
-5. **Audit access** - Review who has access to production secrets
+1. **Never commit `.env.local`** — It's in `.gitignore` by default
+2. **Use different secrets per environment** — Dev, staging, production
+3. **Rotate secrets regularly** — Especially after team changes
+4. **Limit access** — Only give team members access to secrets they need
 
 ## Troubleshooting
 
 ### Variable Not Available
-
-If a variable isn't available:
 
 1. Check the name matches exactly (case-sensitive)
 2. Restart the dev server after changes
@@ -254,23 +153,9 @@ If a variable isn't available:
 
 ### "Process is not defined"
 
-This happens when accessing server-only variables on the client:
+This happens when accessing server-only variables on the client. Keep server-only variables in server-only files:
 
 ```typescript
-// Wrong - will error on client
+// lib/db.ts (server-only, never imported by client)
 const dbUrl = process.env.DATABASE_URL
-
-// Right - server-only file
-// lib/db.ts (never imported by client code)
-const dbUrl = process.env.DATABASE_URL
-```
-
-### Value is undefined
-
-Check for typos and that the variable is in the correct file:
-
-```bash
-# .env.local - for local development
-# .env - for all environments (committed to git)
-# .env.production - production overrides
 ```
