@@ -6,16 +6,16 @@ import { rehypeCodeDefaultOptions } from "fumadocs-core/mdx-plugins";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-var { docs, meta } = defineDocs({
+const { docs, meta } = defineDocs({
   dir: "content/docs"
 });
-var __dirname = path.dirname(fileURLToPath(import.meta.url));
-var homeDir = __dirname.includes(".source") ? path.resolve(__dirname, "..") : __dirname;
-var twoslashTypes = fs.readFileSync(
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const homeDir = __dirname.includes(".source") ? path.resolve(__dirname, "..") : __dirname;
+const twoslashTypes = fs.readFileSync(
   path.resolve(homeDir, "twoslash.d.ts"),
   "utf-8"
 );
-var source_config_default = defineConfig({
+const source_config_default = defineConfig({
   mdxOptions: {
     rehypeCodeOptions: {
       themes: {

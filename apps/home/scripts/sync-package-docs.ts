@@ -1,7 +1,7 @@
-import { readFile, writeFile, mkdir } from "fs/promises"
-import { existsSync } from "fs"
-import { join, dirname } from "path"
-import { fileURLToPath } from "url"
+import { readFile, writeFile, mkdir } from "node:fs/promises"
+import { existsSync } from "node:fs"
+import { join, dirname } from "node:path"
+import { fileURLToPath } from "node:url"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT_DIR = join(__dirname, "..", "..", "..")
