@@ -7,13 +7,15 @@ Access feature flags from PostHog in client components.
 
 ## Import
 
-```tsx
+```tsx twoslash
+// @noErrors
 import { useFlag } from "@repo/analytics"
 ```
 
 ## Usage
 
-```tsx
+```tsx twoslash
+// @noErrors
 "use client"
 
 import { useFlag } from "@repo/analytics"
@@ -41,7 +43,10 @@ Returns the flag value (`boolean`, `string`, or `undefined` if not found).
 
 ### Boolean flag
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { useFlag } from "@repo/analytics"
+// ---cut---
 const showBetaFeatures = useFlag("beta-features")
 
 if (showBetaFeatures) {
@@ -51,7 +56,10 @@ if (showBetaFeatures) {
 
 ### String/variant flag
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { useFlag } from "@repo/analytics"
+// ---cut---
 const pricingVariant = useFlag("pricing-experiment")
 
 switch (pricingVariant) {
@@ -68,7 +76,10 @@ switch (pricingVariant) {
 
 Handle undefined flags gracefully:
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { useFlag } from "@repo/analytics"
+// ---cut---
 const isEnabled = useFlag("new-feature") ?? false
 ```
 
@@ -76,7 +87,10 @@ const isEnabled = useFlag("new-feature") ?? false
 
 For type safety across your app:
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { useFlag } from "@repo/analytics"
+// ---cut---
 interface MyFlags {
   "new-checkout-flow": boolean
   "pricing-experiment": "control" | "variant-a" | "variant-b"

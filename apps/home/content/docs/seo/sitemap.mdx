@@ -149,8 +149,11 @@ export default async function sitemap() {
 
 For large sites with more than 50,000 URLs, split into multiple sitemaps using Next.js's built-in sitemap index support:
 
-```tsx title="app/sitemap.ts"
+```tsx twoslash title="app/sitemap.ts"
+// @noErrors
 import type { MetadataRoute } from "next"
+declare function getProductCount(): Promise<number>
+declare function getProducts(opts: { start: number; limit: number }): Promise<{ slug: string; updatedAt: Date }[]>
 
 export async function generateSitemaps() {
   const totalProducts = await getProductCount()
@@ -182,8 +185,11 @@ This automatically generates:
 
 You can also organize sitemaps by content type:
 
-```tsx title="app/sitemap.ts"
+```tsx twoslash title="app/sitemap.ts"
+// @noErrors
 import type { MetadataRoute } from "next"
+declare function getPosts(): Promise<{ slug: string; updatedAt: Date }[]>
+declare function getProducts(): Promise<{ slug: string; updatedAt: Date }[]>
 
 const categories = ["main", "blog", "products"] as const
 
@@ -266,7 +272,10 @@ Don't include in sitemap:
 
 Update `lastModified` when content changes:
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { db } from "@repo/db"
+// ---cut---
 const posts = await db.query.posts.findMany()
 
 const routes = posts.map(post => ({

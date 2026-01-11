@@ -81,7 +81,10 @@ With `titleTemplate: "%s | My App"`:
 
 ### For Individual Pages
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { generateMetadata } from "@startupkit/seo"
+// ---cut---
 generateMetadata({
   title: "About Us",
   description: "Learn about our company",
@@ -95,8 +98,9 @@ generateMetadata({
 
 Generates:
 
-```typescript
-{
+```typescript twoslash
+// @noErrors
+const metadata = {
   title: "About Us",
   description: "Learn about our company",
   metadataBase: new URL("https://myapp.com"),
@@ -160,7 +164,10 @@ export async function generateMetadata({ params }: Props) {
 
 The default OG image path is `/hero/og.avif`. Override per-page:
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { generateMetadata } from "@startupkit/seo"
+// ---cut---
 generateMetadata({
   title: "Features",
   description: "Explore our features",
@@ -179,7 +186,8 @@ generateMetadata({
 
 Generate OG images with Next.js:
 
-```tsx title="app/og/[...slug]/route.tsx"
+```tsx twoslash title="app/og/[...slug]/route.tsx"
+// @noErrors
 import { ImageResponse } from "next/og"
 
 export async function GET(request: Request) {
@@ -199,7 +207,11 @@ export async function GET(request: Request) {
 
 Then use:
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { generateMetadata } from "@startupkit/seo"
+declare const post: { title: string }
+// ---cut---
 generateMetadata({
   ogImage: `/og?title=${encodeURIComponent(post.title)}`,
   // ...
@@ -210,7 +222,10 @@ generateMetadata({
 
 Exclude pages from search engines:
 
-```tsx title="app/dashboard/page.tsx"
+```tsx twoslash title="app/dashboard/page.tsx"
+// @noErrors
+import { generateMetadata } from "@startupkit/seo"
+// ---cut---
 export const metadata = generateMetadata({
   title: "Dashboard",
   description: "Your personal dashboard",
@@ -231,7 +246,10 @@ Common noIndex pages:
 
 Canonical URLs prevent duplicate content issues:
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { generateMetadata } from "@startupkit/seo"
+// ---cut---
 generateMetadata({
   path: "/about",  // Generates canonical: https://myapp.com/about
   // ...
@@ -240,7 +258,10 @@ generateMetadata({
 
 For pages with query parameters:
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { generateMetadata } from "@startupkit/seo"
+// ---cut---
 // /products?category=shoes should canonicalize to /products
 generateMetadata({
   path: "/products",  // Not /products?category=shoes
@@ -279,7 +300,8 @@ export function generateMetadata(params: {
 
 Use in pages:
 
-```tsx title="app/features/page.tsx"
+```tsx twoslash title="app/features/page.tsx"
+// @noErrors
 import { generateMetadata } from "@/lib/seo"
 
 export const metadata = generateMetadata({

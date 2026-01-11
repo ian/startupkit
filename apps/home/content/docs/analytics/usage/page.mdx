@@ -9,7 +9,8 @@ Track page views with optional properties.
 
 Use the `useAnalytics` hook in client components:
 
-```tsx
+```tsx twoslash
+// @noErrors
 import { useAnalytics } from "@repo/analytics"
 
 const { page } = useAnalytics()
@@ -34,13 +35,22 @@ page(name?: string, properties?: Record<string, unknown>)
 
 #### Manual page tracking
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { useAnalytics } from "@repo/analytics"
+const { page } = useAnalytics()
+// ---cut---
 page("Dashboard")
 ```
 
 #### With properties
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { useAnalytics } from "@repo/analytics"
+const { page } = useAnalytics()
+declare const team: { id: string }
+// ---cut---
 page("Dashboard", {
   section: "analytics",
   teamId: team.id
@@ -51,7 +61,8 @@ page("Dashboard", {
 
 For single-page navigation that doesn't change the URL:
 
-```tsx
+```tsx twoslash
+// @noErrors
 "use client"
 
 import { useEffect } from "react"
@@ -74,9 +85,12 @@ Page tracking is **client-only**. Server components and actions don't have acces
 
 For server-side page analytics, track as a custom event:
 
-```tsx
+```tsx twoslash
+// @noErrors
 import { track } from "@repo/analytics/server"
-
+declare const user: { id: string }
+declare const request: Request
+// ---cut---
 await track({
   event: "PAGE_VIEWED",
   userId: user.id,

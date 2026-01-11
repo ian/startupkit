@@ -9,7 +9,8 @@ Clear the current user identity on logout.
 
 Use the `useAnalytics` hook in client components:
 
-```tsx
+```tsx twoslash
+// @noErrors
 import { useAnalytics } from "@repo/analytics"
 
 const { reset } = useAnalytics()
@@ -17,7 +18,11 @@ const { reset } = useAnalytics()
 
 ### Usage
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { useAnalytics } from "@repo/analytics"
+const { reset } = useAnalytics()
+// ---cut---
 reset()
 ```
 
@@ -27,7 +32,8 @@ No parameters. Clears the user identity across all analytics providers.
 
 #### On logout
 
-```tsx
+```tsx twoslash
+// @noErrors
 "use client"
 
 import { useAnalytics } from "@repo/analytics"
@@ -50,7 +56,12 @@ export function LogoutButton() {
 
 The `AuthProvider` can automatically reset on logout:
 
-```tsx title="app/providers.tsx"
+```tsx twoslash title="app/providers.tsx"
+// @noErrors
+declare const children: React.ReactNode
+declare function reset(): void
+declare function AuthProvider(props: { onReset: () => void; children: React.ReactNode }): JSX.Element
+// ---cut---
 <AuthProvider
   onReset={() => reset()}
 >
@@ -60,7 +71,12 @@ The `AuthProvider` can automatically reset on logout:
 
 #### Account switching
 
-```tsx
+```tsx twoslash
+// @noErrors
+declare function reset(): void
+declare function identify(userId: string, traits: Record<string, unknown>): void
+declare function loadAccount(id: string): Promise<{ id: string; email: string; name: string }>
+// ---cut---
 async function switchAccount(newAccountId: string) {
   reset()
   
@@ -79,9 +95,11 @@ Reset is **client-only**. It clears browser-side state (cookies, local storage) 
 
 For server-side logout tracking:
 
-```tsx
+```tsx twoslash
+// @noErrors
 import { track } from "@repo/analytics/server"
-
+declare const user: { id: string; email: string }
+// ---cut---
 await track({
   event: "USER_SIGNED_OUT",
   userId: user.id,

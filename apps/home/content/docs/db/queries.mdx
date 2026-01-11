@@ -9,7 +9,8 @@ Drizzle provides two query APIs: the SQL-like query builder and the relational q
 
 ### Select all
 
-```tsx
+```tsx twoslash
+// @noErrors
 import { db, users } from "@repo/db"
 
 const allUsers = await db.select().from(users)
@@ -17,7 +18,10 @@ const allUsers = await db.select().from(users)
 
 ### Select with columns
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { db, users } from "@repo/db"
+// ---cut---
 const userEmails = await db
   .select({
     id: users.id,
@@ -28,7 +32,9 @@ const userEmails = await db
 
 ### Where clause
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { db, users } from "@repo/db"
 import { eq, and, or, gt, like } from "drizzle-orm"
 
 // Simple equality
@@ -57,7 +63,11 @@ const gmailUsers = await db
 
 ### Order and limit
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { db, users } from "@repo/db"
+import { desc } from "drizzle-orm"
+// ---cut---
 const recentUsers = await db
   .select()
   .from(users)
@@ -69,7 +79,12 @@ const recentUsers = await db
 
 Use the relational API for nested data:
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { db, users } from "@repo/db"
+import { eq } from "drizzle-orm"
+declare const userId: string
+// ---cut---
 // Get user with their team memberships
 const userWithTeams = await db.query.users.findFirst({
   where: eq(users.id, userId),
@@ -85,7 +100,10 @@ const userWithTeams = await db.query.users.findFirst({
 
 ### Find many with relations
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { db } from "@repo/db"
+// ---cut---
 const teamsWithMembers = await db.query.teams.findMany({
   with: {
     members: {
@@ -107,7 +125,10 @@ const teamsWithMembers = await db.query.teams.findMany({
 
 ### Single insert
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { db, users } from "@repo/db"
+// ---cut---
 const [newUser] = await db
   .insert(users)
   .values({
@@ -120,7 +141,11 @@ const [newUser] = await db
 
 ### Bulk insert
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { db, posts } from "@repo/db"
+declare const userId: string
+// ---cut---
 await db.insert(posts).values([
   { id: "1", title: "First Post", authorId: userId },
   { id: "2", title: "Second Post", authorId: userId }
@@ -129,7 +154,13 @@ await db.insert(posts).values([
 
 ### Insert with conflict handling
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { db, users } from "@repo/db"
+declare const id: string
+declare const email: string
+declare const name: string
+// ---cut---
 await db
   .insert(users)
   .values({ id, email, name })
@@ -141,7 +172,12 @@ await db
 
 ## Update
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { db, users } from "@repo/db"
+import { eq } from "drizzle-orm"
+declare const userId: string
+// ---cut---
 await db
   .update(users)
   .set({ 
@@ -153,7 +189,12 @@ await db
 
 ### Update and return
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { db, posts } from "@repo/db"
+import { eq } from "drizzle-orm"
+declare const postId: string
+// ---cut---
 const [updated] = await db
   .update(posts)
   .set({ published: true })
@@ -163,7 +204,12 @@ const [updated] = await db
 
 ## Delete
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { db, sessions } from "@repo/db"
+import { eq } from "drizzle-orm"
+declare const userId: string
+// ---cut---
 await db
   .delete(sessions)
   .where(eq(sessions.userId, userId))
@@ -171,7 +217,13 @@ await db
 
 ### Soft delete pattern
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { pgTable, text, timestamp } from "drizzle-orm/pg-core"
+import { eq, isNull } from "drizzle-orm"
+declare const db: { update: (t: unknown) => { set: (v: unknown) => { where: (c: unknown) => Promise<void> } }; select: () => { from: (t: unknown) => { where: (c: unknown) => Promise<unknown[]> } } }
+declare const postId: string
+// ---cut---
 // Add deletedAt to schema
 export const posts = pgTable("Post", {
   // ...
@@ -195,7 +247,11 @@ const activePosts = await db
 
 ### Inner join
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { db, posts, users } from "@repo/db"
+import { eq } from "drizzle-orm"
+// ---cut---
 const postsWithAuthors = await db
   .select({
     post: posts,
@@ -207,7 +263,11 @@ const postsWithAuthors = await db
 
 ### Left join
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { db, posts, users } from "@repo/db"
+import { eq } from "drizzle-orm"
+// ---cut---
 const usersWithPosts = await db
   .select()
   .from(users)
@@ -216,7 +276,9 @@ const usersWithPosts = await db
 
 ## Aggregations
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { db, users, posts } from "@repo/db"
 import { count, sum, avg } from "drizzle-orm"
 
 // Count
@@ -236,7 +298,12 @@ const postsByAuthor = await db
 
 ## Transactions
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { db, teams, teamMembers } from "@repo/db"
+declare const teamId: string
+declare const userId: string
+// ---cut---
 await db.transaction(async (tx) => {
   const [team] = await tx
     .insert(teams)
@@ -255,7 +322,9 @@ await db.transaction(async (tx) => {
 
 For complex queries:
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { db } from "@repo/db"
 import { sql } from "drizzle-orm"
 
 const result = await db.execute(sql`
@@ -268,7 +337,8 @@ const result = await db.execute(sql`
 
 ### Query wrapper functions
 
-```tsx
+```tsx twoslash
+// @noErrors
 import { db, users, type User } from "@repo/db"
 import { eq } from "drizzle-orm"
 
@@ -291,7 +361,8 @@ export async function getUserByEmail(email: string): Promise<User | null> {
 
 ### In Server Components
 
-```tsx title="app/dashboard/page.tsx"
+```tsx twoslash title="app/dashboard/page.tsx"
+// @noErrors
 import { db, users } from "@repo/db"
 import { getSession } from "@repo/auth/server"
 import { eq } from "drizzle-orm"

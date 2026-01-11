@@ -40,7 +40,8 @@ packages/auth/
 
 Create your Better Auth instance in `packages/auth/src/lib/auth.ts`:
 
-```ts title="packages/auth/src/lib/auth.ts"
+```ts twoslash title="packages/auth/src/lib/auth.ts"
+// @noErrors
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { nextCookies } from "better-auth/next-js"
@@ -79,7 +80,8 @@ export const auth = betterAuth({
 
 Export server utilities in `packages/auth/src/server.ts`:
 
-```ts title="packages/auth/src/server.ts"
+```ts twoslash title="packages/auth/src/server.ts"
+// @noErrors
 import { toNextJsHandler } from "better-auth/next-js"
 import { headers } from "next/headers"
 import { auth } from "./lib/auth"
@@ -109,7 +111,8 @@ export async function withAuth() {
 
 Add the auth handler route in your Next.js app:
 
-```ts title="apps/web/app/auth/[...all]/route.ts"
+```ts twoslash title="apps/web/app/auth/[...all]/route.ts"
+// @noErrors
 import { handler } from "@repo/auth/server"
 
 export const { GET, POST } = handler()
@@ -121,7 +124,8 @@ export const { GET, POST } = handler()
 
 Set up the Better Auth client in `packages/auth/src/index.ts`:
 
-```ts title="packages/auth/src/index.ts"
+```ts twoslash title="packages/auth/src/index.ts"
+// @noErrors
 import { emailOTPClient } from "better-auth/client/plugins"
 import { createAuthClient } from "better-auth/react"
 
@@ -138,7 +142,8 @@ export const authClient = createAuthClient({
 
 Wrap the StartupKit AuthProvider in `packages/auth/src/components/provider.tsx`:
 
-```tsx title="packages/auth/src/components/provider.tsx"
+```tsx twoslash title="packages/auth/src/components/provider.tsx"
+// @noErrors
 "use client"
 
 import { AuthProvider as StartupKitAuthProvider } from "@startupkit/auth"
@@ -164,7 +169,8 @@ export function AuthProvider({ children, user }: AuthProviderProps) {
 
 Wrap your app with the AuthProvider:
 
-```tsx title="apps/web/app/providers.tsx"
+```tsx twoslash title="apps/web/app/providers.tsx"
+// @noErrors
 "use client"
 
 import { AuthProvider } from "@repo/auth"
@@ -184,7 +190,8 @@ export function Providers({ children, user }: ProvidersProps) {
 }
 ```
 
-```tsx title="apps/web/app/layout.tsx"
+```tsx twoslash title="apps/web/app/layout.tsx"
+// @noErrors
 import { withAuth } from "@repo/auth/server"
 import { Providers } from "./providers"
 

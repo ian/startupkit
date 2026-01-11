@@ -26,7 +26,8 @@ Sessions refresh automatically when users are active.
 
 ## Customizing Session Duration
 
-```tsx title="lib/auth.ts"
+```tsx twoslash title="lib/auth.ts"
+// @noErrors
 import { betterAuth } from "better-auth"
 
 export const auth = betterAuth({
@@ -51,7 +52,12 @@ export const auth = betterAuth({
 
 Sessions are stored in your database via the Drizzle adapter:
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { drizzleAdapter } from "better-auth/adapters/drizzle"
+declare const db: unknown
+declare const sessionsTable: unknown
+// ---cut---
 database: drizzleAdapter(db, {
   provider: "pg",
   schema: {
@@ -72,7 +78,8 @@ The sessions table stores:
 
 ### In Server Components
 
-```tsx
+```tsx twoslash
+// @noErrors
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
 
@@ -100,7 +107,11 @@ export function Component() {
 
 ### Session Metadata
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
+// ---cut---
 const session = await auth.api.getSession({
   headers: await headers()
 })
@@ -119,7 +130,8 @@ console.log(session.session)
 
 ### Sign Out Current Session
 
-```tsx
+```tsx twoslash
+// @noErrors
 "use client"
 
 import { useAuth } from "@startupkit/auth"
@@ -135,7 +147,8 @@ export function LogoutButton() {
 
 For "sign out everywhere" functionality:
 
-```tsx
+```tsx twoslash
+// @noErrors
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
 
@@ -167,7 +180,10 @@ This ensures active users stay logged in.
 
 Better Auth uses secure HTTP-only cookies:
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { betterAuth } from "better-auth"
+// ---cut---
 export const auth = betterAuth({
   // Cookies are configured automatically, but you can customize:
   advanced: {
@@ -193,9 +209,14 @@ export const auth = betterAuth({
 
 Users can have multiple active sessions (different devices):
 
-```tsx
+```tsx twoslash
+// @noErrors
 import { sessions } from "@repo/db/schema"
-
+declare const db: { select: () => { from: (t: unknown) => { where: (c: unknown) => Promise<{ id: string; userAgent: string; ipAddress: string }[]> } } }
+declare const eq: (a: unknown, b: unknown) => unknown
+declare const user: { id: string }
+declare function revokeSession(id: string): void
+// ---cut---
 // Get all sessions for current user
 const userSessions = await db.select()
   .from(sessions)
@@ -220,7 +241,13 @@ const userSessions = await db.select()
 
 Track IP for security monitoring:
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
+import { track } from "@repo/analytics/server"
+declare const currentIp: string
+// ---cut---
 const session = await auth.api.getSession({
   headers: await headers()
 })
@@ -239,7 +266,11 @@ if (session.session.ipAddress !== currentIp) {
 
 For sensitive actions, require fresh authentication:
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
+// ---cut---
 export async function sensitiveAction() {
   const session = await auth.api.getSession({
     headers: await headers()
@@ -267,7 +298,10 @@ SELECT * FROM "Session" WHERE "userId" = 'user_123';
 
 ### Log Session Events
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { betterAuth } from "better-auth"
+// ---cut---
 export const auth = betterAuth({
   hooks: {
     after: async (ctx) => {

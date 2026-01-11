@@ -7,7 +7,8 @@ Your database schema is defined in `packages/db/src/schema.ts`. Drizzle uses Typ
 
 ## Defining Tables
 
-```tsx title="packages/db/src/schema.ts"
+```tsx twoslash title="packages/db/src/schema.ts"
+// @noErrors
 import {
   pgTable,
   text,
@@ -16,6 +17,7 @@ import {
   varchar,
   index
 } from "drizzle-orm/pg-core"
+declare const users: { id: unknown }
 
 export const posts = pgTable("Post", {
   id: text("id").primaryKey(),
@@ -50,7 +52,9 @@ Common PostgreSQL column types:
 
 Define PostgreSQL enums for constrained values:
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { pgTable, text } from "drizzle-orm/pg-core"
 import { pgEnum } from "drizzle-orm/pg-core"
 
 export const statusEnum = pgEnum("status", ["draft", "published", "archived"])
@@ -65,8 +69,12 @@ export const posts = pgTable("Post", {
 
 Define relations for type-safe joins:
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { pgTable, text } from "drizzle-orm/pg-core"
 import { relations } from "drizzle-orm"
+declare const users: { id: unknown }
+declare const comments: unknown
 
 export const posts = pgTable("Post", {
   id: text("id").primaryKey(),
@@ -86,7 +94,10 @@ export const postsRelations = relations(posts, ({ one, many }) => ({
 
 Add indexes for frequently queried columns:
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { pgTable, text, timestamp, index } from "drizzle-orm/pg-core"
+// ---cut---
 export const posts = pgTable("Post", {
   id: text("id").primaryKey(),
   slug: text("slug").notNull(),
@@ -101,8 +112,9 @@ export const posts = pgTable("Post", {
 
 ## Unique Constraints
 
-```tsx
-import { uniqueIndex } from "drizzle-orm/pg-core"
+```tsx twoslash
+// @noErrors
+import { pgTable, text, uniqueIndex } from "drizzle-orm/pg-core"
 
 export const posts = pgTable("Post", {
   id: text("id").primaryKey(),
@@ -116,15 +128,21 @@ export const posts = pgTable("Post", {
 
 Export TypeScript types from your schema:
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { pgTable, text } from "drizzle-orm/pg-core"
+const posts = pgTable("Post", { id: text("id").primaryKey() })
+// ---cut---
 export type Post = typeof posts.$inferSelect
 export type NewPost = typeof posts.$inferInsert
 ```
 
 Use these throughout your app:
 
-```tsx
+```tsx twoslash
+// @noErrors
 import type { Post, NewPost } from "@repo/db"
+import { db, posts } from "@repo/db"
 
 async function createPost(data: NewPost): Promise<Post> {
   const [post] = await db.insert(posts).values(data).returning()
@@ -136,16 +154,19 @@ async function createPost(data: NewPost): Promise<Post> {
 
 The starter includes these tables:
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { pgTable } from "drizzle-orm/pg-core"
+// ---cut---
 // User authentication
-export const users = pgTable("User", { ... })
-export const accounts = pgTable("Account", { ... })
-export const sessions = pgTable("Session", { ... })
-export const verifications = pgTable("Verification", { ... })
+export const users = pgTable("User", { /* ... */ })
+export const accounts = pgTable("Account", { /* ... */ })
+export const sessions = pgTable("Session", { /* ... */ })
+export const verifications = pgTable("Verification", { /* ... */ })
 
 // Team management
-export const teams = pgTable("Team", { ... })
-export const teamMembers = pgTable("TeamMember", { ... })
+export const teams = pgTable("Team", { /* ... */ })
+export const teamMembers = pgTable("TeamMember", { /* ... */ })
 ```
 
 All relations are pre-configured for the auth and team systems.

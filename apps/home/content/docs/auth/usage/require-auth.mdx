@@ -7,7 +7,8 @@ description: Protect pages by redirecting unauthenticated users
 
 ## Basic Usage
 
-```tsx title="app/dashboard/page.tsx"
+```tsx twoslash title="app/dashboard/page.tsx"
+// @noErrors
 import { requireAuth } from "@repo/auth/server"
 
 export default async function DashboardPage() {
@@ -21,7 +22,10 @@ If no session exists, the user is redirected to `/sign-in`.
 
 ## Custom Redirect Path
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { requireAuth } from "@repo/auth/server"
+// ---cut---
 const { user } = await requireAuth("/login")
 ```
 
@@ -29,7 +33,10 @@ const { user } = await requireAuth("/login")
 
 Returns the full session object:
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { requireAuth } from "@repo/auth/server"
+// ---cut---
 const { user, session } = await requireAuth()
 
 // user - The authenticated user
@@ -40,7 +47,8 @@ const { user, session } = await requireAuth()
 
 Protect all pages under a route group:
 
-```tsx title="app/(dashboard)/layout.tsx"
+```tsx twoslash title="app/(dashboard)/layout.tsx"
+// @noErrors
 import { requireAuth } from "@repo/auth/server"
 
 export default async function DashboardLayout({
@@ -65,7 +73,8 @@ All pages in `app/(dashboard)/` are now protected.
 
 Protect server actions:
 
-```tsx title="app/actions/profile.ts"
+```tsx twoslash title="app/actions/profile.ts"
+// @noErrors
 "use server"
 
 import { requireAuth } from "@repo/auth/server"
@@ -85,7 +94,8 @@ export async function updateProfile(data: { name: string }) {
 
 Build on `requireAuth` for role checks:
 
-```tsx title="lib/auth-utils.ts"
+```tsx twoslash title="lib/auth-utils.ts"
+// @noErrors
 import { requireAuth } from "@repo/auth/server"
 import { redirect } from "next/navigation"
 
@@ -102,7 +112,8 @@ export async function requireAdmin() {
 
 Use in pages:
 
-```tsx title="app/admin/page.tsx"
+```tsx twoslash title="app/admin/page.tsx"
+// @noErrors
 import { requireAdmin } from "@/lib/auth-utils"
 
 export default async function AdminPage() {

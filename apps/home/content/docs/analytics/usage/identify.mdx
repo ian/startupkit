@@ -9,7 +9,8 @@ Associate analytics events with a user identity.
 
 Use the `useAnalytics` hook in client components:
 
-```tsx
+```tsx twoslash
+// @noErrors
 import { useAnalytics } from "@repo/analytics"
 
 const { identify } = useAnalytics()
@@ -28,7 +29,8 @@ identify(userId: string | null, traits?: Record<string, unknown>)
 
 ### Examples
 
-```tsx
+```tsx twoslash
+// @noErrors
 "use client"
 
 import { useAnalytics } from "@repo/analytics"
@@ -56,7 +58,12 @@ export function useSignIn() {
 
 The `AuthProvider` can automatically identify users:
 
-```tsx title="app/providers.tsx"
+```tsx twoslash title="app/providers.tsx"
+// @noErrors
+declare const children: React.ReactNode
+declare function identify(userId: string, traits: Record<string, unknown>): void
+declare function AuthProvider(props: { onIdentify: (user: { id: string; email: string; name: string }) => void; children: React.ReactNode }): JSX.Element
+// ---cut---
 <AuthProvider
   onIdentify={(user) => {
     identify(user.id, {
@@ -73,7 +80,8 @@ The `AuthProvider` can automatically identify users:
 
 Server-side identification happens automatically when you include user traits in `track()` calls:
 
-```tsx
+```tsx twoslash
+// @noErrors
 import { track } from "@repo/analytics/server"
 ```
 
@@ -81,7 +89,11 @@ import { track } from "@repo/analytics/server"
 
 PostHog automatically associates traits when you track events with a `userId`:
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { track } from "@repo/analytics/server"
+declare const user: { id: string; email: string; firstName: string; lastName: string }
+// ---cut---
 await track({
   event: "USER_SIGNED_UP",
   userId: user.id,
@@ -97,7 +109,8 @@ await track({
 
 #### After sign-up
 
-```tsx
+```tsx twoslash
+// @noErrors
 "use server"
 
 import { track } from "@repo/analytics/server"
@@ -122,7 +135,8 @@ export async function signUp(email: string) {
 
 #### Plan upgrade
 
-```tsx
+```tsx twoslash
+// @noErrors
 "use server"
 
 import { track } from "@repo/analytics/server"

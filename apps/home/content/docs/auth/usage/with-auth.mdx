@@ -7,7 +7,8 @@ description: Get the current session without redirecting
 
 ## Basic Usage
 
-```tsx title="app/page.tsx"
+```tsx twoslash title="app/page.tsx"
+// @noErrors
 import { withAuth } from "@repo/auth/server"
 
 export default async function HomePage() {
@@ -29,7 +30,10 @@ export default async function HomePage() {
 
 Always returns an object with `user` and `session`:
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { withAuth } from "@repo/auth/server"
+// ---cut---
 const { user, session } = await withAuth()
 
 // Authenticated: { user: User, session: Session }
@@ -40,7 +44,8 @@ const { user, session } = await withAuth()
 
 Protect API routes and return proper HTTP status:
 
-```tsx title="app/api/user/route.ts"
+```tsx twoslash title="app/api/user/route.ts"
+// @noErrors
 import { withAuth } from "@repo/auth/server"
 import { NextResponse } from "next/server"
 
@@ -62,7 +67,8 @@ export async function GET() {
 
 Show different content based on auth state:
 
-```tsx title="app/pricing/page.tsx"
+```tsx twoslash title="app/pricing/page.tsx"
+// @noErrors
 import { withAuth } from "@repo/auth/server"
 
 export default async function PricingPage() {
@@ -85,7 +91,8 @@ export default async function PricingPage() {
 
 Pass user to client providers:
 
-```tsx title="app/layout.tsx"
+```tsx twoslash title="app/layout.tsx"
+// @noErrors
 import { withAuth } from "@repo/auth/server"
 import { Providers } from "./providers"
 
@@ -112,7 +119,8 @@ export default async function RootLayout({
 
 For client-side auth checks, use the `useAuth` hook instead:
 
-```tsx
+```tsx twoslash
+// @noErrors
 "use client"
 
 import { useAuth } from "@repo/auth"
@@ -134,7 +142,8 @@ export function Header() {
 
 For edge-based checks, use Next.js middleware:
 
-```tsx title="middleware.ts"
+```tsx twoslash title="middleware.ts"
+// @noErrors
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 

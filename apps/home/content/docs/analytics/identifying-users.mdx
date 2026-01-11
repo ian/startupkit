@@ -7,7 +7,8 @@ Connect analytics events to specific users with the `identify` function. This en
 
 ## Basic Usage
 
-```tsx
+```tsx twoslash
+// @noErrors
 "use client"
 
 import { useAnalytics } from "@repo/analytics"
@@ -51,7 +52,8 @@ Call `identify()` when:
 
 ### After Sign In
 
-```tsx
+```tsx twoslash
+// @noErrors
 "use client"
 
 import { useAuth } from "@startupkit/auth"
@@ -80,7 +82,8 @@ export function AuthIdentifier() {
 
 A common pattern is to identify users in your providers:
 
-```tsx title="app/providers.tsx"
+```tsx twoslash title="app/providers.tsx"
+// @noErrors
 "use client"
 
 import type { ReactNode } from "react"
@@ -117,7 +120,12 @@ export function Providers({ children, user, flags }: ProvidersProps) {
 
 Include properties that help segment your users:
 
-```typescript
+```typescript twoslash
+// @noErrors
+declare function identify(userId: string, traits: Record<string, unknown>): void
+declare const user: { id: string; email: string; name: string; createdAt: string }
+declare const team: { id: string }
+// ---cut---
 identify(user.id, {
   // Core info
   email: user.email,
@@ -153,7 +161,12 @@ identify(user.id, {
 
 Call `identify()` again when user properties change:
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { useAnalytics } from "@repo/analytics"
+import { useAuth } from "@repo/auth"
+declare function upgradePlan(plan: string): Promise<void>
+// ---cut---
 function PlanUpgrade({ newPlan }) {
   const { identify } = useAnalytics()
   const { user } = useAuth()
@@ -176,7 +189,8 @@ function PlanUpgrade({ newPlan }) {
 
 Clear the user identity when they sign out:
 
-```tsx
+```tsx twoslash
+// @noErrors
 "use client"
 
 import { useAnalytics } from "@repo/analytics"
@@ -212,7 +226,11 @@ This means pre-signup activity is preserved and attributed to the user.
 
 Be mindful of what you include in traits:
 
-```typescript
+```typescript twoslash
+// @noErrors
+declare function identify(userId: string, traits: Record<string, unknown>): void
+declare const user: { id: string; plan: string; role: string; createdAt: string; ssn: string; card: string; password: string; address: string }
+// ---cut---
 // Good - necessary for analytics
 identify(user.id, {
   plan: user.plan,

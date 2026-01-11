@@ -9,7 +9,8 @@ Track custom events with optional properties.
 
 Use the `useAnalytics` hook in client components:
 
-```tsx
+```tsx twoslash
+// @noErrors
 import { useAnalytics } from "@repo/analytics"
 
 const { track } = useAnalytics()
@@ -28,7 +29,8 @@ track(event: string, properties?: Record<string, unknown>)
 
 ### Examples
 
-```tsx
+```tsx twoslash
+// @noErrors
 "use client"
 
 import { useAnalytics } from "@repo/analytics"
@@ -44,7 +46,11 @@ export function SignupButton() {
 }
 ```
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { useAnalytics } from "@repo/analytics"
+const { track } = useAnalytics()
+// ---cut---
 track("PURCHASE_COMPLETED", {
   amount: 99.99,
   currency: "USD",
@@ -56,7 +62,8 @@ track("PURCHASE_COMPLETED", {
 
 Use the `track` function from `@repo/analytics/server` in Server Actions, API routes, or server components:
 
-```tsx
+```tsx twoslash
+// @noErrors
 import { track } from "@repo/analytics/server"
 ```
 
@@ -68,12 +75,12 @@ await track(event: TrackableEvent | TrackableEvent[])
 
 Server-side tracking requires a `userId` or `anonymousId`:
 
-```tsx
+```tsx twoslash
 interface TrackableEvent {
   event: string
   userId: string
   anonymousId?: string
-  [key: string]: unknown  // Additional properties
+  [key: string]: unknown
 }
 ```
 
@@ -81,7 +88,8 @@ interface TrackableEvent {
 
 #### Server Action
 
-```tsx
+```tsx twoslash
+// @noErrors
 "use server"
 
 import { track } from "@repo/analytics/server"
@@ -105,7 +113,8 @@ export async function createTeam(name: string) {
 
 #### API Route
 
-```tsx title="app/api/purchase/route.ts"
+```tsx twoslash title="app/api/purchase/route.ts"
+// @noErrors
 import { track } from "@repo/analytics/server"
 
 export async function POST(request: Request) {
@@ -124,7 +133,12 @@ export async function POST(request: Request) {
 
 #### Batch tracking
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { track } from "@repo/analytics/server"
+declare const user: { id: string }
+declare const team: { id: string }
+// ---cut---
 await track([
   { event: "TEAM_CREATED", userId: user.id, teamId: team.id },
   { event: "TEAM_JOINED", userId: user.id, teamId: team.id }

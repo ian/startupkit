@@ -7,7 +7,8 @@ Track user actions and product usage with the `useAnalytics` hook.
 
 ## Basic Usage
 
-```tsx
+```tsx twoslash
+// @noErrors
 "use client"
 
 import { useAnalytics } from "@repo/analytics"
@@ -45,7 +46,10 @@ track(event: string, properties?: Record<string, unknown>)
 
 Use `ALL_CAPS_SNAKE_CASE` for event names:
 
-```typescript
+```typescript twoslash
+// @noErrors
+declare function track(event: string, properties?: Record<string, unknown>): void
+// ---cut---
 // Good
 track("USER_SIGNED_UP")
 track("PLAN_UPGRADED")
@@ -66,7 +70,10 @@ This convention:
 
 ### User Actions
 
-```typescript
+```typescript twoslash
+// @noErrors
+declare function track(event: string, properties?: Record<string, unknown>): void
+// ---cut---
 track("BUTTON_CLICKED", { buttonId: "cta", page: "home" })
 track("FORM_SUBMITTED", { formId: "contact", success: true })
 track("LINK_CLICKED", { url: "/pricing", external: false })
@@ -74,7 +81,10 @@ track("LINK_CLICKED", { url: "/pricing", external: false })
 
 ### Feature Usage
 
-```typescript
+```typescript twoslash
+// @noErrors
+declare function track(event: string, properties?: Record<string, unknown>): void
+// ---cut---
 track("FEATURE_USED", { feature: "dark_mode", enabled: true })
 track("SEARCH_PERFORMED", { query: "billing", results: 5 })
 track("FILTER_APPLIED", { filter: "date", value: "last_7_days" })
@@ -82,7 +92,10 @@ track("FILTER_APPLIED", { filter: "date", value: "last_7_days" })
 
 ### Business Events
 
-```typescript
+```typescript twoslash
+// @noErrors
+declare function track(event: string, properties?: Record<string, unknown>): void
+// ---cut---
 track("PLAN_SELECTED", { plan: "pro", interval: "monthly" })
 track("CHECKOUT_STARTED", { plan: "pro", amount: 29 })
 track("SUBSCRIPTION_CREATED", { plan: "pro", trial: false })
@@ -90,7 +103,10 @@ track("SUBSCRIPTION_CREATED", { plan: "pro", trial: false })
 
 ### Errors
 
-```typescript
+```typescript twoslash
+// @noErrors
+declare function track(event: string, properties?: Record<string, unknown>): void
+// ---cut---
 track("ERROR_OCCURRED", { 
   code: "PAYMENT_FAILED",
   message: "Card declined"
@@ -101,7 +117,12 @@ track("ERROR_OCCURRED", {
 
 Include relevant context with every event:
 
-```typescript
+```typescript twoslash
+// @noErrors
+declare function track(event: string, properties?: Record<string, unknown>): void
+declare const doc: { id: string }
+declare const team: { id: string }
+// ---cut---
 track("DOCUMENT_CREATED", {
   documentId: doc.id,
   documentType: "invoice",
@@ -119,7 +140,8 @@ Properties help you:
 
 For events that should fire when a page loads:
 
-```tsx
+```tsx twoslash
+// @noErrors
 "use client"
 
 import { useAnalytics } from "@repo/analytics"
@@ -153,7 +175,13 @@ Example transformations:
 
 ### Disable Auto Page Tracking
 
-```tsx
+```tsx twoslash
+// @noErrors
+declare const flags: Record<string, boolean | string>
+declare const plugins: unknown[]
+declare const children: React.ReactNode
+declare function AnalyticsProvider(props: { flags: Record<string, boolean | string>; plugins: unknown[]; autoPageTracking?: boolean; children: React.ReactNode }): JSX.Element
+// ---cut---
 <AnalyticsProvider 
   flags={flags} 
   plugins={plugins}
@@ -167,7 +195,7 @@ Example transformations:
 
 For better type safety, define your events:
 
-```typescript title="types/analytics.ts"
+```typescript twoslash title="types/analytics.ts"
 interface AnalyticsEvents {
   SIGNUP_CLICKED: { source: string }
   PLAN_SELECTED: { plan: string; interval: "monthly" | "yearly" }

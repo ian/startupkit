@@ -9,7 +9,8 @@ Control feature rollouts and run experiments with feature flags. Flags are passe
 
 ### 1. Fetch Flags Server-Side
 
-```tsx title="app/layout.tsx"
+```tsx twoslash title="app/layout.tsx"
+// @noErrors
 import type { ReactNode } from "react"
 import { getFeatureFlags } from "@repo/analytics/server"
 import { auth } from "@/lib/auth"
@@ -35,7 +36,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
 
 ### 2. Pass to Provider
 
-```tsx title="app/providers.tsx"
+```tsx twoslash title="app/providers.tsx"
+// @noErrors
 "use client"
 
 import { AnalyticsProvider } from "@repo/analytics"
@@ -56,7 +58,8 @@ export function Providers({ children, flags }) {
 
 Check a single flag:
 
-```tsx
+```tsx twoslash
+// @noErrors
 "use client"
 
 import { useFlag } from "@repo/analytics"
@@ -74,7 +77,8 @@ export function NewFeature() {
 
 Access all flags at once:
 
-```tsx
+```tsx twoslash
+// @noErrors
 "use client"
 
 import { useAnalytics } from "@repo/analytics"
@@ -95,7 +99,7 @@ export function FeatureGate() {
 
 Flags can be boolean or string values:
 
-```typescript
+```typescript twoslash
 interface Flags {
   "new-dashboard": boolean       // On/off
   "pricing-variant": "A" | "B"   // A/B test
@@ -105,7 +109,10 @@ interface Flags {
 
 ### Boolean Flags
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { useFlag } from "@repo/analytics"
+// ---cut---
 const showBanner = useFlag("show-banner")
 
 if (showBanner) {
@@ -115,7 +122,10 @@ if (showBanner) {
 
 ### String/Variant Flags
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { useFlag } from "@repo/analytics"
+// ---cut---
 const variant = useFlag("checkout-variant")
 
 switch (variant) {
@@ -132,7 +142,8 @@ switch (variant) {
 
 Check flags in Server Components or API routes:
 
-```tsx title="app/dashboard/page.tsx"
+```tsx twoslash title="app/dashboard/page.tsx"
+// @noErrors
 import { getFeatureFlags } from "@repo/analytics/server"
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
@@ -153,7 +164,7 @@ export default async function DashboardPage() {
 
 Define your flags for better TypeScript support:
 
-```typescript title="types/flags.ts"
+```typescript twoslash title="types/flags.ts"
 export interface Flags {
   "new-dashboard": boolean
   "dark-mode": boolean
@@ -163,7 +174,8 @@ export interface Flags {
 
 Then use with the hook:
 
-```tsx
+```tsx twoslash
+// @noErrors
 import { useAnalytics } from "@repo/analytics"
 import type { Flags } from "@/types/flags"
 
@@ -183,7 +195,10 @@ export function MyComponent() {
 
 Roll out a feature to a percentage of users:
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { useFlag } from "@repo/analytics"
+// ---cut---
 // In PostHog, set "new-feature" to 10% rollout
 const hasNewFeature = useFlag("new-feature")
 
@@ -194,7 +209,10 @@ return hasNewFeature ? <NewFeature /> : <OldFeature />
 
 Gate features for beta users:
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { useFlag } from "@repo/analytics"
+// ---cut---
 const isBetaUser = useFlag("beta-access")
 
 if (isBetaUser) {
@@ -211,7 +229,8 @@ if (isBetaUser) {
 
 Run experiments:
 
-```tsx
+```tsx twoslash
+// @noErrors
 "use client"
 
 import { useEffect } from "react"
@@ -236,7 +255,10 @@ function PricingExperiment() {
 
 Disable a feature instantly:
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { useFlag } from "@repo/analytics"
+// ---cut---
 const isFeatureEnabled = useFlag("feature-x-enabled")
 
 if (!isFeatureEnabled) {
@@ -250,7 +272,10 @@ return <FeatureX />
 
 When flags are loading or unavailable:
 
-```tsx
+```tsx twoslash
+// @noErrors
+import { useFlag } from "@repo/analytics"
+// ---cut---
 const isEnabled = useFlag("new-feature")
 
 // isEnabled is null if flags haven't loaded
@@ -269,7 +294,8 @@ return <DefaultFeature />
 
 If using PostHog, flags are fetched automatically:
 
-```tsx title="lib/analytics-server.ts"
+```tsx twoslash title="lib/analytics-server.ts"
+// @noErrors
 import { PostHog } from "posthog-node"
 
 const posthog = new PostHog(process.env.POSTHOG_API_KEY!)
