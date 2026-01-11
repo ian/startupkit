@@ -23,23 +23,23 @@ const twoslashTypes = fs.readFileSync(
 export default defineConfig({
 	mdxOptions: {
 		rehypeCodeOptions: {
-			themes: {
-				light: "github-dark",
-				dark: "github-dark"
-			},
+		themes: {
+			light: "github-light",
+			dark: "github-dark"
+		},
 			transformers: [
 				...(rehypeCodeDefaultOptions.transformers ?? []),
 				transformerTwoslash({
-					typesCache: createFileSystemTypesCache(),
+					cache: createFileSystemTypesCache(),
 					twoslashOptions: {
 						compilerOptions: {
-							moduleResolution: 100, // bundler
-							module: 99, // esnext
-							target: 9, // es2022
+							moduleResolution: 100,
+							module: 99,
+							target: 9,
 							strict: true,
 							esModuleInterop: true,
 							skipLibCheck: true,
-							jsx: 4 // react-jsx
+							jsx: 4
 						},
 						extraFiles: {
 							"startupkit.d.ts": twoslashTypes
