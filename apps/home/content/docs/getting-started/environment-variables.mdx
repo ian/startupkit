@@ -32,12 +32,10 @@ These variables are used across the application:
 |----------|----------|-------------|
 | `DATABASE_URL` | Yes | PostgreSQL connection string |
 | `BETTER_AUTH_SECRET` | Yes | Secret key for signing auth tokens |
-| `NEXT_PUBLIC_BASE_URL` | Recommended | Public URL of your app |
 
 ```bash title=".env.local"
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/myapp
 BETTER_AUTH_SECRET=your-secret-key-here
-NEXT_PUBLIC_BASE_URL=http://localhost:3000
 ```
 
 Generate a secure auth secret:

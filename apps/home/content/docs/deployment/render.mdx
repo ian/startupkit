@@ -31,7 +31,6 @@ Add environment variables in the Environment tab:
 ```bash
 DATABASE_URL=postgresql://...
 BETTER_AUTH_SECRET=your-secret-key
-NEXT_PUBLIC_BASE_URL=https://your-app.onrender.com
 NODE_VERSION=20
 ```
 
@@ -84,8 +83,6 @@ services:
           property: connectionString
       - key: BETTER_AUTH_SECRET
         generateValue: true
-      - key: NEXT_PUBLIC_BASE_URL
-        value: https://your-app.onrender.com
 
 databases:
   - name: mydb

@@ -157,10 +157,8 @@ Block crawlers in non-production:
 import { generateRobots } from "@startupkit/seo"
 
 export default function robots() {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL!
-
-  // Block all crawlers in staging/preview
-  if (baseUrl.includes("staging") || baseUrl.includes("vercel.app")) {
+  // Block all crawlers in preview deployments
+  if (process.env.VERCEL_ENV === "preview") {
     return {
       rules: {
         userAgent: "*",
@@ -169,7 +167,7 @@ export default function robots() {
     }
   }
 
-  return generateRobots({ baseUrl })
+  return generateRobots({ baseUrl: "https://myapp.com" })
 }
 ```
 
