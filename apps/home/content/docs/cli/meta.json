@@ -1,5 +1,12 @@
 {
 	"title": "CLI",
-	"pages": ["index", "init", "add", "upgrade", "agents", "troubleshooting"],
+	"pages": [
+		"index",
+		"init",
+		"add",
+		"upgrade",
+		"agents",
+		"troubleshooting"
+	],
 	"defaultOpen": true
 }
