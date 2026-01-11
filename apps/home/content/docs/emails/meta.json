@@ -1,0 +1,9 @@
+{
+	"title": "Emails",
+	"pages": [
+		"index",
+		"templates",
+		"sending"
+	],
+	"defaultOpen": false
+}

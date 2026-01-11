@@ -13,6 +13,9 @@
 		"---Packages---",
 		"analytics",
 		"auth",
-		"seo"
+		"db",
+		"emails",
+		"seo",
+		"ui"
 	]
 }

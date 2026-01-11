@@ -1,0 +1,118 @@
+---
+title: Emails Overview
+description: Transactional emails with React Email and Resend
+---
+
+The `@repo/emails` package provides a type-safe email system using [React Email](https://react.email) for templates and [Resend](https://resend.com) for delivery.
+
+## Architecture
+
+Your project imports from `@repo/emails` (a local workspace package):
+
+```
+your-project/
+├── packages/
+│   └── emails/           # @repo/emails - local package
+│       └── src/
+│           ├── index.tsx       # sendEmail function
+│           ├── lib/
+│           │   └── preview-email.ts
+│           └── templates/      # Email templates
+│               ├── team-invite.tsx
+│               └── verify-code.tsx
+└── apps/
+    └── web/              # Imports from @repo/emails
+```
+
+This architecture means:
+- **React components as emails** - Build emails with JSX and Tailwind
+- **Type-safe props** - Full TypeScript support for template data
+- **Local preview** - Preview emails in browser during development
+- **Easy customization** - Add or modify templates as needed
+
+## Features
+
+- **React Email** - Build emails with React components
+- **Tailwind CSS** - Style emails with familiar utility classes
+- **Type-safe templates** - TypeScript props for each email type
+- **Dev preview** - Opens emails in browser during development
+- **Resend integration** - Production-ready email delivery
+
+## Quick Start
+
+### Send an email
+
+```tsx title="app/api/invite/route.ts"
+import { sendEmail } from "@repo/emails"
+
+export async function POST(request: Request) {
+  const { email, teamName, inviteLink } = await request.json()
+
+  const { data, error } = await sendEmail({
+    template: "TeamInvite",
+    from: "noreply@myapp.com",
+    to: email,
+    subject: `You've been invited to ${teamName}`,
+    props: {
+      email,
+      invitedByName: "Alex",
+      teamName,
+      inviteLink
+    }
+  })
+
+  if (error) {
+    return Response.json({ error: error.message }, { status: 500 })
+  }
+
+  return Response.json({ success: true })
+}
+```
+
+## Environment Setup
+
+Add your Resend API key to `.env.local`:
+
+```bash title=".env.local"
+RESEND_API_KEY="re_xxxxxxxxxxxxx"
+```
+
+Get your API key from [resend.com/api-keys](https://resend.com/api-keys).
+
+## Development Mode
+
+In development, emails are not sent to Resend. Instead, they open in your browser for preview:
+
+```bash
+📧 Email preview opened in browser: /tmp/email-previews/email-1234567890.html
+```
+
+This allows you to iterate on templates without sending real emails or using API credits.
+
+To force sending emails in development:
+
+```bash title=".env.local"
+RESEND_ENABLED=true
+```
+
+## Preview Templates
+
+Run the React Email dev server to preview templates with hot reload:
+
+```bash title="packages/emails"
+pnpm dev
+```
+
+Opens at `http://localhost:5001` with a visual editor for your templates.
+
+## Included Templates
+
+| Template | Purpose |
+|----------|---------|
+| `TeamInvite` | Team invitation email with accept button |
+| `VerifyCode` | OTP/verification code email |
+
+## Next Steps
+
+- [Email templates](/docs/emails/templates) - Create and customize templates
+- [Sending emails](/docs/emails/sending) - API usage and patterns

@@ -1,0 +1,10 @@
+{
+	"title": "Database",
+	"pages": [
+		"index",
+		"schema",
+		"migrations",
+		"queries"
+	],
+	"defaultOpen": false
+}

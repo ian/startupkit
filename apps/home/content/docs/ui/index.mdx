@@ -1,0 +1,156 @@
+---
+title: UI Overview
+description: Pre-built components with Shadcn UI and Radix
+---
+
+The `@repo/ui` package provides a shared component library built on [Shadcn UI](https://ui.shadcn.com) and [Radix Primitives](https://www.radix-ui.com/).
+
+## Architecture
+
+Your project imports from `@repo/ui` (a local workspace package):
+
+```
+your-project/
+├── packages/
+│   └── ui/                # @repo/ui - local package
+│       └── src/
+│           ├── components/     # Shadcn components
+│           │   ├── button.tsx
+│           │   ├── input.tsx
+│           │   └── ...
+│           ├── hooks/          # Utility hooks
+│           ├── providers/      # Theme & alert providers
+│           ├── lib/
+│           │   └── utils.ts    # cn() helper
+│           └── styles/
+│               └── index.css   # Tailwind styles
+└── apps/
+    └── web/               # Imports from @repo/ui
+```
+
+This architecture means:
+- **Full ownership** - Customize any component to fit your needs
+- **Shared across apps** - Use the same components in all apps
+- **Type-safe** - Full TypeScript support with proper exports
+- **Storybook included** - Visual component documentation
+
+## Features
+
+- **40+ components** - Buttons, forms, dialogs, tables, and more
+- **Accessible** - Built on Radix primitives with ARIA support
+- **Dark mode** - Theme support via next-themes
+- **Tailwind CSS** - Consistent styling with utility classes
+- **Storybook** - Component documentation and testing
+
+## Quick Start
+
+### Import components
+
+```tsx title="app/page.tsx"
+import { Button } from "@repo/ui/components/button"
+import { Input } from "@repo/ui/components/input"
+import { Card, CardHeader, CardTitle, CardContent } from "@repo/ui/components/card"
+
+export default function Page() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Sign In</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <Input placeholder="Email" type="email" />
+        <Button>Continue</Button>
+      </CardContent>
+    </Card>
+  )
+}
+```
+
+### Use the cn utility
+
+```tsx
+import { cn } from "@repo/ui/utils"
+
+<div className={cn(
+  "rounded-lg p-4",
+  isActive && "bg-primary text-primary-foreground",
+  className
+)}>
+  Content
+</div>
+```
+
+### Add providers
+
+```tsx title="app/providers.tsx"
+"use client"
+
+import { UIProvider } from "@repo/ui/providers"
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <UIProvider>
+      {children}
+    </UIProvider>
+  )
+}
+```
+
+The `UIProvider` includes:
+- **ThemeProvider** - Light/dark mode support
+- **AlertProvider** - Confirmation dialogs
+- **Toaster** - Toast notifications (sonner)
+
+## Import Patterns
+
+Components use direct path imports:
+
+```tsx
+// Individual components
+import { Button } from "@repo/ui/components/button"
+import { Dialog, DialogContent } from "@repo/ui/components/dialog"
+
+// Utilities
+import { cn } from "@repo/ui/utils"
+
+// Hooks
+import { useIsMobile } from "@repo/ui/hooks"
+
+// Providers
+import { UIProvider, useAlert } from "@repo/ui/providers"
+
+// Styles (in your app's CSS)
+@import "@repo/ui/styles.css";
+```
+
+## Available Components
+
+| Category | Components |
+|----------|------------|
+| **Buttons** | Button, ButtonLink, Toggle, ToggleGroup |
+| **Forms** | Input, Textarea, Select, Checkbox, Switch, Label, Form |
+| **Layout** | Card, Separator, ScrollArea, Collapsible |
+| **Feedback** | Alert, Skeleton, Spinner, Toast |
+| **Overlay** | Dialog, Drawer, Sheet, AlertDialog, DropdownMenu, Tooltip |
+| **Navigation** | Tabs, Breadcrumb, Sidebar |
+| **Data** | Table, Badge, Avatar |
+| **Content** | Accordion, Markdown |
+
+## Storybook
+
+Browse and test components with Storybook:
+
+```bash title="packages/ui"
+pnpm storybook
+```
+
+Opens at `http://localhost:6006` with:
+- All component variants
+- Interactive controls
+- Dark/light mode toggle
+- Documentation
+
+## Next Steps
+
+- [Components](/docs/ui/components) - Component usage and examples
+- [Theming](/docs/ui/theming) - Customize colors and styles

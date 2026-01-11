@@ -1,0 +1,109 @@
+---
+title: Database Overview
+description: Type-safe database access with Drizzle ORM
+---
+
+The `@repo/db` package provides type-safe database access using [Drizzle ORM](https://orm.drizzle.team/) with PostgreSQL.
+
+## Architecture
+
+StartupKit uses a local package architecture. Your project imports from `@repo/db` (a local workspace package), not directly from external packages:
+
+```
+your-project/
+├── packages/
+│   └── db/              # @repo/db - local package
+│       ├── src/
+│       │   ├── index.ts # Database client
+│       │   └── schema.ts # Your schema
+│       └── drizzle/     # Migrations
+└── apps/
+    └── web/             # Imports from @repo/db
+```
+
+This architecture means:
+- **Full control** - Modify the database layer to fit your needs
+- **Type safety** - Schema types are available throughout your app
+- **Single source of truth** - One schema definition for all apps
+
+## Features
+
+- **Drizzle ORM** - Type-safe queries with full TypeScript support
+- **PostgreSQL** - Production-ready relational database
+- **Connection pooling** - Optimized for serverless environments
+- **Migrations** - Version-controlled schema changes
+- **Drizzle Studio** - Visual database browser
+
+## Quick Start
+
+### Import the client
+
+```tsx title="app/api/users/route.ts"
+import { db, users } from "@repo/db"
+import { eq } from "drizzle-orm"
+
+export async function GET() {
+  const allUsers = await db.select().from(users)
+  return Response.json(allUsers)
+}
+```
+
+### Query with relations
+
+```tsx
+import { db, users, teams, teamMembers } from "@repo/db"
+
+const userWithTeams = await db.query.users.findFirst({
+  where: eq(users.id, userId),
+  with: {
+    memberships: {
+      with: {
+        team: true
+      }
+    }
+  }
+})
+```
+
+## Environment Setup
+
+Add your database connection string to `.env.local`:
+
+```bash title=".env.local"
+DATABASE_URL="postgresql://user:password@host:5432/database"
+```
+
+For local development, you can use:
+- [Neon](https://neon.tech) - Serverless Postgres (recommended)
+- [Supabase](https://supabase.com) - Postgres with extras
+- Local PostgreSQL via Docker
+
+## Available Scripts
+
+Run these from the `packages/db` directory:
+
+| Command | Description |
+|---------|-------------|
+| `pnpm db:generate` | Generate migrations from schema changes |
+| `pnpm db:migrate` | Apply pending migrations |
+| `pnpm db:push` | Push schema directly (dev only) |
+| `pnpm db:studio` | Open Drizzle Studio |
+
+## Included Schema
+
+The starter includes tables for authentication and teams:
+
+| Table | Purpose |
+|-------|---------|
+| `users` | User accounts |
+| `accounts` | OAuth provider accounts |
+| `sessions` | User sessions |
+| `teams` | Team/organization records |
+| `teamMembers` | Team membership with roles |
+| `verifications` | Email verification tokens |
+
+## Next Steps
+
+- [Schema definition](/docs/db/schema) - Define your data models
+- [Migrations](/docs/db/migrations) - Manage schema changes
+- [Queries](/docs/db/queries) - Query patterns and examples

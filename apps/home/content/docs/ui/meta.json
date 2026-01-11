@@ -1,0 +1,9 @@
+{
+	"title": "UI",
+	"pages": [
+		"index",
+		"components",
+		"theming"
+	],
+	"defaultOpen": false
+}

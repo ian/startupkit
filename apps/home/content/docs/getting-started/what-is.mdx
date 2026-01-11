@@ -4,7 +4,7 @@ description: Learn what StartupKit is and why it was built
 icon: CircleHelp
 ---
 
-StartupKit is an **application accelerator** for AI agents. It provides a complete foundation with authentication, analytics, database, and UI components pre-configured—all with clear patterns that AI coding tools can understand and extend.
+StartupKit is an **application accelerator** for AI agents. Built as a Turborepo monorepo, it provides a complete foundation with authentication, analytics, database, and UI components pre-configured—all with clear patterns that AI coding tools can understand and extend.
 
 ## The Problem
 
@@ -25,13 +25,12 @@ StartupKit gives you everything you need out of the box:
 
 | Feature | What You Get |
 |---------|--------------|
-| **Authentication** | Email OTP, OAuth providers, session management via Better Auth |
-| **Analytics** | Provider-agnostic tracking with PostHog, Google Analytics, OpenPanel plugins |
-| **Database** | Drizzle ORM with PostgreSQL, ready-to-use schemas |
-| **UI Components** | Full Shadcn/ui library pre-configured with Tailwind |
-| **Emails** | React Email templates with Resend integration |
-| **SEO** | Metadata, sitemaps, robots.txt, structured data utilities |
-| **Monorepo** | Turborepo with shared configs, packages, and apps |
+| **[Authentication](/docs/auth)** | Email OTP, OAuth providers, session management via [Better Auth](https://www.better-auth.com/) |
+| **[Analytics](/docs/analytics)** | Provider-agnostic tracking with [PostHog](https://posthog.com/), [Google Analytics](https://marketingplatform.google.com/about/analytics/), [OpenPanel](https://openpanel.dev/) plugins |
+| **[Database](/docs/db)** | [Drizzle ORM](https://orm.drizzle.team/) with [PostgreSQL](https://www.postgresql.org/), ready-to-use schemas |
+| **[UI Components](/docs/ui)** | Full [Shadcn/ui](https://ui.shadcn.com/) library pre-configured with [Tailwind](https://tailwindcss.com/) |
+| **[Emails](/docs/emails)** | [React Email](https://react.email/) templates with [Resend](https://resend.com/) integration |
+| **[SEO](/docs/seo)** | Metadata, sitemaps, robots.txt, structured data utilities |
 
 ## Design Principles
 
@@ -39,10 +38,10 @@ StartupKit gives you everything you need out of the box:
 
 Every package in StartupKit wraps standard, well-maintained libraries. If you outgrow a component, you can eject and use the underlying library directly:
 
-- Auth → Better Auth
-- Analytics → PostHog / GA / OpenPanel SDKs
-- Database → Drizzle ORM
-- UI → Shadcn/ui + Radix
+- Auth → [Better Auth](https://www.better-auth.com/)
+- Analytics → [PostHog](https://posthog.com/) / [Google Analytics](https://marketingplatform.google.com/about/analytics/) / [OpenPanel](https://openpanel.dev/) SDKs
+- Database → [Drizzle ORM](https://orm.drizzle.team/)
+- UI → [Shadcn/ui](https://ui.shadcn.com/) + [Radix](https://www.radix-ui.com/)
 
 ### 2. AI-Ready
 
@@ -67,15 +66,15 @@ StartupKit is ideal for:
 
 StartupKit is built on proven technologies:
 
-- **Framework**: Next.js 16 with App Router
-- **Language**: TypeScript (strict mode)
-- **React**: React 19 with Server Components
-- **Styling**: Tailwind CSS v4
-- **Components**: Shadcn/ui + Radix primitives
-- **Database**: PostgreSQL + Drizzle ORM
-- **Auth**: Better Auth
-- **Monorepo**: Turborepo + pnpm workspaces
-- **Linting**: Biome
+- **Framework**: [Next.js](https://nextjs.org/) 16 with App Router
+- **Language**: [TypeScript](https://www.typescriptlang.org/) (strict mode)
+- **React**: [React 19](https://react.dev/) with Server Components
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) v4
+- **Components**: [Shadcn/ui](https://ui.shadcn.com/) + [Radix](https://www.radix-ui.com/) primitives
+- **Database**: [PostgreSQL](https://www.postgresql.org/) + [Drizzle ORM](https://orm.drizzle.team/)
+- **Auth**: [Better Auth](https://www.better-auth.com/)
+- **Monorepo**: [Turborepo](https://turbo.build/) + [pnpm](https://pnpm.io/) workspaces
+- **Linting**: [Biome](https://biomejs.dev/)
 
 ## Next Steps
 
