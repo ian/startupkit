@@ -7,13 +7,13 @@ The `useAuth` hook provides authentication state and methods in client component
 
 ## Import
 
-```tsx
+```tsx twoslash
 import { useAuth } from "@startupkit/auth"
 ```
 
 ## Basic Usage
 
-```tsx
+```tsx twoslash
 "use client"
 
 import { useAuth } from "@startupkit/auth"
@@ -28,8 +28,6 @@ export function MyComponent() {
     verifyAuthCode,
     googleAuth
   } = useAuth()
-
-  // ...
 }
 ```
 
@@ -37,8 +35,10 @@ export function MyComponent() {
 
 ### isAuthenticated
 
-```tsx
-isAuthenticated: boolean
+```tsx twoslash
+import { useAuth } from "@startupkit/auth"
+
+const { isAuthenticated } = useAuth()
 ```
 
 Whether the user is currently signed in.
@@ -52,8 +52,10 @@ return <SignInPrompt />
 
 ### isLoading
 
-```tsx
-isLoading: boolean
+```tsx twoslash
+import { useAuth } from "@startupkit/auth"
+
+const { isLoading } = useAuth()
 ```
 
 Whether the auth state is being determined. Always check this before `isAuthenticated` to avoid flashing content.
@@ -69,8 +71,10 @@ if (!isAuthenticated) {
 
 ### user
 
-```tsx
-user: User | null | undefined
+```tsx twoslash
+import { useAuth } from "@startupkit/auth"
+
+const { user } = useAuth()
 ```
 
 The current user object. `null` if not authenticated, `undefined` while loading.
@@ -101,8 +105,10 @@ if (user) {
 
 ### logout()
 
-```tsx
-logout: () => Promise<void>
+```tsx twoslash
+import { useAuth } from "@startupkit/auth"
+
+const { logout } = useAuth()
 ```
 
 Signs out the current user and redirects to home.
@@ -122,8 +128,10 @@ const handleLogout = async () => {
 
 ### sendAuthCode()
 
-```tsx
-sendAuthCode: (email: string) => Promise<void>
+```tsx twoslash
+import { useAuth } from "@startupkit/auth"
+
+const { sendAuthCode } = useAuth()
 ```
 
 Sends a one-time password to the specified email.
@@ -143,8 +151,10 @@ const handleSend = async () => {
 
 ### verifyAuthCode()
 
-```tsx
-verifyAuthCode: (email: string, code: string) => Promise<void>
+```tsx twoslash
+import { useAuth } from "@startupkit/auth"
+
+const { verifyAuthCode } = useAuth()
 ```
 
 Verifies the OTP code and creates a session.
@@ -162,8 +172,10 @@ const handleVerify = async () => {
 
 ### googleAuth()
 
-```tsx
-googleAuth: () => Promise<void>
+```tsx twoslash
+import { useAuth } from "@startupkit/auth"
+
+const { googleAuth } = useAuth()
 ```
 
 Initiates Google OAuth sign-in flow.

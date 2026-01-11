@@ -45,7 +45,7 @@ The CLI will prompt you for:
 After initialization, your project includes:
 - Pre-configured monorepo with pnpm workspaces
 - Workspace packages (`@repo/analytics`, `@repo/auth`, `@repo/db`, etc.)
-- Shared config (`@config/typescript`, `@config/biome`)
+- Shared config (`@repo/tsconfig`, `@repo/biome`)
 - Turbo for build orchestration
 - AI agent instructions (AGENTS.md)
 
@@ -62,9 +62,9 @@ my-project/
 │   ├── ui/                 # @repo/ui (Shadcn)
 │   └── utils/              # @repo/utils
 ├── config/
-│   ├── biome/              # @config/biome
-│   ├── nextjs/             # @config/nextjs
-│   └── typescript/         # @config/typescript
+│   ├── biome/              # @repo/biome
+│   ├── nextjs/             # @repo/nextjs
+│   └── typescript/         # @repo/tsconfig
 ├── .ruler/
 │   └── AGENTS.md           # AI agent instructions
 ├── turbo.json

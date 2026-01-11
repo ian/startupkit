@@ -132,8 +132,8 @@ The app is pre-configured with:
 - **@repo/ui** - Shadcn components
 - **@repo/auth** - Authentication hooks
 - **@repo/analytics** - Analytics tracking
-- **@config/typescript** - Shared TypeScript config
-- **@config/biome** - Linting and formatting
+- **@repo/tsconfig** - Shared TypeScript config
+- **@repo/biome** - Linting and formatting
 
 ## Template Configuration
 
@@ -146,7 +146,7 @@ export default {
   type: "app",
   dependencies: {
     packages: ["auth", "db", "ui", "analytics"],
-    config: ["typescript", "nextjs", "biome"]
+    config: ["tsconfig", "nextjs", "biome"]
   }
 } satisfies StartupKitConfig
 ```

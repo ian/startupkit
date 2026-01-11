@@ -25,10 +25,10 @@ import {
 
 export const analyticsPlugins = [
   PostHogPlugin({
-    apiKey: process.env.NEXT_PUBLIC_POSTHOG_API_KEY!
+    apiKey: process.env.NEXT_PUBLIC_POSTHOG_KEY!
   }),
   GoogleAnalyticsPlugin({
-    measurementId: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID!
+    measurementId: process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID!
   })
 ]
 ```
@@ -52,13 +52,13 @@ export function Providers({ children, flags }) {
 
 ### 3. Track Events
 
-```tsx
+```tsx twoslash
 "use client"
 
 import { useAnalytics } from "@startupkit/analytics"
 
 export function SignUpButton() {
-  const { track } = useAnalytics()
+  const { track, identify, page, reset } = useAnalytics()
 
   return (
     <button onClick={() => track("SIGNUP_CLICKED", { source: "hero" })}>
@@ -86,9 +86,9 @@ Events are fanned out automatically—no need to call each provider individually
 
 | Provider | Best For |
 |----------|----------|
-| [PostHog](/docs/analytics/providers/posthog) | Product analytics, feature flags, session recordings |
-| [Google Analytics](/docs/analytics/providers/google-analytics) | Traffic analysis, marketing attribution |
-| [OpenPanel](/docs/analytics/providers/openpanel) | Privacy-focused, self-hostable |
+| PostHog | Product analytics, feature flags, session recordings |
+| Google Analytics | Traffic analysis, marketing attribution |
+| OpenPanel | Privacy-focused, self-hostable |
 
 You can use one provider or all of them together.
 
@@ -97,4 +97,3 @@ You can use one provider or all of them together.
 - [Track events](/docs/analytics/tracking-events) - Learn the tracking API
 - [Identify users](/docs/analytics/identifying-users) - Associate events with users
 - [Feature flags](/docs/analytics/feature-flags) - Control feature rollouts
-- [Set up PostHog](/docs/analytics/providers/posthog) - Full PostHog configuration

@@ -79,13 +79,13 @@ Get credentials from [Google Cloud Console](https://console.cloud.google.com/api
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `NEXT_PUBLIC_POSTHOG_API_KEY` | For PostHog | Client-side API key |
+| `NEXT_PUBLIC_POSTHOG_KEY` | For PostHog | Client-side API key |
 | `NEXT_PUBLIC_POSTHOG_HOST` | No | PostHog instance URL |
 | `POSTHOG_API_KEY` | For server | Server-side API key (same as above) |
 | `POSTHOG_HOST` | No | Server-side host URL |
 
 ```bash
-NEXT_PUBLIC_POSTHOG_API_KEY=phc_xxxxxxxxxxxx
+NEXT_PUBLIC_POSTHOG_KEY=phc_xxxxxxxxxxxx
 NEXT_PUBLIC_POSTHOG_HOST=https://app.posthog.com
 
 # Server-side (same key)
@@ -99,10 +99,10 @@ For EU data residency, use `https://eu.posthog.com`.
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `NEXT_PUBLIC_GA_MEASUREMENT_ID` | For GA4 | GA4 measurement ID |
+| `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID` | For GA4 | GA4 measurement ID |
 
 ```bash
-NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX
 ```
 
 Get the ID from [Google Analytics](https://analytics.google.com) → Admin → Data Streams.
@@ -163,13 +163,13 @@ GOOGLE_CLIENT_ID=xxx.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=GOCSPX-xxx
 
 # Analytics - PostHog
-NEXT_PUBLIC_POSTHOG_API_KEY=phc_xxxxxxxxxxxx
+NEXT_PUBLIC_POSTHOG_KEY=phc_xxxxxxxxxxxx
 NEXT_PUBLIC_POSTHOG_HOST=https://app.posthog.com
 POSTHOG_API_KEY=phc_xxxxxxxxxxxx
 POSTHOG_HOST=https://app.posthog.com
 
 # Analytics - Google (optional)
-NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX
 
 # Email
 RESEND_API_KEY=re_xxxxxxxxxxxx
@@ -191,7 +191,7 @@ Next.js has specific rules for environment variables:
 
 ```bash
 # Exposed to browser - safe for public API keys
-NEXT_PUBLIC_POSTHOG_API_KEY=phc_xxx
+NEXT_PUBLIC_POSTHOG_KEY=phc_xxx
 
 # Server only - never exposed
 DATABASE_URL=postgresql://...

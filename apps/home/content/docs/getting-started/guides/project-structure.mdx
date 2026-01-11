@@ -19,9 +19,9 @@ my-project/
 │   ├── ui/                  # @repo/ui - UI components
 │   └── utils/               # @repo/utils - Shared utilities
 ├── config/
-│   ├── biome/               # Biome (linting/formatting) config
-│   ├── nextjs/              # Shared Next.js config
-│   └── typescript/          # Shared TypeScript configs
+│   ├── biome/               # @repo/biome - Linting/formatting config
+│   ├── nextjs/              # @repo/nextjs - Shared Next.js config
+│   └── typescript/          # @repo/tsconfig - Shared TypeScript configs
 ├── turbo.json               # Turborepo configuration
 ├── pnpm-workspace.yaml      # pnpm workspace configuration
 └── package.json             # Root package.json
@@ -135,7 +135,6 @@ Defines workspace packages:
 packages:
   - "apps/*"
   - "packages/*"
-  - "config/*"
 ```
 
 ## Adding New Packages
@@ -155,5 +154,5 @@ npx startupkit add pkg --name shared-utils
 
 ## Next Steps
 
-- [Packages Overview](/docs/packages/analytics) - Explore each package
-- [Guides](/docs/guides/authentication) - Step-by-step tutorials
+- [Analytics](/docs/analytics) - Explore the analytics package
+- [Authentication](/docs/auth) - Set up sign-in flows

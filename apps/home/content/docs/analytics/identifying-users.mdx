@@ -54,7 +54,7 @@ Call `identify()` when:
 ```tsx
 "use client"
 
-import { useAuth } from "@repo/auth"
+import { useAuth } from "@startupkit/auth"
 import { useAnalytics } from "@startupkit/analytics"
 import { useEffect } from "react"
 
@@ -83,7 +83,7 @@ A common pattern is to identify users in your providers:
 ```tsx title="app/providers.tsx"
 "use client"
 
-import { AuthProvider } from "@repo/auth"
+import { AuthProvider } from "@startupkit/auth"
 import { AnalyticsProvider, useAnalytics } from "@startupkit/analytics"
 
 export function Providers({ children, user, flags }) {
@@ -225,4 +225,4 @@ Check your privacy policy and ensure compliance with GDPR, CCPA, etc.
 ## Next Steps
 
 - [Feature flags](/docs/analytics/feature-flags) - Target features to specific users
-- [Server-side tracking](/docs/analytics/advanced/server-side) - Identify users from your backend
+- [Tracking events](/docs/analytics/tracking-events) - Learn the tracking API
