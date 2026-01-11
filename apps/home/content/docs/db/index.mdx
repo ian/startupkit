@@ -52,6 +52,7 @@ export async function GET() {
 
 ```tsx
 import { db, users, teams, teamMembers } from "@repo/db"
+import { eq } from "drizzle-orm"
 
 const userWithTeams = await db.query.users.findFirst({
   where: eq(users.id, userId),
