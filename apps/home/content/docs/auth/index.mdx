@@ -56,15 +56,15 @@ export function Header() {
 
 | Export | Description |
 |--------|-------------|
-| [`withAuth()`](/docs/auth/with-auth) | Get current session (returns `{ user, session }` or nulls) |
-| [`requireAuth()`](/docs/auth/require-auth) | Get session or redirect to sign-in |
+| [`withAuth()`](/docs/auth/usage/with-auth) | Get current session (returns `{ user, session }` or nulls) |
+| [`requireAuth()`](/docs/auth/usage/require-auth) | Get session or redirect to sign-in |
 | `handler()` | Create Next.js API route handler |
 
 ### Client (`@repo/auth`)
 
 | Export | Description |
 |--------|-------------|
-| [`useAuth()`](/docs/auth/hooks-reference) | Hook for auth state and methods |
+| [`useAuth()`](/docs/auth/usage/use-auth) | Hook for auth state and methods |
 | `AuthProvider` | Context provider for auth |
 | `authClient` | Better Auth client instance |
 
@@ -77,6 +77,6 @@ The [Configuration](/docs/auth/configuration) page shows how to set up Email OTP
 ## Next Steps
 
 - [Configuration](/docs/auth/configuration) - Set up auth in your monorepo
-- [requireAuth](/docs/auth/require-auth) - Protect pages with redirect
-- [withAuth](/docs/auth/with-auth) - Get session for conditional rendering
-- [useAuth Reference](/docs/auth/hooks-reference) - Client-side auth hook
+- [requireAuth](/docs/auth/usage/require-auth) - Protect pages with redirect
+- [withAuth](/docs/auth/usage/with-auth) - Get session for conditional rendering
+- [useAuth](/docs/auth/usage/use-auth) - Client-side auth hook
