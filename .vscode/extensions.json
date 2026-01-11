@@ -1,0 +1,16 @@
+{
+	"recommendations": [
+		"biomejs.biome",
+		"bradlc.vscode-tailwindcss",
+		"dbaeumer.vscode-eslint",
+		"esbenp.prettier-vscode",
+		"prisma.prisma",
+		"ms-vscode.vscode-typescript-next",
+		"unifiedjs.vscode-mdx",
+		"mikestead.dotenv",
+		"csstools.postcss",
+		"orta.vscode-twoslash-queries",
+		"yoavbls.pretty-ts-errors"
+	],
+	"unwantedRecommendations": []
+}

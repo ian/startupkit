@@ -1,0 +1,68 @@
+# StartupKit - Cursor Project Rules
+
+## Project Overview
+
+StartupKit is a meta-framework for building SaaS applications. This is a **pnpm monorepo** built with **TypeScript**, **Next.js 16**, **React 19**, and **Turbo**.
+
+## Package Architecture
+
+- `packages/*` → Published npm packages (`@startupkit/*`)
+- `templates/repo/packages/*` → Template workspace packages (`@repo/*`)
+- `templates/next/` → Next.js app template (imports from `@repo/*`)
+
+## TypeScript Rules
+
+- **NEVER use `any`** - Use proper types, `unknown`, or generics
+- **NEVER use `never`** unless modeling impossible states
+- **Prefer `interface` over `type`** for object shapes
+- **Avoid enums** - Use const objects with `as const` or string literal unions
+- **Use the `function` keyword** for pure functions
+
+## Code Style (Biome)
+
+- Indentation: Tabs (width: 2)
+- Line width: 80 characters
+- Quotes: Double quotes
+- Semicolons: As needed (ASI)
+- Trailing commas: None
+- Arrow parens: Always
+
+## React/Next.js Patterns
+
+- **Prefer Server Components** - Minimize `"use client"`
+- **Wrap client components in Suspense** with fallback
+- **Use `nuqs`** for URL search parameter state management
+- **Dynamic imports** for non-critical components
+
+## Template Rules
+
+- **DO NOT** add auth config files to `templates/next/` - Import from `@repo/auth`
+- **Auth routes** go in `app/auth/[...all]/` NOT `app/api/auth/[...all]/`
+- **Use workspace packages**: `@repo/auth`, `@repo/ui`, `@repo/db`, etc.
+
+## Commands
+
+```bash
+pnpm dev              # Start dev servers
+pnpm build            # Build all packages
+pnpm lint:fix         # Auto-fix linting
+pnpm typecheck        # Type-check all packages
+pnpm with-env <cmd>   # Run with .env.local
+pnpm db:generate      # Generate migrations
+pnpm db:migrate       # Apply migrations
+```
+
+## File Placement
+
+| Type | Location |
+|------|----------|
+| Next.js pages | `apps/{app}/src/app/` |
+| Shared UI components | `templates/repo/packages/ui/src/components/` |
+| Database schema | `templates/repo/packages/db/src/schema.ts` |
+| Auth logic | `templates/repo/packages/auth/src/` |
+
+## Important
+
+- **No unnecessary comments** - Code should be self-documenting
+- **Use pnpm catalogs** - Reference `catalog:stack`, `catalog:react19`, etc.
+- **NEVER publish to npm** - Publishing must only be done by humans

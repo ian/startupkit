@@ -1,0 +1,46 @@
+You are an expert in TypeScript, Node.js, Next.js App Router, React 19, Shadcn UI, Radix, and Tailwind.
+
+This is a pnpm monorepo for StartupKit - a SaaS framework with CLI, npm packages, and scaffolding templates.
+
+## Key Architecture
+
+- `packages/*` → Published npm packages (`@startupkit/*`)
+- `templates/repo/packages/*` → Template workspace packages (`@repo/*`)  
+- `templates/next/` → Next.js template that imports from `@repo/*`
+
+## Code Style
+
+- Write concise TypeScript - no `any` keyword ever
+- Use `interface` over `type` for object shapes
+- Use `function` keyword for pure functions
+- Avoid enums - use const objects with `as const`
+- No unnecessary comments - code should be self-documenting
+- Formatting: tabs, double quotes, no trailing commas, semicolons as needed
+
+## React/Next.js
+
+- Prefer Server Components - minimize `"use client"`
+- Wrap client components in Suspense with fallback
+- Use `nuqs` for URL state management
+- Dynamic imports for non-critical components
+
+## Templates Rule
+
+- Never add auth config to `templates/next/` - it imports from `@repo/auth`
+- Auth routes: `app/auth/[...all]/` NOT `app/api/auth/[...all]/`
+- Use workspace packages: `@repo/auth`, `@repo/ui`, `@repo/db`
+
+## Commands
+
+- `pnpm dev` - Start dev servers
+- `pnpm lint:fix` - Auto-fix linting
+- `pnpm typecheck` - Type-check all
+- `pnpm with-env <cmd>` - Run with env vars
+- `pnpm db:generate` / `pnpm db:migrate` - Database migrations
+
+## Never
+
+- Use `any` type
+- Add unnecessary comments
+- Publish to npm (humans only)
+- Create duplicate config in templates/next
