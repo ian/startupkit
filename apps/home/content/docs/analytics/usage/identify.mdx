@@ -60,6 +60,7 @@ The `AuthProvider` can automatically identify users:
 
 ```tsx twoslash title="app/providers.tsx"
 // @noErrors
+import type React from "react"
 declare const children: React.ReactNode
 declare function identify(userId: string, traits: Record<string, unknown>): void
 declare function AuthProvider(props: { onIdentify: (user: { id: string; email: string; name: string }) => void; children: React.ReactNode }): JSX.Element

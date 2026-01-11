@@ -1,8 +1,8 @@
 {
 	"title": "Introduction",
 	"pages": [
-		"quickstart",
 		"what-is",
+		"quickstart",
 		"project-structure",
 		"environment-variables",
 		"comparisons",
