@@ -8,6 +8,7 @@
 		"cli/init",
 		"cli/add",
 		"cli/upgrade",
+		"cli/agents",
 		"cli/troubleshooting",
 		"---Packages---",
 		"analytics",
