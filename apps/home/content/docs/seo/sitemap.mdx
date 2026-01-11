@@ -7,20 +7,18 @@ Sitemaps help search engines discover and index your pages. The `generateSitemap
 
 ## Basic Usage
 
-```tsx title="app/sitemap.ts"
+```tsx twoslash title="app/sitemap.ts"
+// @noErrors
 import { generateSitemap } from "@startupkit/seo"
 
 export default function sitemap() {
-  return generateSitemap({
-    baseUrl: "https://myapp.com",
-    routes: [
-      { path: "/" },
-      { path: "/about" },
-      { path: "/pricing" },
-      { path: "/blog" },
-      { path: "/contact" }
-    ]
-  })
+  return generateSitemap([
+    { url: "https://myapp.com" },
+    { url: "https://myapp.com/about" },
+    { url: "https://myapp.com/pricing" },
+    { url: "https://myapp.com/blog" },
+    { url: "https://myapp.com/contact" }
+  ])
 }
 ```
 
@@ -90,7 +88,8 @@ Options: `always`, `hourly`, `daily`, `weekly`, `monthly`, `yearly`, `never`
 
 ### Blog Posts
 
-```tsx title="app/sitemap.ts"
+```tsx twoslash title="app/sitemap.ts"
+// @noErrors
 import { generateSitemap } from "@startupkit/seo"
 import { db } from "@repo/db"
 
@@ -100,45 +99,40 @@ export default async function sitemap() {
   })
 
   const blogRoutes = posts.map(post => ({
-    path: `/blog/${post.slug}`,
+    url: `https://myapp.com/blog/${post.slug}`,
     lastModified: post.updatedAt,
     changeFrequency: "weekly" as const,
     priority: 0.7
   }))
 
-  return generateSitemap({
-    baseUrl: "https://myapp.com",
-    routes: [
-      { path: "/", priority: 1.0 },
-      { path: "/blog", priority: 0.9 },
-      ...blogRoutes
-    ]
-  })
+  return generateSitemap([
+    { url: "https://myapp.com", priority: 1.0 },
+    { url: "https://myapp.com/blog", priority: 0.9 },
+    ...blogRoutes
+  ])
 }
 ```
 
 ### Product Pages
 
-```tsx title="app/sitemap.ts"
+```tsx twoslash title="app/sitemap.ts"
+// @noErrors
 import { generateSitemap } from "@startupkit/seo"
 
 export default async function sitemap() {
   const products = await fetchProducts()
 
   const productRoutes = products.map(product => ({
-    path: `/products/${product.slug}`,
+    url: `https://myapp.com/products/${product.slug}`,
     lastModified: product.updatedAt,
     priority: 0.8
   }))
 
-  return generateSitemap({
-    baseUrl: "https://myapp.com",
-    routes: [
-      { path: "/", priority: 1.0 },
-      { path: "/products", priority: 0.9 },
-      ...productRoutes
-    ]
-  })
+  return generateSitemap([
+    { url: "https://myapp.com", priority: 1.0 },
+    { url: "https://myapp.com/products", priority: 0.9 },
+    ...productRoutes
+  ])
 }
 ```
 
@@ -165,18 +159,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
 Then create individual sitemaps:
 
-```tsx title="app/sitemap-main.xml/route.ts"
+```tsx twoslash title="app/sitemap-main.xml/route.ts"
+// @noErrors
 import { generateSitemap } from "@startupkit/seo"
 
 export async function GET() {
-  const sitemap = generateSitemap({
-    baseUrl: "https://myapp.com",
-    routes: [
-      { path: "/" },
-      { path: "/about" },
-      { path: "/pricing" }
-    ]
-  })
+  const sitemap = generateSitemap([
+    { url: "https://myapp.com" },
+    { url: "https://myapp.com/about" },
+    { url: "https://myapp.com/pricing" }
+  ])
 
   // Convert to XML response
   // ...

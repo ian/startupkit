@@ -1,4 +1,6 @@
 declare module "@startupkit/auth" {
+	import type { ReactNode } from "react"
+
 	export interface AuthContextType<
 		TUser extends Record<string, unknown> = Record<string, unknown>
 	> {
@@ -16,15 +18,17 @@ declare module "@startupkit/auth" {
 	>(): AuthContextType<TUser>
 
 	export function AuthProvider(props: {
-		children: React.ReactNode
+		children: ReactNode
 		authClient: unknown
 		user?: unknown
 		onIdentify?: (user: unknown) => void
 		onReset?: () => void
-	}): JSX.Element
+	}): ReactNode
 }
 
 declare module "@startupkit/analytics" {
+	import type { ReactNode } from "react"
+
 	export interface AnalyticsContextType<
 		TFlags extends Record<string, unknown> = Record<
 			string,
@@ -45,35 +49,104 @@ declare module "@startupkit/analytics" {
 		>
 	>(): AnalyticsContextType<TFlags>
 
+	export function useFlag<T = boolean>(
+		flagName: string,
+		defaultValue?: T
+	): T | undefined
+
 	export function AnalyticsProvider(props: {
-		children: React.ReactNode
+		children: ReactNode
 		flags?: Record<string, unknown>
 		plugins: unknown[]
-	}): JSX.Element
+	}): ReactNode
 
-	export function PostHogPlugin(config: { apiKey: string }): unknown
+	export function PostHogPlugin(config: {
+		apiKey: string
+		apiHost?: string
+	}): unknown
 	export function GoogleAnalyticsPlugin(config: {
 		measurementId: string
 	}): unknown
-	export function OpenPanelPlugin(config: { clientId: string }): unknown
+	export function OpenPanelPlugin(config: {
+		clientId: string
+		trackScreenViews?: boolean
+	}): unknown
+	export function AhrefsPlugin(config: { siteId: string }): unknown
 }
 
 declare module "@startupkit/seo" {
-	export function generateSEOMetadata(config: {
+	import type { Metadata } from "next"
+
+	export interface GenerateMetadataParams {
 		title: string
 		description: string
 		url?: string
 		image?: string
-	}): Record<string, unknown>
+		siteName?: string
+		locale?: string
+		type?: "website" | "article"
+		twitterCard?: "summary" | "summary_large_image"
+		twitterSite?: string
+		noIndex?: boolean
+	}
+
+	export function generateMetadata(params: GenerateMetadataParams): Metadata
 
 	export function generateRobots(config?: {
-		allow?: string[]
-		disallow?: string[]
-		sitemap?: string
-	}): Record<string, unknown>
+		rules?: {
+			userAgent?: string | string[]
+			allow?: string | string[]
+			disallow?: string | string[]
+		}[]
+		sitemap?: string | string[]
+		host?: string
+	}): { rules: unknown[]; sitemap?: string | string[]; host?: string }
 
-	export function generateSitemap(config: {
-		baseUrl: string
-		routes: string[]
-	}): unknown[]
+	export function generateSitemap(
+		urls: {
+			url: string
+			lastModified?: Date | string
+			changeFrequency?:
+				| "always"
+				| "hourly"
+				| "daily"
+				| "weekly"
+				| "monthly"
+				| "yearly"
+				| "never"
+			priority?: number
+		}[]
+	): {
+		url: string
+		lastModified?: Date | string
+		changeFrequency?: string
+		priority?: number
+	}[]
+
+	export function generateOrganizationSchema(config: {
+		name: string
+		url: string
+		logo?: string
+		description?: string
+		sameAs?: string[]
+	}): { "@context": string; "@type": "Organization"; [key: string]: unknown }
+
+	export function generateWebsiteSchema(config: {
+		name: string
+		url: string
+		description: string
+	}): { "@context": string; "@type": "WebSite"; [key: string]: unknown }
+
+	export function generateBreadcrumbSchema(
+		items: { name: string; url: string }[]
+	): { "@context": string; "@type": "BreadcrumbList"; [key: string]: unknown }
+
+	export function generateArticleSchema(config: {
+		headline: string
+		description: string
+		datePublished: string
+		dateModified?: string
+		authorName: string
+		imageUrl: string
+	}): { "@context": string; "@type": "Article"; [key: string]: unknown }
 }

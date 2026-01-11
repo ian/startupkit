@@ -7,12 +7,13 @@ The `robots.txt` file tells search engines which pages to crawl and index. Use `
 
 ## Basic Usage
 
-```tsx title="app/robots.ts"
+```tsx twoslash title="app/robots.ts"
+// @noErrors
 import { generateRobots } from "@startupkit/seo"
 
 export default function robots() {
   return generateRobots({
-    baseUrl: "https://myapp.com"
+    sitemap: "https://myapp.com/sitemap.xml"
   })
 }
 ```
@@ -31,21 +32,25 @@ Sitemap: https://myapp.com/sitemap.xml
 
 ## Custom Disallow Paths
 
-```tsx title="app/robots.ts"
+```tsx twoslash title="app/robots.ts"
+// @noErrors
 import { generateRobots } from "@startupkit/seo"
 
 export default function robots() {
   return generateRobots({
-    baseUrl: "https://myapp.com",
-    disallowPaths: [
-      "/api/",
-      "/dashboard/",
-      "/auth/",
-      "/admin/",
-      "/settings/",
-      "/checkout/",
-      "/_next/"
-    ]
+    rules: [{
+      userAgent: "*",
+      disallow: [
+        "/api/",
+        "/dashboard/",
+        "/auth/",
+        "/admin/",
+        "/settings/",
+        "/checkout/",
+        "/_next/"
+      ]
+    }],
+    sitemap: "https://myapp.com/sitemap.xml"
   })
 }
 ```
@@ -149,7 +154,8 @@ rules: [
 
 Block crawlers in non-production:
 
-```tsx title="app/robots.ts"
+```tsx twoslash title="app/robots.ts"
+// @noErrors
 import { generateRobots } from "@startupkit/seo"
 
 export default function robots() {
@@ -165,7 +171,7 @@ export default function robots() {
     }
   }
 
-  return generateRobots({ baseUrl })
+  return generateRobots({ sitemap: `${baseUrl}/sitemap.xml` })
 }
 ```
 

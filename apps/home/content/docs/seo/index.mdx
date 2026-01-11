@@ -16,15 +16,14 @@ description: Search engine optimization utilities with @startupkit/seo
 
 ### Page Metadata
 
-```tsx title="app/about/page.tsx"
+```tsx twoslash title="app/about/page.tsx"
+// @noErrors
 import { generateMetadata } from "@startupkit/seo"
 
 export const metadata = generateMetadata({
   title: "About Us",
   description: "Learn about our company and mission",
-  path: "/about",
-  baseUrl: "https://myapp.com",
-  siteName: "My App"
+  url: "/about"
 })
 
 export default function AboutPage() {
@@ -34,16 +33,13 @@ export default function AboutPage() {
 
 ### Root Layout Metadata
 
-```tsx title="app/layout.tsx"
+```tsx twoslash title="app/layout.tsx"
+// @noErrors
 import { generateMetadata } from "@startupkit/seo"
 
 export const metadata = generateMetadata({
   title: "My App",
-  description: "The best app for doing things",
-  titleTemplate: "%s | My App",
-  baseUrl: "https://myapp.com",
-  siteName: "My App",
-  keywords: ["productivity", "tools", "ai"]
+  description: "The best app for doing things"
 })
 ```
 
@@ -65,7 +61,8 @@ The `generateMetadata` function creates:
 
 Add JSON-LD for rich search results:
 
-```tsx title="app/layout.tsx"
+```tsx twoslash title="app/layout.tsx"
+// @noErrors
 import { 
   generateOrganizationSchema,
   generateWebsiteSchema 
@@ -94,30 +91,29 @@ export default function RootLayout({ children }) {
 
 ## Sitemap
 
-```tsx title="app/sitemap.ts"
+```tsx twoslash title="app/sitemap.ts"
+// @noErrors
 import { generateSitemap } from "@startupkit/seo"
 
 export default function sitemap() {
-  return generateSitemap({
-    baseUrl: "https://myapp.com",
-    routes: [
-      { path: "/", priority: 1 },
-      { path: "/about", priority: 0.8 },
-      { path: "/pricing", priority: 0.9 }
-    ]
-  })
+  return generateSitemap([
+    { url: "https://myapp.com", priority: 1 },
+    { url: "https://myapp.com/about", priority: 0.8 },
+    { url: "https://myapp.com/pricing", priority: 0.9 }
+  ])
 }
 ```
 
 ## Robots.txt
 
-```tsx title="app/robots.ts"
+```tsx twoslash title="app/robots.ts"
+// @noErrors
 import { generateRobots } from "@startupkit/seo"
 
 export default function robots() {
   return generateRobots({
-    baseUrl: "https://myapp.com",
-    disallowPaths: ["/api/", "/dashboard/", "/auth/"]
+    rules: [{ userAgent: "*", disallow: ["/api/", "/dashboard/", "/auth/"] }],
+    sitemap: "https://myapp.com/sitemap.xml"
   })
 }
 ```

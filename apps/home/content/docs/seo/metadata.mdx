@@ -9,15 +9,14 @@ Generate complete SEO metadata for your pages with a single function call.
 
 ### Individual Pages
 
-```tsx title="app/pricing/page.tsx"
+```tsx twoslash title="app/pricing/page.tsx"
+// @noErrors
 import { generateMetadata } from "@startupkit/seo"
 
 export const metadata = generateMetadata({
   title: "Pricing",
   description: "Simple, transparent pricing for teams of all sizes",
-  path: "/pricing",
-  baseUrl: "https://myapp.com",
-  siteName: "My App"
+  url: "/pricing"
 })
 
 export default function PricingPage() {
@@ -29,22 +28,15 @@ export default function PricingPage() {
 
 For root layouts, include `titleTemplate` to create consistent page titles:
 
-```tsx title="app/layout.tsx"
+```tsx twoslash title="app/layout.tsx"
+// @noErrors
 import { generateMetadata } from "@startupkit/seo"
 
 export const metadata = generateMetadata({
   title: "My App",
   description: "The best app for doing things",
-  titleTemplate: "%s | My App",
-  baseUrl: "https://myapp.com",
   siteName: "My App",
-  twitterHandle: "@myapp",
-  keywords: ["productivity", "tools"],
-  icons: {
-    icon: [{ url: "/favicon.ico", sizes: "any" }],
-    apple: "/apple-touch-icon.png"
-  },
-  manifest: "/site.webmanifest"
+  twitterSite: "@myapp"
 })
 ```
 
@@ -135,7 +127,8 @@ Generates:
 
 For dynamic pages, use `generateMetadata` as a function:
 
-```tsx title="app/blog/[slug]/page.tsx"
+```tsx twoslash title="app/blog/[slug]/page.tsx"
+// @noErrors
 import { generateMetadata as seoMetadata } from "@startupkit/seo"
 
 interface Props {
@@ -148,10 +141,8 @@ export async function generateMetadata({ params }: Props) {
   return seoMetadata({
     title: post.title,
     description: post.excerpt,
-    path: `/blog/${params.slug}`,
-    baseUrl: "https://myapp.com",
-    siteName: "My App",
-    ogImage: post.coverImage
+    url: `/blog/${params.slug}`,
+    image: post.coverImage
   })
 }
 ```
@@ -254,21 +245,21 @@ generateMetadata({
 
 Create a helper for consistent configuration:
 
-```tsx title="lib/seo.ts"
+```tsx twoslash title="lib/seo.ts"
+// @noErrors
 import { generateMetadata as seoMetadata } from "@startupkit/seo"
 
 const defaults = {
-  baseUrl: process.env.NEXT_PUBLIC_BASE_URL!,
   siteName: "My App",
-  twitterHandle: "@myapp",
-  ogImage: "/og/default.png"
+  twitterSite: "@myapp",
+  image: "/og/default.png"
 }
 
 export function generateMetadata(params: {
   title: string
   description: string
-  path?: string
-  ogImage?: string
+  url?: string
+  image?: string
   noIndex?: boolean
 }) {
   return seoMetadata({

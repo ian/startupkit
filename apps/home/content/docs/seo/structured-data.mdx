@@ -18,7 +18,8 @@ Structured data (JSON-LD) helps search engines understand your content and can e
 
 Display your company in Google's Knowledge Panel:
 
-```tsx title="app/layout.tsx"
+```tsx twoslash title="app/layout.tsx"
+// @noErrors
 import { generateOrganizationSchema } from "@startupkit/seo"
 
 const orgSchema = generateOrganizationSchema({
@@ -79,7 +80,8 @@ export default function RootLayout({ children }) {
 
 Enable sitelinks search box in Google:
 
-```tsx title="app/layout.tsx"
+```tsx twoslash title="app/layout.tsx"
+// @noErrors
 import { generateWebsiteSchema } from "@startupkit/seo"
 
 const websiteSchema = generateWebsiteSchema({
@@ -115,7 +117,8 @@ export default function RootLayout({ children }) {
 
 Show breadcrumb navigation in search results:
 
-```tsx title="app/docs/[slug]/page.tsx"
+```tsx twoslash title="app/docs/[slug]/page.tsx"
+// @noErrors
 import { generateBreadcrumbSchema } from "@startupkit/seo"
 
 export default function DocPage({ params }) {
@@ -170,7 +173,8 @@ export default function DocPage({ params }) {
 
 Enhance blog posts with rich results:
 
-```tsx title="app/blog/[slug]/page.tsx"
+```tsx twoslash title="app/blog/[slug]/page.tsx"
+// @noErrors
 import { generateArticleSchema } from "@startupkit/seo"
 
 export default async function BlogPost({ params }) {
@@ -234,7 +238,8 @@ export default async function BlogPost({ params }) {
 
 Combine multiple schemas on a page:
 
-```tsx title="app/layout.tsx"
+```tsx twoslash title="app/layout.tsx"
+// @noErrors
 import { 
   generateOrganizationSchema, 
   generateWebsiteSchema 

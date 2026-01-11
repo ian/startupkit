@@ -98,7 +98,7 @@ export function Header() {
 
   return (
     <div>
-      <span>Welcome, {user.name}</span>
+      <span>Welcome, {user?.name}</span>
       <button onClick={logout}>Sign Out</button>
     </div>
   )

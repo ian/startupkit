@@ -179,7 +179,15 @@ type EventName = keyof AnalyticsEvents
 
 Then create a typed wrapper:
 
-```typescript title="lib/analytics.ts"
+```typescript twoslash title="lib/analytics.ts"
+// @noErrors
+interface AnalyticsEvents {
+  SIGNUP_CLICKED: { source: string }
+  PLAN_SELECTED: { plan: string; interval: "monthly" | "yearly" }
+  FEATURE_USED: { feature: string; enabled: boolean }
+}
+type EventName = keyof AnalyticsEvents
+// ---cut---
 import { useAnalytics as useBaseAnalytics } from "@startupkit/analytics"
 
 export function useAnalytics() {
