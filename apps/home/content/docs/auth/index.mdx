@@ -1,0 +1,82 @@
+---
+title: Auth Overview
+description: Authentication with @startupkit/auth built on Better Auth
+---
+
+StartupKit authentication is built on [Better Auth](https://better-auth.com), a flexible authentication framework for TypeScript.
+
+## What StartupKit Provides
+
+`@startupkit/auth` adds convenience utilities on top of Better Auth:
+
+- **Server utilities** - `withAuth()`, `requireAuth()` for Server Components
+- **React hooks** - `useAuth()` for client components
+- **Context provider** - `AuthProvider` with analytics integration
+
+## Quick Example
+
+**Server Component:**
+
+```tsx
+import { withAuth } from "@repo/auth/server"
+
+export default async function Dashboard() {
+  const { user } = await withAuth()
+  
+  if (!user) return <SignInPrompt />
+  
+  return <div>Welcome, {user.name}</div>
+}
+```
+
+**Client Component:**
+
+```tsx
+"use client"
+
+import { useAuth } from "@repo/auth"
+
+export function Header() {
+  const { isAuthenticated, user, logout } = useAuth()
+
+  if (!isAuthenticated) return <a href="/sign-in">Sign In</a>
+
+  return (
+    <div>
+      <span>{user?.name}</span>
+      <button onClick={logout}>Sign Out</button>
+    </div>
+  )
+}
+```
+
+## API Reference
+
+### Server (`@repo/auth/server`)
+
+| Export | Description |
+|--------|-------------|
+| [`withAuth()`](/docs/auth/usage/with-auth) | Get current session (returns `{ user, session }` or nulls) |
+| [`requireAuth()`](/docs/auth/usage/require-auth) | Get session or redirect to sign-in |
+| `handler()` | Create Next.js API route handler |
+
+### Client (`@repo/auth`)
+
+| Export | Description |
+|--------|-------------|
+| [`useAuth()`](/docs/auth/usage/use-auth) | Hook for auth state and methods |
+| `AuthProvider` | Context provider for auth |
+| `authClient` | Better Auth client instance |
+
+## Authentication Providers
+
+Better Auth supports many authentication methods including Email OTP, Google, GitHub, Apple, and more. See the [Better Auth Providers documentation](https://www.better-auth.com/docs/concepts/providers) for the full list.
+
+The [Configuration](/docs/auth/configuration) page shows how to set up Email OTP and Google as examples.
+
+## Next Steps
+
+- [Configuration](/docs/auth/configuration) - Set up auth in your monorepo
+- [requireAuth](/docs/auth/usage/require-auth) - Protect pages with redirect
+- [withAuth](/docs/auth/usage/with-auth) - Get session for conditional rendering
+- [useAuth](/docs/auth/usage/use-auth) - Client-side auth hook

@@ -1,0 +1,120 @@
+---
+title: reset
+description: Clear user identity
+---
+
+Clear the current user identity on logout.
+
+## Client
+
+Use the `useAnalytics` hook in client components:
+
+```tsx twoslash
+// @noErrors
+import { useAnalytics } from "@repo/analytics"
+
+const { reset } = useAnalytics()
+```
+
+### Usage
+
+```tsx twoslash
+// @noErrors
+import { useAnalytics } from "@repo/analytics"
+const { reset } = useAnalytics()
+// ---cut---
+reset()
+```
+
+No parameters. Clears the user identity across all analytics providers.
+
+### Examples
+
+#### On logout
+
+```tsx twoslash
+// @noErrors
+"use client"
+
+import { useAnalytics } from "@repo/analytics"
+import { useAuth } from "@repo/auth"
+
+export function LogoutButton() {
+  const { logout } = useAuth()
+  const { reset } = useAnalytics()
+
+  async function handleLogout() {
+    await logout()
+    reset()
+  }
+
+  return <button onClick={handleLogout}>Sign Out</button>
+}
+```
+
+#### With AuthProvider
+
+The `AuthProvider` can automatically reset on logout:
+
+```tsx twoslash title="app/providers.tsx"
+// @noErrors
+declare const children: React.ReactNode
+declare function reset(): void
+declare function AuthProvider(props: { onReset: () => void; children: React.ReactNode }): JSX.Element
+// ---cut---
+<AuthProvider
+  onReset={() => reset()}
+>
+  {children}
+</AuthProvider>
+```
+
+#### Account switching
+
+```tsx twoslash
+// @noErrors
+declare function reset(): void
+declare function identify(userId: string, traits: Record<string, unknown>): void
+declare function loadAccount(id: string): Promise<{ id: string; email: string; name: string }>
+// ---cut---
+async function switchAccount(newAccountId: string) {
+  reset()
+  
+  const user = await loadAccount(newAccountId)
+  
+  identify(user.id, {
+    email: user.email,
+    name: user.name
+  })
+}
+```
+
+## Server
+
+Reset is **client-only**. It clears browser-side state (cookies, local storage) used by analytics providers.
+
+For server-side logout tracking:
+
+```tsx twoslash
+// @noErrors
+import { track } from "@repo/analytics/server"
+declare const user: { id: string; email: string }
+// ---cut---
+await track({
+  event: "USER_SIGNED_OUT",
+  userId: user.id,
+  user: {
+    id: user.id,
+    email: user.email
+  }
+})
+```
+
+## Why reset matters
+
+Always call `reset()` when a user signs out to:
+
+- Prevent events from being attributed to the wrong user
+- Clear stored user properties in the browser
+- Start a fresh anonymous session
+- Comply with privacy requirements

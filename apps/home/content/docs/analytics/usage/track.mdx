@@ -1,0 +1,156 @@
+---
+title: track
+description: Track custom events
+---
+
+Track custom events with optional properties.
+
+## Client
+
+Use the `useAnalytics` hook in client components:
+
+```tsx twoslash
+// @noErrors
+import { useAnalytics } from "@repo/analytics"
+
+const { track } = useAnalytics()
+```
+
+### Usage
+
+```tsx
+track(event: string, properties?: Record<string, unknown>)
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `event` | `string` | Event name (e.g., `"SIGNUP_CLICKED"`) |
+| `properties` | `Record<string, unknown>` | Optional event properties |
+
+### Examples
+
+```tsx twoslash
+// @noErrors
+"use client"
+
+import { useAnalytics } from "@repo/analytics"
+
+export function SignupButton() {
+  const { track } = useAnalytics()
+
+  return (
+    <button onClick={() => track("SIGNUP_CLICKED", { source: "hero" })}>
+      Get Started
+    </button>
+  )
+}
+```
+
+```tsx twoslash
+// @noErrors
+import { useAnalytics } from "@repo/analytics"
+const { track } = useAnalytics()
+// ---cut---
+track("PURCHASE_COMPLETED", {
+  amount: 99.99,
+  currency: "USD",
+  productId: "pro-plan"
+})
+```
+
+## Server
+
+Use the `track` function from `@repo/analytics/server` in Server Actions, API routes, or server components:
+
+```tsx twoslash
+// @noErrors
+import { track } from "@repo/analytics/server"
+```
+
+### Usage
+
+```tsx
+await track(event: TrackableEvent | TrackableEvent[])
+```
+
+Server-side tracking requires a `userId` or `anonymousId`:
+
+```tsx twoslash
+interface TrackableEvent {
+  event: string
+  userId: string
+  anonymousId?: string
+  [key: string]: unknown
+}
+```
+
+### Examples
+
+#### Server Action
+
+```tsx twoslash
+// @noErrors
+"use server"
+
+import { track } from "@repo/analytics/server"
+import { auth } from "@repo/auth/server"
+
+export async function createTeam(name: string) {
+  const { user } = await auth()
+  
+  const team = await db.insert(teams).values({ name }).returning()
+  
+  await track({
+    event: "TEAM_CREATED",
+    userId: user.id,
+    teamId: team.id,
+    teamName: name
+  })
+  
+  return team
+}
+```
+
+#### API Route
+
+```tsx twoslash title="app/api/purchase/route.ts"
+// @noErrors
+import { track } from "@repo/analytics/server"
+
+export async function POST(request: Request) {
+  const { userId, productId, amount } = await request.json()
+  
+  await track({
+    event: "PURCHASE_COMPLETED",
+    userId,
+    productId,
+    amount
+  })
+  
+  return Response.json({ success: true })
+}
+```
+
+#### Batch tracking
+
+```tsx twoslash
+// @noErrors
+import { track } from "@repo/analytics/server"
+declare const user: { id: string }
+declare const team: { id: string }
+// ---cut---
+await track([
+  { event: "TEAM_CREATED", userId: user.id, teamId: team.id },
+  { event: "TEAM_JOINED", userId: user.id, teamId: team.id }
+])
+```
+
+## Event naming conventions
+
+Use `SCREAMING_SNAKE_CASE` for consistency:
+
+- `SIGNUP_CLICKED`
+- `PURCHASE_COMPLETED`
+- `FEATURE_USED`
+- `TEAM_CREATED`
+- `ERROR_OCCURRED`

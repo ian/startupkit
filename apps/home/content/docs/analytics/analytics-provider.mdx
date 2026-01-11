@@ -1,0 +1,126 @@
+---
+title: AnalyticsProvider
+description: Context provider for analytics
+---
+
+Wrap your app to enable analytics tracking.
+
+## Import
+
+```tsx
+import { AnalyticsProvider } from "@repo/analytics"
+```
+
+## Usage
+
+```tsx title="app/providers.tsx"
+"use client"
+
+import { AnalyticsProvider } from "@repo/analytics"
+import { analyticsPlugins } from "@/lib/analytics"
+
+export function Providers({ 
+  children, 
+  flags 
+}: { 
+  children: React.ReactNode
+  flags: Record<string, unknown>
+}) {
+  return (
+    <AnalyticsProvider flags={flags} plugins={analyticsPlugins}>
+      {children}
+    </AnalyticsProvider>
+  )
+}
+```
+
+## Props
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `plugins` | `AnalyticsPlugin[]` | Array of configured analytics plugins |
+| `flags` | `Record<string, unknown>` | Feature flags from server |
+| `children` | `ReactNode` | App content |
+
+## Plugins
+
+Configure which analytics providers to use:
+
+```tsx title="lib/analytics.ts"
+import {
+  PostHogPlugin,
+  GoogleAnalyticsPlugin,
+  OpenPanelPlugin,
+  AhrefsPlugin
+} from "@repo/analytics"
+
+export const analyticsPlugins = [
+  PostHogPlugin({
+    apiKey: process.env.NEXT_PUBLIC_POSTHOG_KEY!
+  }),
+  GoogleAnalyticsPlugin({
+    measurementId: process.env.NEXT_PUBLIC_GA_ID!
+  })
+]
+```
+
+### PostHogPlugin
+
+```tsx
+PostHogPlugin({
+  apiKey: process.env.NEXT_PUBLIC_POSTHOG_KEY!,
+  apiHost: "https://app.posthog.com" // Optional, defaults to PostHog cloud
+})
+```
+
+### GoogleAnalyticsPlugin
+
+```tsx
+GoogleAnalyticsPlugin({
+  measurementId: process.env.NEXT_PUBLIC_GA_ID! // G-XXXXXXXXXX
+})
+```
+
+### OpenPanelPlugin
+
+```tsx
+OpenPanelPlugin({
+  clientId: process.env.NEXT_PUBLIC_OPENPANEL_CLIENT_ID!,
+  trackScreenViews: true // Optional
+})
+```
+
+### AhrefsPlugin
+
+```tsx
+AhrefsPlugin({
+  siteId: process.env.NEXT_PUBLIC_AHREFS_SITE_ID!
+})
+```
+
+## Passing flags from server
+
+Fetch feature flags on the server and pass to the provider:
+
+```tsx title="app/layout.tsx"
+import { Providers } from "./providers"
+import { getFeatureFlags } from "@/lib/feature-flags"
+
+export default async function RootLayout({ children }) {
+  const flags = await getFeatureFlags()
+
+  return (
+    <html>
+      <body>
+        <Providers flags={flags}>
+          {children}
+        </Providers>
+      </body>
+    </html>
+  )
+}
+```
+
+## Automatic page tracking
+
+`AnalyticsProvider` automatically tracks page views on route changes in Next.js. No additional setup required.

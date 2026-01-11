@@ -1,0 +1,198 @@
+---
+title: Migrations
+description: Manage database schema changes with Drizzle Kit
+---
+
+Drizzle Kit handles database migrations—generating SQL from your schema changes and applying them to your database.
+
+## Migration Workflow
+
+1. Modify your schema in `packages/db/src/schema.ts`
+2. Generate a migration with `pnpm db:generate`
+3. Review the generated SQL
+4. Apply with `pnpm db:migrate`
+
+## Generate Migrations
+
+After changing your schema, generate a migration:
+
+```bash title="packages/db"
+pnpm db:generate
+```
+
+This creates a new SQL file in `packages/db/drizzle/`:
+
+```
+packages/db/
+└── drizzle/
+    ├── 0000_initial.sql
+    ├── 0001_add_posts_table.sql  # New migration
+    └── meta/
+        └── _journal.json
+```
+
+## Apply Migrations
+
+Run pending migrations:
+
+```bash title="packages/db"
+pnpm db:migrate
+```
+
+This executes all unapplied migrations in order.
+
+## Push (Development Only)
+
+For rapid iteration during development, push schema changes directly:
+
+```bash title="packages/db"
+pnpm db:push
+```
+
+<Callout type="warn">
+`db:push` modifies the database without creating migration files. Use it only for local development—never in production.
+</Callout>
+
+## Migration Files
+
+Generated migrations are plain SQL:
+
+```sql title="drizzle/0001_add_posts_table.sql"
+CREATE TABLE IF NOT EXISTS "Post" (
+    "id" text PRIMARY KEY NOT NULL,
+    "title" varchar(255) NOT NULL,
+    "content" text,
+    "published" boolean DEFAULT false NOT NULL,
+    "authorId" text NOT NULL,
+    "createdAt" timestamp DEFAULT now() NOT NULL,
+    "updatedAt" timestamp DEFAULT now() NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS "Post_authorId_idx" ON "Post" ("authorId");
+
+ALTER TABLE "Post" ADD CONSTRAINT "Post_authorId_User_id_fk" 
+    FOREIGN KEY ("authorId") REFERENCES "User"("id") 
+    ON DELETE cascade ON UPDATE no action;
+```
+
+You can edit these files before applying if needed.
+
+## Drizzle Studio
+
+Explore your database visually:
+
+```bash title="packages/db"
+pnpm db:studio
+```
+
+Opens a browser-based interface to:
+- Browse tables and data
+- Execute queries
+- Edit records directly
+- View schema structure
+
+## Configuration
+
+Migration settings are in `packages/db/drizzle.config.ts`:
+
+```tsx title="packages/db/drizzle.config.ts"
+import { defineConfig } from "drizzle-kit"
+
+export default defineConfig({
+  dialect: "postgresql",
+  schema: "./src/schema.ts",
+  out: "./drizzle",
+  dbCredentials: {
+    url: process.env.DATABASE_URL || ""
+  }
+})
+```
+
+## Production Migrations
+
+For production deployments:
+
+1. **Generate locally** - Run `pnpm db:generate` in development
+2. **Commit migrations** - Add migration files to git
+3. **Apply in CI/CD** - Run `pnpm db:migrate` during deployment
+
+Example deployment script:
+
+```bash
+# Install dependencies
+pnpm install
+
+# Run migrations
+cd packages/db && pnpm db:migrate
+
+# Start the app
+pnpm start
+```
+
+## Rollback Strategy
+
+Drizzle doesn't auto-generate rollback migrations. For reversibility:
+
+1. **Create a reverse migration** - Manually write SQL to undo changes
+2. **Use a backup** - Restore from a database snapshot
+3. **Forward-fix** - Create a new migration to correct issues
+
+## Common Operations
+
+### Add a column
+
+```tsx
+// Before
+export const posts = pgTable("Post", {
+  id: text("id").primaryKey(),
+  title: text("title").notNull()
+})
+
+// After
+export const posts = pgTable("Post", {
+  id: text("id").primaryKey(),
+  title: text("title").notNull(),
+  slug: text("slug") // New column (nullable)
+})
+```
+
+### Add a table
+
+```tsx
+export const comments = pgTable("Comment", {
+  id: text("id").primaryKey(),
+  postId: text("postId")
+    .notNull()
+    .references(() => posts.id, { onDelete: "cascade" }),
+  content: text("content").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull()
+})
+```
+
+### Rename a column
+
+Drizzle detects renames. Just change the column name and generate:
+
+```tsx
+// The TypeScript property name changes
+oldName: text("old_name") → newName: text("new_name")
+```
+
+## Troubleshooting
+
+### Migration failed
+
+Check the error message and database state. You may need to:
+- Fix the SQL manually
+- Roll back partially applied changes
+- Sync `_journal.json` with actual database state
+
+### Schema out of sync
+
+If your schema and database diverge, use introspection:
+
+```bash
+npx drizzle-kit introspect
+```
+
+This generates a schema file matching your current database.

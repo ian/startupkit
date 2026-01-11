@@ -1,0 +1,255 @@
+---
+title: Identifying Users
+description: How to associate analytics events with specific users
+---
+
+Connect analytics events to specific users with the `identify` function. This enables user-level analytics, cohort analysis, and personalized experiences.
+
+## Basic Usage
+
+```tsx twoslash
+// @noErrors
+"use client"
+
+import { useAnalytics } from "@repo/analytics"
+import { useEffect } from "react"
+
+export function UserIdentifier({ user }) {
+  const { identify } = useAnalytics()
+
+  useEffect(() => {
+    if (user) {
+      identify(user.id, {
+        email: user.email,
+        name: user.name,
+        plan: user.plan
+      })
+    }
+  }, [user, identify])
+
+  return null
+}
+```
+
+## The identify() Function
+
+```typescript
+identify(userId: string, traits?: Record<string, unknown>)
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `userId` | `string` | Unique identifier for the user |
+| `traits` | `object` | Optional user properties |
+
+## When to Identify
+
+Call `identify()` when:
+
+1. **User signs in** - After successful authentication
+2. **User signs up** - When a new account is created
+3. **Profile updates** - When user properties change
+
+### After Sign In
+
+```tsx twoslash
+// @noErrors
+"use client"
+
+import { useAuth } from "@startupkit/auth"
+import { useAnalytics } from "@repo/analytics"
+import { useEffect } from "react"
+
+export function AuthIdentifier() {
+  const { user, isAuthenticated } = useAuth()
+  const { identify } = useAnalytics()
+
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      identify(user.id, {
+        email: user.email,
+        name: user.name,
+        createdAt: user.createdAt
+      })
+    }
+  }, [isAuthenticated, user, identify])
+
+  return null
+}
+```
+
+### In Your Root Layout
+
+A common pattern is to identify users in your providers:
+
+```tsx twoslash title="app/providers.tsx"
+// @noErrors
+"use client"
+
+import type { ReactNode } from "react"
+import { AuthProvider } from "@startupkit/auth"
+import { AnalyticsProvider } from "@repo/analytics"
+import { analyticsPlugins } from "@/lib/analytics"
+import { authClient } from "@/lib/auth"
+
+interface ProvidersProps {
+  children: ReactNode
+  user?: { id: string; email: string; name?: string }
+  flags?: Record<string, boolean | string>
+}
+
+export function Providers({ children, user, flags }: ProvidersProps) {
+  return (
+    <AnalyticsProvider flags={flags} plugins={analyticsPlugins}>
+      <AuthProvider 
+        user={user}
+        authClient={authClient}
+        onIdentify={(user) => {
+          // This is called when user signs in
+          // The AnalyticsProvider handles the identify call
+        }}
+      >
+        {children}
+      </AuthProvider>
+    </AnalyticsProvider>
+  )
+}
+```
+
+## User Traits
+
+Include properties that help segment your users:
+
+```typescript twoslash
+// @noErrors
+declare function identify(userId: string, traits: Record<string, unknown>): void
+declare const user: { id: string; email: string; name: string; createdAt: string }
+declare const team: { id: string }
+// ---cut---
+identify(user.id, {
+  // Core info
+  email: user.email,
+  name: user.name,
+  
+  // Account info
+  plan: "pro",
+  role: "admin",
+  teamId: team.id,
+  
+  // Lifecycle
+  createdAt: user.createdAt,
+  signupSource: "google",
+  
+  // Usage
+  projectCount: 5,
+  lastActiveAt: new Date().toISOString()
+})
+```
+
+### Recommended Traits
+
+| Trait | Description |
+|-------|-------------|
+| `email` | User's email address |
+| `name` | Display name |
+| `plan` | Subscription tier |
+| `createdAt` | Account creation date |
+| `role` | User role (admin, member) |
+| `company` | Organization name |
+
+## Updating Traits
+
+Call `identify()` again when user properties change:
+
+```tsx twoslash
+// @noErrors
+import { useAnalytics } from "@repo/analytics"
+import { useAuth } from "@repo/auth"
+declare function upgradePlan(plan: string): Promise<void>
+// ---cut---
+function PlanUpgrade({ newPlan }) {
+  const { identify } = useAnalytics()
+  const { user } = useAuth()
+
+  const handleUpgrade = async () => {
+    await upgradePlan(newPlan)
+    
+    // Update analytics with new plan
+    identify(user.id, {
+      plan: newPlan,
+      upgradedAt: new Date().toISOString()
+    })
+  }
+
+  return <button onClick={handleUpgrade}>Upgrade to {newPlan}</button>
+}
+```
+
+## Reset on Logout
+
+Clear the user identity when they sign out:
+
+```tsx twoslash
+// @noErrors
+"use client"
+
+import { useAnalytics } from "@repo/analytics"
+
+export function LogoutButton() {
+  const { reset } = useAnalytics()
+
+  const handleLogout = async () => {
+    await signOut()
+    reset() // Clear analytics identity
+  }
+
+  return <button onClick={handleLogout}>Sign Out</button>
+}
+```
+
+The `reset()` function:
+- Clears the current user identity
+- Generates a new anonymous ID
+- Ensures subsequent events aren't associated with the previous user
+
+## Anonymous Users
+
+Before `identify()` is called, users are tracked anonymously. Most analytics providers:
+
+- Generate a random anonymous ID
+- Store it in a cookie or local storage
+- Merge anonymous history when `identify()` is called
+
+This means pre-signup activity is preserved and attributed to the user.
+
+## Privacy Considerations
+
+Be mindful of what you include in traits:
+
+```typescript twoslash
+// @noErrors
+declare function identify(userId: string, traits: Record<string, unknown>): void
+declare const user: { id: string; plan: string; role: string; createdAt: string; ssn: string; card: string; password: string; address: string }
+// ---cut---
+// Good - necessary for analytics
+identify(user.id, {
+  plan: user.plan,
+  role: user.role,
+  createdAt: user.createdAt
+})
+
+// Avoid - sensitive data
+identify(user.id, {
+  ssn: user.ssn,              // Never
+  creditCard: user.card,      // Never
+  password: user.password,    // Never
+  fullAddress: user.address   // Usually unnecessary
+})
+```
+
+Check your privacy policy and ensure compliance with GDPR, CCPA, etc.
+
+## Next Steps
+
+- [Feature flags](/docs/analytics/feature-flags) - Target features to specific users
+- [Tracking events](/docs/analytics/tracking-events) - Learn the tracking API

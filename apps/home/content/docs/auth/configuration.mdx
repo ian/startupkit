@@ -1,0 +1,246 @@
+---
+title: Configuration
+description: Setting up authentication in your StartupKit monorepo
+---
+
+StartupKit uses [Better Auth](https://better-auth.com) for authentication. This guide covers how auth is structured in your monorepo.
+
+## Architecture
+
+Auth in StartupKit has two layers:
+
+| Package | Purpose |
+|---------|---------|
+| `@startupkit/auth` | NPM package with React hooks and utilities |
+| `@repo/auth` | Your customizable auth configuration |
+
+The `@repo/auth` package in your monorepo imports from both `better-auth` directly and `@startupkit/auth`. This gives you full control over your auth configuration while using StartupKit's convenience utilities.
+
+## Project Structure
+
+```
+packages/auth/
+├── src/
+│   ├── lib/
+│   │   └── auth.ts        # Better Auth configuration
+│   ├── components/
+│   │   ├── index.ts
+│   │   └── provider.tsx   # AuthProvider wrapper
+│   ├── hooks/
+│   │   └── use-auth.ts    # Typed useAuth hook
+│   ├── index.ts           # Client exports + authClient
+│   ├── server.ts          # Server exports (withAuth, handler)
+│   └── types.ts           # User/Session types
+└── package.json
+```
+
+## Server Configuration
+
+### 1. Configure Better Auth
+
+Create your Better Auth instance in `packages/auth/src/lib/auth.ts`:
+
+```ts twoslash title="packages/auth/src/lib/auth.ts"
+// @noErrors
+import { betterAuth } from "better-auth"
+import { drizzleAdapter } from "better-auth/adapters/drizzle"
+import { nextCookies } from "better-auth/next-js"
+import { emailOTP } from "better-auth/plugins"
+import * as dbSchema from "@repo/db"
+
+export const auth = betterAuth({
+  basePath: "/auth",
+  database: drizzleAdapter(dbSchema.db, {
+    provider: "pg",
+    schema: {
+      user: dbSchema.users,
+      account: dbSchema.accounts,
+      session: dbSchema.sessions,
+      verification: dbSchema.verifications
+    }
+  }),
+  plugins: [
+    emailOTP({
+      sendVerificationOTP: async ({ email, otp }) => {
+        // Send OTP via your email service
+      }
+    }),
+    nextCookies()
+  ],
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+    }
+  }
+})
+```
+
+### 2. Create Server Exports
+
+Export server utilities in `packages/auth/src/server.ts`:
+
+```ts twoslash title="packages/auth/src/server.ts"
+// @noErrors
+import { toNextJsHandler } from "better-auth/next-js"
+import { headers } from "next/headers"
+import { auth } from "./lib/auth"
+
+export { auth }
+
+export type Session = typeof auth.$Infer.Session.session
+export type User = typeof auth.$Infer.Session.user
+
+export function handler() {
+  return toNextJsHandler(auth.handler)
+}
+
+export async function withAuth() {
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
+
+  return {
+    user: session?.user ?? null,
+    session: session?.session ?? null
+  }
+}
+```
+
+### 3. Create API Route
+
+Add the auth handler route in your Next.js app:
+
+```ts twoslash title="apps/web/app/auth/[...all]/route.ts"
+// @noErrors
+import { handler } from "@repo/auth/server"
+
+export const { GET, POST } = handler()
+```
+
+## Client Configuration
+
+### 1. Create Auth Client
+
+Set up the Better Auth client in `packages/auth/src/index.ts`:
+
+```ts twoslash title="packages/auth/src/index.ts"
+// @noErrors
+import { emailOTPClient } from "better-auth/client/plugins"
+import { createAuthClient } from "better-auth/react"
+
+export * from "./components"
+export * from "./types"
+
+export const authClient = createAuthClient({
+  basePath: "/auth",
+  plugins: [emailOTPClient()]
+})
+```
+
+### 2. Create AuthProvider
+
+Wrap the StartupKit AuthProvider in `packages/auth/src/components/provider.tsx`:
+
+```tsx twoslash title="packages/auth/src/components/provider.tsx"
+// @noErrors
+"use client"
+
+import { AuthProvider as StartupKitAuthProvider } from "@startupkit/auth"
+import type React from "react"
+import { authClient } from "../index"
+import type { User } from "../types"
+
+interface AuthProviderProps {
+  children: React.ReactNode
+  user?: User
+}
+
+export function AuthProvider({ children, user }: AuthProviderProps) {
+  return (
+    <StartupKitAuthProvider authClient={authClient} user={user}>
+      {children}
+    </StartupKitAuthProvider>
+  )
+}
+```
+
+### 3. Add to App Layout
+
+Wrap your app with the AuthProvider:
+
+```tsx twoslash title="apps/web/app/providers.tsx"
+// @noErrors
+"use client"
+
+import { AuthProvider } from "@repo/auth"
+import type { User } from "@repo/auth"
+
+interface ProvidersProps {
+  children: React.ReactNode
+  user?: User
+}
+
+export function Providers({ children, user }: ProvidersProps) {
+  return (
+    <AuthProvider user={user}>
+      {children}
+    </AuthProvider>
+  )
+}
+```
+
+```tsx twoslash title="apps/web/app/layout.tsx"
+// @noErrors
+import { withAuth } from "@repo/auth/server"
+import { Providers } from "./providers"
+
+export default async function RootLayout({
+  children
+}: {
+  children: React.ReactNode
+}) {
+  const { user } = await withAuth()
+
+  return (
+    <html>
+      <body>
+        <Providers user={user}>
+          {children}
+        </Providers>
+      </body>
+    </html>
+  )
+}
+```
+
+## Environment Variables
+
+Add these to your `.env.local`:
+
+```bash
+# Database
+DATABASE_URL="postgresql://..."
+
+# Google OAuth (optional)
+GOOGLE_CLIENT_ID="your-client-id"
+GOOGLE_CLIENT_SECRET="your-client-secret"
+```
+
+## Authentication Providers
+
+The example above configures **Email OTP** and **Google OAuth**. Better Auth supports many more providers including GitHub, Apple, Discord, and others.
+
+See the [Better Auth Providers documentation](https://www.better-auth.com/docs/concepts/providers) for the full list and configuration options.
+
+To add a provider:
+
+1. Add the provider config to `auth.ts`
+2. Add the client plugin to `authClient` if needed
+3. Add environment variables
+
+## Next Steps
+
+- [requireAuth](/docs/auth/usage/require-auth) - Protect pages with redirect
+- [withAuth](/docs/auth/usage/with-auth) - Get session for conditional rendering
+- [Session Management](/docs/auth/session-management) - Configure session duration

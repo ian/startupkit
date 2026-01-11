@@ -1,0 +1,238 @@
+---
+title: Email Templates
+description: Create beautiful emails with React components
+---
+
+Email templates are React components that render to HTML. Use JSX, TypeScript, and Tailwind CSS to build emails.
+
+## Template Structure
+
+Templates live in `packages/emails/src/templates/`:
+
+```tsx title="packages/emails/src/templates/welcome.tsx"
+import {
+  Body,
+  Container,
+  Head,
+  Heading,
+  Html,
+  Preview,
+  Section,
+  Tailwind,
+  Text
+} from "@react-email/components"
+
+export interface WelcomeEmailProps {
+  name: string
+}
+
+export const WelcomeEmail = ({ name }: WelcomeEmailProps) => {
+  return (
+    <Html>
+      <Head />
+      <Preview>Welcome to our platform, {name}!</Preview>
+      <Tailwind>
+        <Body className="bg-[#f5f5f7] font-sans">
+          <Container className="mx-auto my-[40px] max-w-[500px] rounded-[16px] bg-white p-[32px]">
+            <Section>
+              <Heading className="text-[24px] font-bold text-black">
+                Welcome, {name}!
+              </Heading>
+              <Text className="text-[16px] text-[#333333]">
+                Thanks for signing up. We're excited to have you on board.
+              </Text>
+            </Section>
+          </Container>
+        </Body>
+      </Tailwind>
+    </Html>
+  )
+}
+
+WelcomeEmail.PreviewProps = {
+  name: "John Doe"
+}
+
+export default WelcomeEmail
+```
+
+## Register the Template
+
+Add your template to the template registry in `packages/emails/src/index.tsx`:
+
+```tsx title="packages/emails/src/index.tsx"
+import TeamInviteEmail from "./templates/team-invite"
+import VerifyCodeEmail from "./templates/verify-code"
+import WelcomeEmail from "./templates/welcome" // Add import
+
+const templates = {
+  TeamInvite: TeamInviteEmail,
+  VerifyCode: VerifyCodeEmail,
+  Welcome: WelcomeEmail // Register template
+} as const
+```
+
+Now you can send it:
+
+```tsx
+await sendEmail({
+  template: "Welcome", // Type-safe template name
+  from: "noreply@myapp.com",
+  to: user.email,
+  subject: "Welcome to MyApp!",
+  props: { name: user.name } // Type-safe props
+})
+```
+
+## React Email Components
+
+Common components from `@react-email/components`:
+
+| Component | Purpose |
+|-----------|---------|
+| `Html` | Root wrapper |
+| `Head` | Document head |
+| `Preview` | Email preview text (shown in inbox list) |
+| `Body` | Email body |
+| `Container` | Centered container |
+| `Section` | Content section |
+| `Heading` | Headings (h1-h6) |
+| `Text` | Paragraphs |
+| `Link` | Hyperlinks |
+| `Button` | CTA buttons |
+| `Img` | Images |
+| `Hr` | Horizontal rule |
+| `Tailwind` | Enable Tailwind CSS |
+
+## Styling with Tailwind
+
+Wrap your email body in `<Tailwind>` to use utility classes:
+
+```tsx
+<Tailwind>
+  <Body className="bg-gray-100 font-sans">
+    <Container className="mx-auto p-8 bg-white rounded-lg">
+      <Heading className="text-2xl font-bold text-gray-900">
+        Hello!
+      </Heading>
+    </Container>
+  </Body>
+</Tailwind>
+```
+
+<Callout type="info">
+Email clients have limited CSS support. Stick to basic Tailwind utilities—flexbox and grid don't work reliably in emails.
+</Callout>
+
+## Buttons
+
+Create clickable buttons with the `Button` component:
+
+```tsx
+import { Button } from "@react-email/components"
+
+<Button
+  className="rounded-md bg-black px-6 py-3 text-white"
+  href="https://myapp.com/activate"
+>
+  Activate Account
+</Button>
+```
+
+## Images
+
+Reference images with full URLs:
+
+```tsx
+import { Img } from "@react-email/components"
+
+<Img
+  src="https://myapp.com/logo.png"
+  alt="MyApp Logo"
+  width={120}
+  height={40}
+/>
+```
+
+## Links
+
+```tsx
+import { Link } from "@react-email/components"
+
+<Link href="https://myapp.com/help" className="text-blue-600 underline">
+  Need help?
+</Link>
+```
+
+## Preview Props
+
+Define preview props for the dev server:
+
+```tsx
+WelcomeEmail.PreviewProps = {
+  name: "Jane Smith"
+}
+
+export default WelcomeEmail
+```
+
+These populate the template when previewing with `pnpm dev`.
+
+## Template Patterns
+
+### Header with logo
+
+```tsx
+<Section className="text-center">
+  <Img
+    src="https://myapp.com/logo.png"
+    alt="MyApp"
+    width={120}
+    className="mx-auto"
+  />
+</Section>
+```
+
+### Footer
+
+```tsx
+<Section className="mt-8 border-t border-gray-200 pt-8">
+  <Text className="text-xs text-gray-500">
+    © {new Date().getFullYear()} MyApp. All rights reserved.
+  </Text>
+  <Text className="text-xs text-gray-500">
+    123 Main St, San Francisco, CA 94107
+  </Text>
+</Section>
+```
+
+### CTA section
+
+```tsx
+<Section className="my-8 text-center">
+  <Button
+    className="rounded-md bg-blue-600 px-8 py-4 text-lg font-semibold text-white"
+    href={ctaLink}
+  >
+    {ctaText}
+  </Button>
+</Section>
+
+<Text className="text-sm text-gray-500">
+  Or copy this link: <Link href={ctaLink}>{ctaLink}</Link>
+</Text>
+```
+
+## Testing Templates
+
+Preview templates in the browser:
+
+```bash title="packages/emails"
+pnpm dev
+```
+
+This starts a local server at `http://localhost:5001` where you can:
+- View all templates
+- Swap between templates
+- See changes with hot reload
+- Test with different preview props

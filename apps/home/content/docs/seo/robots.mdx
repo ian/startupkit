@@ -1,0 +1,280 @@
+---
+title: Robots.txt
+description: How to configure robots.txt for search engine crawlers
+---
+
+The `robots.txt` file tells search engines which pages to crawl and index. Use `generateRobots` to create one.
+
+## Basic Usage
+
+```tsx twoslash title="app/robots.ts"
+// @noErrors
+import { generateRobots } from "@startupkit/seo"
+
+export default function robots() {
+  return generateRobots({
+    baseUrl: "https://myapp.com"
+  })
+}
+```
+
+This generates `/robots.txt`:
+
+```
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /auth/
+
+Sitemap: https://myapp.com/sitemap.xml
+```
+
+## Custom Disallow Paths
+
+```tsx twoslash title="app/robots.ts"
+// @noErrors
+import { generateRobots } from "@startupkit/seo"
+
+export default function robots() {
+  return generateRobots({
+    baseUrl: "https://myapp.com",
+    disallowPaths: [
+      "/api/",
+      "/dashboard/",
+      "/auth/",
+      "/admin/",
+      "/settings/",
+      "/checkout/",
+      "/_next/"
+    ]
+  })
+}
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `baseUrl` | `string` | Required | Full site URL |
+| `disallowPaths` | `string[]` | `["/api/", "/dashboard/", "/auth/"]` | Paths to block |
+
+## Common Disallow Patterns
+
+### Web Applications
+
+```tsx
+disallowPaths: [
+  "/api/",           // API endpoints
+  "/dashboard/",     // User dashboard
+  "/auth/",          // Auth pages
+  "/settings/",      // User settings
+  "/checkout/",      // Checkout flow
+  "/admin/"          // Admin panel
+]
+```
+
+### E-commerce
+
+```tsx
+disallowPaths: [
+  "/api/",
+  "/cart/",
+  "/checkout/",
+  "/account/",
+  "/search?*",       // Search with params
+  "/wishlist/"
+]
+```
+
+### Content Sites
+
+```tsx
+disallowPaths: [
+  "/api/",
+  "/admin/",
+  "/draft/",         // Draft content
+  "/preview/"        // Preview pages
+]
+```
+
+## Advanced Configuration
+
+For more control, use Next.js's native robots format:
+
+```tsx twoslash title="app/robots.ts"
+// @noErrors
+import type { MetadataRoute } from "next"
+
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules: [
+      {
+        userAgent: "*",
+        allow: "/",
+        disallow: ["/api/", "/dashboard/"]
+      },
+      {
+        userAgent: "Googlebot",
+        allow: "/",
+        disallow: "/private/"
+      },
+      {
+        userAgent: "BadBot",
+        disallow: "/"
+      }
+    ],
+    sitemap: "https://myapp.com/sitemap.xml"
+  }
+}
+```
+
+### Per-Agent Rules
+
+Target specific crawlers:
+
+```tsx
+rules: [
+  {
+    userAgent: "Googlebot",
+    allow: "/",
+    crawlDelay: 2
+  },
+  {
+    userAgent: "Bingbot",
+    allow: "/",
+    crawlDelay: 5
+  }
+]
+```
+
+## Environment-Based Configuration
+
+Block crawlers in non-production:
+
+```tsx twoslash title="app/robots.ts"
+// @noErrors
+import { generateRobots } from "@startupkit/seo"
+
+export default function robots() {
+  // Block all crawlers in preview deployments
+  if (process.env.VERCEL_ENV === "preview") {
+    return {
+      rules: {
+        userAgent: "*",
+        disallow: "/"
+      }
+    }
+  }
+
+  return generateRobots({ baseUrl: "https://myapp.com" })
+}
+```
+
+## What to Block
+
+### Always Block
+
+| Path | Reason |
+|------|--------|
+| `/api/` | API endpoints aren't content |
+| `/auth/` | Sign in/up pages |
+| `/dashboard/` | User-specific content |
+| `/_next/` | Next.js internals |
+
+### Consider Blocking
+
+| Path | Reason |
+|------|--------|
+| `/search?*` | Avoid duplicate content from search |
+| `/checkout/` | No value for SEO |
+| `/print/` | Print-friendly versions |
+| `/*?ref=*` | URLs with tracking params |
+
+### Don't Block
+
+| Path | Reason |
+|------|--------|
+| `/` | Homepage needs indexing |
+| `/about` | Important for SEO |
+| `/pricing` | High-value pages |
+| `/blog/` | Content for indexing |
+
+## Testing
+
+### Check Robots.txt
+
+Visit `https://myapp.com/robots.txt` directly.
+
+### Google's Robots Testing Tool
+
+1. Go to [Search Console](https://search.google.com/search-console)
+2. Select your property
+3. Go to Settings → robots.txt Tester
+4. Enter a URL to test
+
+### Test Specific URLs
+
+```bash
+# Check if a URL is blocked
+curl -A "Googlebot" https://myapp.com/robots.txt
+```
+
+## Common Issues
+
+### Pages Not Indexed
+
+If pages aren't being indexed:
+
+1. Check they're not in `disallow`
+2. Verify sitemap includes them
+3. Check page has proper metadata
+4. Use Search Console's URL Inspection
+
+### Crawl Budget
+
+For large sites, be strategic about blocking to preserve crawl budget:
+
+```tsx
+disallowPaths: [
+  "/api/",
+  "/tag/*",          // Low-value tag pages
+  "/author/*",       // Author archive pages
+  "/*?sort=*",       // Sorted variations
+  "/*?page=*"        // Paginated URLs
+]
+```
+
+### Conflicting Rules
+
+Rules are evaluated in order. More specific rules should come first:
+
+```tsx
+rules: [
+  {
+    userAgent: "Googlebot",
+    allow: "/api/public/",    // Allow specific API
+    disallow: "/api/"         // Block rest of API
+  }
+]
+```
+
+## Relationship with noindex
+
+`robots.txt` and `noindex` serve different purposes:
+
+| | robots.txt | noindex |
+|---|------------|---------|
+| Blocks crawling | Yes | No |
+| Blocks indexing | No | Yes |
+| Where defined | `robots.txt` | Page meta tag |
+| Use for | Crawler access | Indexing control |
+
+For pages you never want indexed:
+1. Block in `robots.txt` (stops crawling)
+2. Add `noindex` meta tag (stops indexing if crawled via links)
+
+## Next Steps
+
+- [Sitemaps](/docs/seo/sitemap) - Help crawlers find pages
+- [Page metadata](/docs/seo/metadata) - Control per-page indexing

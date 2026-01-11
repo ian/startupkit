@@ -60,7 +60,7 @@ import type { Flags } from '../types';
  * Providers are initialized with environment variables:
  * - NEXT_PUBLIC_GOOGLE_ANALYTICS_ID - Google Analytics measurement ID
  * - NEXT_PUBLIC_OPENPANEL_CLIENT_ID - OpenPanel client ID
- * - NEXT_PUBLIC_POSTHOG_API_KEY - PostHog API key
+ * - NEXT_PUBLIC_POSTHOG_KEY - PostHog API key
  * - POSTHOG_HOST (optional) - Custom PostHog host URL (defaults to https://app.posthog.com)
  */
 const plugins: AnalyticsPlugin[] = [
@@ -71,7 +71,7 @@ const plugins: AnalyticsPlugin[] = [
     clientId: process.env.NEXT_PUBLIC_OPENPANEL_CLIENT_ID as string,
   }),
   PostHogPlugin({
-    apiKey: process.env.NEXT_PUBLIC_POSTHOG_API_KEY as string,
+    apiKey: process.env.NEXT_PUBLIC_POSTHOG_KEY as string,
   }),
 ];
 

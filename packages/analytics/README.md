@@ -53,7 +53,7 @@ import {
 
 const plugins = [
   PostHogPlugin({
-    apiKey: process.env.NEXT_PUBLIC_POSTHOG_API_KEY,
+    apiKey: process.env.NEXT_PUBLIC_POSTHOG_KEY,
     apiHost: process.env.NEXT_PUBLIC_POSTHOG_HOST // optional
   }),
   GoogleAnalyticsPlugin({

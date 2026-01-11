@@ -1,0 +1,381 @@
+---
+title: Queries
+description: Query patterns with Drizzle ORM
+---
+
+Drizzle provides two query APIs: the SQL-like query builder and the relational query API.
+
+## Basic Queries
+
+### Select all
+
+```tsx twoslash
+// @noErrors
+import { db, users } from "@repo/db"
+
+const allUsers = await db.select().from(users)
+```
+
+### Select with columns
+
+```tsx twoslash
+// @noErrors
+import { db, users } from "@repo/db"
+// ---cut---
+const userEmails = await db
+  .select({
+    id: users.id,
+    email: users.email
+  })
+  .from(users)
+```
+
+### Where clause
+
+```tsx twoslash
+// @noErrors
+import { db, users } from "@repo/db"
+import { eq, and, or, gt, like } from "drizzle-orm"
+
+// Simple equality
+const user = await db
+  .select()
+  .from(users)
+  .where(eq(users.email, "ian@example.com"))
+
+// Multiple conditions
+const activeAdmins = await db
+  .select()
+  .from(users)
+  .where(
+    and(
+      eq(users.role, "admin"),
+      eq(users.emailVerified, true)
+    )
+  )
+
+// Pattern matching
+const gmailUsers = await db
+  .select()
+  .from(users)
+  .where(like(users.email, "%@gmail.com"))
+```
+
+### Order and limit
+
+```tsx twoslash
+// @noErrors
+import { db, users } from "@repo/db"
+import { desc } from "drizzle-orm"
+// ---cut---
+const recentUsers = await db
+  .select()
+  .from(users)
+  .orderBy(desc(users.createdAt))
+  .limit(10)
+```
+
+## Relational Queries
+
+Use the relational API for nested data:
+
+```tsx twoslash
+// @noErrors
+import { db, users } from "@repo/db"
+import { eq } from "drizzle-orm"
+declare const userId: string
+// ---cut---
+// Get user with their team memberships
+const userWithTeams = await db.query.users.findFirst({
+  where: eq(users.id, userId),
+  with: {
+    memberships: {
+      with: {
+        team: true
+      }
+    }
+  }
+})
+```
+
+### Find many with relations
+
+```tsx twoslash
+// @noErrors
+import { db } from "@repo/db"
+// ---cut---
+const teamsWithMembers = await db.query.teams.findMany({
+  with: {
+    members: {
+      with: {
+        user: {
+          columns: {
+            id: true,
+            name: true,
+            email: true
+          }
+        }
+      }
+    }
+  }
+})
+```
+
+## Insert
+
+### Single insert
+
+```tsx twoslash
+// @noErrors
+import { db, users } from "@repo/db"
+// ---cut---
+const [newUser] = await db
+  .insert(users)
+  .values({
+    id: crypto.randomUUID(),
+    email: "new@example.com",
+    name: "New User"
+  })
+  .returning()
+```
+
+### Bulk insert
+
+```tsx twoslash
+// @noErrors
+import { db, posts } from "@repo/db"
+declare const userId: string
+// ---cut---
+await db.insert(posts).values([
+  { id: "1", title: "First Post", authorId: userId },
+  { id: "2", title: "Second Post", authorId: userId }
+])
+```
+
+### Insert with conflict handling
+
+```tsx twoslash
+// @noErrors
+import { db, users } from "@repo/db"
+declare const id: string
+declare const email: string
+declare const name: string
+// ---cut---
+await db
+  .insert(users)
+  .values({ id, email, name })
+  .onConflictDoUpdate({
+    target: users.email,
+    set: { name, updatedAt: new Date() }
+  })
+```
+
+## Update
+
+```tsx twoslash
+// @noErrors
+import { db, users } from "@repo/db"
+import { eq } from "drizzle-orm"
+declare const userId: string
+// ---cut---
+await db
+  .update(users)
+  .set({ 
+    name: "Updated Name",
+    updatedAt: new Date()
+  })
+  .where(eq(users.id, userId))
+```
+
+### Update and return
+
+```tsx twoslash
+// @noErrors
+import { db, posts } from "@repo/db"
+import { eq } from "drizzle-orm"
+declare const postId: string
+// ---cut---
+const [updated] = await db
+  .update(posts)
+  .set({ published: true })
+  .where(eq(posts.id, postId))
+  .returning()
+```
+
+## Delete
+
+```tsx twoslash
+// @noErrors
+import { db, sessions } from "@repo/db"
+import { eq } from "drizzle-orm"
+declare const userId: string
+// ---cut---
+await db
+  .delete(sessions)
+  .where(eq(sessions.userId, userId))
+```
+
+### Soft delete pattern
+
+```tsx twoslash
+// @noErrors
+import { pgTable, text, timestamp } from "drizzle-orm/pg-core"
+import { eq, isNull } from "drizzle-orm"
+declare const db: { update: (t: unknown) => { set: (v: unknown) => { where: (c: unknown) => Promise<void> } }; select: () => { from: (t: unknown) => { where: (c: unknown) => Promise<unknown[]> } } }
+declare const postId: string
+// ---cut---
+// Add deletedAt to schema
+export const posts = pgTable("Post", {
+  // ...
+  deletedAt: timestamp("deletedAt", { mode: "date" })
+})
+
+// Soft delete
+await db
+  .update(posts)
+  .set({ deletedAt: new Date() })
+  .where(eq(posts.id, postId))
+
+// Query non-deleted only
+const activePosts = await db
+  .select()
+  .from(posts)
+  .where(isNull(posts.deletedAt))
+```
+
+## Joins
+
+### Inner join
+
+```tsx twoslash
+// @noErrors
+import { db, posts, users } from "@repo/db"
+import { eq } from "drizzle-orm"
+// ---cut---
+const postsWithAuthors = await db
+  .select({
+    post: posts,
+    author: users
+  })
+  .from(posts)
+  .innerJoin(users, eq(posts.authorId, users.id))
+```
+
+### Left join
+
+```tsx twoslash
+// @noErrors
+import { db, posts, users } from "@repo/db"
+import { eq } from "drizzle-orm"
+// ---cut---
+const usersWithPosts = await db
+  .select()
+  .from(users)
+  .leftJoin(posts, eq(users.id, posts.authorId))
+```
+
+## Aggregations
+
+```tsx twoslash
+// @noErrors
+import { db, users, posts } from "@repo/db"
+import { count, sum, avg } from "drizzle-orm"
+
+// Count
+const [{ total }] = await db
+  .select({ total: count() })
+  .from(users)
+
+// Group by
+const postsByAuthor = await db
+  .select({
+    authorId: posts.authorId,
+    postCount: count()
+  })
+  .from(posts)
+  .groupBy(posts.authorId)
+```
+
+## Transactions
+
+```tsx twoslash
+// @noErrors
+import { db, teams, teamMembers } from "@repo/db"
+declare const teamId: string
+declare const userId: string
+// ---cut---
+await db.transaction(async (tx) => {
+  const [team] = await tx
+    .insert(teams)
+    .values({ id: teamId, name: "New Team", slug: "new-team" })
+    .returning()
+
+  await tx.insert(teamMembers).values({
+    teamId: team.id,
+    userId: userId,
+    role: "owner"
+  })
+})
+```
+
+## Raw SQL
+
+For complex queries:
+
+```tsx twoslash
+// @noErrors
+import { db } from "@repo/db"
+import { sql } from "drizzle-orm"
+
+const result = await db.execute(sql`
+  SELECT * FROM "User" 
+  WHERE "createdAt" > NOW() - INTERVAL '7 days'
+`)
+```
+
+## Type-Safe Patterns
+
+### Query wrapper functions
+
+```tsx twoslash
+// @noErrors
+import { db, users, type User } from "@repo/db"
+import { eq } from "drizzle-orm"
+
+export async function getUserById(id: string): Promise<User | null> {
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.id, id))
+  return user ?? null
+}
+
+export async function getUserByEmail(email: string): Promise<User | null> {
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, email))
+  return user ?? null
+}
+```
+
+### In Server Components
+
+```tsx twoslash title="app/dashboard/page.tsx"
+// @noErrors
+import { db, users } from "@repo/db"
+import { getSession } from "@repo/auth/server"
+import { eq } from "drizzle-orm"
+
+export default async function DashboardPage() {
+  const session = await getSession()
+  if (!session) return null
+
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.id, session.user.id))
+
+  return <div>Welcome, {user.name}</div>
+}
+```

@@ -1,0 +1,12 @@
+{
+	"title": "Introduction",
+	"pages": [
+		"what-is",
+		"quickstart",
+		"project-structure",
+		"environment-variables",
+		"comparisons",
+		"installation"
+	],
+	"defaultOpen": true
+}

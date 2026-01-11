@@ -2,7 +2,7 @@ import { render } from '@react-email/render';
 import { Resend } from 'resend';
 import { previewEmailInBrowser } from './lib/preview-email';
 import TeamInviteEmail from './templates/team-invite';
-import VerifyCodeEmail from './templates/verifiy-code';
+import VerifyCodeEmail from './templates/verify-code';
 
 const templates = {
   TeamInvite: TeamInviteEmail,

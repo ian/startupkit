@@ -1,0 +1,134 @@
+---
+title: Render
+description: Deploy to Render
+---
+
+[Render](https://render.com) offers straightforward deployment with predictable pricing.
+
+## Setup
+
+### 1. Create Web Service
+
+1. Go to [dashboard.render.com](https://dashboard.render.com)
+2. Click "New" → "Web Service"
+3. Connect your GitHub repository
+
+### 2. Configure Build
+
+Set the build configuration:
+
+| Setting | Value |
+|---------|-------|
+| **Root Directory** | `apps/web` |
+| **Build Command** | `pnpm install && pnpm build` |
+| **Start Command** | `pnpm start` |
+| **Environment** | Node |
+
+### 3. Environment Variables
+
+Add environment variables in the Environment tab:
+
+```bash
+DATABASE_URL=postgresql://...
+BETTER_AUTH_SECRET=your-secret-key
+NODE_VERSION=20
+```
+
+### 4. Deploy
+
+Click "Create Web Service". Render will:
+
+1. Clone your repository
+2. Install dependencies
+3. Build and start the application
+
+## Database on Render
+
+Render can host your PostgreSQL database:
+
+### 1. Create Database
+
+1. Click "New" → "PostgreSQL"
+2. Configure size and region
+3. Create database
+
+### 2. Connect
+
+1. Copy the Internal Database URL
+2. Add as `DATABASE_URL` to your web service
+
+## Custom Domain
+
+1. Go to your service → Settings → Custom Domains
+2. Add your domain
+3. Update DNS records
+4. Render automatically provisions SSL
+
+## Blueprint (Infrastructure as Code)
+
+Define your infrastructure in `render.yaml`:
+
+```yaml title="render.yaml"
+services:
+  - type: web
+    name: web
+    env: node
+    rootDir: apps/web
+    buildCommand: pnpm install && pnpm build
+    startCommand: pnpm start
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: mydb
+          property: connectionString
+      - key: BETTER_AUTH_SECRET
+        generateValue: true
+
+databases:
+  - name: mydb
+    plan: free
+```
+
+## Auto-Deploy
+
+Render automatically deploys on push to your default branch. Configure in Settings:
+
+- Enable/disable auto-deploy
+- Set deploy branch
+- Configure deploy hooks
+
+## Scaling
+
+### Vertical Scaling
+
+Upgrade your instance type for more resources:
+
+- Starter: 512 MB RAM
+- Standard: 2 GB RAM
+- Pro: 4+ GB RAM
+
+### Horizontal Scaling
+
+Available on Team plans:
+
+1. Go to Settings → Scaling
+2. Set number of instances
+
+## Troubleshooting
+
+### Build Failures
+
+Check the build logs. Common issues:
+
+- Missing Node.js version (set `NODE_VERSION=20`)
+- Memory limits (upgrade plan or optimize build)
+- Missing dependencies
+
+### Cold Starts
+
+Free tier services spin down after inactivity. Upgrade to paid plans for always-on.
+
+## Next Steps
+
+- [Render Docs](https://render.com/docs) — Full documentation
+- [Render Blueprints](https://render.com/docs/blueprint-spec) — Infrastructure as code
