@@ -1,0 +1,82 @@
+---
+title: Overview
+description: Deploy your StartupKit application to production
+---
+
+StartupKit works with any platform that supports Next.js. This guide covers deployment to popular platforms.
+
+## Supported Platforms
+
+| Platform | Best For |
+|----------|----------|
+| [Vercel](/docs/deployment/vercel) | Easiest setup, great for most projects |
+| [Cloudflare](/docs/deployment/cloudflare) | Edge-first, global performance |
+| [Railway](/docs/deployment/railway) | Simple infrastructure, good DX |
+| [Render](/docs/deployment/render) | Straightforward pricing |
+| [Fly.io](/docs/deployment/fly) | Multi-region, container-based |
+
+## Before You Deploy
+
+### 1. Database
+
+You'll need a PostgreSQL database. Recommended providers:
+
+- [Neon](https://neon.tech) — Serverless Postgres, generous free tier
+- [Supabase](https://supabase.com) — Postgres with extras
+- [Railway](https://railway.app) — Simple managed Postgres
+- [PlanetScale](https://planetscale.com) — MySQL (requires adapter)
+
+### 2. Run Migrations
+
+Before first deployment, push your schema:
+
+```bash
+pnpm db:push
+```
+
+Or run migrations:
+
+```bash
+pnpm db:migrate
+```
+
+### 3. Environment Variables
+
+Each platform has its own way of setting environment variables. At minimum, you'll need:
+
+```bash
+DATABASE_URL=postgresql://...
+BETTER_AUTH_SECRET=your-secret-key
+NEXT_PUBLIC_BASE_URL=https://yourdomain.com
+```
+
+See [Environment Variables](/docs/getting-started/environment-variables) for the complete list.
+
+## Production Checklist
+
+Before going live:
+
+- [ ] Environment variables are set
+- [ ] Database is provisioned and migrated
+- [ ] Authentication providers configured with production URLs
+- [ ] Analytics is tracking correctly
+- [ ] Custom domain configured
+- [ ] SSL certificate active
+
+## Monorepo Configuration
+
+For all platforms, you'll need to configure the build for your monorepo:
+
+- **Root Directory**: `apps/web`
+- **Build Command**: `pnpm build` (or `turbo run build --filter=web`)
+- **Install Command**: `pnpm install`
+
+## Next Steps
+
+Choose your deployment platform:
+
+- [Vercel](/docs/deployment/vercel) — Recommended for most users
+- [Cloudflare](/docs/deployment/cloudflare) — Edge deployment
+- [Railway](/docs/deployment/railway) — Simple setup
+- [Render](/docs/deployment/render) — Predictable pricing
+- [Fly.io](/docs/deployment/fly) — Multi-region containers

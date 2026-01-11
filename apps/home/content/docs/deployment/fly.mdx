@@ -1,0 +1,217 @@
+---
+title: Fly.io
+description: Deploy to Fly.io
+---
+
+[Fly.io](https://fly.io) runs containers close to your users with multi-region deployment.
+
+## Prerequisites
+
+Install the Fly CLI:
+
+```bash
+# macOS
+brew install flyctl
+
+# Windows
+powershell -Command "iwr https://fly.io/install.ps1 -useb | iex"
+
+# Linux
+curl -L https://fly.io/install.sh | sh
+```
+
+Login to Fly:
+
+```bash
+fly auth login
+```
+
+## Setup
+
+### 1. Initialize App
+
+From your project root:
+
+```bash
+cd apps/web
+fly launch
+```
+
+This creates a `fly.toml` configuration file.
+
+### 2. Configure fly.toml
+
+```toml title="apps/web/fly.toml"
+app = "your-app-name"
+primary_region = "iad"
+
+[build]
+
+[env]
+  PORT = "3000"
+  NODE_ENV = "production"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 512
+```
+
+### 3. Create Dockerfile
+
+Create a Dockerfile in `apps/web`:
+
+```dockerfile title="apps/web/Dockerfile"
+FROM node:20-alpine AS base
+
+FROM base AS deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+COPY package.json pnpm-lock.yaml ./
+RUN corepack enable pnpm && pnpm install --frozen-lockfile
+
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+RUN corepack enable pnpm && pnpm build
+
+FROM base AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+ENV PORT=3000
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+EXPOSE 3000
+CMD ["node", "server.js"]
+```
+
+### 4. Set Secrets
+
+Set environment variables as secrets:
+
+```bash
+fly secrets set DATABASE_URL="postgresql://..."
+fly secrets set BETTER_AUTH_SECRET="your-secret-key"
+fly secrets set NEXT_PUBLIC_BASE_URL="https://your-app.fly.dev"
+```
+
+### 5. Deploy
+
+```bash
+fly deploy
+```
+
+## Database on Fly.io
+
+### Fly Postgres
+
+Create a PostgreSQL cluster:
+
+```bash
+fly postgres create --name myapp-db
+```
+
+Attach to your app:
+
+```bash
+fly postgres attach myapp-db
+```
+
+This automatically sets `DATABASE_URL`.
+
+### External Database
+
+Use Neon, Supabase, or another provider and set `DATABASE_URL` as a secret.
+
+## Custom Domain
+
+```bash
+fly certs create yourdomain.com
+```
+
+Then update your DNS to point to your Fly app.
+
+## Multi-Region Deployment
+
+Deploy to multiple regions for lower latency:
+
+```bash
+fly scale count 2 --region iad,lhr
+```
+
+Or configure in `fly.toml`:
+
+```toml
+primary_region = "iad"
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 512
+
+[processes]
+  app = "node server.js"
+```
+
+## Scaling
+
+### Vertical
+
+```bash
+fly scale vm shared-cpu-2x
+fly scale memory 1024
+```
+
+### Horizontal
+
+```bash
+fly scale count 3
+```
+
+## Troubleshooting
+
+### Build Failures
+
+Check the build logs:
+
+```bash
+fly logs
+```
+
+Common issues:
+
+- Dockerfile syntax errors
+- Missing files in build context
+- Memory limits during build
+
+### Connection Issues
+
+If your app can't connect to the database:
+
+```bash
+# Check secrets are set
+fly secrets list
+
+# Check database is attached
+fly postgres list
+```
+
+## Next Steps
+
+- [Fly.io Docs](https://fly.io/docs) — Full documentation
+- [Fly.io for Next.js](https://fly.io/docs/js/frameworks/nextjs/) — Framework guide

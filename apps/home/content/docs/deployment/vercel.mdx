@@ -1,0 +1,105 @@
+---
+title: Vercel
+description: Deploy to Vercel
+---
+
+[Vercel](https://vercel.com) is the recommended deployment platform for StartupKit. It's built by the creators of Next.js and offers the best integration.
+
+## Setup
+
+### 1. Connect Repository
+
+1. Push your code to GitHub
+2. Go to [vercel.com/new](https://vercel.com/new)
+3. Import your repository
+4. Vercel auto-detects Next.js
+
+### 2. Configure Monorepo
+
+Set the root directory for your app:
+
+- **Root Directory**: `apps/web`
+- **Framework Preset**: Next.js (auto-detected)
+- **Build Command**: Leave default
+- **Install Command**: `pnpm install`
+
+### 3. Environment Variables
+
+Add your environment variables in the Vercel dashboard:
+
+```bash
+DATABASE_URL=postgresql://...
+BETTER_AUTH_SECRET=your-secret-key
+NEXT_PUBLIC_BASE_URL=https://your-app.vercel.app
+```
+
+Add any additional variables for auth providers, analytics, etc.
+
+### 4. Deploy
+
+Click "Deploy" and Vercel will:
+
+1. Install dependencies
+2. Build the application
+3. Deploy to a global edge network
+
+## Custom Domain
+
+1. Go to Project Settings → Domains
+2. Add your custom domain
+3. Update DNS records as instructed
+4. Update `NEXT_PUBLIC_BASE_URL` to your domain
+
+## Environment Tips
+
+### Different Values Per Environment
+
+Use different values for Preview vs Production:
+
+- Preview deployments can use a staging database
+- Production uses your production database
+
+### Sensitive Variables
+
+Store secrets in Vercel, never in code:
+
+- `BETTER_AUTH_SECRET`
+- `DATABASE_URL`
+- OAuth client secrets
+
+## Automatic Deployments
+
+Vercel automatically deploys:
+
+- **Production**: On push to `main`
+- **Preview**: On pull requests
+
+## Vercel Analytics
+
+Enable built-in analytics in Project Settings → Analytics for:
+
+- Web Vitals monitoring
+- Page view tracking
+- Performance insights
+
+## Troubleshooting
+
+### Build Failures
+
+Check the build logs. Common issues:
+
+- Missing environment variables
+- TypeScript errors
+- ESLint errors (run `pnpm lint` locally first)
+
+### Monorepo Issues
+
+Ensure the root directory is set correctly:
+
+- Should be `apps/web`, not the repo root
+- Turbo caching may need adjustment
+
+## Next Steps
+
+- [Vercel Docs](https://vercel.com/docs) — Full documentation
+- [Environment Variables](/docs/getting-started/environment-variables) — Complete variable reference

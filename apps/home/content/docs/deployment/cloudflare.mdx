@@ -1,0 +1,113 @@
+---
+title: Cloudflare
+description: Deploy to Cloudflare Pages
+---
+
+[Cloudflare Pages](https://pages.cloudflare.com) offers edge-first deployment with excellent global performance.
+
+## Prerequisites
+
+- Cloudflare account
+- Next.js configured for edge runtime (optional)
+
+## Setup
+
+### 1. Connect Repository
+
+1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com) → Pages
+2. Click "Create a project"
+3. Connect your GitHub repository
+
+### 2. Configure Build
+
+Set the build configuration:
+
+| Setting | Value |
+|---------|-------|
+| **Framework preset** | Next.js |
+| **Root directory** | `apps/web` |
+| **Build command** | `pnpm build` |
+| **Build output directory** | `.next` |
+
+### 3. Environment Variables
+
+Add environment variables in the Cloudflare dashboard:
+
+```bash
+DATABASE_URL=postgresql://...
+BETTER_AUTH_SECRET=your-secret-key
+NEXT_PUBLIC_BASE_URL=https://your-app.pages.dev
+NODE_VERSION=20
+```
+
+### 4. Deploy
+
+Click "Save and Deploy". Cloudflare will:
+
+1. Clone your repository
+2. Install dependencies
+3. Build the application
+4. Deploy to the edge network
+
+## @cloudflare/next-on-pages
+
+For full Next.js support on Cloudflare, use the adapter:
+
+```bash
+pnpm add -D @cloudflare/next-on-pages
+```
+
+Update your build command:
+
+```bash
+npx @cloudflare/next-on-pages
+```
+
+## Custom Domain
+
+1. Go to your Pages project → Custom domains
+2. Add your domain
+3. Cloudflare automatically provisions SSL
+
+## Environment Variables
+
+### Production vs Preview
+
+Set different values for production and preview environments:
+
+- Production: Your live database and keys
+- Preview: Staging/test values
+
+### Secrets
+
+For sensitive values, use encrypted environment variables in the Cloudflare dashboard.
+
+## Limitations
+
+Some Next.js features may require configuration:
+
+- **Image Optimization**: Use Cloudflare Images or external provider
+- **ISR**: Supported with caching configuration
+- **Middleware**: Runs on the edge
+
+## Troubleshooting
+
+### Build Failures
+
+Check the build logs for:
+
+- Missing environment variables
+- Node.js version issues (set `NODE_VERSION=20`)
+- Incompatible Next.js features
+
+### Edge Runtime
+
+If using edge runtime, ensure your code is compatible:
+
+- No Node.js-only APIs
+- Database connections use HTTP (Neon, PlanetScale)
+
+## Next Steps
+
+- [Cloudflare Pages Docs](https://developers.cloudflare.com/pages) — Full documentation
+- [Next.js on Cloudflare](https://developers.cloudflare.com/pages/framework-guides/nextjs/) — Framework guide
