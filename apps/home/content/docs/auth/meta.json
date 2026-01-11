@@ -3,11 +3,11 @@
 	"icon": "Lock",
 	"pages": [
 		"index",
-		"email-otp",
-		"google-oauth",
-		"protecting-routes",
+		"configuration",
 		"session-management",
-		"hooks-reference"
+		"require-auth",
+		"with-auth",
+		"use-auth"
 	],
 	"defaultOpen": true
 }

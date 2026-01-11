@@ -1,0 +1,171 @@
+---
+title: withAuth
+description: Get the current session without redirecting
+---
+
+`withAuth()` returns the current session if one exists, or `null` values if not. Use it for conditional rendering or API routes where you need to handle unauthenticated states yourself.
+
+## Basic Usage
+
+```tsx title="app/page.tsx"
+import { withAuth } from "@repo/auth/server"
+
+export default async function HomePage() {
+  const { user } = await withAuth()
+
+  return (
+    <div>
+      {user ? (
+        <span>Welcome back, {user.name}</span>
+      ) : (
+        <a href="/sign-in">Sign In</a>
+      )}
+    </div>
+  )
+}
+```
+
+## Return Value
+
+Always returns an object with `user` and `session`:
+
+```tsx
+const { user, session } = await withAuth()
+
+// Authenticated: { user: User, session: Session }
+// Not authenticated: { user: null, session: null }
+```
+
+## API Routes
+
+Protect API routes and return proper HTTP status:
+
+```tsx title="app/api/user/route.ts"
+import { withAuth } from "@repo/auth/server"
+import { NextResponse } from "next/server"
+
+export async function GET() {
+  const { user } = await withAuth()
+
+  if (!user) {
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401 }
+    )
+  }
+
+  return NextResponse.json({ user })
+}
+```
+
+## Conditional Content
+
+Show different content based on auth state:
+
+```tsx title="app/pricing/page.tsx"
+import { withAuth } from "@repo/auth/server"
+
+export default async function PricingPage() {
+  const { user } = await withAuth()
+
+  return (
+    <div>
+      <h1>Pricing</h1>
+      {user ? (
+        <CurrentPlanDetails userId={user.id} />
+      ) : (
+        <PublicPricingTable />
+      )}
+    </div>
+  )
+}
+```
+
+## Root Layout
+
+Pass user to client providers:
+
+```tsx title="app/layout.tsx"
+import { withAuth } from "@repo/auth/server"
+import { Providers } from "./providers"
+
+export default async function RootLayout({
+  children
+}: {
+  children: React.ReactNode
+}) {
+  const { user } = await withAuth()
+
+  return (
+    <html>
+      <body>
+        <Providers user={user}>
+          {children}
+        </Providers>
+      </body>
+    </html>
+  )
+}
+```
+
+## Client Components
+
+For client-side auth checks, use the `useAuth` hook instead:
+
+```tsx
+"use client"
+
+import { useAuth } from "@repo/auth"
+
+export function Header() {
+  const { isAuthenticated, user, isLoading } = useAuth()
+
+  if (isLoading) return <Skeleton />
+
+  return isAuthenticated ? (
+    <span>{user?.name}</span>
+  ) : (
+    <a href="/sign-in">Sign In</a>
+  )
+}
+```
+
+## Middleware
+
+For edge-based checks, use Next.js middleware:
+
+```tsx title="middleware.ts"
+import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
+
+export function middleware(request: NextRequest) {
+  const sessionToken = request.cookies.get("better-auth.session_token")
+
+  if (request.nextUrl.pathname.startsWith("/dashboard")) {
+    if (!sessionToken) {
+      return NextResponse.redirect(new URL("/sign-in", request.url))
+    }
+  }
+
+  return NextResponse.next()
+}
+
+export const config = {
+  matcher: ["/dashboard/:path*"]
+}
+```
+
+## When to Use
+
+| Use Case | Function |
+|----------|----------|
+| Conditional UI | `withAuth()` |
+| API routes | `withAuth()` |
+| Root layout | `withAuth()` |
+| Protected pages | [`requireAuth()`](/docs/auth/require-auth) |
+| Server actions | [`requireAuth()`](/docs/auth/require-auth) |
+
+## Next Steps
+
+- [requireAuth](/docs/auth/require-auth) - Redirect unauthenticated users
+- [useAuth](/docs/auth/hooks-reference) - Client-side auth hook

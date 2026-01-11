@@ -1,0 +1,126 @@
+---
+title: AGENTS.md
+description: AI agent instructions file for guiding AI coding assistants in your project
+---
+
+StartupKit projects include an `AGENTS.md` file that provides context and guidelines for AI coding assistants like Claude, Cursor, and GitHub Copilot.
+
+## What is AGENTS.md?
+
+The `AGENTS.md` file is a comprehensive guide that helps AI assistants understand your project's architecture, conventions, and best practices. When you work with AI tools, they can reference this file to provide more accurate, context-aware suggestions.
+
+## File Location
+
+The agent instructions are managed in the `.ruler/` directory:
+
+```
+my-project/
+├── .ruler/
+│   └── AGENTS.md           # Source file for AI instructions
+├── AGENTS.md               # Generated root file
+├── CLAUDE.md               # Claude-specific instructions
+└── WARP.md                 # Warp terminal instructions
+```
+
+## What's Included
+
+The generated `AGENTS.md` covers:
+
+- **Project Structure** - Workspace layout, package architecture, file locations
+- **TypeScript Standards** - Strict configuration, code style rules, naming conventions
+- **Package Management** - pnpm commands, dependency catalogs, workspace protocol
+- **Database** - Drizzle ORM schema patterns, migration commands
+- **UI Components** - Shadcn usage, styling conventions, component imports
+- **Authentication** - @repo/auth configuration, client/server usage, route locations
+- **Analytics** - PostHog integration, feature flags, tracking
+- **Best Practices** - Server Components, environment variables, testing
+
+## Updating Agent Instructions
+
+To customize the AI agent instructions for your project:
+
+1. **Edit the source file**:
+   ```bash
+   # Modify the main instructions
+   code .ruler/AGENTS.md
+   ```
+
+2. **Regenerate the output files**:
+   ```bash
+   pnpm agents.md
+   ```
+
+This regenerates `AGENTS.md`, `CLAUDE.md`, `WARP.md`, and other AI-specific instruction files at the repository root.
+
+## Using with AI Assistants
+
+Most AI coding assistants automatically detect and use `AGENTS.md`:
+
+| Assistant | Detection |
+|-----------|-----------|
+| Cursor | Automatically reads AGENTS.md |
+| Claude (Anthropic) | Reads CLAUDE.md when available |
+| GitHub Copilot | Uses AGENTS.md for context |
+| Warp Terminal | Uses WARP.md for commands |
+
+## Customization Tips
+
+### Add Project-Specific Context
+
+Include information specific to your domain:
+
+```markdown
+## Business Logic
+
+- Users can have multiple organizations
+- Billing is handled through Stripe
+- Feature flags control premium features
+```
+
+### Document Custom Conventions
+
+If your team has specific patterns:
+
+```markdown
+## Our Conventions
+
+- API routes return `{ data, error }` format
+- Use `trpc` for type-safe API calls
+- All dates are stored in UTC
+```
+
+### Include External Service Info
+
+Document integrations:
+
+```markdown
+## External Services
+
+- **Stripe**: Handles payments, webhooks at `/api/webhooks/stripe`
+- **Resend**: Email delivery via @repo/emails
+- **PostHog**: Analytics and feature flags
+```
+
+## Ruler Integration
+
+StartupKit uses [Ruler](https://github.com/intellectronica/ruler) to manage AI instructions. Ruler concatenates multiple markdown files into unified instruction sets.
+
+### Adding More Context Files
+
+Create additional files in `.ruler/`:
+
+```
+.ruler/
+├── AGENTS.md           # Main instructions
+├── api-patterns.md     # API conventions
+├── testing.md          # Testing guidelines
+└── deployment.md       # Deployment docs
+```
+
+Then regenerate:
+
+```bash
+pnpm agents.md
+```
+
+All `.ruler/*.md` files are concatenated into the final output.

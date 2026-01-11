@@ -18,25 +18,11 @@ Sessions refresh automatically when users are active.
 
 ## How Sessions Work
 
-```mermaid
-sequenceDiagram
-    participant User
-    participant App
-    participant BetterAuth
-    participant Database
-
-    User->>App: Sign in
-    App->>BetterAuth: Create session
-    BetterAuth->>Database: Store session
-    BetterAuth->>App: Set cookie
-    App->>User: Authenticated
-
-    User->>App: Make request
-    App->>BetterAuth: Validate session
-    BetterAuth->>Database: Check session
-    Database-->>BetterAuth: Session valid
-    BetterAuth-->>App: User data
-```
+1. **Sign in**: User authenticates via email OTP or OAuth
+2. **Create session**: Better Auth creates a session record in your database
+3. **Set cookie**: A secure HTTP-only cookie is sent to the browser
+4. **Validate requests**: On each request, the cookie is validated against the database
+5. **Refresh**: Active sessions are automatically extended
 
 ## Customizing Session Duration
 
@@ -295,5 +281,6 @@ export const auth = betterAuth({
 
 ## Next Steps
 
-- [Protecting routes](/docs/auth/protecting-routes) - Use sessions to secure pages
-- [useAuth reference](/docs/auth/hooks-reference) - Full hook API
+- [requireAuth](/docs/auth/require-auth) - Protect pages with redirect
+- [withAuth](/docs/auth/with-auth) - Get session for conditional rendering
+- [useAuth reference](/docs/auth/hooks-reference) - Client-side auth hook

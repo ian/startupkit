@@ -3,138 +3,80 @@ title: Auth Overview
 description: Authentication with @startupkit/auth built on Better Auth
 ---
 
-`@startupkit/auth` provides React hooks and context for authentication, built on [Better Auth](https://better-auth.com).
+StartupKit authentication is built on [Better Auth](https://better-auth.com), a flexible authentication framework for TypeScript.
 
-## Features
+## What StartupKit Provides
 
-- **Email OTP** - One-time password via email
-- **Google OAuth** - Sign in with Google
-- **Session management** - 7-day sessions with auto-refresh
-- **React hooks** - `useAuth()` for components
-- **Server utilities** - Session checking in Server Components
+`@startupkit/auth` adds convenience utilities on top of Better Auth:
 
-## Quick Setup
+- **Server utilities** - `withAuth()`, `requireAuth()` for Server Components
+- **React hooks** - `useAuth()` for client components
+- **Context provider** - `AuthProvider` with analytics integration
 
-### 1. Configure Better Auth
+## Quick Example
 
-```tsx title="lib/auth.ts"
-import { betterAuth } from "better-auth"
-import { drizzleAdapter } from "better-auth/adapters/drizzle"
-import { nextCookies } from "better-auth/next-js"
-import { emailOTP } from "better-auth/plugins"
-import { db } from "@repo/db"
+**Server Component:**
 
-export const auth = betterAuth({
-  basePath: "/auth",
-  database: drizzleAdapter(db, { provider: "pg" }),
-  plugins: [
-    emailOTP({
-      sendVerificationOTP: async ({ email, otp }) => {
-        await sendEmail({ to: email, subject: "Your code", body: otp })
-      }
-    }),
-    nextCookies()
-  ],
-  socialProviders: {
-    google: {
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!
-    }
-  }
-})
-```
+```tsx
+import { withAuth } from "@repo/auth/server"
 
-### 2. Create API Route
-
-```tsx title="app/auth/[...all]/route.ts"
-import { auth } from "@/lib/auth"
-import { toNextJsHandler } from "better-auth/next-js"
-
-export const { GET, POST } = toNextJsHandler(auth.handler)
-```
-
-### 3. Create Auth Client
-
-```tsx title="lib/auth-client.ts"
-import { createAuthClient } from "better-auth/react"
-import { emailOTPClient } from "better-auth/client/plugins"
-
-export const authClient = createAuthClient({
-  basePath: "/auth",
-  plugins: [emailOTPClient()]
-})
-```
-
-### 4. Add Provider
-
-```tsx title="app/providers.tsx"
-"use client"
-
-import type { ReactNode } from "react"
-import { AuthProvider } from "@startupkit/auth"
-import { authClient } from "@/lib/auth-client"
-
-interface User {
-  id: string
-  email: string
-  name?: string
-}
-
-interface ProvidersProps {
-  children: ReactNode
-  user?: User
-}
-
-export function Providers({ children, user }: ProvidersProps) {
-  return (
-    <AuthProvider authClient={authClient} user={user}>
-      {children}
-    </AuthProvider>
-  )
+export default async function Dashboard() {
+  const { user } = await withAuth()
+  
+  if (!user) return <SignInPrompt />
+  
+  return <div>Welcome, {user.name}</div>
 }
 ```
 
-### 5. Use in Components
+**Client Component:**
 
 ```tsx
 "use client"
 
-import { useAuth } from "@startupkit/auth"
+import { useAuth } from "@repo/auth"
 
 export function Header() {
   const { isAuthenticated, user, logout } = useAuth()
 
-  if (!isAuthenticated) {
-    return <a href="/sign-in">Sign In</a>
-  }
+  if (!isAuthenticated) return <a href="/sign-in">Sign In</a>
 
   return (
     <div>
-      <span>Welcome, {user?.name}</span>
+      <span>{user?.name}</span>
       <button onClick={logout}>Sign Out</button>
     </div>
   )
 }
 ```
 
-## Authentication Methods
+## API Reference
 
-| Method | Description |
+### Server (`@repo/auth/server`)
+
+| Export | Description |
 |--------|-------------|
-| [Email OTP](/docs/auth/email-otp) | Send one-time codes via email |
-| [Google OAuth](/docs/auth/google-oauth) | Sign in with Google account |
+| [`withAuth()`](/docs/auth/with-auth) | Get current session (returns `{ user, session }` or nulls) |
+| [`requireAuth()`](/docs/auth/require-auth) | Get session or redirect to sign-in |
+| `handler()` | Create Next.js API route handler |
 
-## How Sessions Work
+### Client (`@repo/auth`)
 
-- **Duration**: 7 days by default
-- **Refresh**: Automatically refreshed every 24 hours
-- **Storage**: Stored in database via Drizzle adapter
-- **Cookies**: HTTP-only secure cookies
+| Export | Description |
+|--------|-------------|
+| [`useAuth()`](/docs/auth/hooks-reference) | Hook for auth state and methods |
+| `AuthProvider` | Context provider for auth |
+| `authClient` | Better Auth client instance |
 
-See [Session Management](/docs/auth/session-management) for configuration options.
+## Authentication Providers
+
+Better Auth supports many authentication methods including Email OTP, Google, GitHub, Apple, and more. See the [Better Auth Providers documentation](https://www.better-auth.com/docs/concepts/providers) for the full list.
+
+The [Configuration](/docs/auth/configuration) page shows how to set up Email OTP and Google as examples.
 
 ## Next Steps
 
-- [Email OTP setup](/docs/auth/email-otp) - Configure email authentication
-- [Google OAuth setup](/docs/auth/google-oauth) - Configure Google sign-in
-- [Protecting routes](/docs/auth/protecting-routes) - Secure your pages and APIs
+- [Configuration](/docs/auth/configuration) - Set up auth in your monorepo
+- [requireAuth](/docs/auth/require-auth) - Protect pages with redirect
+- [withAuth](/docs/auth/with-auth) - Get session for conditional rendering
+- [useAuth Reference](/docs/auth/hooks-reference) - Client-side auth hook
