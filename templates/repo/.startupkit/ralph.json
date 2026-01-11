@@ -1,0 +1,16 @@
+{
+	"ai": "claude",
+	"command": "claude",
+	"args": [
+		"--permission-mode", "acceptEdits",
+		"--output-format", "stream-json",
+		"--include-partial-messages",
+		"--verbose",
+		"-p"
+	],
+	"iterations": 10,
+	"specfile": "SPEC.md",
+	"progress": "progress.txt",
+	"complete": ".ralph-complete",
+	"prompt": "Read SPEC.md and progress.txt. Find the highest-priority incomplete task and implement it. Run tests and type checks. Update SPEC.md to mark what was done. Append progress to progress.txt. Commit your changes. ONLY WORK ON A SINGLE TASK. If all tasks complete, create file .ralph-complete"
+}
