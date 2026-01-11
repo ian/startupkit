@@ -29,8 +29,8 @@ export default defineConfig({
 		},
 			transformers: [
 				...(rehypeCodeDefaultOptions.transformers ?? []),
-				transformerTwoslash({
-					cache: createFileSystemTypesCache(),
+			transformerTwoslash({
+				typesCache: createFileSystemTypesCache(),
 					twoslashOptions: {
 						compilerOptions: {
 							moduleResolution: 100,

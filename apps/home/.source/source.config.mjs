@@ -25,7 +25,7 @@ var source_config_default = defineConfig({
       transformers: [
         ...rehypeCodeDefaultOptions.transformers ?? [],
         transformerTwoslash({
-          cache: createFileSystemTypesCache(),
+          typesCache: createFileSystemTypesCache(),
           twoslashOptions: {
             compilerOptions: {
               moduleResolution: 100,
