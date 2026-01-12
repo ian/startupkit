@@ -128,14 +128,27 @@ export async function make(options: MakeOptions): Promise<void> {
 	console.log(`\n⚠️  Reached maximum iterations (${iterations}) without completion.`)
 }
 
-async function runIteration(config: RalphConfig, prompt: string): Promise<void> {
-	return new Promise((resolve, reject) => {
-		const command = config.command ?? "claude"
-		const args = [...(config.args ?? []), prompt]
+export type SpawnFn = (command: string, args: string[]) => {
+	stdout: { on: (event: string, cb: (data: Buffer) => void) => void } | null
+	stderr: { on: (event: string, cb: (data: Buffer) => void) => void } | null
+	on: (event: string, cb: (codeOrErr: number | Error) => void) => void
+}
 
-		const child = nodeSpawn(command, args, {
-			stdio: ["inherit", "pipe", "pipe"]
-		})
+export function buildCommand(config: RalphConfig, prompt: string): { command: string; args: string[] } {
+	const command = config.command ?? "claude"
+	const args = [...(config.args ?? []), prompt]
+	return { command, args }
+}
+
+export async function runIteration(
+	config: RalphConfig,
+	prompt: string,
+	spawnFn: SpawnFn = (cmd, args) => nodeSpawn(cmd, args, { stdio: ["inherit", "pipe", "pipe"] })
+): Promise<void> {
+	return new Promise((resolve, reject) => {
+		const { command, args } = buildCommand(config, prompt)
+
+		const child = spawnFn(command, args)
 
 		child.stdout?.on("data", (data: Buffer) => {
 			const lines = data.toString().split("\n")
@@ -157,7 +170,7 @@ async function runIteration(config: RalphConfig, prompt: string): Promise<void> 
 			}
 		})
 
-		child.on("error", (err) => {
+		child.on("error", (err: Error) => {
 			console.error(`Error running ${command}:`, err.message)
 			reject(err)
 		})

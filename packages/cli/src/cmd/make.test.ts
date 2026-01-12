@@ -1,13 +1,16 @@
 import fs from "node:fs"
 import path from "node:path"
-import { afterEach, beforeEach, describe, expect, it } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import {
+	buildCommand,
 	buildPrompt,
 	DEFAULT_CONFIG,
 	DEFAULT_PROMPT,
 	loadRalphConfig,
 	parseStreamLine,
-	type RalphConfig
+	runIteration,
+	type RalphConfig,
+	type SpawnFn
 } from "./make"
 
 describe("make command - unit tests", () => {
@@ -278,6 +281,178 @@ describe("make command - unit tests", () => {
 
 		it("should mention running tests", () => {
 			expect(DEFAULT_PROMPT).toContain("Run tests")
+		})
+	})
+
+	describe("buildCommand", () => {
+		it("should use claude as default command", () => {
+			const config: RalphConfig = {}
+			const { command, args } = buildCommand(config, "test prompt")
+
+			expect(command).toBe("claude")
+		})
+
+		it("should use custom command from config", () => {
+			const config: RalphConfig = { command: "openai" }
+			const { command } = buildCommand(config, "test prompt")
+
+			expect(command).toBe("openai")
+		})
+
+		it("should append prompt to args", () => {
+			const config: RalphConfig = { args: ["--flag", "value"] }
+			const { args } = buildCommand(config, "my prompt")
+
+			expect(args).toEqual(["--flag", "value", "my prompt"])
+		})
+
+		it("should use default args when not specified", () => {
+			const config: RalphConfig = {}
+			const { args } = buildCommand(config, "test")
+
+			expect(args).toContain("--permission-mode")
+			expect(args).toContain("acceptEdits")
+			expect(args).toContain("--output-format")
+			expect(args).toContain("stream-json")
+			expect(args[args.length - 1]).toBe("test")
+		})
+
+		it("should build correct claude command with default config", () => {
+			const { command, args } = buildCommand(DEFAULT_CONFIG, "Do the task")
+
+			expect(command).toBe("claude")
+			expect(args).toEqual([
+				"--permission-mode", "acceptEdits",
+				"--output-format", "stream-json",
+				"--include-partial-messages",
+				"--verbose",
+				"-p",
+				"Do the task"
+			])
+		})
+	})
+
+	describe("runIteration - Claude invocation", () => {
+		it("should call spawn with claude command and correct args", async () => {
+			const spawnCalls: Array<{ command: string; args: string[] }> = []
+
+			const mockSpawn: SpawnFn = (command, args) => {
+				spawnCalls.push({ command, args })
+				return {
+					stdout: { on: vi.fn() },
+					stderr: { on: vi.fn() },
+					on: (event: string, cb: (code: number) => void) => {
+						if (event === "close") setTimeout(() => cb(0), 0)
+					}
+				}
+			}
+
+			const config: RalphConfig = {
+				command: "claude",
+				args: ["--permission-mode", "acceptEdits", "-p"]
+			}
+
+			await runIteration(config, "Test prompt", mockSpawn)
+
+			expect(spawnCalls).toHaveLength(1)
+			expect(spawnCalls[0].command).toBe("claude")
+			expect(spawnCalls[0].args).toContain("--permission-mode")
+			expect(spawnCalls[0].args).toContain("acceptEdits")
+			expect(spawnCalls[0].args).toContain("-p")
+			expect(spawnCalls[0].args[spawnCalls[0].args.length - 1]).toBe("Test prompt")
+		})
+
+		it("should call custom AI command when configured", async () => {
+			const spawnCalls: Array<{ command: string; args: string[] }> = []
+
+			const mockSpawn: SpawnFn = (command, args) => {
+				spawnCalls.push({ command, args })
+				return {
+					stdout: { on: vi.fn() },
+					stderr: { on: vi.fn() },
+					on: (event: string, cb: (code: number) => void) => {
+						if (event === "close") setTimeout(() => cb(0), 0)
+					}
+				}
+			}
+
+			const config: RalphConfig = {
+				ai: "gpt-4",
+				command: "openai-cli",
+				args: ["--model", "gpt-4", "--prompt"]
+			}
+
+			await runIteration(config, "Custom prompt", mockSpawn)
+
+			expect(spawnCalls[0].command).toBe("openai-cli")
+			expect(spawnCalls[0].args).toEqual(["--model", "gpt-4", "--prompt", "Custom prompt"])
+		})
+
+		it("should reject when command exits with non-zero code", async () => {
+			const mockSpawn: SpawnFn = () => ({
+				stdout: { on: vi.fn() },
+				stderr: { on: vi.fn() },
+				on: (event: string, cb: (code: number) => void) => {
+					if (event === "close") setTimeout(() => cb(1), 0)
+				}
+			})
+
+			await expect(
+				runIteration(DEFAULT_CONFIG, "test", mockSpawn)
+			).rejects.toThrow("claude exited with code 1")
+		})
+
+		it("should reject when spawn errors", async () => {
+			const mockSpawn: SpawnFn = () => ({
+				stdout: { on: vi.fn() },
+				stderr: { on: vi.fn() },
+				on: (event: string, cb: (err: Error) => void) => {
+					if (event === "error") setTimeout(() => cb(new Error("spawn failed")), 0)
+				}
+			})
+
+			await expect(
+				runIteration(DEFAULT_CONFIG, "test", mockSpawn)
+			).rejects.toThrow("spawn failed")
+		})
+
+		it("should process stdout through parseStreamLine", async () => {
+			const writtenOutput: string[] = []
+			const originalWrite = process.stdout.write.bind(process.stdout)
+			process.stdout.write = ((chunk: string) => {
+				writtenOutput.push(chunk)
+				return true
+			}) as typeof process.stdout.write
+
+			const mockSpawn: SpawnFn = () => {
+				let stdoutCallback: ((data: Buffer) => void) | null = null
+				return {
+					stdout: {
+						on: (event: string, cb: (data: Buffer) => void) => {
+							if (event === "data") stdoutCallback = cb
+						}
+					},
+					stderr: { on: vi.fn() },
+					on: (event: string, cb: (code: number) => void) => {
+						if (event === "close") {
+							setTimeout(() => {
+								const jsonLine = JSON.stringify({
+									type: "stream_event",
+									event: { delta: { text: "Hello from Claude" } }
+								})
+								stdoutCallback?.(Buffer.from(jsonLine))
+								cb(0)
+							}, 0)
+						}
+					}
+				}
+			}
+
+			await runIteration(DEFAULT_CONFIG, "test", mockSpawn)
+
+			process.stdout.write = originalWrite
+
+			expect(writtenOutput).toContain("Hello from Claude")
 		})
 	})
 })
