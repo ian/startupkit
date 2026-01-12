@@ -38,6 +38,6 @@
 		"tsx": "4.19.3",
 		"turbo": "2.5.0",
 		"typescript": "5.8.3",
-		"startupkit": "^0.6.1"
+		"startupkit": "^0.6.2"
 	}
 }

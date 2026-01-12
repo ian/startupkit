@@ -23,5 +23,6 @@
 		"@types/react": "catalog:react19",
 		"@types/react-dom": "catalog:react19",
 		"react-email": "4.0.3"
-	}
+	},
+	"version": "0.6.2"
 }

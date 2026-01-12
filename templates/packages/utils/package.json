@@ -35,5 +35,6 @@
 		"@repo/biome": "workspace:*",
 		"@repo/tsconfig": "workspace:*",
 		"@types/node": "catalog:stack"
-	}
+	},
+	"version": "0.6.2"
 }

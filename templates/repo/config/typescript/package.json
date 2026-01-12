@@ -3,5 +3,6 @@
 	"private": true,
 	"files": [
 		"*.json"
-	]
+	],
+	"version": "0.6.2"
 }

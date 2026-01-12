@@ -6,5 +6,6 @@
       "types": "./biome.jsonc",
       "default": "./biome.jsonc"
     }
-  }
+  },
+  "version": "0.6.2"
 }
