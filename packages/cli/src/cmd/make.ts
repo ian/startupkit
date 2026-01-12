@@ -188,6 +188,11 @@ export async function runIteration(
 		})
 
 		child.on("close", (code) => {
+			if (stdoutBuffer) {
+				const text = parseStreamLine(stdoutBuffer)
+				if (text) process.stdout.write(text)
+			}
+
 			if (code === 0) {
 				resolve()
 			} else {

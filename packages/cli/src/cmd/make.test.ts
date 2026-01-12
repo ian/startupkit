@@ -506,5 +506,46 @@ describe("make command - unit tests", () => {
 				process.stdout.write = originalWrite
 			}
 		})
+
+		it("should flush remaining buffer when stream closes without trailing newline", async () => {
+			const writtenOutput: string[] = []
+			const originalWrite = process.stdout.write.bind(process.stdout)
+			process.stdout.write = ((chunk: string) => {
+				writtenOutput.push(chunk)
+				return true
+			}) as typeof process.stdout.write
+
+			try {
+				const mockSpawn: SpawnFn = () => {
+					let stdoutCallback: ((data: Buffer) => void) | null = null
+					return {
+						stdout: {
+							on: (event: string, cb: (data: Buffer) => void) => {
+								if (event === "data") stdoutCallback = cb
+							}
+						},
+						stderr: { on: vi.fn() },
+						on: (event: string, cb: (code: number) => void) => {
+							if (event === "close") {
+								setTimeout(() => {
+									const jsonLine = JSON.stringify({
+										type: "stream_event",
+										event: { delta: { text: "Final message" } }
+									})
+									stdoutCallback?.(Buffer.from(jsonLine))
+									cb(0)
+								}, 0)
+							}
+						}
+					}
+				}
+
+				await runIteration(DEFAULT_CONFIG, "test", mockSpawn)
+
+				expect(writtenOutput).toContain("Final message")
+			} finally {
+				process.stdout.write = originalWrite
+			}
+		})
 	})
 })

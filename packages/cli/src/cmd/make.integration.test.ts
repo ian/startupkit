@@ -30,7 +30,7 @@ describe("CLI make - Simple Claude Output Test", () => {
 			path.join(testDir, "SPEC.md"),
 			`# Simple Test
 
-Just output the word "HELLO_FROM_SPEC" to the console. Nothing else. Do not create any files.
+Just output the word "HELLO_FROM_SPEC" to the console. Nothing else.
 Then create .ralph-complete to signal you're done.
 `
 		)
@@ -100,7 +100,13 @@ Then create .ralph-complete to signal you're done.
 				process.stderr.write(text)
 			})
 
+			const timeoutId = setTimeout(() => {
+				child.kill()
+				reject(new Error("Test timed out after 60s"))
+			}, 60000)
+
 			child.on("close", (code) => {
+				clearTimeout(timeoutId)
 				if (code === 0) {
 					resolve(stdout + stderr)
 				} else {
@@ -108,12 +114,10 @@ Then create .ralph-complete to signal you're done.
 				}
 			})
 
-			child.on("error", reject)
-
-			setTimeout(() => {
-				child.kill()
-				reject(new Error("Test timed out after 60s"))
-			}, 60000)
+			child.on("error", (err) => {
+				clearTimeout(timeoutId)
+				reject(err)
+			})
 		})
 
 		console.log("\n--- Output ---")
