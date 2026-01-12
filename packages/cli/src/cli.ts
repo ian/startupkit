@@ -3,7 +3,7 @@
 import { Command } from "commander"
 import { add } from "./cmd/add"
 import { init } from "./cmd/init"
-import { make, initRalphConfig } from "./cmd/make"
+import { initRalphConfig, make } from "./cmd/make"
 import { upgrade } from "./cmd/upgrade"
 
 export async function run() {
@@ -53,7 +53,14 @@ export async function run() {
 		.command("make [specfile]")
 		.alias("ralph")
 		.description("Run iterative AI-assisted development from a spec file")
-		.option("-i, --iterations <number>", "Maximum number of iterations", Number.parseInt)
+		.option(
+			"-i, --iterations <number>",
+			"Maximum number of iterations",
+			(value) => {
+				const parsed = Number.parseInt(value, 10)
+				return Number.isNaN(parsed) ? undefined : parsed
+			}
+		)
 		.option("-p, --progress <file>", "Progress file path")
 		.action(async (specfile, options) => {
 			await make({

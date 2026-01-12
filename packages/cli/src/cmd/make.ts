@@ -1,6 +1,12 @@
-import { existsSync, readFileSync, writeFileSync, mkdirSync, unlinkSync } from "node:fs"
-import path from "node:path"
 import { spawn as nodeSpawn } from "node:child_process"
+import {
+	existsSync,
+	mkdirSync,
+	readFileSync,
+	unlinkSync,
+	writeFileSync
+} from "node:fs"
+import path from "node:path"
 
 export interface RalphConfig {
 	ai?: string
@@ -25,8 +31,10 @@ export const DEFAULT_CONFIG: RalphConfig = {
 	ai: "claude",
 	command: "claude",
 	args: [
-		"--permission-mode", "acceptEdits",
-		"--output-format", "stream-json",
+		"--permission-mode",
+		"acceptEdits",
+		"--output-format",
+		"stream-json",
 		"--include-partial-messages",
 		"--verbose",
 		"-p"
@@ -62,7 +70,11 @@ function ensureConfigDir(cwd: string): void {
 	}
 }
 
-export function buildPrompt(config: RalphConfig, specfile: string, progress: string): string {
+export function buildPrompt(
+	config: RalphConfig,
+	specfile: string,
+	progress: string
+): string {
 	let prompt = config.prompt ?? DEFAULT_PROMPT
 	prompt = prompt.replace(/SPEC\.md/g, specfile)
 	prompt = prompt.replace(/progress\.txt/g, progress)
@@ -125,16 +137,24 @@ export async function make(options: MakeOptions): Promise<void> {
 		}
 	}
 
-	console.log(`\n⚠️  Reached maximum iterations (${iterations}) without completion.`)
+	console.log(
+		`\n⚠️  Reached maximum iterations (${iterations}) without completion.`
+	)
 }
 
-export type SpawnFn = (command: string, args: string[]) => {
+export type SpawnFn = (
+	command: string,
+	args: string[]
+) => {
 	stdout: { on: (event: string, cb: (data: Buffer) => void) => void } | null
 	stderr: { on: (event: string, cb: (data: Buffer) => void) => void } | null
 	on: (event: string, cb: (codeOrErr: number | Error) => void) => void
 }
 
-export function buildCommand(config: RalphConfig, prompt: string): { command: string; args: string[] } {
+export function buildCommand(
+	config: RalphConfig,
+	prompt: string
+): { command: string; args: string[] } {
 	const command = config.command ?? "claude"
 	const args = [...(config.args ?? []), prompt]
 	return { command, args }
@@ -143,15 +163,19 @@ export function buildCommand(config: RalphConfig, prompt: string): { command: st
 export async function runIteration(
 	config: RalphConfig,
 	prompt: string,
-	spawnFn: SpawnFn = (cmd, args) => nodeSpawn(cmd, args, { stdio: ["inherit", "pipe", "pipe"] })
+	spawnFn: SpawnFn = (cmd, args) =>
+		nodeSpawn(cmd, args, { stdio: ["inherit", "pipe", "pipe"] })
 ): Promise<void> {
 	return new Promise((resolve, reject) => {
 		const { command, args } = buildCommand(config, prompt)
 
 		const child = spawnFn(command, args)
+		let stdoutBuffer = ""
 
 		child.stdout?.on("data", (data: Buffer) => {
-			const lines = data.toString().split("\n")
+			stdoutBuffer += data.toString()
+			const lines = stdoutBuffer.split("\n")
+			stdoutBuffer = lines.pop() ?? ""
 			for (const line of lines) {
 				const text = parseStreamLine(line)
 				if (text) process.stdout.write(text)

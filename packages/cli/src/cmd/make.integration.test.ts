@@ -1,6 +1,6 @@
+import { execSync, spawn } from "node:child_process"
 import fs from "node:fs"
 import path from "node:path"
-import { execSync, spawn } from "node:child_process"
 import { afterAll, beforeAll, describe, expect, it } from "vitest"
 
 describe("CLI make - Integration Test with Claude", () => {
@@ -35,43 +35,39 @@ When done, create the file .ralph-complete
 		}
 	})
 
-	it(
-		"should run claude and execute a simple task",
-		() => {
-			const cliPath = path.join(process.cwd(), "dist/cli.js")
+	it("should run claude and execute a simple task", () => {
+		const cliPath = path.join(process.cwd(), "dist/cli.js")
 
-			if (!fs.existsSync(cliPath)) {
-				console.log("CLI not built, skipping integration test")
-				return
-			}
+		if (!fs.existsSync(cliPath)) {
+			console.log("CLI not built, skipping integration test")
+			return
+		}
 
-			const output = execSync(`node ${cliPath} make --iterations 1`, {
-				cwd: testDir,
-				encoding: "utf-8",
-				stdio: ["inherit", "pipe", "pipe"],
-				timeout: 120000
-			})
+		const output = execSync(`node ${cliPath} make --iterations 1`, {
+			cwd: testDir,
+			encoding: "utf-8",
+			stdio: ["inherit", "pipe", "pipe"],
+			timeout: 120000
+		})
 
-			console.log(output)
+		console.log(output)
 
-			expect(output).toContain("Starting ralph")
-			expect(output).toContain("Iteration 1")
+		expect(output).toContain("Starting ralph")
+		expect(output).toContain("Iteration 1")
 
-			const helloFile = path.join(testDir, "hello.txt")
+		const helloFile = path.join(testDir, "hello.txt")
 
-			console.log("\n--- Test Results ---")
-			console.log(`hello.txt exists: ${fs.existsSync(helloFile)}`)
+		console.log("\n--- Test Results ---")
+		console.log(`hello.txt exists: ${fs.existsSync(helloFile)}`)
 
-			if (fs.existsSync(helloFile)) {
-				const content = fs.readFileSync(helloFile, "utf-8")
-				console.log(`hello.txt content: ${content}`)
-				expect(content).toContain("Hello from Ralph")
-			}
+		if (fs.existsSync(helloFile)) {
+			const content = fs.readFileSync(helloFile, "utf-8")
+			console.log(`hello.txt content: ${content}`)
+			expect(content).toContain("Hello from Ralph")
+		}
 
-			expect(fs.existsSync(helloFile)).toBeTruthy()
-		},
-		180000
-	)
+		expect(fs.existsSync(helloFile)).toBeTruthy()
+	}, 180000)
 })
 
 describe("CLI make - Dry run without Claude", () => {

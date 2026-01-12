@@ -2,15 +2,15 @@ import fs from "node:fs"
 import path from "node:path"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import {
-	buildCommand,
-	buildPrompt,
 	DEFAULT_CONFIG,
 	DEFAULT_PROMPT,
+	type RalphConfig,
+	type SpawnFn,
+	buildCommand,
+	buildPrompt,
 	loadRalphConfig,
 	parseStreamLine,
-	runIteration,
-	type RalphConfig,
-	type SpawnFn
+	runIteration
 } from "./make"
 
 describe("make command - unit tests", () => {
@@ -196,10 +196,7 @@ describe("make command - unit tests", () => {
 		})
 
 		it("should return default config for invalid JSON", () => {
-			fs.writeFileSync(
-				path.join(configDir, "ralph.json"),
-				"{ invalid json }"
-			)
+			fs.writeFileSync(path.join(configDir, "ralph.json"), "{ invalid json }")
 
 			const result = loadRalphConfig(testDir)
 
@@ -322,8 +319,10 @@ describe("make command - unit tests", () => {
 
 			expect(command).toBe("claude")
 			expect(args).toEqual([
-				"--permission-mode", "acceptEdits",
-				"--output-format", "stream-json",
+				"--permission-mode",
+				"acceptEdits",
+				"--output-format",
+				"stream-json",
 				"--include-partial-messages",
 				"--verbose",
 				"-p",
@@ -359,7 +358,9 @@ describe("make command - unit tests", () => {
 			expect(spawnCalls[0].args).toContain("--permission-mode")
 			expect(spawnCalls[0].args).toContain("acceptEdits")
 			expect(spawnCalls[0].args).toContain("-p")
-			expect(spawnCalls[0].args[spawnCalls[0].args.length - 1]).toBe("Test prompt")
+			expect(spawnCalls[0].args[spawnCalls[0].args.length - 1]).toBe(
+				"Test prompt"
+			)
 		})
 
 		it("should call custom AI command when configured", async () => {
@@ -385,7 +386,12 @@ describe("make command - unit tests", () => {
 			await runIteration(config, "Custom prompt", mockSpawn)
 
 			expect(spawnCalls[0].command).toBe("openai-cli")
-			expect(spawnCalls[0].args).toEqual(["--model", "gpt-4", "--prompt", "Custom prompt"])
+			expect(spawnCalls[0].args).toEqual([
+				"--model",
+				"gpt-4",
+				"--prompt",
+				"Custom prompt"
+			])
 		})
 
 		it("should reject when command exits with non-zero code", async () => {
@@ -407,7 +413,8 @@ describe("make command - unit tests", () => {
 				stdout: { on: vi.fn() },
 				stderr: { on: vi.fn() },
 				on: (event: string, cb: (err: Error) => void) => {
-					if (event === "error") setTimeout(() => cb(new Error("spawn failed")), 0)
+					if (event === "error")
+						setTimeout(() => cb(new Error("spawn failed")), 0)
 				}
 			})
 
@@ -424,35 +431,80 @@ describe("make command - unit tests", () => {
 				return true
 			}) as typeof process.stdout.write
 
-			const mockSpawn: SpawnFn = () => {
-				let stdoutCallback: ((data: Buffer) => void) | null = null
-				return {
-					stdout: {
-						on: (event: string, cb: (data: Buffer) => void) => {
-							if (event === "data") stdoutCallback = cb
-						}
-					},
-					stderr: { on: vi.fn() },
-					on: (event: string, cb: (code: number) => void) => {
-						if (event === "close") {
-							setTimeout(() => {
-								const jsonLine = JSON.stringify({
-									type: "stream_event",
-									event: { delta: { text: "Hello from Claude" } }
-								})
-								stdoutCallback?.(Buffer.from(jsonLine))
-								cb(0)
-							}, 0)
+			try {
+				const mockSpawn: SpawnFn = () => {
+					let stdoutCallback: ((data: Buffer) => void) | null = null
+					return {
+						stdout: {
+							on: (event: string, cb: (data: Buffer) => void) => {
+								if (event === "data") stdoutCallback = cb
+							}
+						},
+						stderr: { on: vi.fn() },
+						on: (event: string, cb: (code: number) => void) => {
+							if (event === "close") {
+								setTimeout(() => {
+									const jsonLine = JSON.stringify({
+										type: "stream_event",
+										event: { delta: { text: "Hello from Claude" } }
+									})
+									stdoutCallback?.(Buffer.from(`${jsonLine}\n`))
+									cb(0)
+								}, 0)
+							}
 						}
 					}
 				}
+
+				await runIteration(DEFAULT_CONFIG, "test", mockSpawn)
+
+				expect(writtenOutput).toContain("Hello from Claude")
+			} finally {
+				process.stdout.write = originalWrite
 			}
+		})
 
-			await runIteration(DEFAULT_CONFIG, "test", mockSpawn)
+		it("should handle JSON split across multiple chunks", async () => {
+			const writtenOutput: string[] = []
+			const originalWrite = process.stdout.write.bind(process.stdout)
+			process.stdout.write = ((chunk: string) => {
+				writtenOutput.push(chunk)
+				return true
+			}) as typeof process.stdout.write
 
-			process.stdout.write = originalWrite
+			try {
+				const mockSpawn: SpawnFn = () => {
+					let stdoutCallback: ((data: Buffer) => void) | null = null
+					return {
+						stdout: {
+							on: (event: string, cb: (data: Buffer) => void) => {
+								if (event === "data") stdoutCallback = cb
+							}
+						},
+						stderr: { on: vi.fn() },
+						on: (event: string, cb: (code: number) => void) => {
+							if (event === "close") {
+								setTimeout(() => {
+									const jsonLine = JSON.stringify({
+										type: "stream_event",
+										event: { delta: { text: "Split message" } }
+									})
+									const midpoint = Math.floor(jsonLine.length / 2)
+									stdoutCallback?.(Buffer.from(jsonLine.slice(0, midpoint)))
+									stdoutCallback?.(Buffer.from(`${jsonLine.slice(midpoint)}\n`))
+									cb(0)
+								}, 0)
+							}
+						}
+					}
+				}
 
-			expect(writtenOutput).toContain("Hello from Claude")
+				await runIteration(DEFAULT_CONFIG, "test", mockSpawn)
+
+				expect(writtenOutput).toContain("Split message")
+			} finally {
+				process.stdout.write = originalWrite
+			}
 		})
 	})
 })
