@@ -164,7 +164,7 @@ export async function runIteration(
 	config: RalphConfig,
 	prompt: string,
 	spawnFn: SpawnFn = (cmd, args) =>
-		nodeSpawn(cmd, args, { stdio: ["inherit", "pipe", "pipe"] })
+		nodeSpawn(cmd, args, { stdio: ["ignore", "pipe", "pipe"] })
 ): Promise<void> {
 	return new Promise((resolve, reject) => {
 		const { command, args } = buildCommand(config, prompt)

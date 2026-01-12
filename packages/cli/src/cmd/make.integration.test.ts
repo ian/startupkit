@@ -3,30 +3,66 @@ import fs from "node:fs"
 import path from "node:path"
 import { afterAll, beforeAll, describe, expect, it } from "vitest"
 
-describe("CLI make - Integration Test with Claude", () => {
-	const testDir = path.join(process.cwd(), "tmp/test-make-ralph")
+function assertClaudeAvailable(): void {
+	if (!process.env.ANTHROPIC_API_KEY) {
+		throw new Error("ANTHROPIC_API_KEY environment variable is required")
+	}
+	try {
+		execSync("claude --version", { encoding: "utf-8", timeout: 5000 })
+	} catch {
+		throw new Error(
+			"Claude CLI is not installed. Run: npm install -g @anthropic-ai/claude-code"
+		)
+	}
+}
+
+describe("CLI make - Simple Claude Output Test", () => {
+	const testDir = path.join(process.cwd(), "tmp/test-make-hello")
 
 	beforeAll(() => {
+		assertClaudeAvailable()
 		if (fs.existsSync(testDir)) {
 			fs.rmSync(testDir, { recursive: true, force: true })
 		}
-		fs.mkdirSync(testDir, { recursive: true })
+		fs.mkdirSync(path.join(testDir, ".startupkit"), { recursive: true })
 
 		fs.writeFileSync(
 			path.join(testDir, "SPEC.md"),
-			`# Test Spec
+			`# Simple Test
 
-## Tasks
-
-- [ ] Create a file called hello.txt with the content "Hello from Ralph"
-
-## Completion
-
-When done, create the file .ralph-complete
+Just output the word "HELLO_FROM_SPEC" to the console. Nothing else. Do not create any files.
+Then create .ralph-complete to signal you're done.
 `
 		)
 
 		fs.writeFileSync(path.join(testDir, "progress.txt"), "")
+
+		fs.writeFileSync(
+			path.join(testDir, ".startupkit", "ralph.json"),
+			JSON.stringify(
+				{
+					ai: "claude",
+					command: "claude",
+					args: [
+						"--permission-mode",
+						"acceptEdits",
+						"--output-format",
+						"stream-json",
+						"--include-partial-messages",
+						"--verbose",
+						"-p"
+					],
+					iterations: 1,
+					specfile: "SPEC.md",
+					progress: "progress.txt",
+					complete: ".ralph-complete",
+					prompt:
+						"Read SPEC.md and do exactly what it says. Output HELLO_FROM_SPEC to console then create .ralph-complete"
+				},
+				null,
+				"\t"
+			)
+		)
 	})
 
 	afterAll(() => {
@@ -35,39 +71,60 @@ When done, create the file .ralph-complete
 		}
 	})
 
-	it("should run claude and execute a simple task", () => {
+	it("should call claude and output text from SPEC.md", async () => {
 		const cliPath = path.join(process.cwd(), "dist/cli.js")
 
 		if (!fs.existsSync(cliPath)) {
-			console.log("CLI not built, skipping integration test")
-			return
+			throw new Error("CLI not built - run pnpm build first")
 		}
 
-		const output = execSync(`node ${cliPath} make --iterations 1`, {
-			cwd: testDir,
-			encoding: "utf-8",
-			stdio: ["inherit", "pipe", "pipe"],
-			timeout: 120000
+		const output = await new Promise<string>((resolve, reject) => {
+			let stdout = ""
+			let stderr = ""
+
+			const child = spawn("node", [cliPath, "make"], {
+				cwd: testDir,
+				env: { ...process.env },
+				stdio: ["ignore", "pipe", "pipe"]
+			})
+
+			child.stdout.on("data", (data: Buffer) => {
+				const text = data.toString()
+				stdout += text
+				process.stdout.write(text)
+			})
+
+			child.stderr.on("data", (data: Buffer) => {
+				const text = data.toString()
+				stderr += text
+				process.stderr.write(text)
+			})
+
+			child.on("close", (code) => {
+				if (code === 0) {
+					resolve(stdout + stderr)
+				} else {
+					reject(new Error(`CLI exited with code ${code}\nstderr: ${stderr}`))
+				}
+			})
+
+			child.on("error", reject)
+
+			setTimeout(() => {
+				child.kill()
+				reject(new Error("Test timed out after 60s"))
+			}, 60000)
 		})
 
+		console.log("\n--- Output ---")
 		console.log(output)
+		console.log("--- End ---\n")
 
 		expect(output).toContain("Starting ralph")
+		expect(output).toContain("AI: claude")
 		expect(output).toContain("Iteration 1")
-
-		const helloFile = path.join(testDir, "hello.txt")
-
-		console.log("\n--- Test Results ---")
-		console.log(`hello.txt exists: ${fs.existsSync(helloFile)}`)
-
-		if (fs.existsSync(helloFile)) {
-			const content = fs.readFileSync(helloFile, "utf-8")
-			console.log(`hello.txt content: ${content}`)
-			expect(content).toContain("Hello from Ralph")
-		}
-
-		expect(fs.existsSync(helloFile)).toBeTruthy()
-	}, 180000)
+		expect(output).toContain("HELLO_FROM_SPEC")
+	}, 90000)
 })
 
 describe("CLI make - Dry run without Claude", () => {
