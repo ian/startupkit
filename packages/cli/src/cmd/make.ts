@@ -156,7 +156,8 @@ export function buildCommand(
 	prompt: string
 ): { command: string; args: string[] } {
 	const command = config.command ?? "claude"
-	const args = [...(config.args ?? []), prompt]
+	const defaultArgs = DEFAULT_CONFIG.args ?? []
+	const args = [...(config.args ?? defaultArgs), prompt]
 	return { command, args }
 }
 
