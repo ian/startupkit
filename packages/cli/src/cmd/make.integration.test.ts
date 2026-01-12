@@ -3,24 +3,23 @@ import fs from "node:fs"
 import path from "node:path"
 import { afterAll, beforeAll, describe, expect, it } from "vitest"
 
-function assertClaudeAvailable(): void {
-	if (!process.env.ANTHROPIC_API_KEY) {
-		throw new Error("ANTHROPIC_API_KEY environment variable is required")
-	}
+const hasAnthropicKey = Boolean(process.env.ANTHROPIC_API_KEY)
+
+function isClaudeCliInstalled(): boolean {
 	try {
 		execSync("claude --version", { encoding: "utf-8", timeout: 5000 })
+		return true
 	} catch {
-		throw new Error(
-			"Claude CLI is not installed. Run: npm install -g @anthropic-ai/claude-code"
-		)
+		return false
 	}
 }
 
-describe("CLI make - Simple Claude Output Test", () => {
+const canRunClaudeTests = hasAnthropicKey && isClaudeCliInstalled()
+
+describe.skipIf(!canRunClaudeTests)("CLI make - Simple Claude Output Test", () => {
 	const testDir = path.join(process.cwd(), "tmp/test-make-hello")
 
 	beforeAll(() => {
-		assertClaudeAvailable()
 		if (fs.existsSync(testDir)) {
 			fs.rmSync(testDir, { recursive: true, force: true })
 		}
