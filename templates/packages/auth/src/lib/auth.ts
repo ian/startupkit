@@ -25,7 +25,11 @@ async function sendVerificationOTP({
 }
 
 export const auth = betterAuth({
+	secret: process.env.BETTER_AUTH_SECRET,
 	basePath: "/auth",
+	trustedOrigins: process.env.BETTER_AUTH_TRUSTED_ORIGINS
+		? process.env.BETTER_AUTH_TRUSTED_ORIGINS.split(",")
+		: ["http://localhost:2274"],
 	advanced: {
 		generateId: () => crypto.randomUUID()
 	},
@@ -114,7 +118,11 @@ export const auth = betterAuth({
 	],
 	session: {
 		expiresIn: 60 * 60 * 24 * 7,
-		updateAge: 60 * 60 * 24
+		updateAge: 60 * 60 * 24,
+		cookieCache: {
+			enabled: true,
+			maxAge: 60 * 5
+		}
 	},
 	socialProviders: {
 		google: {
