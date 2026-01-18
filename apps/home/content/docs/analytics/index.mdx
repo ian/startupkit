@@ -7,7 +7,7 @@ description: Provider-agnostic analytics with @repo/analytics
 
 ## Features
 
-- **Multi-provider support** - PostHog, Google Analytics, OpenPanel, Ahrefs
+- **Multi-provider support** - PostHog, Google Analytics, OpenPanel, Datafast, Ahrefs
 - **Automatic page tracking** - Tracks route changes in Next.js
 - **Feature flags** - Built-in support for PostHog feature flags
 - **Type-safe** - Full TypeScript support for events and properties
@@ -78,6 +78,8 @@ flowchart LR
     B --> C[PostHog]
     B --> D[Google Analytics]
     B --> E[OpenPanel]
+    B --> F[Datafast]
+    B --> G[Ahrefs]
 ```
 
 Events are fanned out automatically—no need to call each provider individually.
@@ -162,6 +164,7 @@ See [Feature Flags](/docs/analytics/feature-flags) for setup details.
 | PostHog | Product analytics, feature flags, session recordings |
 | Google Analytics | Traffic analysis, marketing attribution |
 | OpenPanel | Privacy-focused, self-hostable |
+| Datafast | Privacy-focused analytics, revenue attribution |
 | Ahrefs | SEO and traffic analytics |
 
 You can use one provider or all of them together.

@@ -33,6 +33,7 @@ The package includes ready-to-use plugins for popular analytics services:
 - **PostHog** - Product analytics and feature flags
 - **GoogleAnalytics** - Google Analytics 4 integration
 - **OpenPanelPlugin** - Privacy-focused analytics
+- **DatafastPlugin** - Privacy-focused analytics with revenue attribution
 - **AhrefsPlugin** - SEO and traffic analytics
 
 ## Usage
@@ -307,12 +308,29 @@ const plugin = OpenPanelPlugin({
 - Real-time dashboards
 - Event tracking
 
+### DatafastPlugin
+
+```typescript
+import { DatafastPlugin } from "@startupkit/analytics"
+
+const plugin = DatafastPlugin({
+  websiteId: "dfid_...",
+  domain: "yourdomain.com" // optional
+})
+```
+
+**Features:**
+- Privacy-focused analytics
+- Revenue attribution
+- Custom event tracking
+- Automatic page view tracking
+
 ### AhrefsPlugin
 
 ```typescript
 import { AhrefsPlugin } from "@startupkit/analytics"
 
-const plugin = AhrefsPlugin()
+const plugin = AhrefsPlugin({ key: "your-ahrefs-key" })
 ```
 
 **Features:**

@@ -12,6 +12,7 @@ export { useAnalytics } from "./use-analytics"
 export { useFlag } from "./use-flag"
 
 export * from "./ahrefs"
+export * from "./datafast"
 export * from "./google"
 export * from "./openpanel"
 export * from "./posthog"

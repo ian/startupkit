@@ -51,6 +51,7 @@ import {
   PostHogPlugin,
   GoogleAnalyticsPlugin,
   OpenPanelPlugin,
+  DatafastPlugin,
   AhrefsPlugin
 } from "@repo/analytics"
 
@@ -90,11 +91,20 @@ OpenPanelPlugin({
 })
 ```
 
+### DatafastPlugin
+
+```tsx
+DatafastPlugin({
+  websiteId: process.env.NEXT_PUBLIC_DATAFAST_WEBSITE_ID!, // dfid_...
+  domain: "yourdomain.com" // Optional
+})
+```
+
 ### AhrefsPlugin
 
 ```tsx
 AhrefsPlugin({
-  siteId: process.env.NEXT_PUBLIC_AHREFS_SITE_ID!
+  key: process.env.NEXT_PUBLIC_AHREFS_API_KEY!
 })
 ```
 

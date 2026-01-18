@@ -42,6 +42,8 @@ import type {
   AnalyticsPlugin,
 } from '@startupkit/analytics';
 import {
+  AhrefsPlugin,
+  DatafastPlugin,
   GoogleAnalyticsPlugin,
   OpenPanelPlugin,
   PostHogPlugin,
@@ -58,12 +60,22 @@ import type { Flags } from '../types';
  * Add or remove providers by modifying this array.
  *
  * Providers are initialized with environment variables:
+ * - NEXT_PUBLIC_AHREFS_API_KEY - Ahrefs API key
+ * - NEXT_PUBLIC_DATAFAST_WEBSITE_ID - Datafast website ID (dfid_*)
+ * - NEXT_PUBLIC_DATAFAST_DOMAIN - Datafast domain (optional)
  * - NEXT_PUBLIC_GOOGLE_ANALYTICS_ID - Google Analytics measurement ID
  * - NEXT_PUBLIC_OPENPANEL_CLIENT_ID - OpenPanel client ID
  * - NEXT_PUBLIC_POSTHOG_KEY - PostHog API key
  * - POSTHOG_HOST (optional) - Custom PostHog host URL (defaults to https://app.posthog.com)
  */
 const plugins: AnalyticsPlugin[] = [
+  AhrefsPlugin({
+    key: process.env.NEXT_PUBLIC_AHREFS_API_KEY as string,
+  }),
+  DatafastPlugin({
+    websiteId: process.env.NEXT_PUBLIC_DATAFAST_WEBSITE_ID as string,
+    domain: process.env.NEXT_PUBLIC_DATAFAST_DOMAIN,
+  }),
   GoogleAnalyticsPlugin({
     measurementId: process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID as string,
   }),
