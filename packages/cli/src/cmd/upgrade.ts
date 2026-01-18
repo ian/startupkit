@@ -17,7 +17,7 @@ interface UpgradeOptions {
 	dryRun?: boolean
 }
 
-function findStartupKitPackages(pkg: PackageJson): string[] {
+function findStartupKitPackagesInPkg(pkg: PackageJson): string[] {
 	const findOrgPackages = (deps: Record<string, string> | undefined) => {
 		if (!deps) return []
 		return Object.keys(deps).filter(
@@ -31,6 +31,103 @@ function findStartupKitPackages(pkg: PackageJson): string[] {
 	return [...new Set([...dependencies, ...devDependencies])]
 }
 
+function getWorkspaceGlobs(baseDir: string): string[] {
+	const pnpmWorkspacePath = path.join(baseDir, "pnpm-workspace.yaml")
+
+	if (fs.existsSync(pnpmWorkspacePath)) {
+		const content = fs.readFileSync(pnpmWorkspacePath, "utf-8")
+		const packagePatterns: string[] = []
+
+		const lines = content.split("\n")
+		let inPackages = false
+
+		for (const line of lines) {
+			if (line.trim() === "packages:") {
+				inPackages = true
+				continue
+			}
+			if (inPackages) {
+				if (line.startsWith("  - ")) {
+					const pattern = line.replace("  - ", "").trim()
+					packagePatterns.push(pattern)
+				} else if (!line.startsWith("  ") && line.trim() !== "") {
+					break
+				}
+			}
+		}
+
+		return packagePatterns
+	}
+
+	const rootPkgPath = path.join(baseDir, "package.json")
+	if (fs.existsSync(rootPkgPath)) {
+		const rootPkg = JSON.parse(fs.readFileSync(rootPkgPath, "utf-8"))
+		if (rootPkg.workspaces) {
+			if (Array.isArray(rootPkg.workspaces)) {
+				return rootPkg.workspaces
+			}
+			if (rootPkg.workspaces.packages) {
+				return rootPkg.workspaces.packages
+			}
+		}
+	}
+
+	return []
+}
+
+function expandGlobPattern(baseDir: string, pattern: string): string[] {
+	const results: string[] = []
+
+	if (pattern.endsWith("/*")) {
+		const parentDir = path.join(baseDir, pattern.slice(0, -2))
+		if (fs.existsSync(parentDir)) {
+			const entries = fs.readdirSync(parentDir, { withFileTypes: true })
+			for (const entry of entries) {
+				if (entry.isDirectory()) {
+					results.push(path.join(parentDir, entry.name))
+				}
+			}
+		}
+	} else {
+		const fullPath = path.join(baseDir, pattern)
+		if (fs.existsSync(fullPath)) {
+			results.push(fullPath)
+		}
+	}
+
+	return results
+}
+
+function findAllStartupKitPackages(baseDir: string): string[] {
+	const allPackages: Set<string> = new Set()
+
+	const rootPkgPath = path.join(baseDir, "package.json")
+	if (fs.existsSync(rootPkgPath)) {
+		const rootPkg: PackageJson = JSON.parse(
+			fs.readFileSync(rootPkgPath, "utf-8")
+		)
+		for (const pkg of findStartupKitPackagesInPkg(rootPkg)) {
+			allPackages.add(pkg)
+		}
+	}
+
+	const workspaceGlobs = getWorkspaceGlobs(baseDir)
+	for (const glob of workspaceGlobs) {
+		const dirs = expandGlobPattern(baseDir, glob)
+		for (const dir of dirs) {
+			const pkgPath = path.join(dir, "package.json")
+			if (fs.existsSync(pkgPath)) {
+				const pkg: PackageJson = JSON.parse(fs.readFileSync(pkgPath, "utf-8"))
+				for (const pkgName of findStartupKitPackagesInPkg(pkg)) {
+					allPackages.add(pkgName)
+				}
+			}
+		}
+	}
+
+	return Array.from(allPackages)
+}
+
 async function detectPackageManager(
 	baseDir: string
 ): Promise<"pnpm" | "npm" | "yarn" | "bun"> {
@@ -42,12 +139,13 @@ async function detectPackageManager(
 
 function getUpgradeCommand(
 	pm: "pnpm" | "npm" | "yarn" | "bun",
-	packages: string[]
+	packages: string[],
+	isMonorepo: boolean
 ): string {
 	const pkgList = packages.map((pkg) => `${pkg}@latest`).join(" ")
 	switch (pm) {
 		case "pnpm":
-			return `pnpm up ${pkgList}`
+			return isMonorepo ? `pnpm up -r ${pkgList}` : `pnpm up ${pkgList}`
 		case "yarn":
 			return `yarn upgrade ${pkgList}`
 		case "bun":
@@ -74,15 +172,15 @@ async function upgradeNpmPackages(
 		return { success: false, message: "No package.json found" }
 	}
 
-	const pkg: PackageJson = JSON.parse(fs.readFileSync(pkgPath, "utf-8"))
-	const packages = findStartupKitPackages(pkg)
+	const packages = findAllStartupKitPackages(baseDir)
 
 	if (packages.length === 0) {
 		return { success: false, message: "No @startupkit/* packages found" }
 	}
 
 	const pm = await detectPackageManager(baseDir)
-	const cmd = getUpgradeCommand(pm, packages)
+	const isMonorepo = getWorkspaceGlobs(baseDir).length > 0
+	const cmd = getUpgradeCommand(pm, packages, isMonorepo)
 
 	if (dryRun) {
 		return { success: true, packages, command: cmd }
@@ -155,12 +253,7 @@ async function upgradeConfig(
 }
 
 async function checkForUpdates(baseDir: string): Promise<void> {
-	const pkgPath = path.join(baseDir, "package.json")
-
-	if (!fs.existsSync(pkgPath)) return
-
-	const pkg: PackageJson = JSON.parse(fs.readFileSync(pkgPath, "utf-8"))
-	const packages = findStartupKitPackages(pkg)
+	const packages = findAllStartupKitPackages(baseDir)
 
 	if (packages.length === 0) return
 
@@ -168,13 +261,14 @@ async function checkForUpdates(baseDir: string): Promise<void> {
 
 	try {
 		const pm = await detectPackageManager(baseDir)
+		const pkgList = packages.join(" ")
 		if (pm === "pnpm") {
-			await exec("pnpm outdated startupkit @startupkit/*", {
+			await exec(`pnpm outdated ${pkgList}`, {
 				cwd: baseDir,
 				stdio: "inherit"
 			})
 		} else if (pm === "npm") {
-			await exec("npm outdated startupkit @startupkit/*", {
+			await exec(`npm outdated ${pkgList}`, {
 				cwd: baseDir,
 				stdio: "inherit"
 			})
