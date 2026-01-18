@@ -45,6 +45,7 @@ import {
   AhrefsPlugin,
   DatafastPlugin,
   GoogleAnalyticsPlugin,
+  GoogleTagManagerPlugin,
   OpenPanelPlugin,
   PostHogPlugin,
   AnalyticsProvider as StartupKitAnalyticsProvider,
@@ -64,6 +65,7 @@ import type { Flags } from '../types';
  * - NEXT_PUBLIC_DATAFAST_WEBSITE_ID - Datafast website ID (dfid_*)
  * - NEXT_PUBLIC_DATAFAST_DOMAIN - Datafast domain (optional)
  * - NEXT_PUBLIC_GOOGLE_ANALYTICS_ID - Google Analytics measurement ID
+ * - NEXT_PUBLIC_GTM_CONTAINER_ID - Google Tag Manager container ID (GTM-XXXXXXX)
  * - NEXT_PUBLIC_OPENPANEL_CLIENT_ID - OpenPanel client ID
  * - NEXT_PUBLIC_POSTHOG_KEY - PostHog API key
  * - POSTHOG_HOST (optional) - Custom PostHog host URL (defaults to https://app.posthog.com)
@@ -78,6 +80,9 @@ const plugins: AnalyticsPlugin[] = [
   }),
   GoogleAnalyticsPlugin({
     measurementId: process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID as string,
+  }),
+  GoogleTagManagerPlugin({
+    containerId: process.env.NEXT_PUBLIC_GTM_CONTAINER_ID as string,
   }),
   OpenPanelPlugin({
     clientId: process.env.NEXT_PUBLIC_OPENPANEL_CLIENT_ID as string,

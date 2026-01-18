@@ -32,6 +32,7 @@ The package includes ready-to-use plugins for popular analytics services:
 
 - **PostHog** - Product analytics and feature flags
 - **GoogleAnalytics** - Google Analytics 4 integration
+- **GoogleTagManager** - Tag management for multiple tracking scripts
 - **OpenPanelPlugin** - Privacy-focused analytics
 - **DatafastPlugin** - Privacy-focused analytics with revenue attribution
 - **AhrefsPlugin** - SEO and traffic analytics
@@ -261,52 +262,17 @@ if (isNewFeatureEnabled) {
 
 ## Built-in Plugins
 
-### PostHog
+### AhrefsPlugin
 
 ```typescript
-import { PostHogPlugin } from "@startupkit/analytics"
+import { AhrefsPlugin } from "@startupkit/analytics"
 
-const plugin = PostHogPlugin({
-  apiKey: "phc_...",
-  apiHost: "https://app.posthog.com" // optional
-})
+const plugin = AhrefsPlugin({ key: "your-ahrefs-key" })
 ```
 
 **Features:**
-- Product analytics
-- Feature flags
-- Session recordings
-- A/B testing
-
-### GoogleAnalytics
-
-```typescript
-import { GoogleAnalyticsPlugin } from "@startupkit/analytics"
-
-const plugin = GoogleAnalyticsPlugin({
-  measurementId: "G-XXXXXXXXXX"
-})
-```
-
-**Features:**
-- Page view tracking
-- Event tracking
-- Google Analytics 4 integration
-
-### OpenPanelPlugin
-
-```typescript
-import { OpenPanelPlugin } from "@startupkit/analytics"
-
-const plugin = OpenPanelPlugin({
-  clientId: "your-client-id"
-})
-```
-
-**Features:**
-- Privacy-focused analytics
-- Real-time dashboards
-- Event tracking
+- SEO tracking
+- Traffic source analytics
 
 ### DatafastPlugin
 
@@ -325,17 +291,68 @@ const plugin = DatafastPlugin({
 - Custom event tracking
 - Automatic page view tracking
 
-### AhrefsPlugin
+### GoogleAnalyticsPlugin
 
 ```typescript
-import { AhrefsPlugin } from "@startupkit/analytics"
+import { GoogleAnalyticsPlugin } from "@startupkit/analytics"
 
-const plugin = AhrefsPlugin({ key: "your-ahrefs-key" })
+const plugin = GoogleAnalyticsPlugin({
+  measurementId: "G-XXXXXXXXXX"
+})
 ```
 
 **Features:**
-- SEO tracking
-- Traffic source analytics
+- Page view tracking
+- Event tracking
+- Google Analytics 4 integration
+
+### GoogleTagManagerPlugin
+
+```typescript
+import { GoogleTagManagerPlugin } from "@startupkit/analytics"
+
+const plugin = GoogleTagManagerPlugin({
+  containerId: "GTM-XXXXXXX"
+})
+```
+
+**Features:**
+- Tag management system
+- Load multiple tracking scripts from one container
+- Configure event routing in GTM dashboard
+- Support for GA4, Facebook Pixel, conversion tracking, etc.
+
+### OpenPanelPlugin
+
+```typescript
+import { OpenPanelPlugin } from "@startupkit/analytics"
+
+const plugin = OpenPanelPlugin({
+  clientId: "your-client-id"
+})
+```
+
+**Features:**
+- Privacy-focused analytics
+- Real-time dashboards
+- Event tracking
+
+### PostHogPlugin
+
+```typescript
+import { PostHogPlugin } from "@startupkit/analytics"
+
+const plugin = PostHogPlugin({
+  apiKey: "phc_...",
+  apiHost: "https://app.posthog.com" // optional
+})
+```
+
+**Features:**
+- Product analytics
+- Feature flags
+- Session recordings
+- A/B testing
 
 ## Creating Custom Plugins
 
