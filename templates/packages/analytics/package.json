@@ -21,7 +21,7 @@
 		"@openpanel/sdk": "1.0.0",
 		"@repo/db": "workspace:*",
 		"@repo/utils": "workspace:*",
-		"@startupkit/analytics": "^0.6.3",
+		"@startupkit/analytics": "^0.6.4",
 		"posthog-js": "1.235.5",
 		"posthog-node": "4.2.1"
 	},
@@ -40,5 +40,5 @@
 		"react": "catalog:react19",
 		"react-dom": "catalog:react19"
 	},
-	"version": "0.6.3"
+	"version": "0.6.4"
 }
