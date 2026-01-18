@@ -492,7 +492,7 @@ plugins.GoogleAnalytics.track(...) // ✅
 
 // TypeScript catches typos:
 plugins.PostHOG.track(...)      // ❌ Error
-plugins.Mixpanel.track(...)     // ❌ Error
+plugins.GoogleAnalytics.track(...)     // ❌ Error
 ```
 
 **Important**: Use `as const` when defining your plugins array for proper type inference.

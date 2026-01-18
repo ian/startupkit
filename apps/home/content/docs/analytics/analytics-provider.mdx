@@ -66,37 +66,11 @@ export const analyticsPlugins = [
 ]
 ```
 
-### PostHogPlugin
+### AhrefsPlugin
 
 ```tsx
-PostHogPlugin({
-  apiKey: process.env.NEXT_PUBLIC_POSTHOG_KEY!,
-  apiHost: "https://app.posthog.com" // Optional, defaults to PostHog cloud
-})
-```
-
-### GoogleAnalyticsPlugin
-
-```tsx
-GoogleAnalyticsPlugin({
-  measurementId: process.env.NEXT_PUBLIC_GA_ID! // G-XXXXXXXXXX
-})
-```
-
-### OpenPanelPlugin
-
-```tsx
-OpenPanelPlugin({
-  clientId: process.env.NEXT_PUBLIC_OPENPANEL_CLIENT_ID!,
-  trackScreenViews: true // Optional
-})
-```
-
-### GoogleTagManagerPlugin
-
-```tsx
-GoogleTagManagerPlugin({
-  containerId: process.env.NEXT_PUBLIC_GTM_CONTAINER_ID! // GTM-XXXXXXX
+AhrefsPlugin({
+  key: process.env.NEXT_PUBLIC_AHREFS_API_KEY!
 })
 ```
 
@@ -109,11 +83,37 @@ DatafastPlugin({
 })
 ```
 
-### AhrefsPlugin
+### GoogleAnalyticsPlugin
 
 ```tsx
-AhrefsPlugin({
-  key: process.env.NEXT_PUBLIC_AHREFS_API_KEY!
+GoogleAnalyticsPlugin({
+  measurementId: process.env.NEXT_PUBLIC_GA_ID! // G-XXXXXXXXXX
+})
+```
+
+### GoogleTagManagerPlugin
+
+```tsx
+GoogleTagManagerPlugin({
+  containerId: process.env.NEXT_PUBLIC_GTM_CONTAINER_ID! // GTM-XXXXXXX
+})
+```
+
+### OpenPanelPlugin
+
+```tsx
+OpenPanelPlugin({
+  clientId: process.env.NEXT_PUBLIC_OPENPANEL_CLIENT_ID!,
+  trackScreenViews: true // Optional
+})
+```
+
+### PostHogPlugin
+
+```tsx
+PostHogPlugin({
+  apiKey: process.env.NEXT_PUBLIC_POSTHOG_KEY!,
+  apiHost: "https://app.posthog.com" // Optional, defaults to PostHog cloud
 })
 ```
 
