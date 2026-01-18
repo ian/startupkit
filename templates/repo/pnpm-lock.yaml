@@ -21,8 +21,8 @@ importers:
         specifier: '8'
         version: 8.5.6
       startupkit:
-        specifier: ^0.6.2
-        version: 0.6.2
+        specifier: ^0.6.3
+        version: 0.6.3
       tsx:
         specifier: 4.19.3
         version: 4.19.3
@@ -1128,8 +1128,8 @@ packages:
     resolution: {integrity: sha512-S7iGNosepx9RadX82oimUkvr0Ct7IjJbEbs4mJcTxst8um95J3sDYU1RBEOvdu6oL1Wek2ODI5i4MAw+dZ6cAQ==}
     engines: {node: ^18.17.0 || >=20.5.0}
 
-  startupkit@0.6.2:
-    resolution: {integrity: sha512-aDMw0SovnGbSDbztuT6hm+rcudQyn5XWUifimAU2Wm4fkSPaeO7Ou0Qse39zTI8umE2vZrFWH6pO4I2WPyrR3w==}
+  startupkit@0.6.3:
+    resolution: {integrity: sha512-g1rhh2HPM5w4nBqMjagy2gry7+vVOr/RrxheWyB8waYZBOTbxfLtH0SRzdpda4Z1YKaGvITrXLhGMfCCoxrQKg==}
     hasBin: true
 
   stdin-discarder@0.2.2:
@@ -1159,6 +1159,7 @@ packages:
   tar@7.5.2:
     resolution: {integrity: sha512-7NyxrTE4Anh8km8iEy7o0QYPs+0JKBTj5ZaqHg6B39erLg0qYXN3BijtShwbsNSvQ+LN75+KV+C4QR/f6Gwnpg==}
     engines: {node: '>=18'}
+    deprecated: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exhorbitant rates) by contacting i@izs.me
 
   tinyglobby@0.2.15:
     resolution: {integrity: sha512-j2Zq4NyQYG5XMST4cbs02Ak8iJUdxRM0XI5QyxXuZOzKOINmWurp3smXu3y5wDcJrptwpSjgXHzIQxR0omXljQ==}
@@ -2364,7 +2365,7 @@ snapshots:
     dependencies:
       minipass: 7.1.2
 
-  startupkit@0.6.2:
+  startupkit@0.6.3:
     dependencies:
       commander: 13.1.0
       create-next-app: 15.3.1
