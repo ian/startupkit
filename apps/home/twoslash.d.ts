@@ -64,14 +64,21 @@ declare module "@startupkit/analytics" {
 		apiKey: string
 		apiHost?: string
 	}): unknown
+	
 	export function GoogleAnalyticsPlugin(config: {
 		measurementId: string
 	}): unknown
+
 	export function OpenPanelPlugin(config: {
 		clientId: string
 		trackScreenViews?: boolean
 	}): unknown
 	export function AhrefsPlugin(config: { siteId: string }): unknown
+
+	export function DatafastPlugin(config: {
+		websiteId: string
+		domain?: string
+	}): unknown
 }
 
 declare module "@repo/db" {

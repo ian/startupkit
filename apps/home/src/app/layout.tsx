@@ -5,6 +5,7 @@ import {
 	generateOrganizationSchema,
 	generateWebsiteSchema
 } from "@startupkit/seo"
+import { Providers } from "./providers"
 import "./globals.css"
 
 const BASE_URL = "https://startupkit.com"
@@ -102,9 +103,11 @@ export default function RootLayout({
 					dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
 				/>
 			</head>
-			<body className="min-h-screen bg-black text-white antialiased">
+		<body className="min-h-screen bg-black text-white antialiased">
+			<Providers>
 				<RootProvider>{children}</RootProvider>
-			</body>
+			</Providers>
+		</body>
 		</html>
 	)
 }
