@@ -162,6 +162,126 @@ interface UpgradeResult {
 	command?: string
 }
 
+async function fetchLatestVersion(packageName: string): Promise<string | null> {
+	try {
+		const response = await fetch(
+			`https://registry.npmjs.org/${packageName}/latest`
+		)
+		if (!response.ok) return null
+		const data = (await response.json()) as { version?: string }
+		return data.version ?? null
+	} catch {
+		return null
+	}
+}
+
+interface CatalogUpdateResult {
+	updated: string[]
+	skipped: string[]
+}
+
+async function updateWorkspaceCatalogs(
+	baseDir: string,
+	dryRun?: boolean
+): Promise<CatalogUpdateResult> {
+	const workspacePath = path.join(baseDir, "pnpm-workspace.yaml")
+	const result: CatalogUpdateResult = { updated: [], skipped: [] }
+
+	if (!fs.existsSync(workspacePath)) {
+		return result
+	}
+
+	let content = fs.readFileSync(workspacePath, "utf-8")
+	const startupkitPattern =
+		/["']?(@startupkit\/[\w-]+|startupkit)["']?\s*:\s*["']?([\d.^~<>=]+)["']?/g
+
+	const matches = [...content.matchAll(startupkitPattern)]
+	if (matches.length === 0) {
+		return result
+	}
+
+	for (const match of matches) {
+		const packageName = match[1]
+		if (!packageName) continue
+
+		const latestVersion = await fetchLatestVersion(packageName)
+		if (!latestVersion) {
+			result.skipped.push(packageName)
+			continue
+		}
+
+		const oldPattern = new RegExp(
+			`(["']?${packageName.replace("/", "\\/")}["']?\\s*:\\s*)["']?[\\d.^~<>=]+["']?`,
+			"g"
+		)
+		const newContent = content.replace(oldPattern, `$1${latestVersion}`)
+
+		if (newContent !== content) {
+			content = newContent
+			result.updated.push(`${packageName}@${latestVersion}`)
+		}
+	}
+
+	if (!dryRun && result.updated.length > 0) {
+		fs.writeFileSync(workspacePath, content)
+	}
+
+	return result
+}
+
+interface PackageVersionState {
+	path: string
+	hadVersion: boolean
+}
+
+function collectPackageVersionStates(baseDir: string): PackageVersionState[] {
+	const states: PackageVersionState[] = []
+
+	const rootPkgPath = path.join(baseDir, "package.json")
+	if (fs.existsSync(rootPkgPath)) {
+		const rootPkg: PackageJson = JSON.parse(
+			fs.readFileSync(rootPkgPath, "utf-8")
+		)
+		states.push({
+			path: rootPkgPath,
+			hadVersion: rootPkg.version !== undefined
+		})
+	}
+
+	const workspaceGlobs = getWorkspaceGlobs(baseDir)
+	for (const glob of workspaceGlobs) {
+		const dirs = expandGlobPattern(baseDir, glob)
+		for (const dir of dirs) {
+			const pkgPath = path.join(dir, "package.json")
+			if (fs.existsSync(pkgPath)) {
+				const pkg: PackageJson = JSON.parse(fs.readFileSync(pkgPath, "utf-8"))
+				states.push({
+					path: pkgPath,
+					hadVersion: pkg.version !== undefined
+				})
+			}
+		}
+	}
+
+	return states
+}
+
+function restorePackageVersionStates(states: PackageVersionState[]): void {
+	for (const state of states) {
+		if (!state.hadVersion && fs.existsSync(state.path)) {
+			const content = fs.readFileSync(state.path, "utf-8")
+			const pkg = JSON.parse(content)
+			if (pkg.version !== undefined) {
+				const { version: _, ...pkgWithoutVersion } = pkg
+				fs.writeFileSync(
+					state.path,
+					`${JSON.stringify(pkgWithoutVersion, null, "\t")}\n`
+				)
+			}
+		}
+	}
+}
+
 async function upgradeNpmPackages(
 	baseDir: string,
 	dryRun?: boolean
@@ -186,7 +306,12 @@ async function upgradeNpmPackages(
 		return { success: true, packages, command: cmd }
 	}
 
+	const versionStates = collectPackageVersionStates(baseDir)
+
 	await exec(cmd, { cwd: baseDir })
+
+	restorePackageVersionStates(versionStates)
+
 	return { success: true, packages }
 }
 
@@ -308,6 +433,20 @@ export async function upgrade(options: UpgradeOptions = {}): Promise<void> {
 			}
 		} else if (result.message) {
 			console.log(`   ⚠️  ${result.message}`)
+		}
+
+		const catalogResult = await spinner(
+			"Updating pnpm-workspace.yaml catalogs",
+			() => updateWorkspaceCatalogs(baseDir, options.dryRun)
+		)
+
+		if (catalogResult.updated.length > 0) {
+			console.log(`   📋 Catalogs: ${catalogResult.updated.join(", ")}`)
+		}
+		if (catalogResult.skipped.length > 0 && options.dryRun) {
+			console.log(
+				`   ⚠️  Could not fetch: ${catalogResult.skipped.join(", ")}`
+			)
 		}
 	}
 

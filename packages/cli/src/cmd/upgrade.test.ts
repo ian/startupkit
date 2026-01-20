@@ -258,6 +258,170 @@ describe("upgrade command - unit tests", () => {
 		})
 	})
 
+	describe("workspace package version restoration", () => {
+		const testDir = path.join(process.cwd(), "tmp/test-version-restore")
+
+		beforeEach(() => {
+			if (fs.existsSync(testDir)) {
+				fs.rmSync(testDir, { recursive: true, force: true })
+			}
+			fs.mkdirSync(path.join(testDir, "packages/tsconfig"), { recursive: true })
+			fs.mkdirSync(path.join(testDir, "packages/utils"), { recursive: true })
+		})
+
+		afterEach(() => {
+			if (fs.existsSync(testDir)) {
+				fs.rmSync(testDir, { recursive: true, force: true })
+			}
+		})
+
+		it("should identify workspace packages without versions", () => {
+			fs.writeFileSync(
+				path.join(testDir, "packages/tsconfig/package.json"),
+				JSON.stringify({ name: "@repo/tsconfig", private: true }, null, "\t")
+			)
+			fs.writeFileSync(
+				path.join(testDir, "packages/utils/package.json"),
+				JSON.stringify(
+					{ name: "my-utils", version: "1.0.0", private: true },
+					null,
+					"\t"
+				)
+			)
+
+			const tsconfigPkg = JSON.parse(
+				fs.readFileSync(
+					path.join(testDir, "packages/tsconfig/package.json"),
+					"utf-8"
+				)
+			)
+			const utilsPkg = JSON.parse(
+				fs.readFileSync(
+					path.join(testDir, "packages/utils/package.json"),
+					"utf-8"
+				)
+			)
+
+			expect(tsconfigPkg.version).toBeUndefined()
+			expect(utilsPkg.version).toBe("1.0.0")
+		})
+
+		it("should restore version-less state after simulated pnpm up for any workspace package", () => {
+			const tsconfigPath = path.join(testDir, "packages/tsconfig/package.json")
+			fs.writeFileSync(
+				tsconfigPath,
+				JSON.stringify({ name: "my-tsconfig", private: true }, null, "\t")
+			)
+
+			const originalPkg = JSON.parse(fs.readFileSync(tsconfigPath, "utf-8"))
+			const hadVersion = originalPkg.version !== undefined
+
+			const pkgWithVersion = { ...originalPkg, version: "0.6.4" }
+			fs.writeFileSync(
+				tsconfigPath,
+				JSON.stringify(pkgWithVersion, null, "\t")
+			)
+
+			if (!hadVersion) {
+				const content = fs.readFileSync(tsconfigPath, "utf-8")
+				const pkg = JSON.parse(content)
+				if (pkg.version !== undefined) {
+					const { version: _, ...pkgWithoutVersion } = pkg
+					fs.writeFileSync(
+						tsconfigPath,
+						`${JSON.stringify(pkgWithoutVersion, null, "\t")}\n`
+					)
+				}
+			}
+
+			const finalPkg = JSON.parse(fs.readFileSync(tsconfigPath, "utf-8"))
+			expect(finalPkg.version).toBeUndefined()
+			expect(finalPkg.name).toBe("my-tsconfig")
+			expect(finalPkg.private).toBe(true)
+		})
+
+		it("should preserve version for packages that originally had it", () => {
+			const utilsPath = path.join(testDir, "packages/utils/package.json")
+			fs.writeFileSync(
+				utilsPath,
+				JSON.stringify(
+					{ name: "my-utils", version: "1.0.0", private: true },
+					null,
+					"\t"
+				)
+			)
+
+			const originalPkg = JSON.parse(fs.readFileSync(utilsPath, "utf-8"))
+			const hadVersion = originalPkg.version !== undefined
+
+			const pkgWithNewVersion = { ...originalPkg, version: "0.6.4" }
+			fs.writeFileSync(utilsPath, JSON.stringify(pkgWithNewVersion, null, "\t"))
+
+			if (!hadVersion) {
+				const content = fs.readFileSync(utilsPath, "utf-8")
+				const pkg = JSON.parse(content)
+				if (pkg.version !== undefined) {
+					const { version: _, ...pkgWithoutVersion } = pkg
+					fs.writeFileSync(
+						utilsPath,
+						`${JSON.stringify(pkgWithoutVersion, null, "\t")}\n`
+					)
+				}
+			}
+
+			const finalPkg = JSON.parse(fs.readFileSync(utilsPath, "utf-8"))
+			expect(finalPkg.version).toBe("0.6.4")
+		})
+	})
+
+	describe("pnpm-workspace.yaml catalog detection", () => {
+		it("should match @startupkit/* packages in catalog format", () => {
+			const content = `
+catalogs:
+  stack:
+    "@startupkit/analytics": 0.5.0
+    "@startupkit/auth": "0.5.0"
+    next: 15.0.0
+`
+			const pattern =
+				/["']?(@startupkit\/[\w-]+|startupkit)["']?\s*:\s*["']?([\d.^~<>=]+)["']?/g
+			const matches = [...content.matchAll(pattern)]
+
+			expect(matches).toHaveLength(2)
+			expect(matches[0]?.[1]).toBe("@startupkit/analytics")
+			expect(matches[1]?.[1]).toBe("@startupkit/auth")
+		})
+
+		it("should match startupkit CLI in catalog", () => {
+			const content = `
+catalog:
+  startupkit: 0.6.0
+  zod: 3.23.8
+`
+			const pattern =
+				/["']?(@startupkit\/[\w-]+|startupkit)["']?\s*:\s*["']?([\d.^~<>=]+)["']?/g
+			const matches = [...content.matchAll(pattern)]
+
+			expect(matches).toHaveLength(1)
+			expect(matches[0]?.[1]).toBe("startupkit")
+		})
+
+		it("should not match non-startupkit packages", () => {
+			const content = `
+catalogs:
+  stack:
+    next: 15.0.0
+    react: 19.0.0
+    typescript: 5.0.0
+`
+			const pattern =
+				/["']?(@startupkit\/[\w-]+|startupkit)["']?\s*:\s*["']?([\d.^~<>=]+)["']?/g
+			const matches = [...content.matchAll(pattern)]
+
+			expect(matches).toHaveLength(0)
+		})
+	})
+
 	describe("config upgrade detection", () => {
 		const testDir = path.join(process.cwd(), "tmp/test-config-detection")
 
