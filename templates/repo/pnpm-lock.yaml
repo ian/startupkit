@@ -21,8 +21,8 @@ importers:
         specifier: '8'
         version: 8.5.6
       startupkit:
-        specifier: ^0.6.4
-        version: 0.6.4
+        specifier: ^0.6.5
+        version: 0.6.5
       tsx:
         specifier: 4.19.3
         version: 4.19.3
@@ -1128,8 +1128,8 @@ packages:
     resolution: {integrity: sha512-S7iGNosepx9RadX82oimUkvr0Ct7IjJbEbs4mJcTxst8um95J3sDYU1RBEOvdu6oL1Wek2ODI5i4MAw+dZ6cAQ==}
     engines: {node: ^18.17.0 || >=20.5.0}
 
-  startupkit@0.6.4:
-    resolution: {integrity: sha512-bTFUeXqFS1it4sfZze2F7k7dL8372a7nOe+XazZbGvfey7weZ/EYIjRvX3duM63BpFN/q/HWdbYB+O+3RDU50A==}
+  startupkit@0.6.5:
+    resolution: {integrity: sha512-Cg1LWPu19QYnDP1VCPGNNfzXkUXPw2+9Cg281bvEO2+khaL6i5FgmiX4ZTFPd6P/tRakV3Gdrmew+ZezmTy2Wg==}
     hasBin: true
 
   stdin-discarder@0.2.2:
@@ -2365,7 +2365,7 @@ snapshots:
     dependencies:
       minipass: 7.1.2
 
-  startupkit@0.6.4:
+  startupkit@0.6.5:
     dependencies:
       commander: 13.1.0
       create-next-app: 15.3.1
