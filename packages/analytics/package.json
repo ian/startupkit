@@ -1,6 +1,6 @@
 {
 	"name": "@startupkit/analytics",
-	"version": "0.6.5",
+	"version": "0.6.6",
 	"author": "Ian Hunter <ian@01.studio>",
 	"license": "ISC",
 	"description": "Provider-agnostic analytics helpers for StartupKit",
