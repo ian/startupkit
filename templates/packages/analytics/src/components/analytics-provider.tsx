@@ -46,11 +46,11 @@ import {
   DatafastPlugin,
   GoogleAnalyticsPlugin,
   GoogleTagManagerPlugin,
-  OpenPanelPlugin,
-  PostHogPlugin,
   AnalyticsProvider as StartupKitAnalyticsProvider,
   useAnalytics as useBaseAnalytics,
 } from '@startupkit/analytics';
+import { OpenPanelPlugin } from '@startupkit/analytics/openpanel';
+import { PostHogPlugin } from '@startupkit/analytics/posthog';
 import type { ReactNode } from 'react';
 import type { Flags } from '../types';
 

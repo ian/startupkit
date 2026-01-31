@@ -48,10 +48,11 @@ The plugin architecture makes it easy to use multiple analytics providers:
 
 import {
   AnalyticsProvider,
-  PostHogPlugin,
-  GoogleAnalyticsPlugin,
-  OpenPanelPlugin
+  GoogleAnalyticsPlugin
 } from "@startupkit/analytics"
+// PostHog and OpenPanel are optional - import from subpaths
+import { PostHogPlugin } from "@startupkit/analytics/posthog"
+import { OpenPanelPlugin } from "@startupkit/analytics/openpanel"
 
 const plugins = [
   PostHogPlugin({
@@ -324,8 +325,10 @@ const plugin = GoogleTagManagerPlugin({
 
 ### OpenPanelPlugin
 
+Requires the `@openpanel/sdk` peer dependency.
+
 ```typescript
-import { OpenPanelPlugin } from "@startupkit/analytics"
+import { OpenPanelPlugin } from "@startupkit/analytics/openpanel"
 
 const plugin = OpenPanelPlugin({
   clientId: "your-client-id"
@@ -339,8 +342,10 @@ const plugin = OpenPanelPlugin({
 
 ### PostHogPlugin
 
+Requires the `posthog-js` peer dependency.
+
 ```typescript
-import { PostHogPlugin } from "@startupkit/analytics"
+import { PostHogPlugin } from "@startupkit/analytics/posthog"
 
 const plugin = PostHogPlugin({
   apiKey: "phc_...",
@@ -664,13 +669,14 @@ You can use the built-in plugins, create your own, or implement custom handlers.
 
 ## Peer Dependencies
 
+Required:
 - `next` >= 14.0.0 (for App Router hooks)
 - `react` >= 18.2.0
 
-Plugin-specific dependencies (only install what you use):
-- `posthog-js` - For PostHogPlugin
-- `@openpanel/sdk` - For OpenPanelPlugin
-- (GoogleAnalyticsPlugin and AhrefsPlugin work via script injection)
+Optional (only install what you use):
+- `posthog-js` - Required for `@startupkit/analytics/posthog`
+- `@openpanel/sdk` - Required for `@startupkit/analytics/openpanel`
+- GoogleAnalytics, GTM, Datafast, and Ahrefs plugins work via script injection (no extra dependencies)
 
 ## Learn More
 

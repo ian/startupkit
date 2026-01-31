@@ -59,26 +59,35 @@ declare module "@startupkit/analytics" {
 		flags?: Record<string, unknown>
 		plugins: unknown[]
 	}): ReactNode
-
-	export function PostHogPlugin(config: {
-		apiKey: string
-		apiHost?: string
-	}): unknown
 	
 	export function GoogleAnalyticsPlugin(config: {
 		measurementId: string
 	}): unknown
 
-	export function OpenPanelPlugin(config: {
-		clientId: string
-		trackScreenViews?: boolean
-	}): unknown
 	export function AhrefsPlugin(config: { siteId: string }): unknown
 
 	export function DatafastPlugin(config: {
 		websiteId: string
 		domain?: string
 	}): unknown
+}
+
+declare module "@startupkit/analytics/posthog" {
+	export function PostHogPlugin(config: {
+		apiKey: string
+		apiHost?: string
+	}): unknown
+
+	export function usePostHog(): unknown
+}
+
+declare module "@startupkit/analytics/openpanel" {
+	export function OpenPanelPlugin(config: {
+		clientId: string
+		trackScreenViews?: boolean
+	}): unknown
+
+	export function useOpenPanel(): unknown
 }
 
 declare module "@repo/db" {

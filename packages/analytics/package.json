@@ -14,6 +14,14 @@
 		".": {
 			"types": "./dist/types/index.d.ts",
 			"default": "./dist/esm/index.js"
+		},
+		"./posthog": {
+			"types": "./dist/types/posthog/index.d.ts",
+			"default": "./dist/esm/posthog.js"
+		},
+		"./openpanel": {
+			"types": "./dist/types/openpanel/index.d.ts",
+			"default": "./dist/esm/openpanel.js"
 		}
 	},
 	"scripts": {
