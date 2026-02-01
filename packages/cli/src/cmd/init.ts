@@ -176,6 +176,20 @@ export async function init(props: {
 
 	const isCurrentDir = destDir === cwd
 
+	// Step 3: Ask about Storybook
+	let includeStorybook = false
+	if (promptedForName) {
+		const { addStorybook } = await inquirer.prompt([
+			{
+				type: "confirm",
+				name: "addStorybook",
+				message: "Would you like to add Storybook for component documentation?",
+				default: true
+			}
+		])
+		includeStorybook = addStorybook
+	}
+
 	// --- USE DEGit TO CLONE THE REPO STRUCTURE AND PACKAGES ---
 	const repoBase = props.repoArg || "ian/startupkit"
 	const { repoSource, packagesSource, storybookSource } =
@@ -198,12 +212,14 @@ export async function init(props: {
 			})
 			await packagesEmitter.clone(path.join(destDir, "packages"))
 
-			const storybookEmitter = degit(storybookSource, {
-				cache: false,
-				force: true,
-				verbose: false
-			})
-			await storybookEmitter.clone(path.join(destDir, "apps", "storybook"))
+			if (includeStorybook) {
+				const storybookEmitter = degit(storybookSource, {
+					cache: false,
+					force: true,
+					verbose: false
+				})
+				await storybookEmitter.clone(path.join(destDir, "apps", "storybook"))
+			}
 		}
 	)
 

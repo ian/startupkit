@@ -143,6 +143,16 @@ describe("add command - unit tests", () => {
 			expect(result.replacementPattern).toEqual(/PROJECT_VITE/g)
 		})
 
+		it("should return correct info for storybook template", () => {
+			const result = getTemplateInfo("storybook")
+
+			expect(result.type).toBe("storybook")
+			expect(result.templatePath).toBe(
+				"ian/startupkit/templates/apps/storybook"
+			)
+			expect(result.replacementPattern).toEqual(/NEVER_REPLACE_ANYTHING/g)
+		})
+
 		it("should use custom repo when provided", () => {
 			const customRepo = "user/custom-repo/templates/apps/next"
 			const result = getTemplateInfo("next", customRepo)
