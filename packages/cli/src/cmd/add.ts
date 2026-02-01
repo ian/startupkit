@@ -19,6 +19,7 @@ import { exec } from "../lib/system"
 const TEMPLATE_TYPES = [
 	{ name: "Next.js", value: "next" },
 	{ name: "Vite", value: "vite" },
+	{ name: "Storybook", value: "storybook" },
 	new inquirer.Separator("---- coming soon ----"),
 	{ name: "Expo", value: "expo", disabled: true },
 	{ name: "Capacitor Mobile", value: "capacitor", disabled: true },
@@ -80,6 +81,11 @@ function getTemplateInfo(appType: string, repoArg?: string): TemplateInfo {
 			type: "vite",
 			templatePath: repoArg || "ian/startupkit/templates/apps/vite",
 			replacementPattern: /PROJECT_VITE/g
+		},
+		storybook: {
+			type: "storybook",
+			templatePath: repoArg || "ian/startupkit/templates/apps/storybook",
+			replacementPattern: /NEVER_REPLACE_ANYTHING/g
 		}
 	}
 
@@ -375,7 +381,7 @@ async function addApp(options: AddOptions): Promise<void> {
 		appType = selected
 	}
 
-	if (!["next", "vite"].includes(appType)) {
+	if (!["next", "vite", "storybook"].includes(appType)) {
 		console.log(`\n${appType} support coming soon, we've recorded your vote!`)
 		return
 	}
