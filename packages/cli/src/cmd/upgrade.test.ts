@@ -317,10 +317,7 @@ describe("upgrade command - unit tests", () => {
 			const hadVersion = originalPkg.version !== undefined
 
 			const pkgWithVersion = { ...originalPkg, version: "0.6.4" }
-			fs.writeFileSync(
-				tsconfigPath,
-				JSON.stringify(pkgWithVersion, null, "\t")
-			)
+			fs.writeFileSync(tsconfigPath, JSON.stringify(pkgWithVersion, null, "\t"))
 
 			if (!hadVersion) {
 				const content = fs.readFileSync(tsconfigPath, "utf-8")

@@ -6,10 +6,7 @@ import type { AnalyticsPlugin } from "../types"
 
 declare global {
 	interface Window {
-		datafast?: (
-			event: string,
-			properties?: Record<string, unknown>
-		) => void
+		datafast?: (event: string, properties?: Record<string, unknown>) => void
 	}
 }
 
