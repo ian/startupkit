@@ -98,3 +98,54 @@ jobs:
         if: always()
         run: rm -rf test-projects
 
+  test-cli-bun:
+    name: CLI Integration - Bun Install
+    runs-on: ubuntu-latest
+    needs: test-cli
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+          
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Install dependencies and build
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm --filter startupkit build
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Create and test bun project
+        run: |
+          mkdir -p test-projects
+          cd test-projects
+          
+          echo "🔍 Creating project with bun..."
+          node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" init --name "test-startup-bun" --repo "ian/startupkit#${{ github.ref_name }}" --package-manager bun
+          
+          echo "📂 Verifying packages directory exists..."
+          test -d test-startup-bun/packages || exit 1
+          
+          echo "🔍 Running typecheck..."
+          cd test-startup-bun
+          bun run typecheck
+          
+          echo "🏗️ Running build..."
+          bun run build
+          
+          echo "✅ Bun install test passed"
+
+      - name: Clean up
+        if: always()
+        run: rm -rf test-projects
+

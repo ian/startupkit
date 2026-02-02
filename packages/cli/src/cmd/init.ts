@@ -63,6 +63,13 @@ export interface ResolveDestDirOptions {
 	promptedDirectory?: string
 }
 
+export interface InitOptions {
+	name?: string
+	repoArg?: string
+	dir?: string
+	packageManager?: "pnpm" | "bun"
+}
+
 export function resolveDestDir(options: ResolveDestDirOptions): string {
 	const { dir, key, cwd, promptedDirectory } = options
 
@@ -103,11 +110,7 @@ export function buildDegitSources(repoBase: string): {
 	}
 }
 
-export async function init(props: {
-	name?: string
-	repoArg?: string
-	dir?: string
-}) {
+export async function init(props: InitOptions) {
 	opener()
 
 	// Step 1: Use provided name or prompt for project name
@@ -191,8 +194,8 @@ export async function init(props: {
 	}
 
 	// Step 4: Ask about package manager
-	let packageManager = "pnpm"
-	if (promptedForName) {
+	let packageManager: "pnpm" | "bun" = props.packageManager ?? "pnpm"
+	if (!props.packageManager && promptedForName) {
 		const { pm } = await inquirer.prompt([
 			{
 				type: "list",
