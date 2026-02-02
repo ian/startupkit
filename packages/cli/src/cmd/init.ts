@@ -304,7 +304,11 @@ export async function init(props: {
 
 	// Install dependencies
 	await spinner(`Installing dependencies`, async () => {
-		await exec(`${packageManager} install`, { cwd: destDir })
+		if (packageManager === "pnpm") {
+			await exec("pnpm install --no-frozen-lockfile", { cwd: destDir })
+			return
+		}
+		await exec("bun install", { cwd: destDir })
 	})
 
 	// Create or update .env.local with required keys
