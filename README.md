@@ -20,13 +20,13 @@ npx startupkit init
 
 Without structure, every project becomes a different architecture. That's **AI slop**.
 
-| Without StartupKit | With StartupKit |
-|-------------------|-----------------|
-| Where should auth logic live? | `@repo/auth` → Better Auth, ready |
-| Prisma or Drizzle? Which pattern? | `@repo/db` → Drizzle + Postgres, configured |
-| App router or pages? RSC or client? | Next.js 16 App Router, RSC by default |
-| How do I structure shared code? | Monorepo → share everything |
-| Which analytics provider? | `@repo/analytics` → Provider-agnostic hooks |
+| Without StartupKit                  | With StartupKit                             |
+| ----------------------------------- | ------------------------------------------- |
+| Where should auth logic live?       | `@repo/auth` → Better Auth, ready           |
+| Prisma or Drizzle? Which pattern?   | `@repo/db` → Drizzle + Postgres, configured |
+| App router or pages? RSC or client? | Next.js 16 App Router, RSC by default       |
+| How do I structure shared code?     | Monorepo → share everything                 |
+| Which analytics provider?           | `@repo/analytics` → Provider-agnostic hooks |
 
 **Start at 70%.** AI handles the details, not the foundation.
 
@@ -35,7 +35,7 @@ Without structure, every project becomes a different architecture. That's **AI s
 StartupKit is designed to work seamlessly with AI development tools:
 
 - ✅ **Devin** ready
-- ✅ **Claude** ready  
+- ✅ **Claude** ready
 - ✅ **Amp** ready
 - ✅ **OpenCode** ready
 
@@ -47,10 +47,12 @@ Every project includes `AGENTS.md` with clear conventions, file placement guidel
 npx startupkit init
 cd my-project
 cp .env.example .env.local
-pnpm dev
+pnpm dev    # or: bun dev
 ```
 
 Visit [http://localhost:3000](http://localhost:3000)
+
+**Package Manager:** StartupKit supports both [pnpm](https://pnpm.io) and [bun](https://bun.sh). Use whichever you prefer.
 
 ## What's Included
 
@@ -107,32 +109,32 @@ my-project/
 ### Development
 
 ```bash
-pnpm dev                  # Start all apps
-pnpm --filter web dev     # Start specific app
-pnpm build                # Build all packages
+pnpm dev                  # Start all apps (or: bun dev)
+pnpm --filter web dev     # Start specific app (or: bun --filter web dev)
+pnpm build                # Build all packages (or: bun run build)
 ```
 
 ### Database
 
 ```bash
-pnpm db:generate          # Generate migration files
-pnpm db:migrate           # Apply migrations
-pnpm db:studio            # Open database GUI
+pnpm db:generate          # Generate migration files (or: bun db:generate)
+pnpm db:migrate           # Apply migrations (or: bun db:migrate)
+pnpm db:studio            # Open database GUI (or: bun db:studio)
 ```
 
 ### UI Components
 
 ```bash
-pnpm shadcn add button
-pnpm shadcn add dialog
+pnpm shadcn add button    # or: bun shadcn add button
+pnpm shadcn add dialog    # or: bun shadcn add dialog
 ```
 
 ### Code Quality
 
 ```bash
-pnpm lint                 # Check all files
-pnpm lint:fix             # Fix issues
-pnpm typecheck            # Type check all packages
+pnpm lint                 # Check all files (or: bun lint)
+pnpm lint:fix             # Fix issues (or: bun lint:fix)
+pnpm typecheck            # Type check all packages (or: bun typecheck)
 ```
 
 ## Add New Services
@@ -168,7 +170,7 @@ NEXT_PUBLIC_POSTHOG_HOST=https://app.posthog.com
 - **Database:** PostgreSQL + Drizzle ORM
 - **Auth:** Better Auth
 - **Email:** React Email + Resend
-- **Monorepo:** pnpm + Turbo
+- **Monorepo:** pnpm or bun + Turbo
 - **Linting:** Biome
 
 ## Support & Resources

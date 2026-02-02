@@ -63,6 +63,13 @@ export interface ResolveDestDirOptions {
 	promptedDirectory?: string
 }
 
+export interface InitOptions {
+	name?: string
+	repoArg?: string
+	dir?: string
+	packageManager?: "pnpm" | "bun"
+}
+
 export function resolveDestDir(options: ResolveDestDirOptions): string {
 	const { dir, key, cwd, promptedDirectory } = options
 
@@ -103,11 +110,7 @@ export function buildDegitSources(repoBase: string): {
 	}
 }
 
-export async function init(props: {
-	name?: string
-	repoArg?: string
-	dir?: string
-}) {
+export async function init(props: InitOptions) {
 	opener()
 
 	// Step 1: Use provided name or prompt for project name
@@ -190,6 +193,24 @@ export async function init(props: {
 		includeStorybook = addStorybook
 	}
 
+	// Step 4: Ask about package manager
+	let packageManager: "pnpm" | "bun" = props.packageManager ?? "pnpm"
+	if (!props.packageManager && promptedForName) {
+		const { pm } = await inquirer.prompt([
+			{
+				type: "list",
+				name: "pm",
+				message: "Which package manager would you like to use?",
+				choices: [
+					{ name: "pnpm (recommended)", value: "pnpm" },
+					{ name: "bun", value: "bun" }
+				],
+				default: "pnpm"
+			}
+		])
+		packageManager = pm
+	}
+
 	// --- USE DEGit TO CLONE THE REPO STRUCTURE AND PACKAGES ---
 	const repoBase = props.repoArg || "ian/startupkit"
 	const { repoSource, packagesSource, storybookSource } =
@@ -232,9 +253,65 @@ export async function init(props: {
 		allowEmptyPaths: true
 	})
 
+	// Replace package manager placeholder in package.json
+	const rootPackageJsonPath = path.join(destDir, "package.json")
+	if (existsSync(rootPackageJsonPath)) {
+		const packageJsonContent = readFileSync(rootPackageJsonPath, "utf8")
+		const packageManagerVersion =
+			packageManager === "pnpm" ? "10.28.2" : "1.1.27"
+		const updatedContent = packageJsonContent
+			.replace(
+				/PACKAGE_MANAGER@PACKAGE_MANAGER_VERSION/g,
+				`${packageManager}@${packageManagerVersion}`
+			)
+			.replace(/PACKAGE_MANAGER/g, packageManager)
+		writeFileSync(rootPackageJsonPath, updatedContent)
+	}
+
+	// Replace package manager setup in GitHub workflow
+	const workflowPath = path.join(
+		destDir,
+		".github/workflows/lint-typecheck.yml"
+	)
+	if (existsSync(workflowPath)) {
+		const workflowContent = readFileSync(workflowPath, "utf8")
+		let pmSetupBlock: string
+		if (packageManager === "pnpm") {
+			pmSetupBlock = `      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Use Node.js \${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: \${{ matrix.node-version }}
+          cache: "pnpm"`
+		} else {
+			pmSetupBlock = `      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Use Node.js \${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: \${{ matrix.node-version }}`
+		}
+		const updatedWorkflow = workflowContent
+			.replace(
+				/# PACKAGE_MANAGER_SETUP_START[\s\S]*?# PACKAGE_MANAGER_SETUP_END/,
+				pmSetupBlock
+			)
+			.replace(/PACKAGE_MANAGER/g, packageManager)
+		writeFileSync(workflowPath, updatedWorkflow)
+	}
+
 	// Install dependencies
 	await spinner(`Installing dependencies`, async () => {
-		await exec("pnpm install --no-frozen-lockfile", { cwd: destDir })
+		if (packageManager === "pnpm") {
+			await exec("pnpm install --no-frozen-lockfile", { cwd: destDir })
+			return
+		}
+		await exec("bun install", { cwd: destDir })
 	})
 
 	// Create or update .env.local with required keys
@@ -258,7 +335,7 @@ export async function init(props: {
 
 	// Generate AI agent instructions
 	await spinner(`Generating AI agent instructions`, async () => {
-		await exec("pnpm agents.md", { cwd: destDir })
+		await exec(`${packageManager} agents.md`, { cwd: destDir })
 	})
 
 	console.log(`\nProject initialized at: ${isCurrentDir ? "." : destDir}`)

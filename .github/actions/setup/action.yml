@@ -12,6 +12,4 @@ runs:
         node-version: 22
 
     - name: Setup pnpm
-      uses: pnpm/action-setup@v2
-      with:
-        version: 9.6.0
+      uses: pnpm/action-setup@v4

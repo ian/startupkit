@@ -6,6 +6,22 @@ import { init } from "./cmd/init"
 import { initRalphConfig, make } from "./cmd/make"
 import { upgrade } from "./cmd/upgrade"
 
+interface InitCommandOptions {
+	name?: string
+	repo?: string
+	dir?: string
+	packageManager?: string
+}
+
+function parsePackageManager(
+	value: string | undefined
+): "pnpm" | "bun" | undefined {
+	if (!value) return undefined
+	const normalized = value.trim().toLowerCase()
+	if (normalized === "pnpm" || normalized === "bun") return normalized
+	throw new Error(`Unsupported package manager: ${value}. Use "pnpm" or "bun".`)
+}
+
 export async function run() {
 	const program = new Command()
 
@@ -17,11 +33,17 @@ export async function run() {
 		.option("--name <name>", "Name of the app")
 		.option("--repo <repo>", "Template repo to use")
 		.option("--dir <dir>", "Directory to create project in (use . for current)")
-		.action(async (options) => {
+		.option(
+			"--package-manager <packageManager>",
+			"Package manager to use (pnpm or bun)"
+		)
+		.action(async (options: InitCommandOptions) => {
+			const packageManager = parsePackageManager(options.packageManager)
 			await init({
 				name: options.name,
 				repoArg: options.repo,
-				dir: options.dir
+				dir: options.dir,
+				packageManager
 			})
 		})
 
