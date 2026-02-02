@@ -10,19 +10,21 @@
  * for any package.json files with names starting with "@startupkit/".
  *
  * Usage:
- *   pnpm link:local              - Link template repo packages
+ *   pnpm link:local              - Link template repo packages (with pnpm)
+ *   bun link:local               - Link template repo packages (with bun)
  *   pnpm unlink:local            - Unlink template repo packages
  *   node scripts/link-local.js link <target-dir> <packages-dir>
  *
  * Examples:
  *   Development: pnpm link:local && cd templates/repo && pnpm install
+ *   Development: bun link:local && cd templates/repo && bun install
  *   Publishing:  pnpm unlink:local
  *   CI: node scripts/link-local.js link test-projects/test-startup $GITHUB_WORKSPACE/packages
  */
 
-import { glob } from "glob"
 import { readFileSync, writeFileSync } from "node:fs"
 import { join, relative, resolve } from "node:path"
+import { glob } from "glob"
 
 const command = process.argv[2]
 const targetDir = process.argv[3] || "templates/repo"
@@ -143,7 +145,7 @@ async function main() {
 		console.log(`\n🎉 Updated ${changedCount} package.json file(s)`)
 		if (command === "link") {
 			console.log(
-				'\n⚠️  Run "pnpm install" in templates/repo to update node_modules'
+				'\n⚠️  Run "pnpm install" or "bun install" in templates/repo to update node_modules'
 			)
 		} else {
 			console.log("\n⚠️  Remember to update lockfile before committing")
