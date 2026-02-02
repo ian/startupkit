@@ -80,6 +80,7 @@ export function resolveDestDir(options: ResolveDestDirOptions): string {
 export function buildDegitSources(repoBase: string): {
 	repoSource: string
 	packagesSource: string
+	storybookSource: string
 } {
 	if (repoBase.includes("#")) {
 		const [userRepo, branch] = repoBase.split("#")
@@ -88,7 +89,8 @@ export function buildDegitSources(repoBase: string): {
 			.replace(/\/templates\/packages$/, "")
 		return {
 			repoSource: `${normalizedRepo}/templates/repo#${branch}`,
-			packagesSource: `${normalizedRepo}/templates/packages#${branch}`
+			packagesSource: `${normalizedRepo}/templates/packages#${branch}`,
+			storybookSource: `${normalizedRepo}/templates/apps/storybook#${branch}`
 		}
 	}
 	const normalizedRepo = repoBase
@@ -96,7 +98,8 @@ export function buildDegitSources(repoBase: string): {
 		.replace(/\/templates\/packages$/, "")
 	return {
 		repoSource: `${normalizedRepo}/templates/repo`,
-		packagesSource: `${normalizedRepo}/templates/packages`
+		packagesSource: `${normalizedRepo}/templates/packages`,
+		storybookSource: `${normalizedRepo}/templates/apps/storybook`
 	}
 }
 
@@ -173,9 +176,24 @@ export async function init(props: {
 
 	const isCurrentDir = destDir === cwd
 
+	// Step 3: Ask about Storybook
+	let includeStorybook = false
+	if (promptedForName) {
+		const { addStorybook } = await inquirer.prompt([
+			{
+				type: "confirm",
+				name: "addStorybook",
+				message: "Would you like to add Storybook for component documentation?",
+				default: true
+			}
+		])
+		includeStorybook = addStorybook
+	}
+
 	// --- USE DEGit TO CLONE THE REPO STRUCTURE AND PACKAGES ---
 	const repoBase = props.repoArg || "ian/startupkit"
-	const { repoSource, packagesSource } = buildDegitSources(repoBase)
+	const { repoSource, packagesSource, storybookSource } =
+		buildDegitSources(repoBase)
 
 	await spinner(
 		`Cloning template into ${isCurrentDir ? "current directory" : destDir}`,
@@ -193,6 +211,15 @@ export async function init(props: {
 				verbose: false
 			})
 			await packagesEmitter.clone(path.join(destDir, "packages"))
+
+			if (includeStorybook) {
+				const storybookEmitter = degit(storybookSource, {
+					cache: false,
+					force: true,
+					verbose: false
+				})
+				await storybookEmitter.clone(path.join(destDir, "apps", "storybook"))
+			}
 		}
 	)
 

@@ -13,7 +13,6 @@
 		"clean": "pnpm -r clean",
 		"dev": "pnpm with-env pnpm -r --parallel --stream run dev",
 		"test": "pnpm with-test-env turbo run test --ui stream",
-		"storybook": "pnpm --filter @repo/ui storybook",
 		"format": "turbo run format --continue --ui stream",
 		"format:fix": "turbo run format --continue --ui stream",
 		"lint": "turbo run lint --continue --ui stream",
@@ -26,6 +25,7 @@
 		"db:push": "pnpm --filter ./packages/db db:push",
 		"db:studio": "pnpm --filter ./packages/db db:studio",
 		"shadcn": "sh ./packages/ui/shadcn.sh",
+		"storybook": "pnpm --filter ./apps/storybook storybook",
 		"with-env": "dotenv -e .env.local --",
 		"with-test-env": "dotenv -e .env.test --",
 		"agents.md": "ruler apply"

@@ -444,9 +444,7 @@ export async function upgrade(options: UpgradeOptions = {}): Promise<void> {
 			console.log(`   📋 Catalogs: ${catalogResult.updated.join(", ")}`)
 		}
 		if (catalogResult.skipped.length > 0 && options.dryRun) {
-			console.log(
-				`   ⚠️  Could not fetch: ${catalogResult.skipped.join(", ")}`
-			)
+			console.log(`   ⚠️  Could not fetch: ${catalogResult.skipped.join(", ")}`)
 		}
 	}
 

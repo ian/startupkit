@@ -35,6 +35,11 @@ const getTemplateInfo = (appType: string, repoArg?: string): TemplateInfo => {
 			type: "vite",
 			templatePath: repoArg || "ian/startupkit/templates/apps/vite",
 			replacementPattern: /PROJECT_VITE/g
+		},
+		storybook: {
+			type: "storybook",
+			templatePath: repoArg || "ian/startupkit/templates/apps/storybook",
+			replacementPattern: /NEVER_REPLACE_ANYTHING/g
 		}
 	}
 
@@ -138,6 +143,16 @@ describe("add command - unit tests", () => {
 			expect(result.replacementPattern).toEqual(/PROJECT_VITE/g)
 		})
 
+		it("should return correct info for storybook template", () => {
+			const result = getTemplateInfo("storybook")
+
+			expect(result.type).toBe("storybook")
+			expect(result.templatePath).toBe(
+				"ian/startupkit/templates/apps/storybook"
+			)
+			expect(result.replacementPattern).toEqual(/NEVER_REPLACE_ANYTHING/g)
+		})
+
 		it("should use custom repo when provided", () => {
 			const customRepo = "user/custom-repo/templates/apps/next"
 			const result = getTemplateInfo("next", customRepo)
@@ -222,7 +237,9 @@ describe("add command - unit tests", () => {
 		})
 
 		it("should detect existing config packages", () => {
-			fs.mkdirSync(path.join(testDir, "config/typescript"), { recursive: true })
+			fs.mkdirSync(path.join(testDir, "config/typescript"), {
+				recursive: true
+			})
 
 			const config = {
 				type: "app" as const,
@@ -238,7 +255,9 @@ describe("add command - unit tests", () => {
 
 		it("should handle both packages and config dependencies", () => {
 			fs.mkdirSync(path.join(testDir, "packages/auth"), { recursive: true })
-			fs.mkdirSync(path.join(testDir, "config/typescript"), { recursive: true })
+			fs.mkdirSync(path.join(testDir, "config/typescript"), {
+				recursive: true
+			})
 
 			const config = {
 				type: "app" as const,

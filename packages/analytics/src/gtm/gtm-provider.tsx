@@ -31,7 +31,8 @@ export function GoogleTagManagerProvider({
 		if (document.querySelector('script[src*="googletagmanager.com/gtm.js"]'))
 			return
 
-		const dataLayer = (window.dataLayer = window.dataLayer || [])
+		window.dataLayer = window.dataLayer || []
+		const dataLayer = window.dataLayer
 		dataLayer.push({
 			"gtm.start": new Date().getTime(),
 			event: "gtm.js"

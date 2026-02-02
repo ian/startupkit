@@ -45,6 +45,9 @@ describe("init command - unit tests", () => {
 
 			expect(result.repoSource).toBe("ian/startupkit/templates/repo")
 			expect(result.packagesSource).toBe("ian/startupkit/templates/packages")
+			expect(result.storybookSource).toBe(
+				"ian/startupkit/templates/apps/storybook"
+			)
 		})
 
 		it("should handle branch names in degit sources", () => {
@@ -54,6 +57,9 @@ describe("init command - unit tests", () => {
 			expect(result.packagesSource).toBe(
 				"ian/startupkit/templates/packages#develop"
 			)
+			expect(result.storybookSource).toBe(
+				"ian/startupkit/templates/apps/storybook#develop"
+			)
 		})
 
 		it("should handle different repository paths", () => {
@@ -61,6 +67,9 @@ describe("init command - unit tests", () => {
 
 			expect(result.repoSource).toBe("user/repo/templates/repo#main")
 			expect(result.packagesSource).toBe("user/repo/templates/packages#main")
+			expect(result.storybookSource).toBe(
+				"user/repo/templates/apps/storybook#main"
+			)
 		})
 	})
 
