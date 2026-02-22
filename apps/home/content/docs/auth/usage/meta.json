@@ -1,5 +1,0 @@
-{
-	"title": "Usage",
-	"pages": ["require-auth", "with-auth", "use-auth"],
-	"defaultOpen": true
-}

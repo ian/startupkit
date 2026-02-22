@@ -1,16 +1,16 @@
 {
 	"name": "startupkit",
-	"version": "0.6.6",
+	"version": "1.0.0",
 	"author": "Ian Hunter <ian@01.studio>",
 	"license": "ISC",
-	"description": "The NextJS framework with everything you need to launch a SaaS product.",
+	"description": "Equip your AI agents with startup skills - entrepreneur, dev, marketing, and product expertise.",
 	"homepage": "https://startupkit.com",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/ian/startupkit"
 	},
-	"keywords": ["startup", "bootstrap", "boilerplate", "analytics", "auth"],
-	"files": ["dist", "templates"],
+	"keywords": ["startup", "ai", "agents", "skills", "claude", "opencode"],
+	"files": ["dist"],
 	"type": "module",
 	"main": "dist/cli.js",
 	"bin": {
@@ -20,41 +20,25 @@
 		".": {
 			"default": "./dist/cli.js"
 		},
-		"./config": {
-			"types": "./src/config.ts",
-			"default": "./dist/config.js"
-		},
 		"./package.json": "./package.json"
 	},
 	"scripts": {
 		"clean": "rm -rf dist",
 		"build": "rollup -c",
-		"build:watch": "rollup -c -w",
 		"cli": "node dist/cli.js",
-		"test": "vitest run",
-		"test:watch": "vitest",
-		"test:coverage": "vitest run --coverage",
-		"typecheck": "tsc --noEmit",
-		"format": "biome format",
-		"format:fix": "biome format --write",
-		"lint": "biome check",
-		"lint:fix": "biome check --write"
+		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
-		"commander": "13.1.0",
-		"create-next-app": "15.3.1",
-		"degit": "^2.8.4",
-		"inquirer": "12.6.0",
-		"ora": "8.2.0",
-		"replace-in-file": "^8.3.0",
-		"validate-package-exports": "0.9.0"
+		"@inquirer/prompts": "^8.2.1",
+		"commander": "13.1.0"
 	},
 	"devDependencies": {
 		"@rollup/plugin-json": "6.1.0",
 		"@rollup/plugin-node-resolve": "16.0.1",
 		"@types/node": "22.15.3",
-		"@vitest/coverage-v8": "^2.1.8",
+		"rollup": "^4.20.0",
 		"rollup-plugin-command": "^1.1.3",
-		"vitest": "^2.1.8"
+		"rollup-plugin-esbuild": "^6.1.1",
+		"typescript": "5.9.2"
 	}
 }

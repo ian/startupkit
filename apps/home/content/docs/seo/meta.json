@@ -1,6 +1,0 @@
-{
-	"title": "SEO",
-	"icon": "Search",
-	"pages": ["index", "metadata", "structured-data", "sitemap", "robots"],
-	"defaultOpen": true
-}
