@@ -42,6 +42,37 @@ describe("init", () => {
 			expect(existsSync(soulPath)).toBe(true);
 		});
 
+		it("should create .agents directory with subagent files", async () => {
+			await initProject({ skipPrompts: true, skipSkills: true });
+
+			const agentsDir = join(mockCwd, ".agents");
+			expect(existsSync(agentsDir)).toBe(true);
+
+			const subagents = [
+				"product",
+				"engineering",
+				"design",
+				"marketing",
+				"growth",
+			];
+			for (const subagent of subagents) {
+				const subagentPath = join(agentsDir, `${subagent}.md`);
+				expect(existsSync(subagentPath)).toBe(true);
+			}
+		});
+
+		it("should list available skills in subagent files", async () => {
+			await initProject({ skipPrompts: true, skipSkills: true });
+
+			const productPath = join(mockCwd, ".agents", "product.md");
+			const content = await import("node:fs").then((fs) =>
+				fs.readFileSync(productPath, "utf-8"),
+			);
+
+			expect(content).toContain("brainstorming");
+			expect(content).toContain("page-cro");
+		});
+
 		it("should skip skills when skipSkills is true", async () => {
 			const execSync = await import("node:child_process");
 			const mockExecSync = vi.spyOn(execSync, "execSync");
@@ -73,6 +104,20 @@ describe("init", () => {
 				fs.readFileSync(soulPath, "utf-8"),
 			);
 			expect(content).toBe("existing content");
+		});
+
+		it("should not overwrite existing subagent files when skipPrompts is true", async () => {
+			const agentsDir = join(mockCwd, ".agents");
+			mkdirSync(agentsDir, { recursive: true });
+			const productPath = join(agentsDir, "product.md");
+			writeFileSync(productPath, "existing product subagent");
+
+			await initProject({ skipPrompts: true, skipSkills: true });
+
+			const content = await import("node:fs").then((fs) =>
+				fs.readFileSync(productPath, "utf-8"),
+			);
+			expect(content).toBe("existing product subagent");
 		});
 
 		it("should use default agents when none specified", async () => {
