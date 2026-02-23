@@ -1,426 +1,426 @@
-import { execSync } from "node:child_process";
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
-import { checkbox, confirm, input } from "@inquirer/prompts";
+import { execSync } from "node:child_process"
+import { existsSync, mkdirSync, writeFileSync } from "node:fs"
+import { join } from "node:path"
+import { checkbox, confirm, input } from "@inquirer/prompts"
 
 export const STARTUP_SKILLS = {
 	product: [
 		{
 			name: "brainstorming",
 			repo: "obra/superpowers",
-			description: "Brainstorming and ideation techniques",
+			description: "Brainstorming and ideation techniques"
 		},
 		{
 			name: "writing-plans",
 			repo: "obra/superpowers",
-			description: "Writing comprehensive plans",
+			description: "Writing comprehensive plans"
 		},
 		{
 			name: "executing-plans",
 			repo: "obra/superpowers",
-			description: "Executing plans systematically",
+			description: "Executing plans systematically"
 		},
 		{
 			name: "verification-before-completion",
 			repo: "obra/superpowers",
-			description: "Verify work before marking complete",
+			description: "Verify work before marking complete"
 		},
 		{
 			name: "page-cro",
 			repo: "coreyhaines31/marketingskills",
-			description: "Landing page optimization",
+			description: "Landing page optimization"
 		},
 		{
 			name: "onboarding-cro",
 			repo: "coreyhaines31/marketingskills",
-			description: "Onboarding conversion optimization",
+			description: "Onboarding conversion optimization"
 		},
 		{
 			name: "form-cro",
 			repo: "coreyhaines31/marketingskills",
-			description: "Form conversion optimization",
+			description: "Form conversion optimization"
 		},
 		{
 			name: "signup-flow-cro",
 			repo: "coreyhaines31/marketingskills",
-			description: "Signup flow optimization",
+			description: "Signup flow optimization"
 		},
 		{
 			name: "paywall-upgrade-cro",
 			repo: "coreyhaines31/marketingskills",
-			description: "Paywall and upgrade flows",
+			description: "Paywall and upgrade flows"
 		},
 		{
 			name: "ab-test-setup",
 			repo: "coreyhaines31/marketingskills",
-			description: "A/B testing methodology",
+			description: "A/B testing methodology"
 		},
 		{
 			name: "referral-program",
 			repo: "coreyhaines31/marketingskills",
-			description: "Referral program design",
+			description: "Referral program design"
 		},
 		{
 			name: "free-tool-strategy",
 			repo: "coreyhaines31/marketingskills",
-			description: "Free tool as lead magnet",
+			description: "Free tool as lead magnet"
 		},
 		{
 			name: "competitor-alternatives",
 			repo: "coreyhaines31/marketingskills",
-			description: "Competitor alternative pages",
-		},
+			description: "Competitor alternative pages"
+		}
 	],
 	engineering: [
 		{
 			name: "vercel-react-best-practices",
 			repo: "vercel-labs/agent-skills",
-			description: "React/Next.js performance patterns",
+			description: "React/Next.js performance patterns"
 		},
 		{
 			name: "vercel-composition-patterns",
 			repo: "vercel-labs/agent-skills",
-			description: "React composition patterns that scale",
+			description: "React composition patterns that scale"
 		},
 		{
 			name: "web-design-guidelines",
 			repo: "vercel-labs/agent-skills",
-			description: "Web interface guidelines compliance",
+			description: "Web interface guidelines compliance"
 		},
 		{
 			name: "v0-automation",
 			repo: "composiohq/awesome-claude-skills",
-			description: "V0 automation for rapid UI development",
+			description: "V0 automation for rapid UI development"
 		},
 		{
 			name: "premium-frontend-design",
 			repo: "kv0906/cc-skills",
-			description: "Premium frontend design patterns",
+			description: "Premium frontend design patterns"
 		},
 		{
 			name: "better-auth-best-practices",
 			repo: "better-auth/skills",
-			description: "Better Auth implementation patterns",
+			description: "Better Auth implementation patterns"
 		},
 		{
 			name: "building-native-ui",
 			repo: "expo/skills",
-			description: "Building native UI with Expo",
+			description: "Building native UI with Expo"
 		},
 		{
 			name: "systematic-debugging",
 			repo: "obra/superpowers",
-			description: "Systematic debugging methodology",
+			description: "Systematic debugging methodology"
 		},
 		{
 			name: "test-driven-development",
 			repo: "obra/superpowers",
-			description: "TDD best practices",
+			description: "TDD best practices"
 		},
 		{
 			name: "requesting-code-review",
 			repo: "obra/superpowers",
-			description: "Request effective code reviews",
+			description: "Request effective code reviews"
 		},
 		{
 			name: "receiving-code-review",
 			repo: "obra/superpowers",
-			description: "Handle code review feedback",
+			description: "Handle code review feedback"
 		},
 		{
 			name: "subagent-driven-development",
 			repo: "obra/superpowers",
-			description: "Use subagents effectively",
+			description: "Use subagents effectively"
 		},
 		{
 			name: "dispatching-parallel-agents",
 			repo: "obra/superpowers",
-			description: "Parallel agent orchestration",
+			description: "Parallel agent orchestration"
 		},
 		{
 			name: "finishing-a-development-branch",
 			repo: "obra/superpowers",
-			description: "Clean branch completion workflow",
+			description: "Clean branch completion workflow"
 		},
 		{
 			name: "using-git-worktrees",
 			repo: "obra/superpowers",
-			description: "Git worktree best practices",
+			description: "Git worktree best practices"
 		},
 		{
 			name: "writing-skills",
 			repo: "obra/superpowers",
-			description: "Write effective agent skills",
-		},
+			description: "Write effective agent skills"
+		}
 	],
 	design: [
 		{
 			name: "frontend-design",
 			repo: "anthropics/skills",
-			description: "Frontend design best practices",
+			description: "Frontend design best practices"
 		},
 		{
 			name: "design-md",
 			repo: "google-labs-code/stitch-skills",
-			description: "Design documentation in markdown",
+			description: "Design documentation in markdown"
 		},
 		{
 			name: "ui-ux-pro-max",
 			repo: "nextlevelbuilder/ui-ux-pro-max-skill",
-			description: "Pro-level UI/UX design patterns",
+			description: "Pro-level UI/UX design patterns"
 		},
 		{
 			name: "explainer-video-guide",
 			repo: "inference-sh-6/skills",
-			description: "Explainer video creation guide",
+			description: "Explainer video creation guide"
 		},
 		{
 			name: "audit-website",
 			repo: "squirrelscan/skills",
-			description: "Website audit methodology",
-		},
+			description: "Website audit methodology"
+		}
 	],
 	marketing: [
 		{
 			name: "copywriting",
 			repo: "coreyhaines31/marketingskills",
-			description: "Persuasive copywriting",
+			description: "Persuasive copywriting"
 		},
 		{
 			name: "marketing-psychology",
 			repo: "coreyhaines31/marketingskills",
-			description: "Psychology in marketing",
+			description: "Psychology in marketing"
 		},
 		{
 			name: "seo-audit",
 			repo: "coreyhaines31/marketingskills",
-			description: "SEO audit and optimization",
+			description: "SEO audit and optimization"
 		},
 		{
 			name: "programmatic-seo",
 			repo: "coreyhaines31/marketingskills",
-			description: "Programmatic SEO strategies",
+			description: "Programmatic SEO strategies"
 		},
 		{
 			name: "content-strategy",
 			repo: "coreyhaines31/marketingskills",
-			description: "Content strategy planning",
+			description: "Content strategy planning"
 		},
 		{
 			name: "product-marketing-context",
 			repo: "coreyhaines31/marketingskills",
-			description: "Product marketing fundamentals",
+			description: "Product marketing fundamentals"
 		},
 		{
 			name: "marketing-ideas",
 			repo: "coreyhaines31/marketingskills",
-			description: "Creative marketing ideas",
+			description: "Creative marketing ideas"
 		},
 		{
 			name: "social-content",
 			repo: "coreyhaines31/marketingskills",
-			description: "Social media content creation",
+			description: "Social media content creation"
 		},
 		{
 			name: "copy-editing",
 			repo: "coreyhaines31/marketingskills",
-			description: "Copy editing best practices",
+			description: "Copy editing best practices"
 		},
 		{
 			name: "pricing-strategy",
 			repo: "coreyhaines31/marketingskills",
-			description: "Pricing strategy development",
+			description: "Pricing strategy development"
 		},
 		{
 			name: "launch-strategy",
 			repo: "coreyhaines31/marketingskills",
-			description: "Product launch planning",
+			description: "Product launch planning"
 		},
 		{
 			name: "analytics-tracking",
 			repo: "coreyhaines31/marketingskills",
-			description: "Analytics and tracking setup",
+			description: "Analytics and tracking setup"
 		},
 		{
 			name: "email-sequence",
 			repo: "coreyhaines31/marketingskills",
-			description: "Email sequence creation",
+			description: "Email sequence creation"
 		},
 		{
 			name: "paid-ads",
 			repo: "coreyhaines31/marketingskills",
-			description: "Paid advertising strategies",
+			description: "Paid advertising strategies"
 		},
 		{
 			name: "seo",
 			repo: "addyosmani/web-quality-skills",
-			description: "SEO optimization",
+			description: "SEO optimization"
 		},
 		{
 			name: "seo-geo",
 			repo: "resciencelab/opc-skills",
-			description: "SEO for GEO (Generative Engine Optimization)",
+			description: "SEO for GEO (Generative Engine Optimization)"
 		},
 		{
 			name: "backlink-analyzer",
 			repo: "aaron-he-zhu/seo-geo-claude-skills",
-			description: "Backlink analysis",
+			description: "Backlink analysis"
 		},
 		{
 			name: "keyword-research",
 			repo: "aaron-he-zhu/seo-geo-claude-skills",
-			description: "Keyword research",
+			description: "Keyword research"
 		},
 		{
 			name: "reddit",
 			repo: "resciencelab/opc-skills",
-			description: "Reddit marketing",
+			description: "Reddit marketing"
 		},
 		{
 			name: "twitter",
 			repo: "resciencelab/opc-skills",
-			description: "Twitter/X marketing",
+			description: "Twitter/X marketing"
 		},
 		{
 			name: "producthunt",
 			repo: "resciencelab/opc-skills",
-			description: "Product Hunt launch",
+			description: "Product Hunt launch"
 		},
 		{
 			name: "domain-hunter",
 			repo: "resciencelab/opc-skills",
-			description: "Domain finding",
+			description: "Domain finding"
 		},
 		{
 			name: "requesthunt",
 			repo: "resciencelab/opc-skills",
-			description: "Request hunting",
-		},
+			description: "Request hunting"
+		}
 	],
 	growth: [
 		{
 			name: "schema-markup",
 			repo: "coreyhaines31/marketingskills",
-			description: "Schema markup implementation",
+			description: "Schema markup implementation"
 		},
 		{
 			name: "popup-cro",
 			repo: "coreyhaines31/marketingskills",
-			description: "Popup conversion optimization",
-		},
-	],
-};
+			description: "Popup conversion optimization"
+		}
+	]
+}
 
-export type SkillCategory = keyof typeof STARTUP_SKILLS;
+export type SkillCategory = keyof typeof STARTUP_SKILLS
 
-const ALL_SKILLS = Object.values(STARTUP_SKILLS).flat();
-const SKILL_MAP = new Map(ALL_SKILLS.map((s) => [s.name, s]));
+const ALL_SKILLS = Object.values(STARTUP_SKILLS).flat()
+const SKILL_MAP = new Map(ALL_SKILLS.map((s) => [s.name, s]))
 
 export function listSkills() {
-	console.log("\n📦 StartupKit Skills\n");
-	console.log("Available skill categories:\n");
+	console.log("\n📦 StartupKit Skills\n")
+	console.log("Available skill categories:\n")
 	for (const [category, skills] of Object.entries(STARTUP_SKILLS)) {
-		console.log(`  ${category} (${skills.length} skills)`);
+		console.log(`  ${category} (${skills.length} skills)`)
 		for (const skill of skills) {
-			console.log(`    - ${skill.name}: ${skill.description}`);
+			console.log(`    - ${skill.name}: ${skill.description}`)
 		}
 	}
-	console.log("\nCommands:");
+	console.log("\nCommands:")
 	console.log(
-		"  startupkit init                           # Initialize project with AGENTS.md, SOUL.md, and skills",
-	);
+		"  startupkit init                           # Initialize project with AGENTS.md, SOUL.md, and skills"
+	)
 	console.log(
-		"  startupkit skills add                     # Interactive selection",
-	);
+		"  startupkit skills add                     # Interactive selection"
+	)
 	console.log(
-		"  startupkit skills add --all               # Install all skills",
-	);
+		"  startupkit skills add --all               # Install all skills"
+	)
 	console.log(
-		"  startupkit skills add --category dev      # Install dev skills",
-	);
+		"  startupkit skills add --category dev      # Install dev skills"
+	)
 	console.log(
-		"  startupkit skills add brainstorming       # Install specific skill",
-	);
+		"  startupkit skills add brainstorming       # Install specific skill"
+	)
 	console.log(
-		"  startupkit skills list --installed        # List installed skills",
-	);
-	console.log("  startupkit skills remove <skill>          # Remove a skill");
-	console.log("  startupkit skills add --global            # Install globally");
+		"  startupkit skills list --installed        # List installed skills"
+	)
+	console.log("  startupkit skills remove <skill>          # Remove a skill")
+	console.log("  startupkit skills add --global            # Install globally")
 	console.log(
-		"  startupkit skills add --dry-run           # Preview without installing",
-	);
+		"  startupkit skills add --dry-run           # Preview without installing"
+	)
 }
 
 export async function listInstalledSkills(global: boolean) {
-	const globalFlag = global ? "--global" : "";
-	const cmd = `npx skills list ${globalFlag}`.trim();
+	const globalFlag = global ? "--global" : ""
+	const cmd = `npx skills list ${globalFlag}`.trim()
 	try {
-		execSync(cmd, { stdio: "inherit" });
+		execSync(cmd, { stdio: "inherit" })
 	} catch {
-		console.log("No skills installed.");
+		console.log("No skills installed.")
 	}
 }
 
 export async function addSkills(options: {
-	skill?: string;
-	category?: string;
-	all?: boolean;
-	agent?: string[];
-	global?: boolean;
-	dryRun?: boolean;
+	skill?: string
+	category?: string
+	all?: boolean
+	agent?: string[]
+	global?: boolean
+	dryRun?: boolean
 }) {
 	const agents = options.agent?.length
 		? options.agent
-		: ["opencode", "claude-code"];
-	const global = options.global ?? false;
-	const dryRun = options.dryRun ?? false;
+		: ["opencode", "claude-code"]
+	const global = options.global ?? false
+	const dryRun = options.dryRun ?? false
 
 	if (options.skill) {
-		await installSingleSkill(options.skill, agents, global, dryRun);
-		return;
+		await installSingleSkill(options.skill, agents, global, dryRun)
+		return
 	}
 
 	if (options.all) {
-		console.log("\n🚀 Installing all StartupKit skills...\n");
-		await installAllSkills(agents, global, dryRun);
-		return;
+		console.log("\n🚀 Installing all StartupKit skills...\n")
+		await installAllSkills(agents, global, dryRun)
+		return
 	}
 
 	if (options.category) {
-		const category = options.category as SkillCategory;
+		const category = options.category as SkillCategory
 		if (!STARTUP_SKILLS[category]) {
-			console.error(`Unknown category: ${options.category}`);
+			console.error(`Unknown category: ${options.category}`)
 			console.log(
-				`Available categories: ${Object.keys(STARTUP_SKILLS).join(", ")}`,
-			);
-			process.exit(1);
+				`Available categories: ${Object.keys(STARTUP_SKILLS).join(", ")}`
+			)
+			process.exit(1)
 		}
-		console.log(`\n📦 Installing ${category} skills...\n`);
-		await installCategorySkills(category, agents, global, dryRun);
-		return;
+		console.log(`\n📦 Installing ${category} skills...\n`)
+		await installCategorySkills(category, agents, global, dryRun)
+		return
 	}
 
 	const categories = await checkbox({
 		message: "Select skill categories to install:",
 		choices: Object.keys(STARTUP_SKILLS).map((k) => ({
 			name: `${k} (${STARTUP_SKILLS[k as SkillCategory].length} skills)`,
-			value: k,
-		})),
-	});
+			value: k
+		}))
+	})
 
 	if (categories.length === 0) {
-		console.log("No categories selected. Exiting.");
-		return;
+		console.log("No categories selected. Exiting.")
+		return
 	}
 
 	for (const category of categories) {
-		console.log(`\n📦 Installing ${category} skills...\n`);
+		console.log(`\n📦 Installing ${category} skills...\n`)
 		await installCategorySkills(
 			category as SkillCategory,
 			agents,
 			global,
-			dryRun,
-		);
+			dryRun
+		)
 	}
 }
 
@@ -428,34 +428,34 @@ async function installSingleSkill(
 	skillName: string,
 	agents: string[],
 	global: boolean,
-	dryRun: boolean,
+	dryRun: boolean
 ) {
-	const skill = SKILL_MAP.get(skillName);
+	const skill = SKILL_MAP.get(skillName)
 	if (!skill) {
-		console.error(`Unknown skill: ${skillName}`);
-		console.log("\nAvailable skills:");
+		console.error(`Unknown skill: ${skillName}`)
+		console.log("\nAvailable skills:")
 		for (const [name, s] of SKILL_MAP) {
-			console.log(`  - ${name}: ${s.description}`);
+			console.log(`  - ${name}: ${s.description}`)
 		}
-		process.exit(1);
+		process.exit(1)
 	}
 
-	console.log(`\n📦 Installing ${skillName}...\n`);
-	await installSkillsFromRepo(skill.repo, [skillName], agents, global, dryRun);
+	console.log(`\n📦 Installing ${skillName}...\n`)
+	await installSkillsFromRepo(skill.repo, [skillName], agents, global, dryRun)
 }
 
 export async function installAllSkills(
 	agents: string[],
 	global: boolean,
-	dryRun: boolean,
+	dryRun: boolean
 ) {
 	for (const category of Object.keys(STARTUP_SKILLS)) {
 		await installCategorySkills(
 			category as SkillCategory,
 			agents,
 			global,
-			dryRun,
-		);
+			dryRun
+		)
 	}
 }
 
@@ -463,18 +463,18 @@ async function installCategorySkills(
 	category: SkillCategory,
 	agents: string[],
 	global: boolean,
-	dryRun: boolean,
+	dryRun: boolean
 ) {
-	const skills = STARTUP_SKILLS[category];
-	const repoMap = new Map<string, string[]>();
+	const skills = STARTUP_SKILLS[category]
+	const repoMap = new Map<string, string[]>()
 	for (const skill of skills) {
-		const existing = repoMap.get(skill.repo) ?? [];
-		existing.push(skill.name);
-		repoMap.set(skill.repo, existing);
+		const existing = repoMap.get(skill.repo) ?? []
+		existing.push(skill.name)
+		repoMap.set(skill.repo, existing)
 	}
 
 	for (const [repo, skillNames] of repoMap) {
-		await installSkillsFromRepo(repo, skillNames, agents, global, dryRun);
+		await installSkillsFromRepo(repo, skillNames, agents, global, dryRun)
 	}
 }
 
@@ -483,58 +483,58 @@ async function installSkillsFromRepo(
 	skillNames: string[],
 	agents: string[],
 	global: boolean,
-	dryRun: boolean,
+	dryRun: boolean
 ) {
-	const agentFlags = agents.map((a) => `--agent ${a}`).join(" ");
-	const globalFlag = global ? "--global" : "";
-	const skillFlags = skillNames.map((s) => `--skill ${s}`).join(" ");
+	const agentFlags = agents.map((a) => `--agent ${a}`).join(" ")
+	const globalFlag = global ? "--global" : ""
+	const skillFlags = skillNames.map((s) => `--skill ${s}`).join(" ")
 
 	if (dryRun) {
-		console.log(`  [DRY RUN] Would install from ${repo}:`);
+		console.log(`  [DRY RUN] Would install from ${repo}:`)
 		for (const name of skillNames) {
-			console.log(`    - ${name}`);
+			console.log(`    - ${name}`)
 		}
-		console.log(`    Agents: ${agents.join(", ")}`);
-		console.log(`    Global: ${global}`);
-		return;
+		console.log(`    Agents: ${agents.join(", ")}`)
+		console.log(`    Global: ${global}`)
+		return
 	}
 
 	const cmd =
-		`npx skills add ${repo} ${agentFlags} ${skillFlags} ${globalFlag} -y`.trim();
-	console.log(`  Installing from ${repo}...`);
+		`npx skills add ${repo} ${agentFlags} ${skillFlags} ${globalFlag} -y`.trim()
+	console.log(`  Installing from ${repo}...`)
 	try {
-		execSync(cmd, { stdio: "inherit" });
+		execSync(cmd, { stdio: "inherit" })
 	} catch {
-		console.error(`  Failed to install from ${repo}`);
+		console.error(`  Failed to install from ${repo}`)
 	}
 }
 
 export async function removeSkill(options: {
-	skill?: string;
-	agent?: string[];
-	global?: boolean;
+	skill?: string
+	agent?: string[]
+	global?: boolean
 }) {
 	if (!options.skill) {
-		const skillName = await input({ message: "Enter skill name to remove:" });
+		const skillName = await input({ message: "Enter skill name to remove:" })
 		if (!skillName) {
-			console.log("No skill name provided.");
-			return;
+			console.log("No skill name provided.")
+			return
 		}
-		options.skill = skillName;
+		options.skill = skillName
 	}
 
 	const agents = options.agent?.length
 		? options.agent
-		: ["opencode", "claude-code"];
-	const agentFlags = agents.map((a) => `--agent ${a}`).join(" ");
-	const globalFlag = options.global ? "--global" : "";
+		: ["opencode", "claude-code"]
+	const agentFlags = agents.map((a) => `--agent ${a}`).join(" ")
+	const globalFlag = options.global ? "--global" : ""
 	const cmd =
-		`npx skills remove --skill ${options.skill} ${agentFlags} ${globalFlag} -y`.trim();
+		`npx skills remove --skill ${options.skill} ${agentFlags} ${globalFlag} -y`.trim()
 
 	try {
-		execSync(cmd, { stdio: "inherit" });
+		execSync(cmd, { stdio: "inherit" })
 	} catch {
-		console.error(`Failed to remove skill: ${options.skill}`);
+		console.error(`Failed to remove skill: ${options.skill}`)
 	}
 }
 
@@ -596,7 +596,7 @@ This project uses specialized subagents for different domains:
 1. Ensure all tests pass
 2. Update documentation if needed
 3. Review your own changes first
-`;
+`
 
 const SOUL_TEMPLATE = `# Project Soul
 
@@ -639,13 +639,13 @@ const SOUL_TEMPLATE = `# Project Soul
 ## Competitive Landscape
 
 <!-- Who are the competitors? What makes this different? -->
-`;
+`
 
 function getSubagentTemplate(category: keyof typeof STARTUP_SKILLS): string {
-	const skills = STARTUP_SKILLS[category];
+	const skills = STARTUP_SKILLS[category]
 	const skillsList = skills
 		.map((s) => `- **${s.name}**: ${s.description}`)
-		.join("\n");
+		.join("\n")
 
 	const templates: Record<keyof typeof STARTUP_SKILLS, string> = {
 		product: `# Product Subagent
@@ -820,141 +820,141 @@ ${skillsList}
 - Focus on high-impact changes
 - Document experiments and learnings
 - Iterate based on data
-`,
-	};
+`
+	}
 
-	return templates[category];
+	return templates[category]
 }
 
 export async function initSkills(options: {
-	skipPrompts?: boolean;
-	global?: boolean;
-	skipSkills?: boolean;
-	agents?: string[];
+	skipPrompts?: boolean
+	global?: boolean
+	skipSkills?: boolean
+	agents?: string[]
 }) {
 	const agents = options.agents?.length
 		? options.agents
-		: ["opencode", "claude-code"];
-	const skipPrompts = options.skipPrompts ?? false;
-	const global = options.global ?? false;
-	const skipSkills = options.skipSkills ?? false;
+		: ["opencode", "claude-code"]
+	const skipPrompts = options.skipPrompts ?? false
+	const global = options.global ?? false
+	const skipSkills = options.skipSkills ?? false
 
-	console.log("\n🚀 Initializing StartupKit Skills...\n");
+	console.log("\n🚀 Initializing StartupKit Skills...\n")
 
-	await createAgentsMd(skipPrompts);
-	await createSoulMd(skipPrompts);
-	await createSubagents(skipPrompts);
+	await createAgentsMd(skipPrompts)
+	await createSoulMd(skipPrompts)
+	await createSubagents(skipPrompts)
 
 	if (!skipSkills) {
-		console.log("\n📦 Installing default skills...\n");
-		await installAllSkills(agents, global, false);
+		console.log("\n📦 Installing default skills...\n")
+		await installAllSkills(agents, global, false)
 	}
 
-	console.log("\n✅ StartupKit Skills initialized!\n");
-	console.log("Next steps:");
-	console.log("  1. Edit AGENTS.md to add project-specific context");
-	console.log("  2. Edit SOUL.md to define your project's vision and values");
-	console.log("  3. Edit .agents/*.md to customize subagent behavior");
-	console.log("  4. Run 'startupkit skills list' to see installed skills");
+	console.log("\n✅ StartupKit Skills initialized!\n")
+	console.log("Next steps:")
+	console.log("  1. Edit AGENTS.md to add project-specific context")
+	console.log("  2. Edit SOUL.md to define your project's vision and values")
+	console.log("  3. Edit .agents/*.md to customize subagent behavior")
+	console.log("  4. Run 'startupkit skills list' to see installed skills")
 }
 
 async function createAgentsMd(skipPrompts: boolean) {
-	const agentsPath = join(process.cwd(), "AGENTS.md");
+	const agentsPath = join(process.cwd(), "AGENTS.md")
 
 	if (existsSync(agentsPath)) {
 		if (!skipPrompts) {
 			const overwrite = await confirm({
 				message: "AGENTS.md already exists. Overwrite?",
-				default: false,
-			});
+				default: false
+			})
 			if (!overwrite) {
-				console.log("  Skipping AGENTS.md (keeping existing)");
-				return;
+				console.log("  Skipping AGENTS.md (keeping existing)")
+				return
 			}
 		} else {
-			console.log("  Skipping AGENTS.md (already exists)");
-			return;
+			console.log("  Skipping AGENTS.md (already exists)")
+			return
 		}
 	}
 
-	writeFileSync(agentsPath, AGENTS_TEMPLATE);
-	console.log("  Created AGENTS.md");
+	writeFileSync(agentsPath, AGENTS_TEMPLATE)
+	console.log("  Created AGENTS.md")
 }
 
 async function createSoulMd(skipPrompts: boolean) {
-	const soulPath = join(process.cwd(), "SOUL.md");
+	const soulPath = join(process.cwd(), "SOUL.md")
 
 	if (existsSync(soulPath)) {
 		if (!skipPrompts) {
 			const overwrite = await confirm({
 				message: "SOUL.md already exists. Overwrite?",
-				default: false,
-			});
+				default: false
+			})
 			if (!overwrite) {
-				console.log("  Skipping SOUL.md (keeping existing)");
-				return;
+				console.log("  Skipping SOUL.md (keeping existing)")
+				return
 			}
 		} else {
-			console.log("  Skipping SOUL.md (already exists)");
-			return;
+			console.log("  Skipping SOUL.md (already exists)")
+			return
 		}
 	}
 
-	let soulContent = SOUL_TEMPLATE;
+	let soulContent = SOUL_TEMPLATE
 
 	if (!skipPrompts) {
 		const projectName = await input({
 			message: "Project name:",
-			default: process.cwd().split("/").pop() || "My Project",
-		});
+			default: process.cwd().split("/").pop() || "My Project"
+		})
 
 		const vision = await input({
-			message: "Project vision (one sentence):",
-		});
+			message: "Project vision (one sentence):"
+		})
 
 		if (projectName || vision) {
 			soulContent = soulContent.replace(
 				"<!-- What is the ultimate vision for this project? -->",
-				vision || "",
-			);
+				vision || ""
+			)
 		}
 	}
 
-	writeFileSync(soulPath, soulContent);
-	console.log("  Created SOUL.md");
+	writeFileSync(soulPath, soulContent)
+	console.log("  Created SOUL.md")
 }
 
 async function createSubagents(skipPrompts: boolean) {
-	const agentsDir = join(process.cwd(), ".agents");
+	const agentsDir = join(process.cwd(), ".agents")
 
 	if (!existsSync(agentsDir)) {
-		mkdirSync(agentsDir, { recursive: true });
+		mkdirSync(agentsDir, { recursive: true })
 	}
 
 	const categories = Object.keys(STARTUP_SKILLS) as Array<
 		keyof typeof STARTUP_SKILLS
-	>;
+	>
 
 	for (const category of categories) {
-		const subagentPath = join(agentsDir, `${category}.md`);
+		const subagentPath = join(agentsDir, `${category}.md`)
 
 		if (existsSync(subagentPath)) {
 			if (!skipPrompts) {
 				const overwrite = await confirm({
 					message: `.agents/${category}.md already exists. Overwrite?`,
-					default: false,
-				});
+					default: false
+				})
 				if (!overwrite) {
-					console.log(`  Skipping .agents/${category}.md (keeping existing)`);
-					continue;
+					console.log(`  Skipping .agents/${category}.md (keeping existing)`)
+					continue
 				}
 			} else {
-				console.log(`  Skipping .agents/${category}.md (already exists)`);
-				continue;
+				console.log(`  Skipping .agents/${category}.md (already exists)`)
+				continue
 			}
 		}
 
-		writeFileSync(subagentPath, getSubagentTemplate(category));
-		console.log(`  Created .agents/${category}.md`);
+		writeFileSync(subagentPath, getSubagentTemplate(category))
+		console.log(`  Created .agents/${category}.md`)
 	}
 }

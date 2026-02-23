@@ -16,3 +16,4 @@ dist/
 
 # skills lock file (optional - uncomment if you don't want to track)
 # skills-lock.json
+.turbo/
