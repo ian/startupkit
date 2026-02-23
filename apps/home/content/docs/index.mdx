@@ -1,0 +1,139 @@
+---
+title: Introduction
+description: Welcome to StartupKit - The startup stack for the AI era
+---
+
+StartupKit is an application accelerator for AI agents. It's built on **Next.js**, **React 19**, **TypeScript**, and **Turbo** with authentication, analytics, database, and UI components pre-configured—all designed with clear patterns that AI coding tools can understand and extend.
+
+## Why StartupKit?
+
+Building an application from scratch means spending weeks on boilerplate:
+
+- Setting up authentication
+- Configuring analytics
+- Building UI components
+- Optimizing for SEO
+- Managing a monorepo
+
+StartupKit gives you all of this out of the box, so you can focus on what matters: **building your product**.
+
+## Quick Start
+
+Get started with a single command:
+
+```bash
+npx startupkit init
+```
+
+This will:
+1. Clone the complete monorepo template
+2. Install all dependencies
+3. Set up workspace packages
+
+Then start the development server:
+
+```bash
+cd my-project
+pnpm dev
+```
+
+## What's Included
+
+### Packages
+
+StartupKit includes several packages that work together:
+
+- **[@repo/analytics](/docs/analytics)** - Provider-agnostic analytics with plugins for PostHog, Google Analytics, and OpenPanel
+- **[@repo/auth](/docs/auth)** - Authentication wrappers built on Better Auth
+- **[@repo/db](/docs/db)** - Type-safe database access with Drizzle ORM and PostgreSQL
+- **[@repo/emails](/docs/emails)** - Transactional emails with React Email and Resend
+- **[@repo/seo](/docs/seo)** - SEO utilities including metadata, structured data, and sitemaps
+- **[@repo/ui](/docs/ui)** - Pre-built components with Shadcn UI, Radix, and Tailwind
+
+### Project Structure
+
+```
+my-project/
+├── apps/
+│   └── web/           # Your Next.js application
+├── packages/
+│   ├── analytics/     # @repo/analytics
+│   ├── auth/          # @repo/auth
+│   ├── db/            # @repo/db (Drizzle ORM)
+│   ├── emails/        # @repo/emails (React Email)
+│   ├── ui/            # @repo/ui (Shadcn components)
+│   └── utils/         # @repo/utils
+├── config/
+│   ├── biome/         # @repo/biome
+│   ├── nextjs/        # @repo/nextjs
+│   └── typescript/    # @repo/tsconfig
+├── turbo.json
+└── package.json
+```
+
+## Architecture
+
+StartupKit uses a **two-layer package architecture** that separates core infrastructure from your customizable code.
+
+### `@startupkit/*` — Core packages
+
+Published npm packages that provide the underlying infrastructure:
+
+```tsx
+import { PostHogPlugin, GoogleAnalyticsPlugin } from "@startupkit/analytics"
+import { generateMetadata, generateSitemap } from "@startupkit/seo"
+```
+
+These packages provide:
+- Plugin systems and adapters
+- Utility functions
+- Type definitions
+- Provider integrations
+
+You don't modify these—they're updated via npm.
+
+### `@repo/*` — Your packages
+
+Local workspace packages in your `packages/` directory that you own and customize:
+
+```tsx
+import { useAnalytics, AnalyticsProvider } from "@repo/analytics"
+import { useAuth, AuthProvider } from "@repo/auth"
+import { db, users } from "@repo/db"
+import { Button, Card } from "@repo/ui/components/button"
+```
+
+These packages:
+- Wrap `@startupkit/*` packages with your configuration
+- Contain your database schema
+- Hold your custom components
+- Include project-specific logic
+
+### Why this design?
+
+| Layer | What it provides | Who maintains it |
+|-------|------------------|------------------|
+| `@startupkit/*` | Core infrastructure, plugins, utilities | StartupKit (npm updates) |
+| `@repo/*` | Your configuration, schema, customizations | You |
+
+This lets you **receive updates** to core functionality while **keeping full control** over your implementation. When we ship improvements to `@startupkit/analytics`, you get them without losing your custom event types or provider configuration.
+
+See [Project Structure](/docs/getting-started/project-structure) for more details.
+
+## AI-Ready
+
+StartupKit is designed to work seamlessly with AI coding assistants. Clear patterns, consistent conventions, and well-documented code make it easy for tools like Cursor, GitHub Copilot, and Claude to understand and extend your codebase.
+
+Every project includes an `AGENTS.md` file that explains your codebase structure to AI tools.
+
+## Next Steps
+
+- [Installation](/docs/getting-started/installation) - Detailed installation guide
+- [Quickstart](/docs/getting-started/quickstart) - Get up and running in 5 minutes
+- [CLI](/docs/cli) - Learn the command-line tools
+- [Analytics](/docs/analytics) - Set up event tracking
+- [Auth](/docs/auth) - Configure authentication
+- [Database](/docs/db) - Work with your data
+- [Emails](/docs/emails) - Send transactional emails
+- [SEO](/docs/seo) - Optimize for search engines
+- [UI](/docs/ui) - Use pre-built components

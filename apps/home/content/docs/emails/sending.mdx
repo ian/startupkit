@@ -1,0 +1,231 @@
+---
+title: Sending Emails
+description: Send transactional emails with the sendEmail API
+---
+
+The `sendEmail` function provides a type-safe way to send emails through Resend.
+
+## Basic Usage
+
+```tsx
+import { sendEmail } from "@repo/emails"
+
+const { data, error } = await sendEmail({
+  template: "TeamInvite",
+  from: "MyApp <noreply@myapp.com>",
+  to: "user@example.com",
+  subject: "You've been invited!",
+  props: {
+    email: "user@example.com",
+    invitedByName: "Alex Johnson",
+    teamName: "Acme Corp",
+    inviteLink: "https://myapp.com/invite/abc123"
+  }
+})
+```
+
+## Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `template` | string | Template name from the registry |
+| `from` | string | Sender address |
+| `to` | string | Recipient address |
+| `subject` | string | Email subject line |
+| `props` | object | Template-specific data (type-safe) |
+
+## Response
+
+```tsx
+const { data, error } = await sendEmail({ ... })
+
+if (error) {
+  console.error("Failed to send:", error.message)
+  return
+}
+
+console.log("Email sent:", data?.id)
+```
+
+## Development Mode
+
+In development (`NODE_ENV=development`), emails are not sent to Resend. Instead:
+
+1. The email renders to HTML
+2. Opens automatically in your default browser
+3. Shows sender, recipient, and subject metadata
+
+This enables rapid iteration without API calls.
+
+### Force sending in development
+
+Set this env var to send real emails in development:
+
+```bash title=".env.local"
+RESEND_ENABLED=true
+```
+
+## In API Routes
+
+```tsx title="app/api/auth/verify/route.ts"
+import { sendEmail } from "@repo/emails"
+
+export async function POST(request: Request) {
+  const { email } = await request.json()
+  const code = generateVerificationCode()
+
+  const { error } = await sendEmail({
+    template: "VerifyCode",
+    from: "MyApp <noreply@myapp.com>",
+    to: email,
+    subject: "Your verification code",
+    props: {
+      email,
+      otpCode: code,
+      expiryTime: "10 minutes"
+    }
+  })
+
+  if (error) {
+    return Response.json(
+      { error: "Failed to send verification email" },
+      { status: 500 }
+    )
+  }
+
+  return Response.json({ success: true })
+}
+```
+
+## In Server Actions
+
+```tsx title="app/actions/invite.ts"
+"use server"
+
+import { sendEmail } from "@repo/emails"
+
+export async function inviteToTeam(formData: FormData) {
+  const email = formData.get("email") as string
+  const teamName = formData.get("teamName") as string
+
+  const inviteToken = generateInviteToken()
+  const inviteLink = `${process.env.NEXT_PUBLIC_APP_URL}/invite/${inviteToken}`
+
+  const { error } = await sendEmail({
+    template: "TeamInvite",
+    from: "MyApp <noreply@myapp.com>",
+    to: email,
+    subject: `Join ${teamName} on MyApp`,
+    props: {
+      email,
+      invitedByName: "Current User",
+      teamName,
+      inviteLink
+    }
+  })
+
+  if (error) {
+    return { error: "Failed to send invitation" }
+  }
+
+  return { success: true }
+}
+```
+
+## Sender Address
+
+The `from` address should be from a verified domain in Resend. Format options:
+
+```tsx
+// Just email
+from: "noreply@myapp.com"
+
+// Name and email
+from: "MyApp <noreply@myapp.com>"
+
+// Support address
+from: "MyApp Support <support@myapp.com>"
+```
+
+## Error Handling
+
+Common errors and handling:
+
+```tsx
+const { error } = await sendEmail({ ... })
+
+if (error) {
+  // Log for debugging
+  console.error("Email error:", error)
+
+  // Handle specific cases
+  if (error.message.includes("rate limit")) {
+    // Retry later
+  }
+
+  if (error.message.includes("invalid")) {
+    // Bad email address
+  }
+
+  // Return user-friendly message
+  return { error: "Unable to send email. Please try again." }
+}
+```
+
+## Batch Sending
+
+For multiple recipients, loop and send individually:
+
+```tsx
+const recipients = ["user1@example.com", "user2@example.com"]
+
+const results = await Promise.all(
+  recipients.map(email =>
+    sendEmail({
+      template: "Newsletter",
+      from: "MyApp <news@myapp.com>",
+      to: email,
+      subject: "Weekly Update",
+      props: { email }
+    })
+  )
+)
+
+const failed = results.filter(r => r.error)
+if (failed.length > 0) {
+  console.error(`${failed.length} emails failed to send`)
+}
+```
+
+<Callout type="warn">
+For large batch sends (100+ emails), use Resend's batch API directly or a job queue to avoid rate limits.
+</Callout>
+
+## Queue Integration
+
+For production apps, consider using a job queue:
+
+```tsx title="jobs/send-email.ts"
+import { sendEmail } from "@repo/emails"
+
+export async function sendEmailJob(payload: {
+  template: string
+  to: string
+  subject: string
+  props: Record<string, unknown>
+}) {
+  const { error } = await sendEmail({
+    template: payload.template as "TeamInvite" | "VerifyCode",
+    from: "MyApp <noreply@myapp.com>",
+    to: payload.to,
+    subject: payload.subject,
+    props: payload.props
+  })
+
+  if (error) {
+    throw new Error(`Failed to send email: ${error.message}`)
+  }
+}
+```
+
+This allows retries, rate limiting, and async processing.

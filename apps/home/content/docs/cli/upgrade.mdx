@@ -1,0 +1,176 @@
+---
+title: Upgrading
+description: How to upgrade StartupKit packages and configuration
+---
+
+The `upgrade` command keeps your StartupKit project up to date with the latest packages and configuration.
+
+## Basic Usage
+
+```bash
+npx startupkit upgrade
+```
+
+This upgrades both:
+- **Packages** - All `@startupkit/*` npm packages
+- **Config** - Configuration files from the latest template
+
+## Command Options
+
+```bash
+npx startupkit upgrade [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `--packages` | Only upgrade npm packages |
+| `--config` | Only sync config files |
+| `--dry-run` | Preview changes without applying |
+
+## Examples
+
+### Upgrade Everything
+
+```bash
+npx startupkit upgrade
+```
+
+### Upgrade Packages Only
+
+```bash
+npx startupkit upgrade --packages
+```
+
+Upgrades `@startupkit/analytics`, `@startupkit/auth`, `@startupkit/seo`, etc.
+
+### Sync Config Only
+
+```bash
+npx startupkit upgrade --config
+```
+
+Syncs configuration files from the latest template:
+- `biome.jsonc`
+- `turbo.json`
+- TypeScript configs
+
+### Preview Changes
+
+```bash
+npx startupkit upgrade --dry-run
+```
+
+Shows what would change without modifying files.
+
+## What Gets Upgraded
+
+### Package Upgrades (`--packages`)
+
+Updates all `@startupkit/*` dependencies in your workspace:
+
+```json
+{
+  "dependencies": {
+    "@startupkit/analytics": "^1.2.0",  // Updated
+    "@startupkit/auth": "^1.2.0",       // Updated
+    "@startupkit/seo": "^1.2.0"         // Updated
+  }
+}
+```
+
+### Config Sync (`--config`)
+
+Syncs configuration files that may have changed upstream:
+
+| File | Description |
+|------|-------------|
+| `turbo.json` | Turbo pipeline configuration |
+| `biome.jsonc` | Linting and formatting rules |
+| `config/typescript/*.json` | TypeScript configurations |
+| `.github/workflows/*` | CI/CD workflows |
+
+## Upgrade Strategy
+
+The upgrade command follows these principles:
+
+1. **Non-destructive** - Won't overwrite your custom code
+2. **Additive for config** - Adds new options, preserves existing
+3. **Semantic versioning** - Follows semver for packages
+
+## When to Upgrade
+
+- **After major releases** - New features and improvements
+- **Security updates** - Patch vulnerabilities in dependencies
+- **Bug fixes** - Resolve issues reported by the community
+
+Check the [changelog](https://github.com/ian/startupkit/releases) for release notes.
+
+## Manual Upgrades
+
+If you prefer manual control:
+
+### Upgrade npm Packages
+
+```bash
+pnpm update @startupkit/analytics @startupkit/auth @startupkit/seo
+```
+
+### Sync Specific Config
+
+```bash
+# Get latest turbo.json
+npx degit ian/startupkit/templates/repo/turbo.json turbo.json
+
+# Get latest biome config
+npx degit ian/startupkit/templates/repo/biome.jsonc biome.jsonc
+```
+
+## Handling Conflicts
+
+If config sync encounters conflicts:
+
+1. **Backup your changes** - The CLI won't overwrite without asking
+2. **Review diffs** - Use `--dry-run` to see what would change
+3. **Merge manually** - For complex customizations
+
+## Post-Upgrade Steps
+
+After upgrading:
+
+```bash
+# Install any new dependencies
+pnpm install
+
+# Run type checking
+pnpm typecheck
+
+# Run linting
+pnpm lint
+
+# Test your app
+pnpm dev
+```
+
+## Troubleshooting
+
+### Version Conflicts
+
+If you see peer dependency warnings:
+
+```bash
+pnpm install --force
+```
+
+### Breaking Changes
+
+Check migration guides in release notes for major version bumps.
+
+### Config Overwritten
+
+If you accidentally overwrote custom config:
+
+```bash
+git checkout -- turbo.json  # Restore from git
+```
+
+See [Troubleshooting](/docs/cli/troubleshooting) for more solutions.

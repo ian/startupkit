@@ -1,0 +1,11 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Disallow internal/private paths
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /auth/
+
+# Sitemap
+Sitemap: https://startupkit.com/sitemap.xml

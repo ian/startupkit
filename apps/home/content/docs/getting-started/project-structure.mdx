@@ -1,0 +1,229 @@
+---
+title: Project Structure
+description: Understanding the StartupKit monorepo layout
+icon: FolderTree
+---
+
+StartupKit uses a **monorepo** architecture powered by [Turborepo](https://turbo.build/repo). This allows you to share code between apps while keeping everything in a single repository.
+
+## Directory Overview
+
+```
+my-project/
+├── apps/
+│   └── web/                 # Main Next.js application
+├── packages/
+│   ├── analytics/           # @repo/analytics - Analytics hooks
+│   ├── auth/                # @repo/auth - Authentication
+│   ├── db/                  # @repo/db - Database (Drizzle)
+│   ├── ui/                  # @repo/ui - UI components
+│   └── utils/               # @repo/utils - Shared utilities
+├── config/
+│   ├── biome/               # @repo/biome - Linting/formatting config
+│   ├── nextjs/              # @repo/nextjs - Shared Next.js config
+│   └── typescript/          # @repo/tsconfig - Shared TypeScript configs
+├── turbo.json               # Turborepo configuration
+├── pnpm-workspace.yaml      # pnpm workspace configuration
+└── package.json             # Root package.json
+```
+
+## Apps
+
+The `apps/` directory contains deployable applications:
+
+### `apps/web`
+
+Your main Next.js application with:
+
+- **App Router** - Modern Next.js routing
+- **Server Components** - RSC by default
+- **Authentication** - Better Auth integration
+- **Analytics** - PostHog, GA4, etc.
+- **Database** - Drizzle ORM with PostgreSQL
+
+```
+apps/web/
+├── src/
+│   ├── app/                 # Next.js App Router
+│   │   ├── (auth)/          # Auth routes (sign-in, etc.)
+│   │   ├── (main)/          # Main app routes
+│   │   └── api/             # API routes
+│   ├── components/          # App-specific components
+│   └── lib/                 # App-specific utilities
+├── drizzle/                 # Database migrations
+└── public/                  # Static assets
+```
+
+## Package Namespaces
+
+StartupKit uses two package namespaces that serve different purposes:
+
+### `@startupkit/*` - Published packages
+
+These are npm packages published by StartupKit that provide **meta-functionality**:
+
+```tsx
+// Core analytics engine with plugin system
+import { PostHogPlugin, GoogleAnalyticsPlugin } from "@startupkit/analytics"
+
+// SEO utilities for Next.js
+import { generateMetadata, generateSitemap } from "@startupkit/seo"
+
+// CLI tools
+npx startupkit init
+```
+
+You typically don't modify these packages—they provide the underlying infrastructure.
+
+### `@repo/*` - Your local packages
+
+These are workspace packages in your `packages/` directory that **you own and customize**:
+
+```tsx
+// Your analytics implementation (wraps @startupkit/analytics)
+import { useAnalytics, AnalyticsProvider } from "@repo/analytics"
+
+// Your auth implementation
+import { useAuth, AuthProvider } from "@repo/auth"
+
+// Your database schema and client
+import { db, users } from "@repo/db"
+
+// Your UI components
+import { Button, Card } from "@repo/ui"
+```
+
+The `@repo/*` packages often wrap `@startupkit/*` packages, adding your project-specific configuration and customizations.
+
+### Why this architecture?
+
+| Namespace | Purpose | Modifiable |
+|-----------|---------|------------|
+| `@startupkit/*` | Core infrastructure, plugin systems, utilities | No (npm packages) |
+| `@repo/*` | Your implementation, configuration, customizations | Yes (your code) |
+
+This separation lets you:
+
+- **Receive updates** to core functionality via npm
+- **Customize behavior** in your local packages
+- **Add project-specific code** without forking
+- **Share code** across multiple apps in your monorepo
+
+### Example: Analytics
+
+```
+@startupkit/analytics          @repo/analytics
+┌─────────────────────┐       ┌─────────────────────────┐
+│ • Plugin system     │       │ • Your configured       │
+│ • PostHogPlugin     │  ──►  │   plugins               │
+│ • GAPlugin          │       │ • Custom event types    │
+│ • OpenPanelPlugin   │       │ • Server-side track()   │
+└─────────────────────┘       └─────────────────────────┘
+      (npm package)                (your code)
+```
+
+## Packages
+
+The `packages/` directory contains shared code:
+
+### `@repo/analytics`
+
+Analytics hooks and providers:
+
+```tsx
+import { useAnalytics } from "@repo/analytics"
+
+const { track, identify } = useAnalytics()
+```
+
+### `@repo/auth`
+
+Authentication context and hooks:
+
+```tsx
+import { useAuth } from "@repo/auth"
+
+const { user, isAuthenticated, logout } = useAuth()
+```
+
+### `@repo/db`
+
+Database client and schema:
+
+```tsx
+import { db } from "@repo/db"
+import { users } from "@repo/db/schema"
+```
+
+### `@repo/ui`
+
+Shadcn-based UI components:
+
+```tsx
+import { Button } from "@repo/ui/button"
+import { Card } from "@repo/ui/card"
+```
+
+### `@repo/utils`
+
+Shared utilities:
+
+```tsx
+import { cn, getUrl } from "@repo/utils"
+```
+
+## Configuration
+
+### `turbo.json`
+
+Defines the task pipeline:
+
+```json
+{
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "dist/**"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {},
+    "typecheck": {}
+  }
+}
+```
+
+### `pnpm-workspace.yaml`
+
+Defines workspace packages:
+
+```yaml
+packages:
+  - "apps/*"
+  - "config/*"
+  - "packages/*"
+```
+
+This configuration tells pnpm to look for packages in the `apps`, `config`, and `packages` directories.
+
+## Adding New Packages
+
+Use the CLI to add new apps or packages:
+
+```bash
+# Add a new Next.js app
+npx startupkit add next --name dashboard
+
+# Add a new Vite app
+npx startupkit add vite --name landing
+
+# Add a new package
+npx startupkit add pkg --name shared-utils
+```
+
+## Next Steps
+
+- [Analytics](/docs/analytics) - Explore the analytics package
+- [Authentication](/docs/auth) - Set up sign-in flows

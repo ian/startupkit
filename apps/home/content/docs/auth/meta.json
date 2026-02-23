@@ -1,0 +1,11 @@
+{
+	"title": "Auth",
+	"icon": "Lock",
+	"pages": [
+		"index",
+		"configuration",
+		"session-management",
+		"usage"
+	],
+	"defaultOpen": true
+}

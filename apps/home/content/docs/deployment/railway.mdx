@@ -1,0 +1,114 @@
+---
+title: Railway
+description: Deploy to Railway
+---
+
+[Railway](https://railway.app) offers simple infrastructure with a great developer experience.
+
+## Setup
+
+### 1. Create Project
+
+1. Go to [railway.app/new](https://railway.app/new)
+2. Choose "Deploy from GitHub repo"
+3. Select your repository
+
+### 2. Configure Service
+
+Railway auto-detects Next.js. Configure for monorepo:
+
+1. Click on your service
+2. Go to Settings → Build
+3. Set **Root Directory**: `apps/web`
+4. Set **Build Command**: `pnpm build`
+5. Set **Start Command**: `pnpm start`
+
+### 3. Environment Variables
+
+Add environment variables in the Variables tab:
+
+```bash
+DATABASE_URL=postgresql://...
+BETTER_AUTH_SECRET=your-secret-key
+PORT=3000
+```
+
+### 4. Deploy
+
+Railway automatically deploys on push to your default branch.
+
+## Database on Railway
+
+Railway can host your PostgreSQL database:
+
+### 1. Add PostgreSQL
+
+1. Click "New" → "Database" → "PostgreSQL"
+2. Railway provisions a database
+
+### 2. Connect
+
+Use the connection string from the database service:
+
+1. Click on the PostgreSQL service
+2. Go to Variables
+3. Copy `DATABASE_URL`
+4. Add to your web service variables
+
+Or use Railway's variable references:
+
+```bash
+DATABASE_URL=${{Postgres.DATABASE_URL}}
+```
+
+## Custom Domain
+
+1. Go to your service → Settings → Domains
+2. Add your custom domain
+3. Update DNS records
+
+## Networking
+
+### Private Networking
+
+Services in the same project can communicate privately:
+
+```bash
+# Reference another service
+API_URL=${{api.RAILWAY_PRIVATE_DOMAIN}}
+```
+
+### Public Access
+
+Enable public networking for your web service to expose it to the internet.
+
+## Scaling
+
+Railway supports horizontal scaling:
+
+1. Go to Settings → Deploy
+2. Adjust replicas
+3. Configure health checks
+
+## Troubleshooting
+
+### Build Failures
+
+Check the build logs. Common issues:
+
+- Missing `PORT` environment variable
+- Incorrect root directory
+- pnpm not detected (add `packageManager` to package.json)
+
+### Database Connection
+
+If database connections fail:
+
+- Ensure `DATABASE_URL` is set
+- Check the database service is running
+- Verify connection pooling settings
+
+## Next Steps
+
+- [Railway Docs](https://docs.railway.app) — Full documentation
+- [Railway Templates](https://railway.app/templates) — Pre-built configurations

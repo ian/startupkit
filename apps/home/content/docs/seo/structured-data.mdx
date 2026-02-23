@@ -1,0 +1,303 @@
+---
+title: Structured Data
+description: How to add JSON-LD schemas for rich search results
+---
+
+Structured data (JSON-LD) helps search engines understand your content and can enable rich results like knowledge panels, breadcrumbs, and article cards.
+
+## Available Schemas
+
+| Schema | Use Case |
+|--------|----------|
+| `generateOrganizationSchema` | Company info in knowledge panels |
+| `generateWebsiteSchema` | Site-wide search box |
+| `generateBreadcrumbSchema` | Breadcrumb navigation |
+| `generateArticleSchema` | Blog posts and articles |
+
+## Organization Schema
+
+Display your company in Google's Knowledge Panel:
+
+```tsx twoslash title="app/layout.tsx"
+// @noErrors
+import { generateOrganizationSchema } from "@startupkit/seo"
+
+const orgSchema = generateOrganizationSchema({
+  name: "My Company",
+  url: "https://mycompany.com",
+  logo: "https://mycompany.com/logo.png",
+  description: "We build amazing software",
+  sameAs: [
+    "https://twitter.com/mycompany",
+    "https://linkedin.com/company/mycompany",
+    "https://github.com/mycompany"
+  ]
+})
+
+export default function RootLayout({ children }) {
+  return (
+    <html>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+        />
+      </head>
+      <body>{children}</body>
+    </html>
+  )
+}
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `name` | `string` | Yes | Organization name |
+| `url` | `string` | Yes | Website URL |
+| `logo` | `string` | No | Logo image URL |
+| `description` | `string` | No | Organization description |
+| `sameAs` | `string[]` | No | Social profile URLs |
+
+### Output
+
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "My Company",
+  "url": "https://mycompany.com",
+  "logo": "https://mycompany.com/logo.png",
+  "description": "We build amazing software",
+  "sameAs": [
+    "https://twitter.com/mycompany",
+    "https://linkedin.com/company/mycompany"
+  ]
+}
+```
+
+## Website Schema
+
+Enable sitelinks search box in Google:
+
+```tsx twoslash title="app/layout.tsx"
+// @noErrors
+import { generateWebsiteSchema } from "@startupkit/seo"
+
+const websiteSchema = generateWebsiteSchema({
+  name: "My App",
+  url: "https://myapp.com",
+  description: "The best app for productivity"
+})
+
+export default function RootLayout({ children }) {
+  return (
+    <html>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
+      </head>
+      <body>{children}</body>
+    </html>
+  )
+}
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `name` | `string` | Yes | Website name |
+| `url` | `string` | Yes | Website URL |
+| `description` | `string` | Yes | Website description |
+
+## Breadcrumb Schema
+
+Show breadcrumb navigation in search results:
+
+```tsx twoslash title="app/docs/[slug]/page.tsx"
+// @noErrors
+import { generateBreadcrumbSchema } from "@startupkit/seo"
+
+export default function DocPage({ params }) {
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: "Home", url: "https://myapp.com" },
+    { name: "Docs", url: "https://myapp.com/docs" },
+    { name: params.slug, url: `https://myapp.com/docs/${params.slug}` }
+  ])
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <article>...</article>
+    </>
+  )
+}
+```
+
+### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `items` | `Array<{name, url}>` | Breadcrumb items in order |
+
+### Output
+
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://myapp.com"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Docs",
+      "item": "https://myapp.com/docs"
+    }
+  ]
+}
+```
+
+## Article Schema
+
+Enhance blog posts with rich results:
+
+```tsx twoslash title="app/blog/[slug]/page.tsx"
+// @noErrors
+import { generateArticleSchema } from "@startupkit/seo"
+
+export default async function BlogPost({ params }) {
+  const post = await getPost(params.slug)
+
+  const articleSchema = generateArticleSchema({
+    headline: post.title,
+    description: post.excerpt,
+    datePublished: post.publishedAt,
+    dateModified: post.updatedAt,
+    authorName: post.author.name,
+    imageUrl: post.coverImage
+  })
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
+      <article>
+        <h1>{post.title}</h1>
+        <p>By {post.author.name}</p>
+        <div>{post.content}</div>
+      </article>
+    </>
+  )
+}
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `headline` | `string` | Yes | Article title |
+| `description` | `string` | Yes | Article summary |
+| `datePublished` | `string` | Yes | ISO 8601 date string |
+| `dateModified` | `string` | No | Last modified date |
+| `authorName` | `string` | Yes | Author's name |
+| `imageUrl` | `string` | Yes | Featured image URL |
+
+### Output
+
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How to Build an AI-Powered App",
+  "description": "A complete guide to building...",
+  "image": "https://myapp.com/blog/ai-app-guide.png",
+  "datePublished": "2024-01-15T09:00:00Z",
+  "dateModified": "2024-01-20T14:30:00Z",
+  "author": {
+    "@type": "Person",
+    "name": "John Doe"
+  }
+}
+```
+
+## Multiple Schemas
+
+Combine multiple schemas on a page:
+
+```tsx twoslash title="app/layout.tsx"
+// @noErrors
+import { 
+  generateOrganizationSchema, 
+  generateWebsiteSchema 
+} from "@startupkit/seo"
+
+const schemas = [
+  generateOrganizationSchema({
+    name: "My Company",
+    url: "https://mycompany.com"
+  }),
+  generateWebsiteSchema({
+    name: "My App",
+    url: "https://myapp.com",
+    description: "The best app"
+  })
+]
+
+export default function RootLayout({ children }) {
+  return (
+    <html>
+      <head>
+        {schemas.map((schema, i) => (
+          <script
+            key={i}
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+          />
+        ))}
+      </head>
+      <body>{children}</body>
+    </html>
+  )
+}
+```
+
+## Testing Structured Data
+
+### Google's Rich Results Test
+
+1. Go to [Rich Results Test](https://search.google.com/test/rich-results)
+2. Enter your page URL
+3. Check for errors and warnings
+
+### Schema Markup Validator
+
+1. Go to [Schema.org Validator](https://validator.schema.org/)
+2. Paste your JSON-LD
+3. Verify structure is correct
+
+## Best Practices
+
+1. **One Organization schema** - Add to root layout only
+2. **Breadcrumbs on nested pages** - Not needed on homepage
+3. **Article schema for blog posts** - Helps with rich results
+4. **Keep data accurate** - Match visible content
+5. **Test before deploying** - Use Google's testing tool
+
+## Next Steps
+
+- [Sitemaps](/docs/seo/sitemap) - Help search engines discover pages
+- [Robots.txt](/docs/seo/robots) - Control crawler access

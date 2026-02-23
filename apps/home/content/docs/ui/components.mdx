@@ -1,0 +1,181 @@
+---
+title: Components
+description: Adding and customizing UI components
+---
+
+StartupKit includes commonly used [Shadcn UI](https://ui.shadcn.com/) components out of the box. This guide covers how to add more components and use the included helpers.
+
+## Adding Components
+
+Add any Shadcn component with a single command:
+
+```bash
+pnpm shadcn add <component>
+```
+
+For example:
+
+```bash
+pnpm shadcn add calendar
+pnpm shadcn add command
+pnpm shadcn add carousel
+```
+
+Components are installed to `packages/ui/src/components/` and immediately available across all apps.
+
+### Browse available components
+
+See the full list of components at [ui.shadcn.com/docs/components](https://ui.shadcn.com/docs/components).
+
+### Add multiple components
+
+```bash
+pnpm shadcn add dialog dropdown-menu tooltip
+```
+
+## Import Pattern
+
+Components use direct path imports from `@repo/ui`:
+
+```tsx
+import { Button } from "@repo/ui/components/button"
+import { Card, CardHeader, CardContent } from "@repo/ui/components/card"
+import { Dialog, DialogContent, DialogTrigger } from "@repo/ui/components/dialog"
+```
+
+## Helpers
+
+### cn() utility
+
+The `cn()` function merges Tailwind classes with proper precedence. It combines [clsx](https://github.com/lukeed/clsx) and [tailwind-merge](https://github.com/dcastil/tailwind-merge):
+
+```tsx
+import { cn } from "@repo/ui/utils"
+
+function MyComponent({ className, isActive }) {
+  return (
+    <div className={cn(
+      "rounded-lg border p-4",
+      isActive && "border-primary bg-primary/10",
+      className
+    )}>
+      Content
+    </div>
+  )
+}
+```
+
+Use `cn()` when:
+- Merging conditional classes
+- Accepting `className` as a prop
+- Overriding default component styles
+
+### useIsMobile hook
+
+Detect mobile viewport for responsive behavior:
+
+```tsx
+"use client"
+
+import { useIsMobile } from "@repo/ui/hooks"
+
+export function ResponsiveComponent() {
+  const isMobile = useIsMobile()
+
+  if (isMobile) {
+    return <MobileView />
+  }
+
+  return <DesktopView />
+}
+```
+
+### useAlert hook
+
+Programmatic confirmation dialogs:
+
+```tsx
+"use client"
+
+import { useAlert } from "@repo/ui/providers"
+
+export function DeleteButton() {
+  const { confirm } = useAlert()
+
+  async function handleDelete() {
+    const confirmed = await confirm({
+      title: "Delete item?",
+      description: "This action cannot be undone.",
+      confirmText: "Delete",
+      cancelText: "Cancel"
+    })
+
+    if (confirmed) {
+      await deleteItem()
+    }
+  }
+
+  return <Button onClick={handleDelete}>Delete</Button>
+}
+```
+
+### Toast notifications
+
+Show toast messages with [Sonner](https://sonner.emilkowal.ski/):
+
+```tsx
+"use client"
+
+import { toast } from "sonner"
+
+function handleSave() {
+  toast.success("Changes saved!")
+}
+
+function handleError() {
+  toast.error("Something went wrong")
+}
+
+function handleWithAction() {
+  toast("File deleted", {
+    action: {
+      label: "Undo",
+      onClick: () => restoreFile()
+    }
+  })
+}
+```
+
+The `Toaster` component is included in `UIProvider`.
+
+## Customizing Components
+
+Since components live in `packages/ui/src/components/`, you can modify them directly:
+
+```tsx title="packages/ui/src/components/button.tsx"
+const buttonVariants = cva(
+  "inline-flex items-center justify-center rounded-md...",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground",
+        // Add your own variant
+        brand: "bg-gradient-to-r from-purple-500 to-pink-500 text-white",
+      },
+      // ...
+    },
+  }
+)
+```
+
+Changes apply across all apps in the monorepo.
+
+## Storybook
+
+Preview components in isolation:
+
+```bash
+pnpm storybook
+```
+
+Opens at `http://localhost:6006` with all components and their variants.

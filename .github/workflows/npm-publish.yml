@@ -1,0 +1,162 @@
+name: Publish to NPM
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract version from release tag
+        run: |
+          TAG_NAME="${{ github.event.release.tag_name }}"
+          # Remove 'v' prefix if present (e.g., v1.2.3 -> 1.2.3)
+          VERSION="${TAG_NAME#v}"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "📦 Publishing version: $VERSION"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9.6.0
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Set package versions
+        run: |
+          echo "📝 Setting all packages to version $VERSION..."
+          pnpm -r exec -- npm version $VERSION --no-git-tag-version --allow-same-version
+
+      - name: Verify package versions
+        run: |
+          echo "🔍 Verifying package versions..."
+          find packages -name "package.json" -exec node -e "
+            const pkg = require('{}');
+            const expectedVersion = '$VERSION';
+            if (pkg.version === expectedVersion) {
+              console.log('✅ ' + pkg.name + '@' + pkg.version);
+            } else {
+              console.log('❌ ' + pkg.name + ' version mismatch: expected ' + expectedVersion + ', got ' + pkg.version);
+              process.exit(1);
+            }
+          " \;
+
+      - name: Build packages
+        run: pnpm run build
+
+      - name: List packages to be published
+        run: |
+          echo "📦 Packages to publish (version $VERSION):"
+          find packages -name "package.json" -exec node -e "
+            const pkg = require('{}');
+            if (!pkg.private) {
+              console.log('  • ' + pkg.name + '@' + pkg.version);
+            }
+          " \;
+
+      - name: Generate OTP code
+        run: |
+          echo "🔐 Generating OTP code for 2FA..."
+          OTP_CODE=$(node -e "
+            const crypto = require('crypto');
+            
+            // Base32 decoder
+            function base32Decode(encoded) {
+              const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+              let bits = '';
+              let result = [];
+              
+              for (let i = 0; i < encoded.length; i++) {
+                const val = alphabet.indexOf(encoded.charAt(i).toUpperCase());
+                if (val >= 0) {
+                  bits += val.toString(2).padStart(5, '0');
+                }
+              }
+              
+              for (let i = 0; i + 8 <= bits.length; i += 8) {
+                result.push(parseInt(bits.substr(i, 8), 2));
+              }
+              
+              return Buffer.from(result);
+            }
+            
+            const secret = '${{ secrets.NPM_OTP_SECRET }}';
+            const time = Math.floor(Date.now() / 1000 / 30);
+            const buffer = Buffer.alloc(8);
+            buffer.writeUInt32BE(time, 4);
+            
+            const secretBuffer = base32Decode(secret);
+            const hmac = crypto.createHmac('sha1', secretBuffer);
+            hmac.update(buffer);
+            const hash = hmac.digest();
+            
+            const offset = hash[hash.length - 1] & 0xf;
+            const code = ((hash[offset] & 0x7f) << 24) | 
+                        ((hash[offset + 1] & 0xff) << 16) | 
+                        ((hash[offset + 2] & 0xff) << 8) | 
+                        (hash[offset + 3] & 0xff);
+            
+            console.log(String(code % 1000000).padStart(6, '0'));
+          ")
+          echo "OTP_CODE=$OTP_CODE" >> $GITHUB_ENV
+          echo "✅ OTP code generated: $OTP_CODE"
+
+      - name: Publish to NPM
+        run: |
+          echo "🔐 Using 2FA authentication with OTP"
+          echo "🚀 Publishing all packages..."
+          
+          find packages -name "package.json" -exec dirname {} \; | while read package_dir; do
+            package_name=$(node -p "require('./$package_dir/package.json').name")
+            is_private=$(node -p "require('./$package_dir/package.json').private || false")
+            
+            if [ "$is_private" != "true" ]; then
+              echo "📦 Publishing $package_name@$VERSION..."
+              cd "$package_dir"
+              npm publish --access public --otp $OTP_CODE
+              cd - > /dev/null
+            fi
+          done
+          
+          echo "✅ All packages published!"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Update template references
+        run: |
+          echo "📝 Updating @startupkit/* and startupkit references in templates..."
+          
+          # Find all package.json files in templates and update startupkit package references
+          find templates -name "package.json" -type f | while read file; do
+            # Update @startupkit/* package versions (handles both "x.x.x" and "^x.x.x" formats)
+            sed -i 's/"@startupkit\/\([^"]*\)": "\^*[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*"/"@startupkit\/\1": "^'"$VERSION"'"/g' "$file"
+            # Update startupkit CLI version
+            sed -i 's/"startupkit": "\^*[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*"/"startupkit": "^'"$VERSION"'"/g' "$file"
+          done
+          
+          # Show what was updated
+          echo "🔍 Updated template references:"
+          grep -r '"@startupkit/\|"startupkit":' templates --include="package.json" || echo "  (none found)"
+
+      - name: Commit version bumps
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add packages/*/package.json
+          git add templates/*/package.json templates/*/*/package.json templates/*/*/*/package.json 2>/dev/null || true
+          git commit -m "chore: bump package versions to $VERSION [skip ci]" || echo "No changes to commit"
+          git push origin HEAD:main

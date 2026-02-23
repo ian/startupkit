@@ -1,0 +1,79 @@
+---
+title: Overview
+description: The StartupKit command-line interface for scaffolding and managing projects
+---
+
+The StartupKit CLI helps you create new projects, add apps to your workspace, and keep your setup up to date.
+
+## Installation
+
+You can use the CLI directly with `npx` (no installation required):
+
+```bash
+npx startupkit init
+```
+
+Or install it globally:
+
+```bash
+npm install -g startupkit
+startupkit init
+```
+
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| [`init`](/docs/cli/init) | Create a new StartupKit project |
+| [`add`](/docs/cli/add) | Add a new app to your workspace |
+| [`upgrade`](/docs/cli/upgrade) | Upgrade packages and config to latest |
+| `help` | Show help information |
+
+## Quick Start
+
+Create a new project:
+
+```bash
+npx startupkit init
+```
+
+The CLI will prompt you for:
+1. **Project name** - The display name for your project
+2. **Project key** - URL-safe slug (auto-generated from name)
+3. **Directory** - Where to create the project
+
+After initialization, your project includes:
+- Pre-configured monorepo with pnpm workspaces
+- Workspace packages (`@repo/analytics`, `@repo/auth`, `@repo/db`, etc.)
+- Shared config (`@repo/tsconfig`, `@repo/biome`)
+- Turbo for build orchestration
+- AI agent instructions (AGENTS.md)
+
+## What Gets Scaffolded
+
+```
+my-project/
+├── apps/                    # Your applications
+├── packages/
+│   ├── analytics/          # @repo/analytics
+│   ├── auth/               # @repo/auth
+│   ├── db/                 # @repo/db (Drizzle ORM)
+│   ├── emails/             # @repo/emails
+│   ├── ui/                 # @repo/ui (Shadcn)
+│   └── utils/              # @repo/utils
+├── config/
+│   ├── biome/              # @repo/biome
+│   ├── nextjs/             # @repo/nextjs
+│   └── typescript/         # @repo/tsconfig
+├── .ruler/
+│   └── AGENTS.md           # AI agent instructions
+├── turbo.json
+├── pnpm-workspace.yaml
+└── package.json
+```
+
+## Next Steps
+
+- [Create a new project](/docs/cli/init) - Detailed init command guide
+- [Add apps to your workspace](/docs/cli/add) - Add Next.js, Vite, and more
+- [Keep your project updated](/docs/cli/upgrade) - Upgrade packages and config

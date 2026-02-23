@@ -1,0 +1,330 @@
+---
+title: Sitemaps
+description: How to generate sitemaps for search engine discovery
+---
+
+Sitemaps help search engines discover and index your pages. The `generateSitemap` function creates a Next.js-compatible sitemap.
+
+## Basic Usage
+
+```tsx twoslash title="app/sitemap.ts"
+// @noErrors
+import { generateSitemap } from "@startupkit/seo"
+
+export default function sitemap() {
+  return generateSitemap({
+    baseUrl: "https://myapp.com",
+    routes: [
+      { path: "/" },
+      { path: "/about" },
+      { path: "/pricing" },
+      { path: "/blog" },
+      { path: "/contact" }
+    ]
+  })
+}
+```
+
+This generates `/sitemap.xml`:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://myapp.com/</loc>
+    <lastmod>2024-01-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1</priority>
+  </url>
+  <url>
+    <loc>https://myapp.com/about</loc>
+    <lastmod>2024-01-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1</priority>
+  </url>
+  ...
+</urlset>
+```
+
+## Route Configuration
+
+### Basic Route
+
+```tsx
+{ path: "/about" }
+```
+
+### With Priority
+
+Higher priority pages (0.0 to 1.0):
+
+```tsx
+{ path: "/", priority: 1.0 },      // Homepage - highest
+{ path: "/pricing", priority: 0.9 },
+{ path: "/about", priority: 0.8 },
+{ path: "/contact", priority: 0.5 }
+```
+
+### With Change Frequency
+
+How often the page changes:
+
+```tsx
+{ path: "/", changeFrequency: "daily" },
+{ path: "/blog", changeFrequency: "weekly" },
+{ path: "/about", changeFrequency: "monthly" },
+{ path: "/terms", changeFrequency: "yearly" }
+```
+
+Options: `always`, `hourly`, `daily`, `weekly`, `monthly`, `yearly`, `never`
+
+### With Last Modified
+
+```tsx
+{ 
+  path: "/blog/my-post", 
+  lastModified: new Date("2024-01-15") 
+}
+```
+
+## Dynamic Sitemaps
+
+### Blog Posts
+
+```tsx twoslash title="app/sitemap.ts"
+// @noErrors
+import { generateSitemap } from "@startupkit/seo"
+import { db } from "@repo/db"
+
+export default async function sitemap() {
+  const posts = await db.query.posts.findMany({
+    columns: { slug: true, updatedAt: true }
+  })
+
+  const blogRoutes = posts.map(post => ({
+    path: `/blog/${post.slug}`,
+    lastModified: post.updatedAt,
+    changeFrequency: "weekly" as const,
+    priority: 0.7
+  }))
+
+  return generateSitemap({
+    baseUrl: "https://myapp.com",
+    routes: [
+      { path: "/", priority: 1.0 },
+      { path: "/blog", priority: 0.9 },
+      ...blogRoutes
+    ]
+  })
+}
+```
+
+### Product Pages
+
+```tsx twoslash title="app/sitemap.ts"
+// @noErrors
+import { generateSitemap } from "@startupkit/seo"
+
+export default async function sitemap() {
+  const products = await fetchProducts()
+
+  const productRoutes = products.map(product => ({
+    path: `/products/${product.slug}`,
+    lastModified: product.updatedAt,
+    priority: 0.8
+  }))
+
+  return generateSitemap({
+    baseUrl: "https://myapp.com",
+    routes: [
+      { path: "/", priority: 1.0 },
+      { path: "/products", priority: 0.9 },
+      ...productRoutes
+    ]
+  })
+}
+```
+
+## Multiple Sitemaps (Sitemap Index)
+
+For large sites with more than 50,000 URLs, split into multiple sitemaps using Next.js's built-in sitemap index support:
+
+```tsx twoslash title="app/sitemap.ts"
+// @noErrors
+import type { MetadataRoute } from "next"
+declare function getProductCount(): Promise<number>
+declare function getProducts(opts: { start: number; limit: number }): Promise<{ slug: string; updatedAt: Date }[]>
+
+export async function generateSitemaps() {
+  const totalProducts = await getProductCount()
+  const sitemapsNeeded = Math.ceil(totalProducts / 50000)
+  
+  return Array.from({ length: sitemapsNeeded }, (_, i) => ({ id: i }))
+}
+
+export default async function sitemap({ 
+  id 
+}: { 
+  id: number 
+}): Promise<MetadataRoute.Sitemap> {
+  const start = id * 50000
+  const products = await getProducts({ start, limit: 50000 })
+  
+  return products.map(product => ({
+    url: `https://myapp.com/products/${product.slug}`,
+    lastModified: product.updatedAt
+  }))
+}
+```
+
+This automatically generates:
+- `/sitemap.xml` — the sitemap index listing all child sitemaps
+- `/sitemap/0.xml`, `/sitemap/1.xml`, etc. — individual sitemaps with up to 50,000 URLs each
+
+### Category-Based Sitemaps
+
+You can also organize sitemaps by content type:
+
+```tsx twoslash title="app/sitemap.ts"
+// @noErrors
+import type { MetadataRoute } from "next"
+declare function getPosts(): Promise<{ slug: string; updatedAt: Date }[]>
+declare function getProducts(): Promise<{ slug: string; updatedAt: Date }[]>
+
+const categories = ["main", "blog", "products"] as const
+
+export async function generateSitemaps() {
+  return categories.map(id => ({ id }))
+}
+
+export default async function sitemap({ 
+  id 
+}: { 
+  id: string 
+}): Promise<MetadataRoute.Sitemap> {
+  switch (id) {
+    case "main":
+      return [
+        { url: "https://myapp.com", priority: 1.0 },
+        { url: "https://myapp.com/about", priority: 0.8 },
+        { url: "https://myapp.com/pricing", priority: 0.9 }
+      ]
+    case "blog":
+      const posts = await getPosts()
+      return posts.map(post => ({
+        url: `https://myapp.com/blog/${post.slug}`,
+        lastModified: post.updatedAt
+      }))
+    case "products":
+      const products = await getProducts()
+      return products.map(product => ({
+        url: `https://myapp.com/products/${product.slug}`,
+        lastModified: product.updatedAt
+      }))
+    default:
+      return []
+  }
+}
+
+## Parameters
+
+### generateSitemap
+
+```tsx
+generateSitemap({
+  baseUrl: string,   // Full base URL (e.g., "https://myapp.com")
+  routes: SitemapRoute[]
+})
+```
+
+### SitemapRoute
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `path` | `string` | Required | URL path (e.g., `/about`) |
+| `lastModified` | `Date` | `new Date()` | Last modification date |
+| `changeFrequency` | `string` | `"daily"` | How often page changes |
+| `priority` | `number` | `1` | Importance (0.0 - 1.0) |
+
+## Best Practices
+
+### Priority Guidelines
+
+| Page Type | Priority |
+|-----------|----------|
+| Homepage | 1.0 |
+| Core pages (pricing, features) | 0.9 |
+| Product/category pages | 0.8 |
+| Blog posts | 0.7 |
+| Support/docs | 0.6 |
+| Legal pages | 0.3 |
+
+### Exclude Pages
+
+Don't include in sitemap:
+- Auth pages (`/sign-in`, `/sign-up`)
+- Dashboard/app pages
+- API routes
+- Error pages (`/404`, `/500`)
+- Redirects
+
+### Keep Updated
+
+Update `lastModified` when content changes:
+
+```tsx twoslash
+// @noErrors
+import { db } from "@repo/db"
+// ---cut---
+const posts = await db.query.posts.findMany()
+
+const routes = posts.map(post => ({
+  path: `/blog/${post.slug}`,
+  lastModified: post.updatedAt  // Actual update date
+}))
+```
+
+## Submitting to Search Engines
+
+### Google Search Console
+
+1. Go to [Search Console](https://search.google.com/search-console)
+2. Add your property
+3. Navigate to Sitemaps
+4. Enter `sitemap.xml`
+5. Click Submit
+
+### Bing Webmaster Tools
+
+1. Go to [Bing Webmaster](https://www.bing.com/webmasters)
+2. Add your site
+3. Submit sitemap URL
+
+### robots.txt Reference
+
+Include sitemap in robots.txt:
+
+```
+Sitemap: https://myapp.com/sitemap.xml
+```
+
+See [Robots.txt](/docs/seo/robots) for more.
+
+## Debugging
+
+### Check Sitemap
+
+Visit `https://myapp.com/sitemap.xml` directly.
+
+### Validate Format
+
+Use [XML Sitemap Validator](https://www.xml-sitemaps.com/validate-xml-sitemap.html).
+
+### Check in Search Console
+
+Google Search Console shows sitemap status and any errors.
+
+## Next Steps
+
+- [Robots.txt](/docs/seo/robots) - Control crawler access
+- [Page metadata](/docs/seo/metadata) - Optimize individual pages

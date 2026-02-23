@@ -1,0 +1,245 @@
+---
+title: Tracking Events
+description: How to track analytics events with @repo/analytics
+---
+
+Track user actions and product usage with the `useAnalytics` hook.
+
+## Basic Usage
+
+```tsx twoslash
+// @noErrors
+"use client"
+
+import { useAnalytics } from "@repo/analytics"
+
+export function PricingCard({ plan }: { plan: string }) {
+  const { track } = useAnalytics()
+
+  const handleSelect = () => {
+    track("PLAN_SELECTED", {
+      plan,
+      source: "pricing_page"
+    })
+  }
+
+  return (
+    <button onClick={handleSelect}>
+      Select {plan}
+    </button>
+  )
+}
+```
+
+## The track() Function
+
+```typescript
+track(event: string, properties?: Record<string, unknown>)
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `event` | `string` | Event name (e.g., `"BUTTON_CLICKED"`) |
+| `properties` | `object` | Optional metadata about the event |
+
+## Event Naming Conventions
+
+Use `ALL_CAPS_SNAKE_CASE` for event names:
+
+```typescript twoslash
+// @noErrors
+declare function track(event: string, properties?: Record<string, unknown>): void
+// ---cut---
+// Good
+track("USER_SIGNED_UP")
+track("PLAN_UPGRADED")
+track("FEATURE_USED")
+
+// Avoid
+track("user signed up")
+track("planUpgraded")
+track("feature-used")
+```
+
+This convention:
+- Makes events easy to find in analytics dashboards
+- Clearly distinguishes events from other data
+- Is widely adopted across analytics tools
+
+## Common Event Patterns
+
+### User Actions
+
+```typescript twoslash
+// @noErrors
+declare function track(event: string, properties?: Record<string, unknown>): void
+// ---cut---
+track("BUTTON_CLICKED", { buttonId: "cta", page: "home" })
+track("FORM_SUBMITTED", { formId: "contact", success: true })
+track("LINK_CLICKED", { url: "/pricing", external: false })
+```
+
+### Feature Usage
+
+```typescript twoslash
+// @noErrors
+declare function track(event: string, properties?: Record<string, unknown>): void
+// ---cut---
+track("FEATURE_USED", { feature: "dark_mode", enabled: true })
+track("SEARCH_PERFORMED", { query: "billing", results: 5 })
+track("FILTER_APPLIED", { filter: "date", value: "last_7_days" })
+```
+
+### Business Events
+
+```typescript twoslash
+// @noErrors
+declare function track(event: string, properties?: Record<string, unknown>): void
+// ---cut---
+track("PLAN_SELECTED", { plan: "pro", interval: "monthly" })
+track("CHECKOUT_STARTED", { plan: "pro", amount: 29 })
+track("SUBSCRIPTION_CREATED", { plan: "pro", trial: false })
+```
+
+### Errors
+
+```typescript twoslash
+// @noErrors
+declare function track(event: string, properties?: Record<string, unknown>): void
+// ---cut---
+track("ERROR_OCCURRED", { 
+  code: "PAYMENT_FAILED",
+  message: "Card declined"
+})
+```
+
+## Adding Properties
+
+Include relevant context with every event:
+
+```typescript twoslash
+// @noErrors
+declare function track(event: string, properties?: Record<string, unknown>): void
+declare const doc: { id: string }
+declare const team: { id: string }
+// ---cut---
+track("DOCUMENT_CREATED", {
+  documentId: doc.id,
+  documentType: "invoice",
+  teamId: team.id,
+  templateUsed: true
+})
+```
+
+Properties help you:
+- Filter and segment in analytics dashboards
+- Debug issues with more context
+- Build funnels and cohorts
+
+## Tracking on Page Load
+
+For events that should fire when a page loads:
+
+```tsx twoslash
+// @noErrors
+"use client"
+
+import { useAnalytics } from "@repo/analytics"
+import { useEffect } from "react"
+
+export function PricingPage() {
+  const { track } = useAnalytics()
+
+  useEffect(() => {
+    track("PRICING_PAGE_VIEWED", {
+      referrer: document.referrer
+    })
+  }, [track])
+
+  return <div>Pricing content...</div>
+}
+```
+
+## Automatic Page Tracking
+
+The `AnalyticsProvider` automatically tracks page views when routes change. You don't need to manually call `track()` for page views.
+
+The automatic tracking:
+- Fires on every route change
+- Filters out route groups (e.g., `(dashboard)`)
+- Replaces long IDs with `:id` for cleaner data
+
+Example transformations:
+- `/dashboard/(settings)/profile/abc123` → `/dashboard/profile/:id`
+- `/(marketing)/pricing` → `/pricing`
+
+### Disable Auto Page Tracking
+
+```tsx twoslash
+// @noErrors
+declare const flags: Record<string, boolean | string>
+declare const plugins: unknown[]
+declare const children: React.ReactNode
+declare function AnalyticsProvider(props: { flags: Record<string, boolean | string>; plugins: unknown[]; autoPageTracking?: boolean; children: React.ReactNode }): JSX.Element
+// ---cut---
+<AnalyticsProvider 
+  flags={flags} 
+  plugins={plugins}
+  autoPageTracking={false}
+>
+  {children}
+</AnalyticsProvider>
+```
+
+## Type-Safe Events
+
+For better type safety, define your events:
+
+```typescript twoslash title="types/analytics.ts"
+interface AnalyticsEvents {
+  SIGNUP_CLICKED: { source: string }
+  PLAN_SELECTED: { plan: string; interval: "monthly" | "yearly" }
+  FEATURE_USED: { feature: string; enabled: boolean }
+}
+
+type EventName = keyof AnalyticsEvents
+```
+
+Then create a typed wrapper:
+
+```typescript twoslash title="lib/analytics.ts"
+// @noErrors
+interface AnalyticsEvents {
+  SIGNUP_CLICKED: { source: string }
+  PLAN_SELECTED: { plan: string; interval: "monthly" | "yearly" }
+  FEATURE_USED: { feature: string; enabled: boolean }
+}
+type EventName = keyof AnalyticsEvents
+// ---cut---
+import { useAnalytics as useBaseAnalytics } from "@repo/analytics"
+
+export function useAnalytics() {
+  const analytics = useBaseAnalytics()
+
+  return {
+    ...analytics,
+    track: <T extends EventName>(
+      event: T,
+      properties: AnalyticsEvents[T]
+    ) => analytics.track(event, properties)
+  }
+}
+```
+
+## Best Practices
+
+1. **Be consistent** - Use the same event name for the same action across your app
+2. **Include context** - Add properties that help you understand the event
+3. **Don't over-track** - Focus on events that drive business decisions
+4. **Avoid PII** - Don't include emails, names, or other personal data in properties
+5. **Use present tense verbs** - `BUTTON_CLICKED` not `BUTTON_WAS_CLICKED`
+
+## Next Steps
+
+- [Identify users](/docs/analytics/identifying-users) - Associate events with users
+- [Feature flags](/docs/analytics/feature-flags) - Control feature rollouts

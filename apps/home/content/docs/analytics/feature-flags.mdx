@@ -1,0 +1,316 @@
+---
+title: Feature Flags
+description: How to use feature flags with @repo/analytics
+---
+
+Control feature rollouts and run experiments with feature flags. Flags are passed through the `AnalyticsProvider` and accessible via hooks.
+
+## Setup
+
+### 1. Fetch Flags Server-Side
+
+```tsx twoslash title="app/layout.tsx"
+// @noErrors
+import type { ReactNode } from "react"
+import { getFeatureFlags } from "@repo/analytics/server"
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
+import { Providers } from "./providers"
+
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const session = await auth.api.getSession({ headers: await headers() })
+  const userId = session?.user?.id
+  const flags = await getFeatureFlags(userId)
+
+  return (
+    <html>
+      <body>
+        <Providers flags={flags}>
+          {children}
+        </Providers>
+      </body>
+    </html>
+  )
+}
+```
+
+### 2. Pass to Provider
+
+```tsx twoslash title="app/providers.tsx"
+// @noErrors
+"use client"
+
+import { AnalyticsProvider } from "@repo/analytics"
+import { analyticsPlugins } from "@/lib/analytics"
+
+export function Providers({ children, flags }) {
+  return (
+    <AnalyticsProvider flags={flags} plugins={analyticsPlugins}>
+      {children}
+    </AnalyticsProvider>
+  )
+}
+```
+
+## Using Flags
+
+### useFlag Hook
+
+Check a single flag:
+
+```tsx twoslash
+// @noErrors
+"use client"
+
+import { useFlag } from "@repo/analytics"
+
+export function NewFeature() {
+  const isEnabled = useFlag("new-dashboard")
+
+  if (!isEnabled) return null
+
+  return <div>Welcome to the new dashboard!</div>
+}
+```
+
+### useAnalytics Hook
+
+Access all flags at once:
+
+```tsx twoslash
+// @noErrors
+"use client"
+
+import { useAnalytics } from "@repo/analytics"
+
+export function FeatureGate() {
+  const { flags } = useAnalytics()
+
+  return (
+    <div>
+      {flags["feature-a"] && <FeatureA />}
+      {flags["feature-b"] && <FeatureB />}
+    </div>
+  )
+}
+```
+
+## Flag Types
+
+Flags can be boolean or string values:
+
+```typescript twoslash
+interface Flags {
+  "new-dashboard": boolean       // On/off
+  "pricing-variant": "A" | "B"   // A/B test
+  "api-version": "v1" | "v2"     // Gradual rollout
+}
+```
+
+### Boolean Flags
+
+```tsx twoslash
+// @noErrors
+import { useFlag } from "@repo/analytics"
+// ---cut---
+const showBanner = useFlag("show-banner")
+
+if (showBanner) {
+  return <Banner />
+}
+```
+
+### String/Variant Flags
+
+```tsx twoslash
+// @noErrors
+import { useFlag } from "@repo/analytics"
+// ---cut---
+const variant = useFlag("checkout-variant")
+
+switch (variant) {
+  case "A":
+    return <CheckoutA />
+  case "B":
+    return <CheckoutB />
+  default:
+    return <CheckoutDefault />
+}
+```
+
+## Server-Side Flag Checks
+
+Check flags in Server Components or API routes:
+
+```tsx twoslash title="app/dashboard/page.tsx"
+// @noErrors
+import { getFeatureFlags } from "@repo/analytics/server"
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
+
+export default async function DashboardPage() {
+  const session = await auth.api.getSession({ headers: await headers() })
+  const flags = await getFeatureFlags(session?.user?.id)
+
+  if (flags["new-dashboard"]) {
+    return <NewDashboard />
+  }
+
+  return <LegacyDashboard />
+}
+```
+
+## Type Safety
+
+Define your flags for better TypeScript support:
+
+```typescript twoslash title="types/flags.ts"
+export interface Flags {
+  "new-dashboard": boolean
+  "dark-mode": boolean
+  "checkout-variant": "control" | "variant-a" | "variant-b"
+}
+```
+
+Then use with the hook:
+
+```tsx twoslash
+// @noErrors
+import { useAnalytics } from "@repo/analytics"
+import type { Flags } from "@/types/flags"
+
+export function MyComponent() {
+  const { flags } = useAnalytics() as { flags: Flags }
+
+  // TypeScript knows the flag types
+  if (flags["new-dashboard"]) {
+    // ...
+  }
+}
+```
+
+## Common Patterns
+
+### Gradual Rollout
+
+Roll out a feature to a percentage of users:
+
+```tsx twoslash
+// @noErrors
+import { useFlag } from "@repo/analytics"
+// ---cut---
+// In PostHog, set "new-feature" to 10% rollout
+const hasNewFeature = useFlag("new-feature")
+
+return hasNewFeature ? <NewFeature /> : <OldFeature />
+```
+
+### Beta Access
+
+Gate features for beta users:
+
+```tsx twoslash
+// @noErrors
+import { useFlag } from "@repo/analytics"
+// ---cut---
+const isBetaUser = useFlag("beta-access")
+
+if (isBetaUser) {
+  return (
+    <div>
+      <BetaBadge />
+      <BetaFeatures />
+    </div>
+  )
+}
+```
+
+### A/B Testing
+
+Run experiments:
+
+```tsx twoslash
+// @noErrors
+"use client"
+
+import { useEffect } from "react"
+import { useAnalytics, useFlag } from "@repo/analytics"
+
+function PricingExperiment() {
+  const variant = useFlag("pricing-experiment")
+  const { track } = useAnalytics()
+
+  useEffect(() => {
+    track("EXPERIMENT_VIEWED", {
+      experiment: "pricing-experiment",
+      variant
+    })
+  }, [variant, track])
+
+  return variant === "A" ? <PricingA /> : <PricingB />
+}
+```
+
+### Kill Switch
+
+Disable a feature instantly:
+
+```tsx twoslash
+// @noErrors
+import { useFlag } from "@repo/analytics"
+// ---cut---
+const isFeatureEnabled = useFlag("feature-x-enabled")
+
+if (!isFeatureEnabled) {
+  return <MaintenanceMessage />
+}
+
+return <FeatureX />
+```
+
+## Fallback Values
+
+When flags are loading or unavailable:
+
+```tsx twoslash
+// @noErrors
+import { useFlag } from "@repo/analytics"
+// ---cut---
+const isEnabled = useFlag("new-feature")
+
+// isEnabled is null if flags haven't loaded
+if (isEnabled === null) {
+  return <LoadingState />
+}
+
+if (isEnabled) {
+  return <NewFeature />
+}
+
+return <DefaultFeature />
+```
+
+## PostHog Integration
+
+If using PostHog, flags are fetched automatically:
+
+```tsx twoslash title="lib/analytics-server.ts"
+// @noErrors
+import { PostHog } from "posthog-node"
+
+const posthog = new PostHog(process.env.POSTHOG_API_KEY!)
+
+export async function getFeatureFlags(userId?: string) {
+  if (!userId) return {}
+  
+  const flags = await posthog.getAllFlags(userId)
+  return flags
+}
+```
+
+See the [PostHog documentation](https://posthog.com/docs/feature-flags) for full configuration.
+
+## Next Steps
+
+- [Tracking events](/docs/analytics/tracking-events) - Learn the tracking API
+- [Identifying users](/docs/analytics/identifying-users) - Associate events with users

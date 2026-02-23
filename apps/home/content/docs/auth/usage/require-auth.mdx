@@ -1,0 +1,139 @@
+---
+title: requireAuth
+description: Protect pages by redirecting unauthenticated users
+---
+
+`requireAuth()` gets the current session and redirects to sign-in if no user is authenticated. Use it when a page should only be accessible to logged-in users.
+
+## Basic Usage
+
+```tsx twoslash title="app/dashboard/page.tsx"
+// @noErrors
+import { requireAuth } from "@repo/auth/server"
+
+export default async function DashboardPage() {
+  const { user } = await requireAuth()
+
+  return <h1>Welcome, {user.name}</h1>
+}
+```
+
+If no session exists, the user is redirected to `/sign-in`.
+
+## Custom Redirect Path
+
+```tsx twoslash
+// @noErrors
+import { requireAuth } from "@repo/auth/server"
+// ---cut---
+const { user } = await requireAuth("/login")
+```
+
+## Return Value
+
+Returns the full session object:
+
+```tsx twoslash
+// @noErrors
+import { requireAuth } from "@repo/auth/server"
+// ---cut---
+const { user, session } = await requireAuth()
+
+// user - The authenticated user
+// session - Session metadata (id, expiresAt, etc.)
+```
+
+## Layout Protection
+
+Protect all pages under a route group:
+
+```tsx twoslash title="app/(dashboard)/layout.tsx"
+// @noErrors
+import { requireAuth } from "@repo/auth/server"
+
+export default async function DashboardLayout({
+  children
+}: {
+  children: React.ReactNode
+}) {
+  await requireAuth()
+
+  return (
+    <div>
+      <nav>Dashboard Nav</nav>
+      {children}
+    </div>
+  )
+}
+```
+
+All pages in `app/(dashboard)/` are now protected.
+
+## Server Actions
+
+Protect server actions:
+
+```tsx twoslash title="app/actions/profile.ts"
+// @noErrors
+"use server"
+
+import { requireAuth } from "@repo/auth/server"
+
+export async function updateProfile(data: { name: string }) {
+  const { user } = await requireAuth()
+
+  await db.update(users)
+    .set({ name: data.name })
+    .where(eq(users.id, user.id))
+
+  return { success: true }
+}
+```
+
+## Role-Based Access
+
+Build on `requireAuth` for role checks:
+
+```tsx twoslash title="lib/auth-utils.ts"
+// @noErrors
+import { requireAuth } from "@repo/auth/server"
+import { redirect } from "next/navigation"
+
+export async function requireAdmin() {
+  const session = await requireAuth()
+
+  if (session.user.role !== "admin") {
+    redirect("/dashboard")
+  }
+
+  return session
+}
+```
+
+Use in pages:
+
+```tsx twoslash title="app/admin/page.tsx"
+// @noErrors
+import { requireAdmin } from "@/lib/auth-utils"
+
+export default async function AdminPage() {
+  const { user } = await requireAdmin()
+
+  return <div>Admin Panel for {user.name}</div>
+}
+```
+
+## When to Use
+
+| Use Case | Function |
+|----------|----------|
+| Protected pages | `requireAuth()` |
+| Protected layouts | `requireAuth()` |
+| Server actions | `requireAuth()` |
+| Conditional UI | [`withAuth()`](/docs/auth/usage/with-auth) |
+| API routes | [`withAuth()`](/docs/auth/usage/with-auth) |
+
+## Next Steps
+
+- [withAuth](/docs/auth/usage/with-auth) - Get session without redirecting
+- [useAuth](/docs/auth/usage/use-auth) - Client-side auth hook

@@ -1,0 +1,53 @@
+import { defineDocs, defineConfig } from "fumadocs-mdx/config"
+import { transformerTwoslash } from "fumadocs-twoslash"
+import { createFileSystemTypesCache } from "fumadocs-twoslash/cache-fs"
+import { rehypeCodeDefaultOptions } from "fumadocs-core/mdx-plugins"
+import fs from "node:fs"
+import path from "node:path"
+import { fileURLToPath } from "node:url"
+
+export const { docs, meta } = defineDocs({
+	dir: "content/docs"
+})
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const homeDir = __dirname.includes(".source")
+	? path.resolve(__dirname, "..")
+	: __dirname
+
+const twoslashTypes = fs.readFileSync(
+	path.resolve(homeDir, "twoslash.d.ts"),
+	"utf-8"
+)
+
+export default defineConfig({
+	mdxOptions: {
+		rehypeCodeOptions: {
+		themes: {
+			light: "github-light",
+			dark: "github-dark"
+		},
+			transformers: [
+				...(rehypeCodeDefaultOptions.transformers ?? []),
+		transformerTwoslash({
+			cache: true,
+			typesCache: createFileSystemTypesCache(),
+			twoslashOptions: {
+						compilerOptions: {
+							moduleResolution: 100,
+							module: 99,
+							target: 9,
+							strict: true,
+							esModuleInterop: true,
+							skipLibCheck: true,
+							jsx: 4
+						},
+						extraFiles: {
+							"startupkit.d.ts": twoslashTypes
+						}
+					}
+				})
+			]
+		}
+	}
+})

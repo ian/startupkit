@@ -1,0 +1,50 @@
+---
+title: Quick Start
+description: Get up and running in under 2 minutes
+icon: Rocket
+---
+
+## 1. Create your project
+
+```bash
+npx startupkit@latest init
+```
+
+Follow the prompts to configure your project name and options, then change into your new project directory:
+
+```bash
+cd <your-project-name>
+```
+
+## 2. Add a Next.js app
+
+```bash
+npx startupkit add next --name web
+```
+
+This creates a fully configured Next.js app with authentication, analytics, database, and UI components ready to go.
+
+## 3. Start developing
+
+```bash
+pnpm dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) — you're ready to build.
+
+## What's included
+
+Your new project comes with everything pre-configured:
+
+- **Authentication** — Sign in with email OTP or OAuth
+- **Analytics** — Event tracking with PostHog, Google Analytics
+- **Database** — PostgreSQL with Drizzle ORM
+- **UI Components** — 40+ Shadcn components
+- **TypeScript** — Strict mode, fully typed
+
+## Next steps
+
+- [Project Structure](/docs/getting-started/project-structure) — Understand the monorepo layout
+- [Environment Variables](/docs/getting-started/environment-variables) — Configure API keys
+- [Authentication](/docs/auth) — Customize sign-in flows
+- [Analytics](/docs/analytics) — Set up event tracking

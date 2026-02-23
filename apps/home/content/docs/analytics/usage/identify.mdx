@@ -1,0 +1,168 @@
+---
+title: identify
+description: Associate events with a user
+---
+
+Associate analytics events with a user identity.
+
+## Client
+
+Use the `useAnalytics` hook in client components:
+
+```tsx twoslash
+// @noErrors
+import { useAnalytics } from "@repo/analytics"
+
+const { identify } = useAnalytics()
+```
+
+### Usage
+
+```tsx
+identify(userId: string | null, traits?: Record<string, unknown>)
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `userId` | `string \| null` | Unique user identifier |
+| `traits` | `Record<string, unknown>` | Optional user properties |
+
+### Examples
+
+```tsx twoslash
+// @noErrors
+"use client"
+
+import { useAnalytics } from "@repo/analytics"
+
+export function useSignIn() {
+  const { identify } = useAnalytics()
+
+  async function signIn(email: string, code: string) {
+    const { user } = await verifyAuthCode(email, code)
+    
+    identify(user.id, {
+      email: user.email,
+      name: user.name,
+      plan: user.plan
+    })
+    
+    return user
+  }
+
+  return { signIn }
+}
+```
+
+### With AuthProvider
+
+The `AuthProvider` can automatically identify users:
+
+```tsx twoslash title="app/providers.tsx"
+// @noErrors
+import type React from "react"
+declare const children: React.ReactNode
+declare function identify(userId: string, traits: Record<string, unknown>): void
+declare function AuthProvider(props: { onIdentify: (user: { id: string; email: string; name: string }) => void; children: React.ReactNode }): JSX.Element
+// ---cut---
+<AuthProvider
+  onIdentify={(user) => {
+    identify(user.id, {
+      email: user.email,
+      name: user.name
+    })
+  }}
+>
+  {children}
+</AuthProvider>
+```
+
+## Server
+
+Server-side identification happens automatically when you include user traits in `track()` calls:
+
+```tsx twoslash
+// @noErrors
+import { track } from "@repo/analytics/server"
+```
+
+### Usage
+
+PostHog automatically associates traits when you track events with a `userId`:
+
+```tsx twoslash
+// @noErrors
+import { track } from "@repo/analytics/server"
+declare const user: { id: string; email: string; firstName: string; lastName: string }
+// ---cut---
+await track({
+  event: "USER_SIGNED_UP",
+  userId: user.id,
+  user: {
+    email: user.email,
+    firstName: user.firstName,
+    lastName: user.lastName
+  }
+})
+```
+
+### Examples
+
+#### After sign-up
+
+```tsx twoslash
+// @noErrors
+"use server"
+
+import { track } from "@repo/analytics/server"
+
+export async function signUp(email: string) {
+  const user = await createUser({ email })
+  
+  await track({
+    event: "USER_SIGNED_UP",
+    userId: user.id,
+    user: {
+      id: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName
+    }
+  })
+  
+  return user
+}
+```
+
+#### Plan upgrade
+
+```tsx twoslash
+// @noErrors
+"use server"
+
+import { track } from "@repo/analytics/server"
+
+export async function upgradePlan(userId: string, plan: string) {
+  await db.update(users).set({ plan }).where(eq(users.id, userId))
+  
+  await track({
+    event: "PLAN_UPGRADED",
+    userId,
+    plan,
+    previousPlan: "free"
+  })
+}
+```
+
+## Common traits
+
+| Trait | Description |
+|-------|-------------|
+| `email` | User's email address |
+| `name` | Display name |
+| `firstName` | First name |
+| `lastName` | Last name |
+| `plan` | Subscription plan |
+| `createdAt` | Account creation date |
+| `company` | Company/organization name |
+| `role` | User role (admin, member, etc.) |

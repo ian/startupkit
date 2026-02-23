@@ -1,0 +1,180 @@
+---
+title: Schema Definition
+description: Define your database schema with Drizzle ORM
+---
+
+Your database schema is defined in `packages/db/src/schema.ts`. Drizzle uses TypeScript to define tables, columns, and relations.
+
+## Defining Tables
+
+```tsx twoslash title="packages/db/src/schema.ts"
+// @noErrors
+import {
+  pgTable,
+  text,
+  timestamp,
+  boolean,
+  varchar,
+  index
+} from "drizzle-orm/pg-core"
+declare const users: { id: unknown }
+
+export const posts = pgTable("Post", {
+  id: text("id").primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  content: text("content"),
+  published: boolean("published").default(false).notNull(),
+  authorId: text("authorId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).defaultNow().notNull()
+}, (table) => [
+  index("Post_authorId_idx").on(table.authorId)
+])
+```
+
+## Column Types
+
+Common PostgreSQL column types:
+
+| Drizzle | PostgreSQL | Example |
+|---------|------------|---------|
+| `text()` | TEXT | `text("name")` |
+| `varchar()` | VARCHAR(n) | `varchar("slug", { length: 64 })` |
+| `boolean()` | BOOLEAN | `boolean("active").default(true)` |
+| `integer()` | INTEGER | `integer("count")` |
+| `timestamp()` | TIMESTAMP | `timestamp("createdAt", { mode: "date" })` |
+| `json()` | JSON | `json("metadata")` |
+| `jsonb()` | JSONB | `jsonb("settings")` |
+
+## Enums
+
+Define PostgreSQL enums for constrained values:
+
+```tsx twoslash
+// @noErrors
+import { pgTable, text } from "drizzle-orm/pg-core"
+import { pgEnum } from "drizzle-orm/pg-core"
+
+export const statusEnum = pgEnum("status", ["draft", "published", "archived"])
+
+export const posts = pgTable("Post", {
+  id: text("id").primaryKey(),
+  status: statusEnum("status").default("draft").notNull()
+})
+```
+
+## Relations
+
+Define relations for type-safe joins:
+
+```tsx twoslash
+// @noErrors
+import { pgTable, text } from "drizzle-orm/pg-core"
+import { relations } from "drizzle-orm"
+declare const users: { id: unknown }
+declare const comments: unknown
+
+export const posts = pgTable("Post", {
+  id: text("id").primaryKey(),
+  authorId: text("authorId").notNull()
+})
+
+export const postsRelations = relations(posts, ({ one, many }) => ({
+  author: one(users, {
+    fields: [posts.authorId],
+    references: [users.id]
+  }),
+  comments: many(comments)
+}))
+```
+
+## Indexes
+
+Add indexes for frequently queried columns:
+
+```tsx twoslash
+// @noErrors
+import { pgTable, text, timestamp, index } from "drizzle-orm/pg-core"
+// ---cut---
+export const posts = pgTable("Post", {
+  id: text("id").primaryKey(),
+  slug: text("slug").notNull(),
+  authorId: text("authorId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull()
+}, (table) => [
+  index("Post_slug_idx").on(table.slug),
+  index("Post_authorId_idx").on(table.authorId),
+  index("Post_createdAt_idx").on(table.createdAt)
+])
+```
+
+## Unique Constraints
+
+```tsx twoslash
+// @noErrors
+import { pgTable, text, uniqueIndex } from "drizzle-orm/pg-core"
+
+export const posts = pgTable("Post", {
+  id: text("id").primaryKey(),
+  slug: text("slug").notNull()
+}, (table) => [
+  uniqueIndex("Post_slug_key").on(table.slug)
+])
+```
+
+## Inferred Types
+
+Export TypeScript types from your schema:
+
+```tsx twoslash
+// @noErrors
+import { pgTable, text } from "drizzle-orm/pg-core"
+const posts = pgTable("Post", { id: text("id").primaryKey() })
+// ---cut---
+export type Post = typeof posts.$inferSelect
+export type NewPost = typeof posts.$inferInsert
+```
+
+Use these throughout your app:
+
+```tsx twoslash
+// @noErrors
+import type { Post, NewPost } from "@repo/db"
+import { db, posts } from "@repo/db"
+
+async function createPost(data: NewPost): Promise<Post> {
+  const [post] = await db.insert(posts).values(data).returning()
+  return post
+}
+```
+
+## Default Schema
+
+The starter includes these tables:
+
+```tsx twoslash
+// @noErrors
+import { pgTable } from "drizzle-orm/pg-core"
+// ---cut---
+// User authentication
+export const users = pgTable("User", { /* ... */ })
+export const accounts = pgTable("Account", { /* ... */ })
+export const sessions = pgTable("Session", { /* ... */ })
+export const verifications = pgTable("Verification", { /* ... */ })
+
+// Team management
+export const teams = pgTable("Team", { /* ... */ })
+export const teamMembers = pgTable("TeamMember", { /* ... */ })
+```
+
+All relations are pre-configured for the auth and team systems.
+
+## Best Practices
+
+1. **Use descriptive table names** - PascalCase for table names (`"User"`, `"Post"`)
+2. **Add timestamps** - Include `createdAt` and `updatedAt` on all tables
+3. **Index foreign keys** - Always index columns used in relations
+4. **Use references** - Define foreign key constraints with `references()`
+5. **Export types** - Create `$inferSelect` and `$inferInsert` types for each table

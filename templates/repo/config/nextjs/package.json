@@ -1,0 +1,9 @@
+{
+	"name": "@repo/nextjs",
+	"version": "0.6.6",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": "./index.mjs"
+	}
+}

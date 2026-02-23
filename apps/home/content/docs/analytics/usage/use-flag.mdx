@@ -1,0 +1,105 @@
+---
+title: useFlag
+description: Hook for accessing feature flags
+---
+
+Access feature flags from PostHog in client components.
+
+## Import
+
+```tsx twoslash
+// @noErrors
+import { useFlag } from "@repo/analytics"
+```
+
+## Usage
+
+```tsx twoslash
+// @noErrors
+"use client"
+
+import { useFlag } from "@repo/analytics"
+
+export function NewFeature() {
+  const isEnabled = useFlag("new-checkout-flow")
+
+  if (!isEnabled) return null
+
+  return <NewCheckoutFlow />
+}
+```
+
+## Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `name` | `string` | The feature flag key from PostHog |
+
+## Return Value
+
+Returns the flag value (`boolean`, `string`, or `undefined` if not found).
+
+## Examples
+
+### Boolean flag
+
+```tsx twoslash
+// @noErrors
+import { useFlag } from "@repo/analytics"
+// ---cut---
+const showBetaFeatures = useFlag("beta-features")
+
+if (showBetaFeatures) {
+  return <BetaUI />
+}
+```
+
+### String/variant flag
+
+```tsx twoslash
+// @noErrors
+import { useFlag } from "@repo/analytics"
+// ---cut---
+const pricingVariant = useFlag("pricing-experiment")
+
+switch (pricingVariant) {
+  case "variant-a":
+    return <PricingA />
+  case "variant-b":
+    return <PricingB />
+  default:
+    return <PricingControl />
+}
+```
+
+### With fallback
+
+Handle undefined flags gracefully:
+
+```tsx twoslash
+// @noErrors
+import { useFlag } from "@repo/analytics"
+// ---cut---
+const isEnabled = useFlag("new-feature") ?? false
+```
+
+### Typed flags
+
+For type safety across your app:
+
+```tsx twoslash
+// @noErrors
+import { useFlag } from "@repo/analytics"
+// ---cut---
+interface MyFlags {
+  "new-checkout-flow": boolean
+  "pricing-experiment": "control" | "variant-a" | "variant-b"
+}
+
+const variant = useFlag<MyFlags, "pricing-experiment">("pricing-experiment")
+// Type: "control" | "variant-a" | "variant-b" | undefined
+```
+
+## Setup
+
+Feature flags require PostHog. See [Feature Flags](/docs/analytics/feature-flags) for configuration.

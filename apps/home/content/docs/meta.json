@@ -1,0 +1,28 @@
+{
+	"title": "Documentation",
+	"pages": [
+		"index",
+		"...getting-started",
+		"---CLI---",
+		"cli/index",
+		"cli/init",
+		"cli/add",
+		"cli/upgrade",
+		"cli/agents",
+		"cli/troubleshooting",
+		"---Deployment---",
+		"deployment/index",
+		"deployment/vercel",
+		"deployment/cloudflare",
+		"deployment/railway",
+		"deployment/render",
+		"deployment/fly",
+		"---Packages---",
+		"analytics",
+		"auth",
+		"db",
+		"emails",
+		"seo",
+		"ui"
+	]
+}

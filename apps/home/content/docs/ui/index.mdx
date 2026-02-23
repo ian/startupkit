@@ -1,0 +1,277 @@
+---
+title: UI Overview
+description: Pre-built components with Shadcn UI and Radix
+---
+
+The `@repo/ui` package provides a shared component library built on [Shadcn UI](https://ui.shadcn.com) and [Radix Primitives](https://www.radix-ui.com/).
+
+## Architecture
+
+Your project imports from `@repo/ui` (a local workspace package):
+
+```
+your-project/
+├── packages/
+│   └── ui/                     # @repo/ui - local package
+│       └── src/
+│           ├── components/     # Shadcn components
+│           │   ├── button.tsx
+│           │   ├── input.tsx
+│           │   └── ...
+│           ├── hooks/          # Utility hooks
+│           ├── providers/      # Theme & alert providers
+│           ├── lib/
+│           │   └── utils.ts    # cn() helper
+│           └── styles/
+│               └── index.css   # Tailwind styles
+└── apps/
+    └── web/                    # Imports from @repo/ui
+```
+
+This architecture means:
+- **Full ownership** - Customize any component to fit your needs
+- **Shared across apps** - Use the same components in all apps
+- **Type-safe** - Full TypeScript support with proper exports
+- **Storybook included** - Visual component documentation
+
+## Features
+
+- **40+ components** - Buttons, forms, dialogs, tables, and more
+- **Accessible** - Built on Radix primitives with ARIA support
+- **Dark mode** - Theme support via next-themes
+- **Tailwind CSS** - Consistent styling with utility classes
+- **Storybook** - Component documentation and testing
+
+## Usage
+
+### Utilities
+
+| Export | Path | Description |
+|--------|------|-------------|
+| `cn()` | `@repo/ui/utils` | Merge Tailwind classes with proper precedence |
+| `useIsMobile()` | `@repo/ui/hooks` | Detect mobile viewport |
+| `useAlert()` | `@repo/ui/providers` | Programmatic confirmation dialogs |
+| `toast` | `sonner` | Toast notifications |
+
+### cn()
+
+Merge Tailwind classes with [clsx](https://github.com/lukeed/clsx) + [tailwind-merge](https://github.com/dcastil/tailwind-merge):
+
+```tsx
+import { cn } from "@repo/ui/utils"
+
+<div className={cn(
+  "rounded-lg p-4",
+  isActive && "bg-primary",
+  className
+)} />
+```
+
+### useIsMobile()
+
+```tsx
+"use client"
+import { useIsMobile } from "@repo/ui/hooks"
+
+const isMobile = useIsMobile()
+```
+
+### useAlert()
+
+```tsx
+"use client"
+import { useAlert } from "@repo/ui/providers"
+
+const { confirm } = useAlert()
+
+const confirmed = await confirm({
+  title: "Delete item?",
+  description: "This cannot be undone.",
+  confirmText: "Delete",
+  cancelText: "Cancel"
+})
+```
+
+### toast
+
+```tsx
+import { toast } from "sonner"
+
+toast.success("Saved!")
+toast.error("Failed")
+toast("Message", { action: { label: "Undo", onClick: undo } })
+```
+
+## Quick Start
+
+### Import components
+
+```tsx title="app/page.tsx"
+import { Button } from "@repo/ui/components/button"
+import { Input } from "@repo/ui/components/input"
+import { Card, CardHeader, CardTitle, CardContent } from "@repo/ui/components/card"
+
+export default function Page() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Sign In</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <Input placeholder="Email" type="email" />
+        <Button>Continue</Button>
+      </CardContent>
+    </Card>
+  )
+}
+```
+
+### Use the cn utility
+
+```tsx
+import { cn } from "@repo/ui/utils"
+
+<div className={cn(
+  "rounded-lg p-4",
+  isActive && "bg-primary text-primary-foreground",
+  className
+)}>
+  Content
+</div>
+```
+
+### Add providers
+
+```tsx title="app/providers.tsx"
+"use client"
+
+import { UIProvider } from "@repo/ui/providers"
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <UIProvider>
+      {children}
+    </UIProvider>
+  )
+}
+```
+
+The `UIProvider` includes:
+- **ThemeProvider** - Light/dark mode support
+- **AlertProvider** - Confirmation dialogs
+- **Toaster** - Toast notifications (sonner)
+
+## Import Patterns
+
+Components use direct path imports:
+
+```tsx
+// Individual components
+import { Button } from "@repo/ui/components/button"
+import { Dialog, DialogContent } from "@repo/ui/components/dialog"
+
+// Utilities
+import { cn } from "@repo/ui/utils"
+
+// Hooks
+import { useIsMobile } from "@repo/ui/hooks"
+
+// Providers
+import { UIProvider, useAlert } from "@repo/ui/providers"
+
+// Styles (in your app's CSS)
+@import "@repo/ui/styles.css";
+```
+
+## Adding Components
+
+StartupKit includes commonly used components out of the box. To add more [Shadcn UI](https://ui.shadcn.com/docs/components) components:
+
+```bash
+pnpm shadcn add <component>
+```
+
+For example:
+
+```bash
+pnpm shadcn add calendar
+pnpm shadcn add command
+pnpm shadcn add carousel
+```
+
+Components are installed to `packages/ui/src/components/` and immediately available across all apps.
+
+Browse available components at [ui.shadcn.com/docs/components](https://ui.shadcn.com/docs/components).
+
+## Dark Mode
+
+StartupKit includes dark mode support via [next-themes](https://github.com/pacocoursey/next-themes). The `UIProvider` sets this up automatically.
+
+### Add a theme toggle
+
+```tsx
+"use client"
+
+import { useTheme } from "next-themes"
+import { Button } from "@repo/ui/components/button"
+import { Moon, Sun } from "lucide-react"
+
+export function ThemeToggle() {
+  const { theme, setTheme } = useTheme()
+
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+    >
+      <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+      <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+      <span className="sr-only">Toggle theme</span>
+    </Button>
+  )
+}
+```
+
+### Use theme-aware styles
+
+Tailwind's `dark:` variant works automatically:
+
+```tsx
+<div className="bg-white dark:bg-zinc-900">
+  <p className="text-zinc-900 dark:text-zinc-100">
+    Adapts to the current theme
+  </p>
+</div>
+```
+
+### Set default theme
+
+Configure the default theme in `UIProvider`:
+
+```tsx
+<UIProvider defaultTheme="dark">
+  {children}
+</UIProvider>
+```
+
+Options: `"light"`, `"dark"`, or `"system"` (default).
+
+## Storybook
+
+Browse and test components with Storybook:
+
+```bash title="packages/ui"
+pnpm storybook
+```
+
+Opens at `http://localhost:6006` with:
+- All component variants
+- Interactive controls
+- Dark/light mode toggle
+- Documentation
+
+## Next Steps
+
+- [Components](/docs/ui/components) - Component usage and examples
+- [Theming](/docs/ui/theming) - Customize colors and styles

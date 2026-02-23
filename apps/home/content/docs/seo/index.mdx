@@ -1,0 +1,250 @@
+---
+title: SEO Overview
+description: Search engine optimization utilities with @startupkit/seo
+---
+
+`@startupkit/seo` provides utilities for generating Next.js metadata, structured data, sitemaps, and robots.txt files.
+
+## Features
+
+- **Metadata generation** - OpenGraph, Twitter Cards, canonical URLs
+- **Structured data** - JSON-LD schemas for rich search results
+- **Sitemaps** - Dynamic sitemap generation
+- **Robots.txt** - Search engine crawling rules
+
+## Usage
+
+### Functions
+
+| Function | Description |
+|----------|-------------|
+| `generateMetadata()` | Generate Next.js metadata object with OpenGraph, Twitter, canonical URL |
+| `generateSitemap()` | Generate sitemap entries for Next.js sitemap.ts |
+| `generateRobots()` | Generate robots.txt rules for Next.js robots.ts |
+| `generateOrganizationSchema()` | JSON-LD schema for organization |
+| `generateWebsiteSchema()` | JSON-LD schema for website |
+| `generateBreadcrumbSchema()` | JSON-LD schema for breadcrumbs |
+| `generateArticleSchema()` | JSON-LD schema for articles/blog posts |
+
+### generateMetadata
+
+For **page-level** metadata (canonical URL, noIndex):
+
+```ts
+import { generateMetadata } from "@startupkit/seo"
+
+generateMetadata({
+  title: "Page Title",
+  description: "Page description",
+  baseUrl: "https://myapp.com",
+  siteName: "My App",
+  path: "/page",
+  ogImage: "/og-image.png",
+  noIndex: false
+})
+```
+
+For **root layout** metadata (title template, keywords):
+
+```ts
+import { generateMetadata } from "@startupkit/seo"
+
+generateMetadata({
+  title: "My App",
+  description: "App description",
+  baseUrl: "https://myapp.com",
+  siteName: "My App",
+  titleTemplate: "%s | My App",
+  keywords: ["saas", "app"],
+  ogImage: "/og-image.png"
+})
+```
+
+### generateSitemap
+
+```ts
+import { generateSitemap } from "@startupkit/seo"
+
+generateSitemap({
+  baseUrl: "https://myapp.com",
+  routes: [
+    { path: "/", priority: 1, changeFrequency: "daily" },
+    { path: "/about", priority: 0.8 },
+    { path: "/blog", priority: 0.9 }
+  ]
+})
+```
+
+### generateRobots
+
+```ts
+import { generateRobots } from "@startupkit/seo"
+
+generateRobots({
+  baseUrl: "https://myapp.com",
+  disallowPaths: ["/api/", "/dashboard/"]
+})
+```
+
+### Structured Data Schemas
+
+```ts
+import {
+  generateOrganizationSchema,
+  generateWebsiteSchema,
+  generateBreadcrumbSchema,
+  generateArticleSchema
+} from "@startupkit/seo"
+
+// Organization
+generateOrganizationSchema({
+  name: "My Company",
+  url: "https://myapp.com",
+  logo: "https://myapp.com/logo.png",
+  sameAs: ["https://twitter.com/mycompany"]
+})
+
+// Website with search
+generateWebsiteSchema({
+  name: "My App",
+  url: "https://myapp.com",
+  description: "The best app"
+})
+
+// Breadcrumbs
+generateBreadcrumbSchema([
+  { name: "Home", url: "https://myapp.com" },
+  { name: "Blog", url: "https://myapp.com/blog" }
+])
+
+// Article
+generateArticleSchema({
+  headline: "Article Title",
+  description: "Article description",
+  datePublished: "2024-01-15",
+  authorName: "John Doe",
+  imageUrl: "https://myapp.com/article-image.jpg"
+})
+```
+
+## Quick Setup
+
+### Page Metadata
+
+```tsx twoslash title="app/about/page.tsx"
+// @noErrors
+import { generateMetadata } from "@startupkit/seo"
+
+export const metadata = generateMetadata({
+  title: "About Us",
+  description: "Learn about our company and mission",
+  path: "/about",
+  baseUrl: "https://myapp.com",
+  siteName: "My App"
+})
+
+export default function AboutPage() {
+  return <div>About content</div>
+}
+```
+
+### Root Layout Metadata
+
+```tsx twoslash title="app/layout.tsx"
+// @noErrors
+import { generateMetadata } from "@startupkit/seo"
+
+export const metadata = generateMetadata({
+  title: "My App",
+  description: "The best app for doing things",
+  baseUrl: "https://myapp.com",
+  siteName: "My App",
+  titleTemplate: "%s | My App"
+})
+```
+
+## What's Generated
+
+The `generateMetadata` function creates:
+
+| Field | Description |
+|-------|-------------|
+| `title` | Page title (with template support) |
+| `description` | Meta description |
+| `openGraph` | Facebook/LinkedIn sharing |
+| `twitter` | Twitter card metadata |
+| `alternates.canonical` | Canonical URL |
+| `robots` | Index/follow directives |
+| `keywords` | SEO keywords (root layout) |
+
+## Structured Data
+
+Add JSON-LD for rich search results:
+
+```tsx twoslash title="app/layout.tsx"
+// @noErrors
+import type { ReactNode } from "react"
+import { 
+  generateOrganizationSchema,
+  generateWebsiteSchema 
+} from "@startupkit/seo"
+
+const orgSchema = generateOrganizationSchema({
+  name: "My Company",
+  url: "https://myapp.com",
+  logo: "https://myapp.com/logo.png"
+})
+
+export default function RootLayout({ children }: { children: ReactNode }) {
+  return (
+    <html>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+        />
+      </head>
+      <body>{children}</body>
+    </html>
+  )
+}
+```
+
+## Sitemap
+
+```tsx twoslash title="app/sitemap.ts"
+// @noErrors
+import { generateSitemap } from "@startupkit/seo"
+
+export default function sitemap() {
+  return generateSitemap({
+    baseUrl: "https://myapp.com",
+    routes: [
+      { path: "/", priority: 1 },
+      { path: "/about", priority: 0.8 },
+      { path: "/pricing", priority: 0.9 }
+    ]
+  })
+}
+```
+
+## Robots.txt
+
+```tsx twoslash title="app/robots.ts"
+// @noErrors
+import { generateRobots } from "@startupkit/seo"
+
+export default function robots() {
+  return generateRobots({
+    baseUrl: "https://myapp.com",
+    disallowPaths: ["/api/", "/dashboard/", "/auth/"]
+  })
+}
+```
+
+## Next Steps
+
+- [Page metadata](/docs/seo/metadata) - Full metadata configuration
+- [Structured data](/docs/seo/structured-data) - JSON-LD schemas
+- [Sitemaps](/docs/seo/sitemap) - Dynamic sitemap generation
+- [Robots.txt](/docs/seo/robots) - Crawling rules

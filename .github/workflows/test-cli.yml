@@ -1,0 +1,102 @@
+name: Test CLI
+
+on: 
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test-cli:
+    name: CLI Tests
+    runs-on: ubuntu-latest
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.6.0
+          run_install: false
+          
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build CLI package
+        run: pnpm --filter startupkit build
+
+      - name: Run Vitest tests
+        run: pnpm --filter startupkit test
+
+      - name: Run Vitest tests with coverage
+        run: pnpm --filter startupkit test:coverage
+
+  test-cli-integration:
+    name: CLI Integration - Full Build & Deploy
+    runs-on: ubuntu-latest
+    needs: test-cli
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.6.0
+          run_install: false
+          
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Install dependencies and build
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+
+      - name: Create and test full project
+        run: |
+          mkdir -p test-projects
+          cd test-projects
+          
+          echo "🔍 Creating full project with init command..."
+          node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" init --name "test-startup" --repo "ian/startupkit#${{ github.ref_name }}"
+          
+          echo "📂 Verifying packages directory exists..."
+          test -d test-startup/packages || exit 1
+          
+          echo "📦 Installing dependencies..."
+          cd test-startup
+          pnpm install --no-frozen-lockfile
+          
+          echo "🔍 Running typecheck..."
+          pnpm typecheck
+          
+          echo "🏗️ Running build..."
+          pnpm build
+          
+          echo "✅ Full integration test passed"
+
+      - name: Test add command
+        run: |
+          cd test-projects/test-startup
+          
+          echo "🔍 Testing add command..."
+          node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" add next --name "web" --repo "ian/startupkit/templates/apps/next#${{ github.ref_name }}"
+          
+          test -d apps/web || exit 1
+          test -f apps/web/package.json || exit 1
+          
+          echo "✅ Add command test passed"
+
+      - name: Clean up
+        if: always()
+        run: rm -rf test-projects
+

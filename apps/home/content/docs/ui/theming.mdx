@@ -1,0 +1,299 @@
+---
+title: Theming
+description: Customize colors, typography, and styles
+---
+
+The `@repo/ui` package uses CSS custom properties for theming, making it easy to customize colors and maintain consistency across components.
+
+## Setup
+
+Import the UI styles in your app's CSS:
+
+```css title="app/globals.css"
+@import "@repo/ui/styles.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+Extend your Tailwind config:
+
+```tsx title="tailwind.config.ts"
+import type { Config } from "tailwindcss"
+import baseConfig from "@repo/ui/tailwind.config"
+
+export default {
+  presets: [baseConfig],
+  content: [
+    "./src/**/*.{ts,tsx}",
+    "../../packages/ui/src/**/*.{ts,tsx}"
+  ]
+} satisfies Config
+```
+
+## CSS Variables
+
+Theme colors are defined as CSS custom properties in HSL format:
+
+```css title="packages/ui/src/styles/index.css"
+:root {
+  --background: 0 0% 100%;
+  --foreground: 0 0% 3.9%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 3.9%;
+
+  --primary: 0 0% 9%;
+  --primary-foreground: 0 0% 98%;
+
+  --secondary: 0 0% 96.1%;
+  --secondary-foreground: 0 0% 9%;
+
+  --muted: 0 0% 96.1%;
+  --muted-foreground: 0 0% 45.1%;
+
+  --accent: 0 0% 96.1%;
+  --accent-foreground: 0 0% 9%;
+
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 0 0% 89.8%;
+  --input: 0 0% 89.8%;
+  --ring: 0 0% 3.9%;
+
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: 0 0% 3.9%;
+  --foreground: 0 0% 98%;
+
+  --card: 0 0% 3.9%;
+  --card-foreground: 0 0% 98%;
+
+  --primary: 0 0% 98%;
+  --primary-foreground: 0 0% 9%;
+
+  /* ... */
+}
+```
+
+## Customizing Colors
+
+Override variables in your app's CSS:
+
+```css title="app/globals.css"
+@import "@repo/ui/styles.css";
+
+@layer base {
+  :root {
+    /* Custom brand blue */
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+
+    /* Warmer background */
+    --background: 30 20% 98%;
+    --foreground: 20 14.3% 4.1%;
+
+    /* Rounded corners */
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+  }
+}
+```
+
+## Available Variables
+
+| Variable | Purpose |
+|----------|---------|
+| `--background` | Page background |
+| `--foreground` | Default text |
+| `--card` | Card backgrounds |
+| `--card-foreground` | Card text |
+| `--primary` | Primary buttons/links |
+| `--primary-foreground` | Text on primary |
+| `--secondary` | Secondary elements |
+| `--secondary-foreground` | Text on secondary |
+| `--muted` | Subtle backgrounds |
+| `--muted-foreground` | Subtle text |
+| `--accent` | Hover states |
+| `--accent-foreground` | Text on accent |
+| `--destructive` | Error/delete actions |
+| `--destructive-foreground` | Text on destructive |
+| `--border` | Border color |
+| `--input` | Input borders |
+| `--ring` | Focus ring |
+| `--radius` | Border radius |
+
+## Using Theme Colors
+
+Reference theme colors in Tailwind classes:
+
+```tsx
+// Background colors
+<div className="bg-background" />
+<div className="bg-card" />
+<div className="bg-primary" />
+<div className="bg-muted" />
+
+// Text colors
+<p className="text-foreground" />
+<p className="text-muted-foreground" />
+<p className="text-primary" />
+
+// Borders
+<div className="border border-border" />
+<div className="border-primary" />
+
+// Combined
+<button className="bg-primary text-primary-foreground hover:bg-primary/90">
+  Click me
+</button>
+```
+
+## Dark Mode
+
+Dark mode is handled by `next-themes` through the `UIProvider`:
+
+```tsx title="app/providers.tsx"
+"use client"
+
+import { UIProvider } from "@repo/ui/providers"
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <UIProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+    >
+      {children}
+    </UIProvider>
+  )
+}
+```
+
+### Theme Toggle
+
+Add a toggle button:
+
+```tsx
+import { ThemeToggle } from "@repo/ui/components/theme-toggle"
+
+<header className="flex items-center justify-between">
+  <Logo />
+  <ThemeToggle />
+</header>
+```
+
+### Programmatic Access
+
+```tsx
+"use client"
+
+import { useTheme } from "next-themes"
+
+export function ThemeInfo() {
+  const { theme, setTheme, resolvedTheme } = useTheme()
+
+  return (
+    <div>
+      <p>Current: {resolvedTheme}</p>
+      <button onClick={() => setTheme("light")}>Light</button>
+      <button onClick={() => setTheme("dark")}>Dark</button>
+      <button onClick={() => setTheme("system")}>System</button>
+    </div>
+  )
+}
+```
+
+## cn() Utility
+
+The `cn()` function merges Tailwind classes intelligently:
+
+```tsx
+import { cn } from "@repo/ui/utils"
+
+// Merge classes
+cn("px-4 py-2", "px-6")
+// → "py-2 px-6" (px-6 wins)
+
+// Conditional classes
+cn(
+  "base-class",
+  isActive && "active-class",
+  variant === "primary" && "bg-primary"
+)
+
+// With props
+function MyComponent({ className }: { className?: string }) {
+  return (
+    <div className={cn("default-styles", className)}>
+      Content
+    </div>
+  )
+}
+```
+
+## Typography
+
+Default font stack from Tailwind:
+
+```css
+font-family: ui-sans-serif, system-ui, sans-serif, 
+  "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+```
+
+Customize in your Tailwind config:
+
+```tsx title="tailwind.config.ts"
+import { fontFamily } from "tailwindcss/defaultTheme"
+
+export default {
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ["Inter var", ...fontFamily.sans],
+        mono: ["JetBrains Mono", ...fontFamily.mono]
+      }
+    }
+  }
+}
+```
+
+## Animations
+
+The UI package includes Tailwind animate plugin. Use animation utilities:
+
+```tsx
+// Fade in
+<div className="animate-in fade-in" />
+
+// Slide from bottom
+<div className="animate-in slide-in-from-bottom-4" />
+
+// Combined with duration
+<div className="animate-in fade-in slide-in-from-bottom-4 duration-500" />
+
+// Fade out
+<div className="animate-out fade-out" />
+```
+
+## Storybook
+
+Preview theme changes in Storybook:
+
+```bash title="packages/ui"
+pnpm storybook
+```
+
+Use the toolbar to toggle between light and dark modes.
