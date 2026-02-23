@@ -3,14 +3,23 @@
 	"version": "1.0.0",
 	"author": "Ian Hunter <ian@01.studio>",
 	"license": "ISC",
-	"description": "Equip your AI agents with startup skills - entrepreneur, dev, marketing, and product expertise.",
+	"description": "Equip your AI agents with startup skills - product, engineering, design, marketing, and growth expertise.",
 	"homepage": "https://startupkit.com",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/ian/startupkit"
 	},
-	"keywords": ["startup", "ai", "agents", "skills", "claude", "opencode"],
-	"files": ["dist"],
+	"keywords": [
+		"startup",
+		"ai",
+		"agents",
+		"skills",
+		"claude",
+		"opencode"
+	],
+	"files": [
+		"dist"
+	],
 	"type": "module",
 	"main": "dist/cli.js",
 	"bin": {

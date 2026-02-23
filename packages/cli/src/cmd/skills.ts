@@ -153,6 +153,11 @@ export const STARTUP_SKILLS = {
 	],
 	design: [
 		{
+			name: "frontend-design",
+			repo: "anthropics/skills",
+			description: "Frontend design best practices",
+		},
+		{
 			name: "design-md",
 			repo: "google-labs-code/stitch-skills",
 			description: "Design documentation in markdown",

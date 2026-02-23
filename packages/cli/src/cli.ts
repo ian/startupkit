@@ -15,7 +15,7 @@ export async function run() {
 	program
 		.name("startupkit")
 		.description(
-			"Startup skills for AI agents. Equip your project with entrepreneur, dev, marketing, and product skills.",
+			"Startup skills for AI agents. Equip your project with product, engineering, design, marketing, and growth expertise.",
 		)
 		.version("1.0.0");
 

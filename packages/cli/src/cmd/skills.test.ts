@@ -29,7 +29,7 @@ describe("skills", () => {
 		it("should have correct number of skills per category", () => {
 			expect(STARTUP_SKILLS.product).toHaveLength(13);
 			expect(STARTUP_SKILLS.engineering).toHaveLength(16);
-			expect(STARTUP_SKILLS.design).toHaveLength(4);
+			expect(STARTUP_SKILLS.design).toHaveLength(5);
 			expect(STARTUP_SKILLS.marketing).toHaveLength(23);
 			expect(STARTUP_SKILLS.growth).toHaveLength(2);
 		});
