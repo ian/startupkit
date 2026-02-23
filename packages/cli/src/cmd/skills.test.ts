@@ -1,11 +1,11 @@
 import { execSync } from "node:child_process";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
-	STARTUP_SKILLS,
 	addSkills,
 	listInstalledSkills,
 	listSkills,
 	removeSkill,
+	STARTUP_SKILLS,
 } from "./skills";
 
 vi.mock("node:child_process");
@@ -18,19 +18,19 @@ describe("skills", () => {
 	describe("STARTUP_SKILLS", () => {
 		it("should have all expected categories", () => {
 			expect(Object.keys(STARTUP_SKILLS)).toEqual([
-				"entrepreneur",
-				"dev",
-				"marketing",
 				"product",
+				"engineering",
+				"design",
+				"marketing",
 				"growth",
 			]);
 		});
 
 		it("should have correct number of skills per category", () => {
-			expect(STARTUP_SKILLS.entrepreneur).toHaveLength(4);
-			expect(STARTUP_SKILLS.dev).toHaveLength(12);
-			expect(STARTUP_SKILLS.marketing).toHaveLength(14);
-			expect(STARTUP_SKILLS.product).toHaveLength(9);
+			expect(STARTUP_SKILLS.product).toHaveLength(13);
+			expect(STARTUP_SKILLS.engineering).toHaveLength(16);
+			expect(STARTUP_SKILLS.design).toHaveLength(4);
+			expect(STARTUP_SKILLS.marketing).toHaveLength(23);
 			expect(STARTUP_SKILLS.growth).toHaveLength(2);
 		});
 
@@ -62,7 +62,7 @@ describe("skills", () => {
 			listSkills();
 			expect(consoleSpy).toHaveBeenCalledWith("\n📦 StartupKit Skills\n");
 			expect(consoleSpy).toHaveBeenCalledWith("Available skill categories:\n");
-			expect(consoleSpy).toHaveBeenCalledWith("  entrepreneur (4 skills)");
+			expect(consoleSpy).toHaveBeenCalledWith("  product (13 skills)");
 		});
 	});
 
@@ -101,7 +101,7 @@ describe("skills", () => {
 		});
 
 		it("should install category skills with --category flag", async () => {
-			await addSkills({ category: "dev" });
+			await addSkills({ category: "engineering" });
 
 			expect(execSync).toHaveBeenCalledWith(
 				expect.stringContaining("vercel-labs/agent-skills"),

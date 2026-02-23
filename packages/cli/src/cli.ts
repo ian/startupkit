@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { Command } from "commander";
+import { initProject } from "./cmd/init";
 import {
 	addSkills,
 	listInstalledSkills,
@@ -17,6 +18,27 @@ export async function run() {
 			"Startup skills for AI agents. Equip your project with entrepreneur, dev, marketing, and product skills.",
 		)
 		.version("1.0.0");
+
+	program
+		.command("init")
+		.description(
+			"Initialize project with AGENTS.md, SOUL.md, and default skills",
+		)
+		.option("-y, --yes", "Skip prompts and use defaults")
+		.option("-g, --global", "Install skills globally")
+		.option("--skip-skills", "Skip installing skills")
+		.option(
+			"--agent <agents...>",
+			"Target agents (default: opencode, claude-code)",
+		)
+		.action(async (options) => {
+			await initProject({
+				skipPrompts: options.yes,
+				global: options.global,
+				skipSkills: options.skipSkills,
+				agents: options.agent,
+			});
+		});
 
 	program
 		.command("skills")

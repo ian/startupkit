@@ -2,7 +2,7 @@ import { execSync } from "node:child_process";
 import { checkbox, input } from "@inquirer/prompts";
 
 export const STARTUP_SKILLS = {
-	entrepreneur: [
+	product: [
 		{
 			name: "brainstorming",
 			repo: "obra/superpowers",
@@ -23,8 +23,53 @@ export const STARTUP_SKILLS = {
 			repo: "obra/superpowers",
 			description: "Verify work before marking complete",
 		},
+		{
+			name: "page-cro",
+			repo: "coreyhaines31/marketingskills",
+			description: "Landing page optimization",
+		},
+		{
+			name: "onboarding-cro",
+			repo: "coreyhaines31/marketingskills",
+			description: "Onboarding conversion optimization",
+		},
+		{
+			name: "form-cro",
+			repo: "coreyhaines31/marketingskills",
+			description: "Form conversion optimization",
+		},
+		{
+			name: "signup-flow-cro",
+			repo: "coreyhaines31/marketingskills",
+			description: "Signup flow optimization",
+		},
+		{
+			name: "paywall-upgrade-cro",
+			repo: "coreyhaines31/marketingskills",
+			description: "Paywall and upgrade flows",
+		},
+		{
+			name: "ab-test-setup",
+			repo: "coreyhaines31/marketingskills",
+			description: "A/B testing methodology",
+		},
+		{
+			name: "referral-program",
+			repo: "coreyhaines31/marketingskills",
+			description: "Referral program design",
+		},
+		{
+			name: "free-tool-strategy",
+			repo: "coreyhaines31/marketingskills",
+			description: "Free tool as lead magnet",
+		},
+		{
+			name: "competitor-alternatives",
+			repo: "coreyhaines31/marketingskills",
+			description: "Competitor alternative pages",
+		},
 	],
-	dev: [
+	engineering: [
 		{
 			name: "vercel-react-best-practices",
 			repo: "vercel-labs/agent-skills",
@@ -39,6 +84,26 @@ export const STARTUP_SKILLS = {
 			name: "web-design-guidelines",
 			repo: "vercel-labs/agent-skills",
 			description: "Web interface guidelines compliance",
+		},
+		{
+			name: "v0-automation",
+			repo: "composiohq/awesome-claude-skills",
+			description: "V0 automation for rapid UI development",
+		},
+		{
+			name: "premium-frontend-design",
+			repo: "kv0906/cc-skills",
+			description: "Premium frontend design patterns",
+		},
+		{
+			name: "better-auth-best-practices",
+			repo: "better-auth/skills",
+			description: "Better Auth implementation patterns",
+		},
+		{
+			name: "building-native-ui",
+			repo: "expo/skills",
+			description: "Building native UI with Expo",
 		},
 		{
 			name: "systematic-debugging",
@@ -84,6 +149,28 @@ export const STARTUP_SKILLS = {
 			name: "writing-skills",
 			repo: "obra/superpowers",
 			description: "Write effective agent skills",
+		},
+	],
+	design: [
+		{
+			name: "design-md",
+			repo: "google-labs-code/stitch-skills",
+			description: "Design documentation in markdown",
+		},
+		{
+			name: "ui-ux-pro-max",
+			repo: "nextlevelbuilder/ui-ux-pro-max-skill",
+			description: "Pro-level UI/UX design patterns",
+		},
+		{
+			name: "explainer-video-guide",
+			repo: "inference-sh-6/skills",
+			description: "Explainer video creation guide",
+		},
+		{
+			name: "audit-website",
+			repo: "squirrelscan/skills",
+			description: "Website audit methodology",
 		},
 	],
 	marketing: [
@@ -157,52 +244,50 @@ export const STARTUP_SKILLS = {
 			repo: "coreyhaines31/marketingskills",
 			description: "Paid advertising strategies",
 		},
-	],
-	product: [
 		{
-			name: "page-cro",
-			repo: "coreyhaines31/marketingskills",
-			description: "Landing page optimization",
+			name: "seo",
+			repo: "addyosmani/web-quality-skills",
+			description: "SEO optimization",
 		},
 		{
-			name: "onboarding-cro",
-			repo: "coreyhaines31/marketingskills",
-			description: "Onboarding conversion optimization",
+			name: "seo-geo",
+			repo: "resciencelab/opc-skills",
+			description: "SEO for GEO (Generative Engine Optimization)",
 		},
 		{
-			name: "form-cro",
-			repo: "coreyhaines31/marketingskills",
-			description: "Form conversion optimization",
+			name: "backlink-analyzer",
+			repo: "aaron-he-zhu/seo-geo-claude-skills",
+			description: "Backlink analysis",
 		},
 		{
-			name: "signup-flow-cro",
-			repo: "coreyhaines31/marketingskills",
-			description: "Signup flow optimization",
+			name: "keyword-research",
+			repo: "aaron-he-zhu/seo-geo-claude-skills",
+			description: "Keyword research",
 		},
 		{
-			name: "paywall-upgrade-cro",
-			repo: "coreyhaines31/marketingskills",
-			description: "Paywall and upgrade flows",
+			name: "reddit",
+			repo: "resciencelab/opc-skills",
+			description: "Reddit marketing",
 		},
 		{
-			name: "ab-test-setup",
-			repo: "coreyhaines31/marketingskills",
-			description: "A/B testing methodology",
+			name: "twitter",
+			repo: "resciencelab/opc-skills",
+			description: "Twitter/X marketing",
 		},
 		{
-			name: "referral-program",
-			repo: "coreyhaines31/marketingskills",
-			description: "Referral program design",
+			name: "producthunt",
+			repo: "resciencelab/opc-skills",
+			description: "Product Hunt launch",
 		},
 		{
-			name: "free-tool-strategy",
-			repo: "coreyhaines31/marketingskills",
-			description: "Free tool as lead magnet",
+			name: "domain-hunter",
+			repo: "resciencelab/opc-skills",
+			description: "Domain finding",
 		},
 		{
-			name: "competitor-alternatives",
-			repo: "coreyhaines31/marketingskills",
-			description: "Competitor alternative pages",
+			name: "requesthunt",
+			repo: "resciencelab/opc-skills",
+			description: "Request hunting",
 		},
 	],
 	growth: [
@@ -234,6 +319,9 @@ export function listSkills() {
 		}
 	}
 	console.log("\nCommands:");
+	console.log(
+		"  startupkit init                           # Initialize project with AGENTS.md, SOUL.md, and skills",
+	);
 	console.log(
 		"  startupkit skills add                     # Interactive selection",
 	);
@@ -349,7 +437,7 @@ async function installSingleSkill(
 	await installSkillsFromRepo(skill.repo, [skillName], agents, global, dryRun);
 }
 
-async function installAllSkills(
+export async function installAllSkills(
 	agents: string[],
 	global: boolean,
 	dryRun: boolean,

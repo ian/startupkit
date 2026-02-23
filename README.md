@@ -6,45 +6,60 @@ Startup skills for AI agents.
 
 ## What is StartupKit?
 
-StartupKit equips your project with a comprehensive set of AI agent skills covering entrepreneur, dev, marketing, and product expertise. Works with OpenCode and Claude Code.
+StartupKit equips your project with a comprehensive set of AI agent skills covering product, engineering, design, and marketing expertise. Works with OpenCode and Claude Code.
 
-One command to install:
+One command to initialize:
 
 ```bash
-npx startupkit skills add
+npx startupkit init
 ```
+
+This creates:
+
+- **AGENTS.md** - Project context and agent instructions
+- **SOUL.md** - Vision, mission, and values
+- Installs all default skills
 
 ## Why StartupKit?
 
 AI agents are only as good as their instructions. StartupKit provides curated skills that give your agents the expertise of a full startup team:
 
-| Category         | Skills Include                                      |
-| ---------------- | --------------------------------------------------- |
-| **Entrepreneur** | Brainstorming, planning, execution, verification    |
-| **Dev**          | React/Next.js patterns, debugging, TDD, code review |
-| **Marketing**    | Copywriting, SEO, content strategy, pricing         |
-| **Product**      | CRO, onboarding, A/B testing, growth loops          |
+| Category        | Skills Include                                                    |
+| --------------- | ----------------------------------------------------------------- |
+| **Product**     | Brainstorming, planning, CRO, A/B testing, growth loops           |
+| **Engineering** | React/Next.js patterns, debugging, TDD, code review, auth, mobile |
+| **Design**      | UI/UX patterns, design documentation, website audits              |
+| **Marketing**   | Copywriting, SEO, content strategy, social media, pricing         |
 
 ## Quick Start
 
 ```bash
-# Interactive selection
+# Initialize project (creates AGENTS.md, SOUL.md, installs skills)
+npx startupkit init
+
+# Skip prompts, use defaults
+npx startupkit init -y
+
+# Install globally
+npx startupkit init --global
+
+# Preview without installing skills
+npx startupkit init --skip-skills
+
+# Add skills interactively
 npx startupkit skills add
 
 # Install all skills
 npx startupkit skills add --all
 
 # Install specific category
-npx startupkit skills add --category dev
+npx startupkit skills add --category engineering
 
 # Install single skill
 npx startupkit skills add brainstorming
 
 # Preview without installing
 npx startupkit skills add --all --dry-run
-
-# Install globally (to ~/.agents/skills/)
-npx startupkit skills add --global
 ```
 
 ## Supported Agents
@@ -57,57 +72,69 @@ Skills are installed to both `.opencode/skills/` and `.claude/skills/` by defaul
 ## Commands
 
 ```bash
-startupkit skills                        # List available skills
-startupkit skills add                    # Add skills interactively
-startupkit skills add --all              # Install all skills
-startupkit skills add --category dev     # Install specific category
-startupkit skills add brainstorming      # Install specific skill
-startupkit skills list --installed       # List installed skills
-startupkit skills remove <skill>         # Remove a skill
-startupkit skills add --global           # Install globally
-startupkit skills add --dry-run          # Preview without installing
+startupkit init                           # Initialize project with AGENTS.md, SOUL.md, and skills
+startupkit init -y                        # Skip prompts, use defaults
+startupkit init --global                  # Install skills globally
+startupkit init --skip-skills             # Skip skill installation
+startupkit skills                         # List available skills
+startupkit skills add                     # Add skills interactively
+startupkit skills add --all               # Install all skills
+startupkit skills add --category product  # Install specific category
+startupkit skills add brainstorming       # Install specific skill
+startupkit skills list --installed        # List installed skills
+startupkit skills remove <skill>          # Remove a skill
+startupkit skills add --global            # Install globally
+startupkit skills add --dry-run           # Preview without installing
 ```
 
 ## Skill Categories
 
-### Entrepreneur
+### Product
 
 - `brainstorming` - Ideation techniques
 - `writing-plans` - Comprehensive planning
 - `executing-plans` - Systematic execution
 - `verification-before-completion` - Quality assurance
+- `page-cro` - Landing page optimization
+- `onboarding-cro` - Onboarding flows
+- `ab-test-setup` - A/B testing
+- `referral-program` - Referral systems
 
-### Dev
+### Engineering
 
 - `vercel-react-best-practices` - React/Next.js performance
 - `vercel-composition-patterns` - Scalable component patterns
 - `web-design-guidelines` - Web interface compliance
+- `v0-automation` - V0 automation for rapid UI
+- `premium-frontend-design` - Premium frontend patterns
+- `better-auth-best-practices` - Better Auth patterns
+- `building-native-ui` - Native UI with Expo
 - `systematic-debugging` - Debug methodology
 - `test-driven-development` - TDD practices
-- `requesting-code-review` - Effective code reviews
-- `receiving-code-review` - Handling feedback
-- `subagent-driven-development` - Subagent patterns
-- `dispatching-parallel-agents` - Parallel orchestration
+
+### Design
+
+- `design-md` - Design documentation
+- `ui-ux-pro-max` - Pro-level UI/UX patterns
+- `explainer-video-guide` - Explainer video creation
+- `audit-website` - Website audit methodology
 
 ### Marketing
 
 - `copywriting` - Persuasive writing
 - `marketing-psychology` - Consumer psychology
 - `seo-audit` - SEO optimization
-- `programmatic-seo` - Scale SEO strategies
-- `content-strategy` - Content planning
+- `seo` - SEO best practices
+- `seo-geo` - Generative Engine Optimization
+- `keyword-research` - Keyword research
+- `backlink-analyzer` - Backlink analysis
+- `reddit` - Reddit marketing
+- `twitter` - Twitter/X marketing
+- `producthunt` - Product Hunt launch
 - `pricing-strategy` - Pricing models
 - `launch-strategy` - Product launches
 - `email-sequence` - Email campaigns
 - `paid-ads` - Advertising strategies
-
-### Product
-
-- `page-cro` - Landing page optimization
-- `onboarding-cro` - Onboarding flows
-- `signup-flow-cro` - Signup optimization
-- `ab-test-setup` - A/B testing
-- `referral-program` - Referral systems
 
 ## Tech Stack
 
