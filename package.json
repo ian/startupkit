@@ -9,6 +9,7 @@
 	"scripts": {
 		"clean": "pnpm --stream -r run clean",
 		"build": "pnpm --stream -r run build",
+		"test": "pnpm --stream -r run test",
 		"typecheck": "pnpm --stream -r run typecheck",
 		"release": "pnpm build && pnpm --filter \"./packages/**\" -r publish --access public --no-git-checks",
 		"startupkit": "node packages/cli/dist/cli.js"

@@ -11,7 +11,7 @@ StartupKit equips your project with a comprehensive set of AI agent skills cover
 One command to install:
 
 ```bash
-npx startupkit add
+npx startupkit skills add
 ```
 
 ## Why StartupKit?
@@ -29,16 +29,22 @@ AI agents are only as good as their instructions. StartupKit provides curated sk
 
 ```bash
 # Interactive selection
-npx startupkit add
+npx startupkit skills add
 
 # Install all skills
-npx startupkit add --all
+npx startupkit skills add --all
 
 # Install specific category
-npx startupkit add --category dev
+npx startupkit skills add --category dev
 
-# Install globally
-npx startupkit add --global
+# Install single skill
+npx startupkit skills add brainstorming
+
+# Preview without installing
+npx startupkit skills add --all --dry-run
+
+# Install globally (to ~/.agents/skills/)
+npx startupkit skills add --global
 ```
 
 ## Supported Agents
@@ -51,12 +57,15 @@ Skills are installed to both `.opencode/skills/` and `.claude/skills/` by defaul
 ## Commands
 
 ```bash
-startupkit skills          # List available skills
-startupkit skills add      # Add skills interactively
-startupkit add             # Shortcut for skills add
-startupkit add --all       # Install everything
-startupkit add --category dev  # Specific category
-startupkit add --global    # Install to user directory
+startupkit skills                        # List available skills
+startupkit skills add                    # Add skills interactively
+startupkit skills add --all              # Install all skills
+startupkit skills add --category dev     # Install specific category
+startupkit skills add brainstorming      # Install specific skill
+startupkit skills list --installed       # List installed skills
+startupkit skills remove <skill>         # Remove a skill
+startupkit skills add --global           # Install globally
+startupkit skills add --dry-run          # Preview without installing
 ```
 
 ## Skill Categories
