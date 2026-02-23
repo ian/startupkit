@@ -1,0 +1,56 @@
+{
+	"name": "@startupkit/analytics",
+	"version": "0.6.6",
+	"author": "Ian Hunter <ian@01.studio>",
+	"license": "ISC",
+	"description": "Provider-agnostic analytics helpers for StartupKit",
+	"homepage": "https://startupkit.com",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/ian/startupkit"
+	},
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/types/index.d.ts",
+			"default": "./dist/esm/index.js"
+		},
+		"./posthog": {
+			"types": "./dist/types/posthog/index.d.ts",
+			"default": "./dist/esm/posthog.js"
+		},
+		"./openpanel": {
+			"types": "./dist/types/openpanel/index.d.ts",
+			"default": "./dist/esm/openpanel.js"
+		}
+	},
+	"scripts": {
+		"clean": "rm -rf ./dist ./.turbo",
+		"build": "rollup -c && tsc --emitDeclarationOnly",
+		"typecheck": "tsc --noEmit",
+		"format": "biome format",
+		"format:fix": "biome format --write",
+		"lint": "biome check",
+		"lint:fix": "biome check --write"
+	},
+	"peerDependencies": {
+		"@openpanel/sdk": ">=1.0.0",
+		"next": ">=14.0.0",
+		"posthog-js": ">=1.0.0",
+		"react": ">=18.2.0"
+	},
+	"peerDependenciesMeta": {
+		"@openpanel/sdk": {
+			"optional": true
+		},
+		"posthog-js": {
+			"optional": true
+		}
+	},
+	"devDependencies": {
+		"@openpanel/sdk": "^1.0.0",
+		"@types/node": "^22.4.0",
+		"@types/react": "^19.0.0",
+		"posthog-js": "^1.186.1"
+	}
+}

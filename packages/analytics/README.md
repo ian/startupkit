@@ -1,0 +1,693 @@
+# @startupkit/analytics
+
+Provider-agnostic analytics helpers for StartupKit projects.
+
+Part of [**StartupKit**](https://startupkit.com) - The Zero to One Startup Framework.
+
+## Installation
+
+```bash
+pnpm add @startupkit/analytics
+```
+
+Or use the [StartupKit CLI](https://startupkit.com) to get started with a complete monorepo setup:
+
+```bash
+npx startupkit init
+```
+
+## What This Package Provides
+
+This package provides a **provider-agnostic** analytics context pattern with built-in conveniences:
+
+- ✅ **Plugin architecture** - Compose multiple analytics providers
+- ✅ **Auto page tracking** (with Next.js App Router)
+- ✅ **Memoized handlers** for performance
+- ✅ **Type-safe hooks** (`useAnalytics`, `useFlag`)
+- ✅ **No vendor lock-in** - use any analytics providers
+
+## Built-in Plugins
+
+The package includes ready-to-use plugins for popular analytics services:
+
+- **PostHog** - Product analytics and feature flags
+- **GoogleAnalytics** - Google Analytics 4 integration
+- **GoogleTagManager** - Tag management for multiple tracking scripts
+- **OpenPanelPlugin** - Privacy-focused analytics
+- **DatafastPlugin** - Privacy-focused analytics with revenue attribution
+- **AhrefsPlugin** - SEO and traffic analytics
+
+## Usage
+
+### Plugin Mode (Recommended)
+
+The plugin architecture makes it easy to use multiple analytics providers:
+
+```typescript
+"use client"
+
+import {
+  AnalyticsProvider,
+  GoogleAnalyticsPlugin
+} from "@startupkit/analytics"
+// PostHog and OpenPanel are optional - import from subpaths
+import { PostHogPlugin } from "@startupkit/analytics/posthog"
+import { OpenPanelPlugin } from "@startupkit/analytics/openpanel"
+
+const plugins = [
+  PostHogPlugin({
+    apiKey: process.env.NEXT_PUBLIC_POSTHOG_KEY,
+    apiHost: process.env.NEXT_PUBLIC_POSTHOG_HOST // optional
+  }),
+  GoogleAnalyticsPlugin({
+    measurementId: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
+  }),
+  OpenPanelPlugin({
+    clientId: process.env.NEXT_PUBLIC_OPENPANEL_CLIENT_ID
+  })
+]
+
+export function Providers({ children, flags }) {
+  return (
+    <AnalyticsProvider flags={flags} plugins={plugins}>
+      {children}
+    </AnalyticsProvider>
+  )
+}
+```
+
+### Using Analytics in Components
+
+```typescript
+"use client"
+
+import { useAnalytics } from "@startupkit/analytics"
+
+export function MyComponent() {
+  const { track, identify, page, reset, flags } = useAnalytics()
+
+  const handleClick = () => {
+    track("BUTTON_CLICKED", { 
+      buttonId: "cta",
+      page: "home" 
+    })
+  }
+
+  const handleSignIn = (userId: string, email: string) => {
+    identify(userId, {
+      email,
+      plan: "pro"
+    })
+  }
+
+  return (
+    <button onClick={handleClick}>
+      Click me
+    </button>
+  )
+}
+```
+
+### Feature Flags
+
+```typescript
+import { useFlag } from "@startupkit/analytics"
+
+export function MyFeature() {
+  const isEnabled = useFlag("new-feature")
+
+  if (!isEnabled) {
+    return null
+  }
+
+  return <div>New Feature!</div>
+}
+```
+
+## API Reference
+
+### `AnalyticsProvider`
+
+Provider component that accepts flags and plugins or handlers.
+
+```typescript
+interface AnalyticsProviderProps<TFlags> {
+  flags: TFlags
+  plugins?: AnalyticsPlugin[]
+  handlers?: AnalyticsHandlers
+  autoPageTracking?: boolean  // Default: true
+  children: ReactNode
+}
+```
+
+**Plugin Mode (Recommended):**
+```typescript
+<AnalyticsProvider 
+  flags={flags} 
+  plugins={[
+    PostHogPlugin({ apiKey: "..." }),
+    GoogleAnalyticsPlugin({ measurementId: "..." })
+  ]}
+>
+  {children}
+</AnalyticsProvider>
+```
+
+**Custom Handlers with Plugins (Advanced):**
+
+For full customization, provide both `plugins` and `handlers`. Your handlers receive a strongly-typed `plugins` object:
+
+```typescript
+const plugins = [
+  PostHogPlugin({ apiKey: "..." }),
+  GoogleAnalyticsPlugin({ measurementId: "..." })
+] as const // Important: use 'as const' for type inference
+
+<AnalyticsProvider 
+  flags={flags}
+  plugins={plugins}
+  handlers={{
+    identify: ({ plugins, userId, traits }) => {
+      // plugins.PostHog is strongly typed!
+      if (userId) {
+        plugins.PostHog.identify?.(userId, traits)
+        
+        // Add custom logic
+        if (traits?.isPremium) {
+          plugins.GoogleAnalytics.identify?.(userId, traits)
+        }
+      }
+    },
+    track: ({ plugins, event, properties }) => {
+      // Full control over which events go where
+      plugins.PostHog.track?.(event, properties)
+      
+      if (event.startsWith('PURCHASE_')) {
+        plugins.GoogleAnalytics.track?.(event, properties)
+      }
+    },
+    page: ({ plugins, name, properties }) => {
+      plugins.PostHog.page?.(name, properties)
+      plugins.GoogleAnalytics.page?.(name, properties)
+    },
+    reset: ({ plugins }) => {
+      plugins.PostHog.reset?.()
+      plugins.GoogleAnalytics.reset?.()
+    }
+  }}
+>
+  {children}
+</AnalyticsProvider>
+```
+
+**Simple Handlers Mode (No Plugins):**
+```typescript
+<AnalyticsProvider 
+  flags={flags}
+  handlers={{
+    identify: (userId, traits) => { /* your code */ },
+    track: (event, properties) => { /* your code */ },
+    page: (name, properties) => { /* your code */ },
+    reset: () => { /* your code */ }
+  }}
+>
+  {children}
+</AnalyticsProvider>
+```
+
+**Auto Page Tracking:**
+- Automatically tracks page views using Next.js App Router hooks
+- Filters out route groups like `(dashboard)`
+- Replaces long numeric segments with `:id`
+- Can be disabled with `autoPageTracking: false`
+
+### `useAnalytics()`
+
+Hook to access analytics context.
+
+```typescript
+const { identify, track, page, reset, flags } = useAnalytics()
+
+// Identify a user
+identify("user_123", {
+  email: "user@example.com",
+  plan: "pro"
+})
+
+// Track an event
+track("PURCHASE_COMPLETED", {
+  amount: 99.99,
+  currency: "USD"
+})
+
+// Track a page view
+page("/dashboard", { 
+  pathname: "/dashboard/settings" 
+})
+
+// Reset analytics (on logout)
+reset()
+```
+
+### `useFlag(name)`
+
+Hook to access a specific feature flag.
+
+```typescript
+const isNewFeatureEnabled = useFlag("new-feature")
+
+if (isNewFeatureEnabled) {
+  // Show new feature
+}
+```
+
+## Built-in Plugins
+
+### AhrefsPlugin
+
+```typescript
+import { AhrefsPlugin } from "@startupkit/analytics"
+
+const plugin = AhrefsPlugin({ key: "your-ahrefs-key" })
+```
+
+**Features:**
+- SEO tracking
+- Traffic source analytics
+
+### DatafastPlugin
+
+```typescript
+import { DatafastPlugin } from "@startupkit/analytics"
+
+const plugin = DatafastPlugin({
+  websiteId: "dfid_...",
+  domain: "yourdomain.com" // optional
+})
+```
+
+**Features:**
+- Privacy-focused analytics
+- Revenue attribution
+- Custom event tracking
+- Automatic page view tracking
+
+### GoogleAnalyticsPlugin
+
+```typescript
+import { GoogleAnalyticsPlugin } from "@startupkit/analytics"
+
+const plugin = GoogleAnalyticsPlugin({
+  measurementId: "G-XXXXXXXXXX"
+})
+```
+
+**Features:**
+- Page view tracking
+- Event tracking
+- Google Analytics 4 integration
+
+### GoogleTagManagerPlugin
+
+```typescript
+import { GoogleTagManagerPlugin } from "@startupkit/analytics"
+
+const plugin = GoogleTagManagerPlugin({
+  containerId: "GTM-XXXXXXX"
+})
+```
+
+**Features:**
+- Tag management system
+- Load multiple tracking scripts from one container
+- Configure event routing in GTM dashboard
+- Support for GA4, Facebook Pixel, conversion tracking, etc.
+
+### OpenPanelPlugin
+
+Requires the `@openpanel/sdk` peer dependency.
+
+```typescript
+import { OpenPanelPlugin } from "@startupkit/analytics/openpanel"
+
+const plugin = OpenPanelPlugin({
+  clientId: "your-client-id"
+})
+```
+
+**Features:**
+- Privacy-focused analytics
+- Real-time dashboards
+- Event tracking
+
+### PostHogPlugin
+
+Requires the `posthog-js` peer dependency.
+
+```typescript
+import { PostHogPlugin } from "@startupkit/analytics/posthog"
+
+const plugin = PostHogPlugin({
+  apiKey: "phc_...",
+  apiHost: "https://app.posthog.com" // optional
+})
+```
+
+**Features:**
+- Product analytics
+- Feature flags
+- Session recordings
+- A/B testing
+
+## Creating Custom Plugins
+
+You can create your own analytics plugins:
+
+```typescript
+import type { AnalyticsPlugin } from "@startupkit/analytics"
+import { useCallback } from "react"
+
+export function MyAnalyticsPlugin(): AnalyticsPlugin {
+  return {
+    name: "MyAnalytics",
+    Provider: ({ children }) => {
+      // Optional: Wrap in your provider
+      return <>{children}</>
+    },
+    useHandlers: () => {
+      const identify = useCallback(
+        (userId: string | null, traits?: Record<string, unknown>) => {
+          // Your identify logic
+          console.log("Identify:", userId, traits)
+        },
+        []
+      )
+
+      const track = useCallback(
+        (event: string, properties?: Record<string, unknown>) => {
+          // Your track logic
+          console.log("Track:", event, properties)
+        },
+        []
+      )
+
+      const page = useCallback(
+        (name?: string, properties?: Record<string, unknown>) => {
+          // Your page view logic
+          console.log("Page:", name, properties)
+        },
+        []
+      )
+
+      const reset = useCallback(() => {
+        // Your reset logic
+        console.log("Reset")
+      }, [])
+
+      return {
+        identify,
+        track,
+        page,
+        reset
+      }
+    }
+  }
+}
+```
+
+## Advanced: Custom Handlers with Plugins
+
+For maximum flexibility, you can provide both `plugins` and `handlers` to gain full control over how analytics events are dispatched. When you do this, the analytics provider:
+
+1. **Initializes all plugins** (calls their `Provider` components)
+2. **Gets handlers from each plugin** (calls their `useHandlers()` hooks)
+3. **Passes a strongly-typed `plugins` object** to your custom handlers
+4. **Lets you decide** which events go to which plugins
+
+### Use Cases
+
+- **Conditional tracking**: Only send certain events to specific providers
+- **Data transformation**: Modify event properties per provider
+- **Performance**: Skip expensive tracking for non-critical events
+- **Debugging**: Log events before sending to providers
+- **A/B testing**: Route events differently for different user segments
+
+### Example: Conditional Tracking
+
+```typescript
+const plugins = [
+  PostHogPlugin({ apiKey: "..." }),
+  GoogleAnalyticsPlugin({ measurementId: "..." })
+] as const // 'as const' enables type inference
+
+<AnalyticsProvider 
+  flags={flags}
+  plugins={plugins}
+  handlers={{
+    track: ({ plugins, event, properties }) => {
+      // All events go to PostHog
+      plugins.PostHog.track?.(event, properties)
+      
+      // Only send purchase events to Google Analytics
+      if (event.startsWith('PURCHASE_')) {
+        plugins.GoogleAnalytics.track?.(event, {
+          ...properties,
+          value: properties.amount // Transform property name
+        })
+      }
+    },
+    identify: ({ plugins, userId, traits }) => {
+      if (!userId) return
+      
+      plugins.PostHog.identify?.(userId, traits)
+      
+      // Only identify premium users in GA
+      if (traits?.plan === 'premium') {
+        plugins.GoogleAnalytics.identify?.(userId, traits)
+      }
+    },
+    page: ({ plugins, name, properties }) => {
+      // Track all page views in both
+      plugins.PostHog.page?.(name, properties)
+      plugins.GoogleAnalytics.page?.(name, properties)
+    },
+    reset: ({ plugins }) => {
+      plugins.PostHog.reset?.()
+      plugins.GoogleAnalytics.reset?.()
+    }
+  }}
+>
+  {children}
+</AnalyticsProvider>
+```
+
+### Type Safety
+
+The `plugins` object is **strongly typed** based on the plugins you provide:
+
+```typescript
+const plugins = [
+  PostHogPlugin({ apiKey: "..." }),
+  GoogleAnalyticsPlugin({ measurementId: "..." })
+] as const // Important!
+
+// TypeScript knows these exist:
+plugins.PostHog.track(...)      // ✅
+plugins.GoogleAnalytics.track(...) // ✅
+
+// TypeScript catches typos:
+plugins.PostHOG.track(...)      // ❌ Error
+plugins.GoogleAnalytics.track(...)     // ❌ Error
+```
+
+**Important**: Use `as const` when defining your plugins array for proper type inference.
+
+### Example: Debugging
+
+```typescript
+<AnalyticsProvider 
+  flags={flags}
+  plugins={plugins}
+  handlers={{
+    track: ({ plugins, event, properties }) => {
+      // Log all events in development
+      if (process.env.NODE_ENV === 'development') {
+        console.log('📊 Analytics:', event, properties)
+      }
+      
+      // Send to all providers
+      plugins.PostHog.track?.(event, properties)
+      plugins.GoogleAnalytics.track?.(event, properties)
+    }
+    // identify, page, reset use default behavior (send to all plugins)
+  }}
+>
+  {children}
+</AnalyticsProvider>
+```
+
+### Partial Handlers
+
+You don't need to provide all handlers! **Unspecified handlers will use the default behavior** (sending to all plugins):
+
+```typescript
+const plugins = [
+  PostHogPlugin({ apiKey: "..." }),
+  GoogleAnalyticsPlugin({ measurementId: "..." })
+] as const
+
+<AnalyticsProvider 
+  flags={flags}
+  plugins={plugins}
+  handlers={{
+    // Only override track - everything else uses defaults
+    track: ({ plugins, event, properties }) => {
+      // Custom logic for tracking only
+      if (event.startsWith('PURCHASE_')) {
+        plugins.PostHog.track?.(event, properties)
+        plugins.GoogleAnalytics.track?.(event, properties)
+      } else {
+        // Only track non-purchase events to PostHog
+        plugins.PostHog.track?.(event, properties)
+      }
+    }
+    // identify, page, reset automatically send to ALL plugins
+  }}
+>
+  {children}
+</AnalyticsProvider>
+```
+
+This is perfect for:
+- **Selective tracking**: Override just `track` to filter which events go where
+- **Custom identification**: Override just `identify` to add extra logic
+- **Debugging specific methods**: Add logging to one method without affecting others
+
+## Multi-Provider Setup
+
+Events are sent to **all** configured plugins simultaneously:
+
+```typescript
+const plugins = [
+  PostHogPlugin({ apiKey: "..." }),      // Product analytics
+  GoogleAnalyticsPlugin({ measurementId: "..." }), // Marketing analytics
+  OpenPanelPlugin({ clientId: "..." })   // Privacy-focused analytics
+]
+
+<AnalyticsProvider flags={flags} plugins={plugins}>
+  {children}
+</AnalyticsProvider>
+```
+
+When you call `track()`, the event is sent to all three providers automatically.
+
+## Auto Page Tracking Details
+
+The package automatically tracks page views with clean route names:
+
+**Input:** `/dashboard/(settings)/profile/abc123def456`
+**Output:** `/dashboard/profile/:id`
+
+- Filters out route groups: `(settings)` → removed
+- Replaces long IDs: `abc123def456` → `:id`
+- Preserves meaningful segments: `dashboard`, `profile`
+
+The `page` handler is called with:
+- `name`: The clean route (e.g., `/dashboard/profile/:id`)
+- `properties.pathname`: The actual pathname
+
+## TypeScript Types
+
+```typescript
+// Plugin interface
+interface AnalyticsPlugin {
+  name: string
+  Provider?: ComponentType<{ children: ReactNode }>
+  useHandlers: () => Partial<AnalyticsHandlers>
+}
+
+// Simple handlers interface (no plugins)
+interface AnalyticsHandlers {
+  identify: (userId: string | null, traits?: Record<string, unknown>) => void
+  track: (event: string, properties?: Record<string, unknown>) => void
+  page: (name?: string, properties?: Record<string, unknown>) => void
+  reset: () => void
+}
+
+// Custom handlers interface (with plugins) - receives plugins object and parameters
+interface CustomAnalyticsHandlers<TPlugins extends readonly AnalyticsPlugin[]> {
+  identify: (params: {
+    plugins: PluginsToHandlersMap<TPlugins>
+    userId: string | null
+    traits?: Record<string, unknown>
+  }) => void
+  track: (params: {
+    plugins: PluginsToHandlersMap<TPlugins>
+    event: string
+    properties?: Record<string, unknown>
+  }) => void
+  page: (params: {
+    plugins: PluginsToHandlersMap<TPlugins>
+    name?: string
+    properties?: Record<string, unknown>
+  }) => void
+  reset: (params: { 
+    plugins: PluginsToHandlersMap<TPlugins> 
+  }) => void
+}
+
+// Plugins map - strongly typed based on plugin names
+type PluginsToHandlersMap<TPlugins extends readonly AnalyticsPlugin[]> = {
+  [K in TPlugins[number]["name"]]: Partial<AnalyticsHandlers>
+}
+
+// Context interface
+interface AnalyticsContextType<TFlags> {
+  flags: TFlags
+  identify: (userId: string | null, traits?: Record<string, unknown>) => void
+  track: (event: string, properties?: Record<string, unknown>) => void
+  page: (name?: string, properties?: Record<string, unknown>) => void
+  reset: () => void
+}
+```
+
+## Philosophy
+
+This package follows the StartupKit minimal package philosophy:
+
+**What it does:** 
+- Provides reusable React patterns for analytics
+- Handles auto page tracking (filters route groups, replaces IDs)
+- Memoizes handlers for performance
+- Includes ready-to-use plugins for popular services
+
+**What it doesn't do:** 
+- Force you to use specific analytics providers
+- Make decisions about your analytics architecture
+
+You can use the built-in plugins, create your own, or implement custom handlers.
+
+## Peer Dependencies
+
+Required:
+- `next` >= 14.0.0 (for App Router hooks)
+- `react` >= 18.2.0
+
+Optional (only install what you use):
+- `posthog-js` - Required for `@startupkit/analytics/posthog`
+- `@openpanel/sdk` - Required for `@startupkit/analytics/openpanel`
+- GoogleAnalytics, GTM, Datafast, and Ahrefs plugins work via script injection (no extra dependencies)
+
+## Learn More
+
+- **StartupKit Website:** [startupkit.com](https://startupkit.com)
+- **GitHub Repository:** [github.com/ian/startupkit](https://github.com/ian/startupkit)
+- **Full Documentation:** [startupkit.com](https://startupkit.com)
+
+## Support
+
+Having issues? [Open an issue on GitHub](https://github.com/ian/startupkit/issues)
+
+## License
+
+ISC © 2025 01 Studio
