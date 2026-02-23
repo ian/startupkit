@@ -1,181 +1,254 @@
-import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { initProject } from "./init";
+import { describe, expect, it } from "vitest"
+import {
+	buildDegitSources,
+	generateEnvContent,
+	mergeEnvContent,
+	parseEnvKeys,
+	resolveDestDir,
+	slugify
+} from "./init"
 
-vi.mock("node:child_process");
-vi.mock("@inquirer/prompts", () => ({
-	confirm: vi.fn(),
-	input: vi.fn(),
-}));
+describe("init command - unit tests", () => {
+	describe("slugify function", () => {
+		it("should convert spaces to dashes", () => {
+			expect(slugify("My Project Name")).toBe("my-project-name")
+		})
 
-const mockCwd = "/tmp/test-project";
+		it("should convert underscores to dashes", () => {
+			expect(slugify("my_project_name")).toBe("my-project-name")
+		})
 
-describe("init", () => {
-	let originalCwd: string;
+		it("should remove special characters", () => {
+			expect(slugify("My Project!@#$%")).toBe("my-project")
+		})
 
-	beforeEach(() => {
-		originalCwd = process.cwd();
-		vi.spyOn(process, "cwd").mockReturnValue(mockCwd);
-		rmSync(mockCwd, { recursive: true, force: true });
-		mkdirSync(mockCwd, { recursive: true });
-	});
+		it("should lowercase everything", () => {
+			expect(slugify("UPPERCASE")).toBe("uppercase")
+		})
 
-	afterEach(() => {
-		vi.restoreAllMocks();
-		process.chdir(originalCwd);
-		rmSync(mockCwd, { recursive: true, force: true });
-	});
+		it("should handle consecutive dashes", () => {
+			expect(slugify("my---project")).toBe("my-project")
+		})
 
-	describe("initProject", () => {
-		it("should create AGENTS.md file", async () => {
-			await initProject({ skipPrompts: true, skipSkills: true });
+		it("should trim leading/trailing dashes", () => {
+			expect(slugify("-my-project-")).toBe("my-project")
+		})
 
-			const agentsPath = join(mockCwd, "AGENTS.md");
-			expect(existsSync(agentsPath)).toBe(true);
-		});
+		it("should handle numbers", () => {
+			expect(slugify("project-123")).toBe("project-123")
+		})
+	})
 
-		it("should create SOUL.md file", async () => {
-			await initProject({ skipPrompts: true, skipSkills: true });
+	describe("buildDegitSources", () => {
+		it("should resolve degit sources correctly without branch", () => {
+			const result = buildDegitSources("ian/startupkit")
 
-			const soulPath = join(mockCwd, "SOUL.md");
-			expect(existsSync(soulPath)).toBe(true);
-		});
+			expect(result.repoSource).toBe("ian/startupkit/templates/repo")
+			expect(result.packagesSource).toBe("ian/startupkit/templates/packages")
+			expect(result.storybookSource).toBe(
+				"ian/startupkit/templates/apps/storybook"
+			)
+		})
 
-		it("should create .agents directory with subagent files", async () => {
-			await initProject({ skipPrompts: true, skipSkills: true });
+		it("should handle branch names in degit sources", () => {
+			const result = buildDegitSources("ian/startupkit#develop")
 
-			const agentsDir = join(mockCwd, ".agents");
-			expect(existsSync(agentsDir)).toBe(true);
+			expect(result.repoSource).toBe("ian/startupkit/templates/repo#develop")
+			expect(result.packagesSource).toBe(
+				"ian/startupkit/templates/packages#develop"
+			)
+			expect(result.storybookSource).toBe(
+				"ian/startupkit/templates/apps/storybook#develop"
+			)
+		})
 
-			const subagents = [
-				"product",
-				"engineering",
-				"design",
-				"marketing",
-				"growth",
-			];
-			for (const subagent of subagents) {
-				const subagentPath = join(agentsDir, `${subagent}.md`);
-				expect(existsSync(subagentPath)).toBe(true);
-			}
-		});
+		it("should handle different repository paths", () => {
+			const result = buildDegitSources("user/repo#main")
 
-		it("should list available skills in subagent files", async () => {
-			await initProject({ skipPrompts: true, skipSkills: true });
+			expect(result.repoSource).toBe("user/repo/templates/repo#main")
+			expect(result.packagesSource).toBe("user/repo/templates/packages#main")
+			expect(result.storybookSource).toBe(
+				"user/repo/templates/apps/storybook#main"
+			)
+		})
+	})
 
-			const productPath = join(mockCwd, ".agents", "product.md");
-			const content = await import("node:fs").then((fs) =>
-				fs.readFileSync(productPath, "utf-8"),
-			);
+	describe("resolveDestDir", () => {
+		const cwd = "/home/user/projects"
 
-			expect(content).toContain("brainstorming");
-			expect(content).toContain("page-cro");
-		});
+		it("should use --dir flag when provided", () => {
+			const result = resolveDestDir({
+				dir: ".",
+				key: "my-project",
+				cwd
+			})
+			expect(result).toBe("/home/user/projects")
+		})
 
-		it("should skip skills when skipSkills is true", async () => {
-			const execSync = await import("node:child_process");
-			const mockExecSync = vi.spyOn(execSync, "execSync");
+		it("should use --dir flag with relative path", () => {
+			const result = resolveDestDir({
+				dir: "./existing-app",
+				key: "my-project",
+				cwd
+			})
+			expect(result).toBe("/home/user/projects/existing-app")
+		})
 
-			await initProject({ skipPrompts: true, skipSkills: true });
+		it("should use --dir flag with absolute path", () => {
+			const result = resolveDestDir({
+				dir: "/tmp/my-app",
+				key: "my-project",
+				cwd
+			})
+			expect(result).toBe("/tmp/my-app")
+		})
 
-			expect(mockExecSync).not.toHaveBeenCalled();
-		});
+		it("should use prompted directory when provided", () => {
+			const result = resolveDestDir({
+				key: "my-project",
+				cwd,
+				promptedDirectory: "."
+			})
+			expect(result).toBe("/home/user/projects")
+		})
 
-		it("should not overwrite existing AGENTS.md when skipPrompts is true", async () => {
-			const agentsPath = join(mockCwd, "AGENTS.md");
-			writeFileSync(agentsPath, "existing content");
+		it("should use prompted directory with custom path", () => {
+			const result = resolveDestDir({
+				key: "my-project",
+				cwd,
+				promptedDirectory: "./custom-dir"
+			})
+			expect(result).toBe("/home/user/projects/custom-dir")
+		})
 
-			await initProject({ skipPrompts: true, skipSkills: true });
+		it("should default to key as directory name when no dir or prompt", () => {
+			const result = resolveDestDir({
+				key: "my-project",
+				cwd
+			})
+			expect(result).toBe("/home/user/projects/my-project")
+		})
 
-			const content = await import("node:fs").then((fs) =>
-				fs.readFileSync(agentsPath, "utf-8"),
-			);
-			expect(content).toBe("existing content");
-		});
+		it("should prioritize --dir over prompted directory", () => {
+			const result = resolveDestDir({
+				dir: "/explicit/path",
+				key: "my-project",
+				cwd,
+				promptedDirectory: "./prompted-path"
+			})
+			expect(result).toBe("/explicit/path")
+		})
 
-		it("should not overwrite existing SOUL.md when skipPrompts is true", async () => {
-			const soulPath = join(mockCwd, "SOUL.md");
-			writeFileSync(soulPath, "existing content");
+		it("should handle empty string prompted directory as current dir", () => {
+			const result = resolveDestDir({
+				key: "my-project",
+				cwd,
+				promptedDirectory: ""
+			})
+			expect(result).toBe("/home/user/projects")
+		})
+	})
 
-			await initProject({ skipPrompts: true, skipSkills: true });
+	describe("parseEnvKeys", () => {
+		it("should parse simple env keys", () => {
+			const content = "FOO=bar\nBAZ=qux"
+			const keys = parseEnvKeys(content)
+			expect(keys).toEqual(new Set(["FOO", "BAZ"]))
+		})
 
-			const content = await import("node:fs").then((fs) =>
-				fs.readFileSync(soulPath, "utf-8"),
-			);
-			expect(content).toBe("existing content");
-		});
+		it("should ignore comments", () => {
+			const content = "# This is a comment\nFOO=bar\n# Another comment"
+			const keys = parseEnvKeys(content)
+			expect(keys).toEqual(new Set(["FOO"]))
+		})
 
-		it("should not overwrite existing subagent files when skipPrompts is true", async () => {
-			const agentsDir = join(mockCwd, ".agents");
-			mkdirSync(agentsDir, { recursive: true });
-			const productPath = join(agentsDir, "product.md");
-			writeFileSync(productPath, "existing product subagent");
+		it("should ignore empty lines", () => {
+			const content = "FOO=bar\n\nBAZ=qux\n"
+			const keys = parseEnvKeys(content)
+			expect(keys).toEqual(new Set(["FOO", "BAZ"]))
+		})
 
-			await initProject({ skipPrompts: true, skipSkills: true });
+		it("should handle values with equals signs", () => {
+			const content = 'DATABASE_URL="postgres://user:pass=123@localhost"'
+			const keys = parseEnvKeys(content)
+			expect(keys).toEqual(new Set(["DATABASE_URL"]))
+		})
 
-			const content = await import("node:fs").then((fs) =>
-				fs.readFileSync(productPath, "utf-8"),
-			);
-			expect(content).toBe("existing product subagent");
-		});
+		it("should trim whitespace from keys", () => {
+			const content = "  FOO  =bar"
+			const keys = parseEnvKeys(content)
+			expect(keys).toEqual(new Set(["FOO"]))
+		})
+	})
 
-		it("should use default agents when none specified", async () => {
-			const execSync = await import("node:child_process");
-			const mockExecSync = vi
-				.spyOn(execSync, "execSync")
-				.mockImplementation(() => Buffer.from(""));
+	describe("generateEnvContent", () => {
+		it("should generate env content with header", () => {
+			const requiredEnv = { FOO: "bar", BAZ: "qux" }
+			const content = generateEnvContent(requiredEnv)
+			expect(content).toBe("# Generated by StartupKit\nFOO=bar\nBAZ=qux\n")
+		})
 
-			await initProject({ skipPrompts: true, skipSkills: false });
+		it("should handle single entry", () => {
+			const requiredEnv = { AUTH_SECRET: "secret123" }
+			const content = generateEnvContent(requiredEnv)
+			expect(content).toBe("# Generated by StartupKit\nAUTH_SECRET=secret123\n")
+		})
+	})
 
-			expect(mockExecSync).toHaveBeenCalledWith(
-				expect.stringContaining("--agent opencode"),
-				expect.any(Object),
-			);
-			expect(mockExecSync).toHaveBeenCalledWith(
-				expect.stringContaining("--agent claude-code"),
-				expect.any(Object),
-			);
-		});
+	describe("mergeEnvContent", () => {
+		it("should add missing keys to existing content", () => {
+			const existingContent = "EXISTING=value"
+			const requiredEnv = { EXISTING: "ignored", NEW_KEY: "new_value" }
+			const { content, addedKeys } = mergeEnvContent(
+				existingContent,
+				requiredEnv
+			)
+			expect(content).toBe("EXISTING=value\nNEW_KEY=new_value\n")
+			expect(addedKeys).toEqual(["NEW_KEY"])
+		})
 
-		it("should use custom agents when specified", async () => {
-			const execSync = await import("node:child_process");
-			const mockExecSync = vi
-				.spyOn(execSync, "execSync")
-				.mockImplementation(() => Buffer.from(""));
+		it("should not modify content when all keys exist", () => {
+			const existingContent = "FOO=bar\nBAZ=qux"
+			const requiredEnv = { FOO: "different", BAZ: "also_different" }
+			const { content, addedKeys } = mergeEnvContent(
+				existingContent,
+				requiredEnv
+			)
+			expect(content).toBe("FOO=bar\nBAZ=qux")
+			expect(addedKeys).toEqual([])
+		})
 
-			await initProject({
-				skipPrompts: true,
-				skipSkills: false,
-				agents: ["cursor", "cline"],
-			});
+		it("should add multiple missing keys", () => {
+			const existingContent = "EXISTING=value"
+			const requiredEnv = { KEY1: "val1", KEY2: "val2" }
+			const { content, addedKeys } = mergeEnvContent(
+				existingContent,
+				requiredEnv
+			)
+			expect(content).toBe("EXISTING=value\nKEY1=val1\nKEY2=val2\n")
+			expect(addedKeys).toEqual(["KEY1", "KEY2"])
+		})
 
-			expect(mockExecSync).toHaveBeenCalledWith(
-				expect.stringContaining("--agent cursor"),
-				expect.any(Object),
-			);
-			expect(mockExecSync).toHaveBeenCalledWith(
-				expect.stringContaining("--agent cline"),
-				expect.any(Object),
-			);
-		});
+		it("should handle content with trailing newline", () => {
+			const existingContent = "EXISTING=value\n"
+			const requiredEnv = { NEW_KEY: "new_value" }
+			const { content, addedKeys } = mergeEnvContent(
+				existingContent,
+				requiredEnv
+			)
+			expect(content).toBe("EXISTING=value\nNEW_KEY=new_value\n")
+			expect(addedKeys).toEqual(["NEW_KEY"])
+		})
 
-		it("should pass global flag when specified", async () => {
-			const execSync = await import("node:child_process");
-			const mockExecSync = vi
-				.spyOn(execSync, "execSync")
-				.mockImplementation(() => Buffer.from(""));
-
-			await initProject({
-				skipPrompts: true,
-				skipSkills: false,
-				global: true,
-			});
-
-			expect(mockExecSync).toHaveBeenCalledWith(
-				expect.stringContaining("--global"),
-				expect.any(Object),
-			);
-		});
-	});
-});
+		it("should preserve comments in existing content", () => {
+			const existingContent = "# My app config\nFOO=bar"
+			const requiredEnv = { BAZ: "qux" }
+			const { content, addedKeys } = mergeEnvContent(
+				existingContent,
+				requiredEnv
+			)
+			expect(content).toBe("# My app config\nFOO=bar\nBAZ=qux\n")
+			expect(addedKeys).toEqual(["BAZ"])
+		})
+	})
+})
