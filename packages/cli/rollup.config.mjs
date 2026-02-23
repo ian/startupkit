@@ -1,7 +1,9 @@
+import commonjs from "@rollup/plugin-commonjs"
 import json from "@rollup/plugin-json"
 import resolve from "@rollup/plugin-node-resolve"
 import commandPlugin from "rollup-plugin-command"
 import esbuild from "rollup-plugin-esbuild"
+import preserveDirectives from "rollup-preserve-directives"
 
 import { readFileSync } from "node:fs"
 import { dirname, resolve as pathResolve } from "node:path"
@@ -18,7 +20,7 @@ const external = Object.keys({
 })
 
 export default {
-	input: ["src/cli.ts"],
+	input: ["src/cli.ts", "src/config.ts", "src/post-install-check.ts"],
 	output: [
 		{
 			dir: "dist/",
@@ -30,14 +32,15 @@ export default {
 		resolve({
 			extensions: [".js", ".ts", ".json"]
 		}),
+		commonjs(),
 		json(),
 		esbuild({
-			include: /\.[jt]sx?$/,
-			exclude: /node_modules/,
-			sourceMap: true,
+			include: /\.[jt]sx?$/, // default, inferred from `loaders` option
+			exclude: /node_modules/, // default
+			sourceMap: true, // default
 			minify: process.env.NODE_ENV === "production",
-			target: "esnext",
-			tsconfig: "tsconfig.json",
+			target: "esnext", // default, or 'es20XX', 'esnext'
+			tsconfig: "tsconfig.json", // default
 			loaders: {
 				".json": "json"
 			},
@@ -45,6 +48,7 @@ export default {
 				"process.env.VERSION": JSON.stringify(pkg.version)
 			}
 		}),
+		preserveDirectives(),
 		commandPlugin("chmod +x dist/cli.js")
 	]
 }
