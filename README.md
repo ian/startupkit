@@ -1,186 +1,145 @@
 # StartupKit
 
-The startup stack for the AI era.
+Startup skills for AI agents.
 
-[**startupkit.com**](https://startupkit.com) | [GitHub](https://github.com/ian/startupkit) | [Documentation](https://startupkit.com)
+**startupkit.com** | [GitHub](https://github.com/ian/startupkit)
 
 ## What is StartupKit?
 
-StartupKit is a meta-framework for building SaaS applications. Built for founders who move fast, loved by the AI tools that help them. Pre-configured auth, analytics, database, and UI components with clear patterns your copilot can follow.
+StartupKit equips your project with a comprehensive set of AI agent skills covering product, engineering, design, and marketing expertise. Works with OpenCode and Claude Code.
 
-One command to start:
+One command to initialize:
 
 ```bash
 npx startupkit init
 ```
 
+This creates:
+
+- **AGENTS.md** - Project context and agent instructions
+- **SOUL.md** - Vision, mission, and values
+- Installs all default skills
+
 ## Why StartupKit?
 
-### AI Needs Constraints to Be Useful
+AI agents are only as good as their instructions. StartupKit provides curated skills that give your agents the expertise of a full startup team:
 
-Without structure, every project becomes a different architecture. That's **AI slop**.
-
-| Without StartupKit | With StartupKit |
-|-------------------|-----------------|
-| Where should auth logic live? | `@repo/auth` → Better Auth, ready |
-| Prisma or Drizzle? Which pattern? | `@repo/db` → Drizzle + Postgres, configured |
-| App router or pages? RSC or client? | Next.js 16 App Router, RSC by default |
-| How do I structure shared code? | Monorepo → share everything |
-| Which analytics provider? | `@repo/analytics` → Provider-agnostic hooks |
-
-**Start at 70%.** AI handles the details, not the foundation.
-
-### Built for the New Era of Development
-
-StartupKit is designed to work seamlessly with AI development tools:
-
-- ✅ **Devin** ready
-- ✅ **Claude** ready  
-- ✅ **Amp** ready
-- ✅ **OpenCode** ready
-
-Every project includes `AGENTS.md` with clear conventions, file placement guidelines, and architecture patterns that AI tools understand.
+| Category        | Skills Include                                                    |
+| --------------- | ----------------------------------------------------------------- |
+| **Product**     | Brainstorming, planning, CRO, A/B testing, growth loops           |
+| **Engineering** | React/Next.js patterns, debugging, TDD, code review, auth, mobile |
+| **Design**      | UI/UX patterns, design documentation, website audits              |
+| **Marketing**   | Copywriting, SEO, content strategy, social media, pricing         |
 
 ## Quick Start
 
 ```bash
+# Initialize project (creates AGENTS.md, SOUL.md, installs skills)
 npx startupkit init
-cd my-project
-cp .env.example .env.local
-pnpm dev
+
+# Skip prompts, use defaults
+npx startupkit init -y
+
+# Install globally
+npx startupkit init --global
+
+# Preview without installing skills
+npx startupkit init --skip-skills
+
+# Add skills interactively
+npx startupkit skills add
+
+# Install all skills
+npx startupkit skills add --all
+
+# Install specific category
+npx startupkit skills add --category engineering
+
+# Install single skill
+npx startupkit skills add brainstorming
+
+# Preview without installing
+npx startupkit skills add --all --dry-run
 ```
 
-Visit [http://localhost:3000](http://localhost:3000)
+## Supported Agents
 
-## What's Included
+- ✅ **OpenCode**
+- ✅ **Claude Code**
 
-### 📦 Pre-Built Packages
+Skills are installed to both `.opencode/skills/` and `.claude/skills/` by default.
 
-- **`@repo/auth`** - Authentication with Better Auth (Google OAuth, Email OTP)
-- **`@repo/analytics`** - Provider-agnostic analytics hooks and context
-- **`@repo/db`** - Database with Drizzle ORM + PostgreSQL
-- **`@repo/ui`** - 60+ Shadcn components, pre-configured
-- **`@repo/emails`** - Email templates with React Email
-- **`@repo/utils`** - Common utilities for SaaS applications
-
-### 🏗️ Monorepo Architecture
-
-- **pnpm workspaces** - Efficient dependency management
-- **Turbo** - Fast task orchestration (build, dev, lint)
-- **TypeScript** - Strict type checking across all packages
-- **Biome** - Fast linting and formatting
-
-### 🎨 UI & Styling
-
-- **Shadcn UI** - Beautiful, accessible components
-- **Tailwind CSS** - Utility-first styling
-- **Lucide Icons** - Clean, consistent icons
-
-### 🗄️ Database
-
-- **Drizzle ORM** - Type-safe database access
-- **PostgreSQL** - Production-ready database setup
-- **Migrations** - Version-controlled schema changes
-
-## Project Structure
-
-```
-my-project/
-├── apps/
-│   └── web/              # Main Next.js application
-├── packages/
-│   ├── analytics/        # Analytics implementation
-│   ├── auth/             # Authentication setup
-│   ├── db/               # Database schema & migrations
-│   ├── emails/           # Email templates
-│   ├── ui/               # Shared UI components
-│   └── utils/            # Utility functions
-├── config/
-│   ├── biome/            # Linter configuration
-│   └── typescript/       # TypeScript configs
-├── AGENTS.md             # AI development guidelines
-└── pnpm-workspace.yaml   # Workspace definition
-```
-
-## Common Tasks
-
-### Development
+## Commands
 
 ```bash
-pnpm dev                  # Start all apps
-pnpm --filter web dev     # Start specific app
-pnpm build                # Build all packages
+startupkit init                           # Initialize project with AGENTS.md, SOUL.md, and skills
+startupkit init -y                        # Skip prompts, use defaults
+startupkit init --global                  # Install skills globally
+startupkit init --skip-skills             # Skip skill installation
+startupkit skills                         # List available skills
+startupkit skills add                     # Add skills interactively
+startupkit skills add --all               # Install all skills
+startupkit skills add --category product  # Install specific category
+startupkit skills add brainstorming       # Install specific skill
+startupkit skills list --installed        # List installed skills
+startupkit skills remove <skill>          # Remove a skill
+startupkit skills add --global            # Install globally
+startupkit skills add --dry-run           # Preview without installing
 ```
 
-### Database
+## Skill Categories
 
-```bash
-pnpm db:generate          # Generate migration files
-pnpm db:migrate           # Apply migrations
-pnpm db:studio            # Open database GUI
-```
+### Product
 
-### UI Components
+- `brainstorming` - Ideation techniques
+- `writing-plans` - Comprehensive planning
+- `executing-plans` - Systematic execution
+- `verification-before-completion` - Quality assurance
+- `page-cro` - Landing page optimization
+- `onboarding-cro` - Onboarding flows
+- `ab-test-setup` - A/B testing
+- `referral-program` - Referral systems
 
-```bash
-pnpm shadcn add button
-pnpm shadcn add dialog
-```
+### Engineering
 
-### Code Quality
+- `vercel-react-best-practices` - React/Next.js performance
+- `vercel-composition-patterns` - Scalable component patterns
+- `web-design-guidelines` - Web interface compliance
+- `v0-automation` - V0 automation for rapid UI
+- `premium-frontend-design` - Premium frontend patterns
+- `better-auth-best-practices` - Better Auth patterns
+- `building-native-ui` - Native UI with Expo
+- `systematic-debugging` - Debug methodology
+- `test-driven-development` - TDD practices
 
-```bash
-pnpm lint                 # Check all files
-pnpm lint:fix             # Fix issues
-pnpm typecheck            # Type check all packages
-```
+### Design
 
-## Add New Services
+- `design-md` - Design documentation
+- `ui-ux-pro-max` - Pro-level UI/UX patterns
+- `explainer-video-guide` - Explainer video creation
+- `audit-website` - Website audit methodology
 
-Expand your monorepo with new apps instantly:
+### Marketing
 
-- **Next.js** - Full-stack React framework ✅
-- **Vite** - Lightning fast frontend tooling ✅
-- **Expo** - React Native for mobile (coming soon)
-
-## Environment Setup
-
-Configure your environment variables in `.env.local`:
-
-```bash
-# Database
-DATABASE_URL=postgresql://user:pass@localhost:5432/mydb
-
-# Authentication
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-
-# Analytics (optional)
-NEXT_PUBLIC_POSTHOG_KEY=phc_...
-NEXT_PUBLIC_POSTHOG_HOST=https://app.posthog.com
-```
+- `copywriting` - Persuasive writing
+- `marketing-psychology` - Consumer psychology
+- `seo-audit` - SEO optimization
+- `seo` - SEO best practices
+- `seo-geo` - Generative Engine Optimization
+- `keyword-research` - Keyword research
+- `backlink-analyzer` - Backlink analysis
+- `reddit` - Reddit marketing
+- `twitter` - Twitter/X marketing
+- `producthunt` - Product Hunt launch
+- `pricing-strategy` - Pricing models
+- `launch-strategy` - Product launches
+- `email-sequence` - Email campaigns
+- `paid-ads` - Advertising strategies
 
 ## Tech Stack
 
-- **Framework:** Next.js 16 (App Router)
-- **UI:** React 19 + Shadcn UI + Tailwind CSS
-- **Language:** TypeScript (strict mode)
-- **Database:** PostgreSQL + Drizzle ORM
-- **Auth:** Better Auth
-- **Email:** React Email + Resend
-- **Monorepo:** pnpm + Turbo
-- **Linting:** Biome
-
-## Support & Resources
-
-- **Website:** [startupkit.com](https://startupkit.com)
-- **GitHub:** [github.com/ian/startupkit](https://github.com/ian/startupkit)
-- **Issues:** [github.com/ian/startupkit/issues](https://github.com/ian/startupkit/issues)
+This CLI wraps the [skills.sh](https://skills.sh) ecosystem. Skills are SKILL.md files that work across AI agent platforms.
 
 ## License
 
 ISC © 2025 01 Studio
-
----
-
-**Stop burning tokens. Start shipping faster.** 🚀

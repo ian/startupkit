@@ -1,22 +1,11 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
 node_modules
 
-# testing
-coverage
-
 # build
-build/
 dist/
-.turbo
-.next
-.cache
 
 # misc
 .DS_Store
-*.pem
-*.old
 
 # debug
 *.log*
@@ -25,27 +14,6 @@ dist/
 .env.local
 .env.test
 
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-# old folder dumping grounds
-old/
-tmp/
-
-
-# bug - ruler does not include these
-/.gemini/
-/.qwen/
-
-# START Ruler Generated Files
-/.cursor/rules/ruler_cursor_instructions.mdc
-/.cursor/rules/ruler_cursor_instructions.mdc.bak
-/AGENTS.md
-/AGENTS.md.bak
-/opencode.json
-/opencode.json.bak
-# END Ruler Generated Files
+# skills lock file (optional - uncomment if you don't want to track)
+# skills-lock.json
+.turbo/

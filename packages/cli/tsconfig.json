@@ -1,12 +1,18 @@
 {
-	"extends": "../../config/typescript/library.json",
 	"compilerOptions": {
 		"rootDir": "./src",
 		"outDir": "./dist",
 		"strict": false,
-		"lib": ["ES2020"],
+		"target": "ES2022",
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"lib": ["ES2022"],
 		"jsx": "preserve",
-		"sourceMap": true
+		"sourceMap": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"declaration": true,
+		"declarationMap": true
 	},
 	"include": ["src/**/*"],
 	"exclude": ["node_modules", "dist"]

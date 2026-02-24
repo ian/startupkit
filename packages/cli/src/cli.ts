@@ -4,6 +4,13 @@ import { Command } from "commander"
 import { add } from "./cmd/add"
 import { init } from "./cmd/init"
 import { initRalphConfig, make } from "./cmd/make"
+import {
+	addSkills,
+	initSkills,
+	listInstalledSkills,
+	listSkills,
+	removeSkill
+} from "./cmd/skills"
 import { upgrade } from "./cmd/upgrade"
 
 export async function run() {
@@ -32,6 +39,55 @@ export async function run() {
 		.option("--repo <repo>", "Template repo to use")
 		.action(async (type, options) => {
 			await add({ type, name: options.name, repo: options.repo })
+		})
+
+	program
+		.command("skills")
+		.description("Manage startup skills for your project")
+		.argument("[action]", "Action to perform (list, add, remove, init)", "list")
+		.argument("[skill]", "Skill name (for add/remove)")
+		.option(
+			"-c, --category <category>",
+			"Install specific category (product, engineering, design, marketing, growth)"
+		)
+		.option("-a, --all", "Install all skills")
+		.option("-i, --installed", "List installed skills")
+		.option(
+			"--agent <agents...>",
+			"Target agents (default: opencode, claude-code)"
+		)
+		.option("-g, --global", "Install/remove skills globally")
+		.option("--dry-run", "Preview without making changes")
+		.option("-y, --yes", "Skip prompts and use defaults (for init)")
+		.option("--skip-skills", "Skip installing skills (for init)")
+		.action(async (action, skill, options) => {
+			if (action === "init") {
+				await initSkills({
+					skipPrompts: options.yes,
+					global: options.global,
+					skipSkills: options.skipSkills,
+					agents: options.agent
+				})
+			} else if (action === "add" || action === "install") {
+				await addSkills({
+					skill: skill,
+					category: options.category,
+					all: options.all,
+					agent: options.agent,
+					global: options.global,
+					dryRun: options.dryRun
+				})
+			} else if (action === "remove" || action === "rm") {
+				await removeSkill({
+					skill: skill || options.category,
+					agent: options.agent,
+					global: options.global
+				})
+			} else if (options.installed) {
+				await listInstalledSkills(options.global ?? false)
+			} else {
+				listSkills()
+			}
 		})
 
 	program
