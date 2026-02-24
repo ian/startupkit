@@ -5,7 +5,7 @@
   "description": "The 0 to 1000 SaaS Startup Framework",
   "license": "ISC",
   "type": "module",
-  "packageManager": "pnpm@9.6.0",
+  "packageManager": "pnpm@10.30.2",
   "scripts": {
     "clean": "pnpm --stream -r run clean",
     "nuke": "find . -name 'node_modules' -type d -exec rm -rf {} +",

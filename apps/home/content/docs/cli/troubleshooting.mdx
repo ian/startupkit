@@ -146,46 +146,6 @@ npx degit ian/startupkit/templates/packages/auth packages/auth
 pnpm install
 ```
 
-## Add Command Issues
-
-### "Template type not found"
-
-Only `next` and `vite` are currently supported:
-
-```bash
-# Supported types
-npx startupkit add next
-npx startupkit add vite
-```
-
-### Missing @repo/* Dependencies
-
-When the CLI detects missing dependencies:
-
-1. **Accept the prompt** - Let the CLI install them
-2. **Or install manually**:
-
-```bash
-# Clone specific package
-npx degit ian/startupkit/templates/packages/ui packages/ui
-pnpm install
-```
-
-### App Name Conflicts
-
-If an app with that name exists:
-
-```bash
-# Check existing apps
-ls apps/
-
-# Remove if needed
-rm -rf apps/web
-
-# Add again
-npx startupkit add next --name web
-```
-
 ## Upgrade Command Issues
 
 ### "No packages to upgrade"
@@ -245,6 +205,7 @@ Your IDE may need to restart after init:
 3. Wait for TypeScript to initialize
 
 Or reload the window:
+
 - **VS Code**: `Cmd/Ctrl + Shift + P` → "Reload Window"
 - **Cursor**: Same as VS Code
 

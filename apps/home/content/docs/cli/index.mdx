@@ -3,7 +3,7 @@ title: Overview
 description: The StartupKit command-line interface for scaffolding and managing projects
 ---
 
-The StartupKit CLI helps you create new projects, add apps to your workspace, and keep your setup up to date.
+The StartupKit CLI helps you create new projects and manage AI agent skills for enhanced development workflows.
 
 ## Installation
 
@@ -22,12 +22,13 @@ startupkit init
 
 ## Commands
 
-| Command | Description |
-|---------|-------------|
-| [`init`](/docs/cli/init) | Create a new StartupKit project |
-| [`add`](/docs/cli/add) | Add a new app to your workspace |
+| Command                        | Description                           |
+| ------------------------------ | ------------------------------------- |
+| [`init`](/docs/cli/init)       | Create a new StartupKit project       |
+| [`skills`](/docs/cli/skills)   | Manage AI agent skills                |
+| [`make`](/docs/cli/make)       | Run iterative AI-assisted development |
 | [`upgrade`](/docs/cli/upgrade) | Upgrade packages and config to latest |
-| `help` | Show help information |
+| `help`                         | Show help information                 |
 
 ## Quick Start
 
@@ -38,16 +39,19 @@ npx startupkit init
 ```
 
 The CLI will prompt you for:
+
 1. **Project name** - The display name for your project
 2. **Project key** - URL-safe slug (auto-generated from name)
 3. **Directory** - Where to create the project
+4. **Storybook** - Whether to include component documentation
 
 After initialization, your project includes:
+
 - Pre-configured monorepo with pnpm workspaces
 - Workspace packages (`@repo/analytics`, `@repo/auth`, `@repo/db`, etc.)
 - Shared config (`@repo/tsconfig`, `@repo/biome`)
 - Turbo for build orchestration
-- AI agent instructions (AGENTS.md)
+- AI agent instructions (AGENTS.md, SOUL.md, subagent configs)
 
 ## What Gets Scaffolded
 
@@ -65,15 +69,51 @@ my-project/
 │   ├── biome/              # @repo/biome
 │   ├── nextjs/             # @repo/nextjs
 │   └── typescript/         # @repo/tsconfig
-├── .ruler/
-│   └── AGENTS.md           # AI agent instructions
+├── .agents/                 # AI subagent configurations
+│   ├── product.md
+│   ├── engineering.md
+│   ├── design.md
+│   ├── marketing.md
+│   └── growth.md
+├── AGENTS.md               # AI agent instructions
+├── SOUL.md                 # Project vision and values
 ├── turbo.json
 ├── pnpm-workspace.yaml
 └── package.json
 ```
 
+## AI Agent Skills
+
+StartupKit includes curated AI agent skills for different domains:
+
+```bash
+# List available skills
+npx startupkit skills
+
+# Install all skills
+npx startupkit skills add --all
+
+# Install specific category
+npx startupkit skills add --category engineering
+```
+
+Categories include: **product**, **engineering**, **design**, **marketing**, **growth**
+
+## Iterative Development
+
+The `make` command runs iterative AI-assisted development:
+
+```bash
+# Create a spec file
+echo "# Tasks\n- [ ] Add feature X\n- [ ] Fix bug Y" > SPEC.md
+
+# Run iterative development
+npx startupkit make SPEC.md
+```
+
 ## Next Steps
 
 - [Create a new project](/docs/cli/init) - Detailed init command guide
-- [Add apps to your workspace](/docs/cli/add) - Add Next.js, Vite, and more
+- [Manage AI skills](/docs/cli/skills) - Install and manage agent skills
+- [Iterative development](/docs/cli/make) - AI-assisted spec-driven development
 - [Keep your project updated](/docs/cli/upgrade) - Upgrade packages and config

@@ -1,0 +1,277 @@
+---
+title: Iterative Development
+description: Run iterative AI-assisted development from spec files
+---
+
+The `make` command (aliased as `ralph`) runs iterative AI-assisted development, automatically working through tasks defined in a spec file.
+
+## Overview
+
+The make command enables spec-driven development where:
+
+1. You define tasks in a markdown file (SPEC.md)
+2. An AI agent iteratively picks up incomplete tasks
+3. Each iteration implements one task, runs tests, and updates progress
+4. The loop continues until all tasks are complete or max iterations reached
+
+## Basic Usage
+
+```bash
+npx startupkit make [specfile] [options]
+# or
+npx startupkit ralph [specfile] [options]
+```
+
+## Creating a Spec File
+
+Create a `SPEC.md` file with your tasks:
+
+```markdown
+# Feature: User Dashboard
+
+## Tasks
+
+- [ ] Create dashboard layout component
+- [ ] Add sidebar navigation
+- [ ] Implement stats cards
+- [ ] Add recent activity feed
+- [ ] Write unit tests
+- [ ] Add loading states
+```
+
+The AI will:
+
+1. Find the first incomplete task (unchecked checkbox)
+2. Implement it
+3. Run tests and type checks
+4. Mark the task as complete
+5. Commit changes
+6. Repeat
+
+## Running Make
+
+```bash
+# Use default SPEC.md
+npx startupkit make
+
+# Use custom spec file
+npx startupkit make my-feature.md
+
+# Limit iterations
+npx startupkit make --iterations 5
+```
+
+## Command Options
+
+| Option                      | Description                                |
+| --------------------------- | ------------------------------------------ |
+| `specfile`                  | Path to spec file (default: SPEC.md)       |
+| `-i, --iterations <number>` | Maximum iterations (default: 10)           |
+| `-p, --progress <file>`     | Progress file path (default: progress.txt) |
+
+## Configuration
+
+Initialize a config file for custom settings:
+
+```bash
+npx startupkit make:init
+```
+
+Creates `.startupkit/ralph.json`:
+
+```json
+{
+  "ai": "claude",
+  "command": "claude",
+  "args": [
+    "--permission-mode",
+    "acceptEdits",
+    "--output-format",
+    "stream-json",
+    "--include-partial-messages",
+    "--verbose",
+    "-p"
+  ],
+  "iterations": 10,
+  "specfile": "SPEC.md",
+  "progress": "progress.txt",
+  "complete": ".ralph-complete",
+  "prompt": "Read SPEC.md and progress.txt..."
+}
+```
+
+### Configuration Options
+
+| Option       | Description                         |
+| ------------ | ----------------------------------- |
+| `ai`         | AI assistant name (for display)     |
+| `command`    | Command to run the AI               |
+| `args`       | Arguments passed to the command     |
+| `iterations` | Default max iterations              |
+| `specfile`   | Default spec file path              |
+| `progress`   | Progress file path                  |
+| `complete`   | Marker file that signals completion |
+| `prompt`     | Custom prompt template              |
+
+## How It Works
+
+### Iteration Loop
+
+1. **Read spec** - Parse tasks from the spec file
+2. **Find task** - Locate the first incomplete task
+3. **Implement** - AI implements the task
+4. **Test** - Run tests and type checks
+5. **Update** - Mark task complete, append to progress
+6. **Commit** - Commit changes to git
+7. **Check completion** - If all done, create `.ralph-complete`
+8. **Repeat** - Start next iteration (or exit if complete)
+
+### Completion Marker
+
+When all tasks are complete, the AI creates a `.ralph-complete` file. This signals the make command to stop iterating.
+
+## Examples
+
+### Basic Feature Development
+
+```bash
+# 1. Create spec
+cat > SPEC.md << 'EOF'
+# User Authentication
+
+## Tasks
+
+- [ ] Add login page
+- [ ] Add signup page
+- [ ] Implement password reset
+- [ ] Add session management
+EOF
+
+# 2. Run make
+npx startupkit make
+```
+
+### Bug Fixing
+
+```markdown
+# Bug Fixes
+
+## Tasks
+
+- [ ] Fix: Login button not responding on mobile
+- [ ] Fix: Date picker shows wrong timezone
+- [ ] Fix: API rate limit not being respected
+```
+
+### Refactoring
+
+```markdown
+# Refactor: API Layer
+
+## Tasks
+
+- [ ] Extract API client to shared module
+- [ ] Add request/response types
+- [ ] Implement error handling middleware
+- [ ] Add retry logic
+- [ ] Update all API calls to use new client
+```
+
+## Custom Prompts
+
+Modify the prompt in `.startupkit/ralph.json` for different workflows:
+
+### TDD Mode
+
+```json
+{
+  "prompt": "Read SPEC.md. Find the highest-priority incomplete task. Write failing tests first, then implement. Run tests to verify. Update SPEC.md and commit."
+}
+```
+
+### Documentation Mode
+
+```json
+{
+  "prompt": "Read SPEC.md. Document the codebase, focusing on incomplete items. Update docs and SPEC.md. Commit changes."
+}
+```
+
+## Tips
+
+### Write Good Tasks
+
+```markdown
+# Good: Specific and actionable
+
+- [ ] Add /api/users endpoint with pagination support
+
+# Bad: Vague
+
+- [ ] Add API stuff
+```
+
+### Use Checkboxes
+
+```markdown
+# Correct format
+
+- [ ] Incomplete task
+- [x] Completed task
+```
+
+### Keep Tasks Atomic
+
+```markdown
+# Good: One logical unit
+
+- [ ] Add user registration form
+- [ ] Add form validation
+- [ ] Add form submission handler
+
+# Bad: Too large
+
+- [ ] Build entire auth system
+```
+
+### Track Progress
+
+The progress file (`progress.txt`) logs each iteration:
+
+```
+=== Iteration 1 ===
+Task: Add dashboard layout component
+Created: src/components/Dashboard/Layout.tsx
+Tests: 3 passed
+Committed: abc1234
+
+=== Iteration 2 ===
+Task: Add sidebar navigation
+Created: src/components/Dashboard/Sidebar.tsx
+Tests: 5 passed
+Committed: def5678
+```
+
+## Troubleshooting
+
+### "Spec file not found"
+
+Create a `SPEC.md` file or specify a path:
+
+```bash
+npx startupkit make my-spec.md
+```
+
+### Max Iterations Reached
+
+Increase iterations or split your spec:
+
+```bash
+npx startupkit make --iterations 20
+```
+
+### AI Gets Stuck
+
+- Simplify tasks into smaller units
+- Add more context to task descriptions
+- Check the progress file for patterns

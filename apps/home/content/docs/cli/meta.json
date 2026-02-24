@@ -3,7 +3,8 @@
 	"pages": [
 		"index",
 		"init",
-		"add",
+		"skills",
+		"make",
 		"upgrade",
 		"agents",
 		"troubleshooting"

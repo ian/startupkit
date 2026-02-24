@@ -1,73 +1,218 @@
 ---
-title: AGENTS.md
-description: AI agent instructions file for guiding AI coding assistants in your project
+title: AI Agent Configuration
+description: Configure AI agents with AGENTS.md, SOUL.md, and subagent configurations
 ---
 
-StartupKit projects include an `AGENTS.md` file that provides context and guidelines for AI coding assistants like Claude, Cursor, and GitHub Copilot.
+StartupKit projects include AI agent configuration files that help AI assistants understand your project's architecture, conventions, and domain-specific knowledge.
 
-## What is AGENTS.md?
-
-The `AGENTS.md` file is a comprehensive guide that helps AI assistants understand your project's architecture, conventions, and best practices. When you work with AI tools, they can reference this file to provide more accurate, context-aware suggestions.
-
-## File Location
-
-The agent instructions are managed in the `.ruler/` directory:
+## File Structure
 
 ```
 my-project/
-├── .ruler/
-│   └── AGENTS.md           # Source file for AI instructions
-├── AGENTS.md               # Generated root file
-├── CLAUDE.md               # Claude-specific instructions
-└── WARP.md                 # Warp terminal instructions
+├── .agents/                 # Subagent configurations
+│   ├── product.md           # Product strategy & CRO
+│   ├── engineering.md       # Development & debugging
+│   ├── design.md            # UI/UX & design systems
+│   ├── marketing.md         # SEO & content
+│   └── growth.md            # Analytics & experiments
+├── AGENTS.md                # Main agent instructions
+└── SOUL.md                  # Project vision & values
 ```
 
-## What's Included
+## AGENTS.md
 
-The generated `AGENTS.md` covers:
+The main instruction file that all AI agents read. It contains:
 
-- **Project Structure** - Workspace layout, package architecture, file locations
-- **TypeScript Standards** - Strict configuration, code style rules, naming conventions
-- **Package Management** - pnpm commands, dependency catalogs, workspace protocol
-- **Database** - Drizzle ORM schema patterns, migration commands
-- **UI Components** - Shadcn usage, styling conventions, component imports
-- **Authentication** - @repo/auth configuration, client/server usage, route locations
-- **Analytics** - PostHog integration, feature flags, tracking
-- **Best Practices** - Server Components, environment variables, testing
+- **Project Context** - Overview of what you're building
+- **Tech Stack** - Frameworks, languages, databases
+- **Conventions** - Code style, commit format, testing
+- **Subagent Reference** - Links to specialized subagents
 
-## Updating Agent Instructions
+### Default Template
 
-To customize the AI agent instructions for your project:
+```markdown
+# Project Agents
 
-1. **Edit the source file**:
-   ```bash
-   # Modify the main instructions
-   code .ruler/AGENTS.md
-   ```
+## Overview
 
-2. **Regenerate the output files**:
-   ```bash
-   pnpm agents.md
-   ```
+This file configures AI agents working on this project.
 
-This regenerates `AGENTS.md`, `CLAUDE.md`, `WARP.md`, and other AI-specific instruction files at the repository root.
+## Project Context
 
-## Using with AI Assistants
+<!-- Describe your project here -->
 
-Most AI coding assistants automatically detect and use `AGENTS.md`:
+## Tech Stack
 
-| Assistant | Detection |
-|-----------|-----------|
-| Cursor | Automatically reads AGENTS.md |
-| Claude (Anthropic) | Reads CLAUDE.md when available |
-| GitHub Copilot | Uses AGENTS.md for context |
-| Warp Terminal | Uses WARP.md for commands |
+<!-- List your tech stack: frameworks, languages, databases, etc. -->
 
-## Customization Tips
+## Conventions
 
-### Add Project-Specific Context
+### Code Style
 
-Include information specific to your domain:
+- Follow existing patterns in the codebase
+- Write clean, readable, self-documenting code
+
+### Commit Messages
+
+- Use conventional commits format
+- Keep commits atomic and focused
+
+### Testing
+
+- Write tests for new features
+- Maintain existing test coverage
+
+## Subagents
+
+| Subagent    | Purpose                              | Location               |
+| ----------- | ------------------------------------ | ---------------------- |
+| Product     | Strategy, planning, CRO              | .agents/product.md     |
+| Engineering | Development, debugging, code review  | .agents/engineering.md |
+| Design      | UI/UX, design systems, audits        | .agents/design.md      |
+| Marketing   | SEO, content, growth channels        | .agents/marketing.md   |
+| Growth      | Experiments, analytics, optimization | .agents/growth.md      |
+```
+
+## SOUL.md
+
+Defines your project's vision, mission, and values. This helps AI agents understand the "why" behind decisions.
+
+### Default Template
+
+```markdown
+# Project Soul
+
+## Vision
+
+<!-- What is the ultimate vision for this project? -->
+
+## Mission
+
+<!-- What does this project do? Who does it serve? -->
+
+## Core Values
+
+<!-- List 3-5 core values that guide decisions -->
+
+1.
+2.
+3.
+
+## Target Users
+
+<!-- Who are your primary users? What problems do they have? -->
+
+## Success Metrics
+
+<!-- How do you measure success? -->
+
+## Constraints
+
+<!-- What constraints must be respected? -->
+
+## Non-Goals
+
+<!-- What is explicitly out of scope? -->
+
+## Brand Voice
+
+<!-- How should the product communicate? Tone, style, personality -->
+
+## Competitive Landscape
+
+<!-- Who are the competitors? What makes this different? -->
+```
+
+## Subagents
+
+Specialized configurations for different domains. Each subagent has:
+
+- **Role** - What it's responsible for
+- **When to Use** - Appropriate situations
+- **Available Skills** - Relevant AI skills
+- **Working Style** - How it approaches problems
+
+### Product Subagent
+
+Handles strategy, planning, and optimization:
+
+- Brainstorming new features
+- Writing product plans and roadmaps
+- Conversion rate optimization
+- A/B test design
+- User onboarding optimization
+
+### Engineering Subagent
+
+Handles development and code quality:
+
+- React/Next.js development
+- Debugging complex issues
+- Code review
+- Test-driven development
+- Performance optimization
+
+### Design Subagent
+
+Handles UI/UX and visual design:
+
+- User experience design
+- Design system creation
+- Website audits
+- Design documentation
+
+### Marketing Subagent
+
+Handles acquisition and content:
+
+- SEO strategy
+- Content creation
+- Social media marketing
+- Launch planning
+- Pricing strategy
+
+### Growth Subagent
+
+Handles experimentation and analytics:
+
+- Growth experiments
+- Analytics setup
+- Conversion optimization
+- Schema markup
+
+## Initialization
+
+Initialize all AI agent configuration files:
+
+```bash
+npx startupkit skills init
+```
+
+This creates:
+
+- `AGENTS.md` - Main instructions
+- `SOUL.md` - Project vision
+- `.agents/*.md` - Subagent configs
+
+Then installs all available skills.
+
+### Skip Prompts
+
+```bash
+npx startupkit skills init --yes
+```
+
+### Skip Skill Installation
+
+```bash
+npx startupkit skills init --yes --skip-skills
+```
+
+## Customization
+
+### Add Project Context
+
+Edit `AGENTS.md` to include domain-specific information:
 
 ```markdown
 ## Business Logic
@@ -75,39 +220,77 @@ Include information specific to your domain:
 - Users can have multiple organizations
 - Billing is handled through Stripe
 - Feature flags control premium features
-```
 
-### Document Custom Conventions
-
-If your team has specific patterns:
-
-```markdown
-## Our Conventions
-
-- API routes return `{ data, error }` format
-- Use `trpc` for type-safe API calls
-- All dates are stored in UTC
-```
-
-### Include External Service Info
-
-Document integrations:
-
-```markdown
 ## External Services
 
-- **Stripe**: Handles payments, webhooks at `/api/webhooks/stripe`
+- **Stripe**: Payments, webhooks at /api/webhooks/stripe
 - **Resend**: Email delivery via @repo/emails
 - **PostHog**: Analytics and feature flags
 ```
 
+### Define Your Vision
+
+Edit `SOUL.md` to clarify your project's purpose:
+
+```markdown
+## Vision
+
+Make it dead simple for solo developers to launch SaaS products.
+
+## Mission
+
+Provide a batteries-included starter that handles auth, analytics, and
+infrastructure so developers can focus on their core product.
+
+## Core Values
+
+1. Developer Experience First
+2. Zero Configuration by Default
+3. Production Ready from Day One
+```
+
+### Customize Subagents
+
+Edit `.agents/*.md` files to add project-specific knowledge:
+
+```markdown
+## Project-Specific Patterns
+
+- Use server actions for mutations
+- All API routes return { data, error } format
+- Dates are always UTC, formatted client-side
+```
+
+## Using with AI Assistants
+
+| Assistant      | File Used                           |
+| -------------- | ----------------------------------- |
+| OpenCode       | AGENTS.md, .agents/\*.md            |
+| Claude Code    | AGENTS.md, CLAUDE.md, .agents/\*.md |
+| Cursor         | AGENTS.md, .cursorrules             |
+| GitHub Copilot | AGENTS.md                           |
+| Windsurf       | AGENTS.md                           |
+
 ## Ruler Integration
 
-StartupKit uses [Ruler](https://github.com/intellectronica/ruler) to manage AI instructions. Ruler concatenates multiple markdown files into unified instruction sets.
+StartupKit uses [Ruler](https://github.com/intellectronica/ruler) to manage AI instructions. The `.ruler/` directory contains source files that are concatenated into the final output.
 
-### Adding More Context Files
+After editing files in `.ruler/`:
 
-Create additional files in `.ruler/`:
+```bash
+pnpm agents.md
+```
+
+This regenerates:
+
+- `AGENTS.md`
+- `CLAUDE.md`
+- `WARP.md`
+- And other agent-specific files
+
+## Adding Context Files
+
+Create additional markdown files in `.ruler/`:
 
 ```
 .ruler/
@@ -117,10 +300,4 @@ Create additional files in `.ruler/`:
 └── deployment.md       # Deployment docs
 ```
 
-Then regenerate:
-
-```bash
-pnpm agents.md
-```
-
-All `.ruler/*.md` files are concatenated into the final output.
+All `.ruler/*.md` files are included in the generated output.

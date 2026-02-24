@@ -1,0 +1,246 @@
+---
+title: AI Agent Skills
+description: Manage AI agent skills for enhanced development workflows
+---
+
+The `skills` command manages AI agent skills that enhance your development workflow with specialized knowledge and patterns.
+
+## Overview
+
+StartupKit provides curated skills from the community, organized into categories:
+
+| Category        | Description                            |
+| --------------- | -------------------------------------- |
+| **product**     | Ideation, planning, CRO, A/B testing   |
+| **engineering** | React/Next.js patterns, debugging, TDD |
+| **design**      | UI/UX, design systems, audits          |
+| **marketing**   | SEO, content, social media, launches   |
+| **growth**      | Analytics, optimization, experiments   |
+
+## Basic Usage
+
+```bash
+npx startupkit skills [action] [options]
+```
+
+| Action            | Description                     |
+| ----------------- | ------------------------------- |
+| `list`            | List available skills (default) |
+| `add` / `install` | Install skills                  |
+| `remove` / `rm`   | Remove a skill                  |
+| `init`            | Initialize skill configuration  |
+
+## List Skills
+
+### List Available Skills
+
+```bash
+npx startupkit skills
+```
+
+Shows all available skills organized by category.
+
+### List Installed Skills
+
+```bash
+npx startupkit skills list --installed
+```
+
+## Install Skills
+
+### Interactive Selection
+
+```bash
+npx startupkit skills add
+```
+
+Prompts you to select which categories to install.
+
+### Install All Skills
+
+```bash
+npx startupkit skills add --all
+```
+
+Installs all skills from all categories.
+
+### Install by Category
+
+```bash
+npx startupkit skills add --category engineering
+```
+
+Available categories: `product`, `engineering`, `design`, `marketing`, `growth`
+
+### Install Specific Skill
+
+```bash
+npx startupkit skills add brainstorming
+```
+
+## Command Options
+
+| Option                  | Description                                    |
+| ----------------------- | ---------------------------------------------- |
+| `-c, --category <name>` | Install specific category                      |
+| `-a, --all`             | Install all skills                             |
+| `-i, --installed`       | List installed skills                          |
+| `--agent <agents...>`   | Target agents (default: opencode, claude-code) |
+| `-g, --global`          | Install/remove skills globally                 |
+| `--dry-run`             | Preview without making changes                 |
+| `-y, --yes`             | Skip prompts (for init)                        |
+| `--skip-skills`         | Skip installing skills (for init)              |
+
+## Initialize Skills
+
+```bash
+npx startupkit skills init
+```
+
+Creates:
+
+- `AGENTS.md` - Main AI agent instructions
+- `SOUL.md` - Project vision and values
+- `.agents/product.md` - Product subagent config
+- `.agents/engineering.md` - Engineering subagent config
+- `.agents/design.md` - Design subagent config
+- `.agents/marketing.md` - Marketing subagent config
+- `.agents/growth.md` - Growth subagent config
+
+Then installs all available skills.
+
+### Skip Prompts
+
+```bash
+npx startupkit skills init --yes
+```
+
+### Skip Skill Installation
+
+```bash
+npx startupkit skills init --yes --skip-skills
+```
+
+## Remove Skills
+
+```bash
+npx startupkit skills remove <skill-name>
+```
+
+## Global Installation
+
+Install skills globally to use across all projects:
+
+```bash
+npx startupkit skills add --all --global
+```
+
+## Target Agents
+
+By default, skills are installed for `opencode` and `claude-code`. Specify different agents:
+
+```bash
+npx startupkit skills add --agent cursor --agent windsurf --all
+```
+
+## Available Skills
+
+### Product Skills
+
+| Skill                            | Description                           |
+| -------------------------------- | ------------------------------------- |
+| `brainstorming`                  | Brainstorming and ideation techniques |
+| `writing-plans`                  | Writing comprehensive plans           |
+| `executing-plans`                | Executing plans systematically        |
+| `verification-before-completion` | Verify work before marking complete   |
+| `page-cro`                       | Landing page optimization             |
+| `onboarding-cro`                 | Onboarding conversion optimization    |
+| `form-cro`                       | Form conversion optimization          |
+| `signup-flow-cro`                | Signup flow optimization              |
+| `paywall-upgrade-cro`            | Paywall and upgrade flows             |
+| `ab-test-setup`                  | A/B testing methodology               |
+| `referral-program`               | Referral program design               |
+| `free-tool-strategy`             | Free tool as lead magnet              |
+| `competitor-alternatives`        | Competitor alternative pages          |
+
+### Engineering Skills
+
+| Skill                            | Description                            |
+| -------------------------------- | -------------------------------------- |
+| `vercel-react-best-practices`    | React/Next.js performance patterns     |
+| `vercel-composition-patterns`    | React composition patterns that scale  |
+| `web-design-guidelines`          | Web interface guidelines compliance    |
+| `v0-automation`                  | V0 automation for rapid UI development |
+| `premium-frontend-design`        | Premium frontend design patterns       |
+| `better-auth-best-practices`     | Better Auth implementation patterns    |
+| `building-native-ui`             | Building native UI with Expo           |
+| `systematic-debugging`           | Systematic debugging methodology       |
+| `test-driven-development`        | TDD best practices                     |
+| `requesting-code-review`         | Request effective code reviews         |
+| `receiving-code-review`          | Handle code review feedback            |
+| `subagent-driven-development`    | Use subagents effectively              |
+| `dispatching-parallel-agents`    | Parallel agent orchestration           |
+| `finishing-a-development-branch` | Clean branch completion workflow       |
+| `using-git-worktrees`            | Git worktree best practices            |
+| `writing-skills`                 | Write effective agent skills           |
+
+### Design Skills
+
+| Skill                   | Description                      |
+| ----------------------- | -------------------------------- |
+| `frontend-design`       | Frontend design best practices   |
+| `design-md`             | Design documentation in markdown |
+| `ui-ux-pro-max`         | Pro-level UI/UX design patterns  |
+| `explainer-video-guide` | Explainer video creation guide   |
+| `audit-website`         | Website audit methodology        |
+
+### Marketing Skills
+
+| Skill                       | Description                            |
+| --------------------------- | -------------------------------------- |
+| `copywriting`               | Persuasive copywriting                 |
+| `marketing-psychology`      | Psychology in marketing                |
+| `seo-audit`                 | SEO audit and optimization             |
+| `programmatic-seo`          | Programmatic SEO strategies            |
+| `content-strategy`          | Content strategy planning              |
+| `product-marketing-context` | Product marketing fundamentals         |
+| `marketing-ideas`           | Creative marketing ideas               |
+| `social-content`            | Social media content creation          |
+| `copy-editing`              | Copy editing best practices            |
+| `pricing-strategy`          | Pricing strategy development           |
+| `launch-strategy`           | Product launch planning                |
+| `analytics-tracking`        | Analytics and tracking setup           |
+| `email-sequence`            | Email sequence creation                |
+| `paid-ads`                  | Paid advertising strategies            |
+| `seo`                       | SEO optimization                       |
+| `seo-geo`                   | SEO for Generative Engine Optimization |
+| `backlink-analyzer`         | Backlink analysis                      |
+| `keyword-research`          | Keyword research                       |
+| `reddit`                    | Reddit marketing                       |
+| `twitter`                   | Twitter/X marketing                    |
+| `producthunt`               | Product Hunt launch                    |
+| `domain-hunter`             | Domain finding                         |
+| `requesthunt`               | Request hunting                        |
+
+### Growth Skills
+
+| Skill           | Description                   |
+| --------------- | ----------------------------- |
+| `schema-markup` | Schema markup implementation  |
+| `popup-cro`     | Popup conversion optimization |
+
+## Dry Run
+
+Preview what would be installed without making changes:
+
+```bash
+npx startupkit skills add --all --dry-run
+```
+
+## Customization
+
+After initialization, customize the generated files:
+
+1. **AGENTS.md** - Add project-specific context, tech stack, conventions
+2. **SOUL.md** - Define your project's vision, mission, values
+3. **.agents/\*.md** - Customize subagent behavior for each domain
