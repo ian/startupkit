@@ -1,0 +1,13 @@
+name = "startupkit-pro"
+main = "src/index.ts"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+account_id = "317663104fe4e8ac83fc201c50aec201"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "startupkit-pro"
+database_id = "2b1a5fea-fa91-4e7f-937f-599029fcb2aa"
+
+[vars]
+API_BASE_URL = "https://pro.startupkit.com"
