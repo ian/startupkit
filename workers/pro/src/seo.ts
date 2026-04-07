@@ -1,31 +1,37 @@
-import { Hono } from 'hono';
-import type { Env, AuthVariables } from './middleware/auth.js';
-import { deductCredits, logToolUsage } from './lib/credits.js';
+import { Hono } from "hono";
+import type { Env, AuthVariables } from "./middleware/auth.js";
+import { deductCredits, logToolUsage } from "./lib/credits.js";
 
 export const seoRouter = new Hono<{ Variables: AuthVariables }>();
 
-seoRouter.post('/overview', async (c) => {
-  const user = c.get('user');
+seoRouter.post("/overview", async (c) => {
+  const user = c.get("user");
   if (!user) {
-    return c.json({ error: 'Unauthorized' }, 401);
+    return c.json({ error: "Unauthorized" }, 401);
   }
 
   const { domain } = await c.req.json<{ domain: string }>();
 
   if (!domain) {
-    return c.json({ error: 'Domain is required' }, 400);
+    return c.json({ error: "Domain is required" }, 400);
   }
 
   const creditCost = 5;
-  const deducted = await deductCredits(c.env.DB, user.id, creditCost, 'seo', `SEO overview: ${domain}`);
-  
+  const deducted = await deductCredits(
+    c.env.DB,
+    user.id,
+    creditCost,
+    "seo",
+    `SEO overview: ${domain}`,
+  );
+
   if (!deducted.success) {
-    return c.json({ error: 'Insufficient credits' }, 402);
+    return c.json({ error: "Insufficient credits" }, 402);
   }
 
-  const seoData = await fetchSeoOverview(domain);
+  const seoData = await fetchSeoOverview(domain, c.env);
 
-  await logToolUsage(c.env.DB, user.id, 'seo', creditCost, { domain }, seoData);
+  await logToolUsage(c.env.DB, user.id, "seo", creditCost, { domain }, seoData);
 
   return c.json({
     data: seoData,
@@ -44,28 +50,36 @@ interface SeoData {
     monthlyVisits: number;
     organicKeywords: number;
   };
-  topKeywords: Array<{ keyword: string; position: number; traffic: number; trafficPercent: number }>;
+  topKeywords: Array<{
+    keyword: string;
+    position: number;
+    traffic: number;
+    trafficPercent: number;
+  }>;
   topPages: Array<{ url: string; traffic: number; keywords: number }>;
 }
 
-async function fetchSeoOverview(domain: string): Promise<SeoData> {
-  const apiUser = process.env.DATAFORSEO_LOGIN;
-  const apiKey = process.env.DATAFORSEO_KEY;
+async function fetchSeoOverview(domain: string, env: Env): Promise<SeoData> {
+  const apiUser = env.DATA_FOR_SEO_API_LOGIN;
+  const apiKey = env.DATA_FOR_SEO_API_KEY;
 
   if (!apiUser || !apiKey) {
     return generateMockSeoData(domain);
   }
 
-  const credentials = Buffer.from(`${apiUser}:${apiKey}`).toString('base64');
+  const credentials = Buffer.from(`${apiUser}:${apiKey}`).toString("base64");
 
-  const response = await fetch('https://api.dataforseo.com/v3/on_page/instant', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Basic ${credentials}`,
-      'Content-Type': 'application/json',
+  const response = await fetch(
+    "https://api.dataforseo.com/v3/on_page/instant",
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${credentials}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify([{ target: domain }]),
     },
-    body: JSON.stringify([{ target: domain }]),
-  });
+  );
 
   if (!response.ok) {
     return generateMockSeoData(domain);
@@ -105,9 +119,24 @@ function generateMockSeoData(domain: string): SeoData {
       organicKeywords: Math.floor(Math.random() * 5000) + 100,
     },
     topKeywords: [
-      { keyword: `${domain.split('.')[0]} reviews`, position: 1, traffic: 1200, trafficPercent: 15 },
-      { keyword: `${domain.split('.')[0]} pricing`, position: 3, traffic: 800, trafficPercent: 10 },
-      { keyword: `best ${domain.split('.')[0]} alternative`, position: 5, traffic: 600, trafficPercent: 8 },
+      {
+        keyword: `${domain.split(".")[0]} reviews`,
+        position: 1,
+        traffic: 1200,
+        trafficPercent: 15,
+      },
+      {
+        keyword: `${domain.split(".")[0]} pricing`,
+        position: 3,
+        traffic: 800,
+        trafficPercent: 10,
+      },
+      {
+        keyword: `best ${domain.split(".")[0]} alternative`,
+        position: 5,
+        traffic: 600,
+        trafficPercent: 8,
+      },
     ],
     topPages: [
       { url: `https://${domain}/`, traffic: 5000, keywords: 120 },

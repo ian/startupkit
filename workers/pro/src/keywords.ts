@@ -1,31 +1,47 @@
-import { Hono } from 'hono';
-import type { Env, AuthVariables } from './middleware/auth.js';
-import { deductCredits, logToolUsage } from './lib/credits.js';
+import { Hono } from "hono";
+import type { Env, AuthVariables } from "./middleware/auth.js";
+import { deductCredits, logToolUsage } from "./lib/credits.js";
 
 export const keywordsRouter = new Hono<{ Variables: AuthVariables }>();
 
-keywordsRouter.post('/', async (c) => {
-  const user = c.get('user');
+keywordsRouter.post("/", async (c) => {
+  const user = c.get("user");
   if (!user) {
-    return c.json({ error: 'Unauthorized' }, 401);
+    return c.json({ error: "Unauthorized" }, 401);
   }
 
-  const { keyword, limit } = await c.req.json<{ keyword: string; limit?: number }>();
+  const { keyword, limit } = await c.req.json<{
+    keyword: string;
+    limit?: number;
+  }>();
 
   if (!keyword) {
-    return c.json({ error: 'Keyword is required' }, 400);
+    return c.json({ error: "Keyword is required" }, 400);
   }
 
   const creditCost = 3;
-  const deducted = await deductCredits(c.env.DB, user.id, creditCost, 'keywords', `Keyword research: ${keyword}`);
-  
+  const deducted = await deductCredits(
+    c.env.DB,
+    user.id,
+    creditCost,
+    "keywords",
+    `Keyword research: ${keyword}`,
+  );
+
   if (!deducted.success) {
-    return c.json({ error: 'Insufficient credits' }, 402);
+    return c.json({ error: "Insufficient credits" }, 402);
   }
 
-  const keywordsData = await fetchKeywords(keyword, limit || 20);
+  const keywordsData = await fetchKeywords(keyword, limit || 20, c.env);
 
-  await logToolUsage(c.env.DB, user.id, 'keywords', creditCost, { keyword, limit }, keywordsData);
+  await logToolUsage(
+    c.env.DB,
+    user.id,
+    "keywords",
+    creditCost,
+    { keyword, limit },
+    keywordsData,
+  );
 
   return c.json({
     data: keywordsData,
@@ -46,7 +62,10 @@ interface KeywordData {
   questions: Array<{ question: string; popularity: number }>;
 }
 
-async function fetchKeywords(seedKeyword: string, limit: number): Promise<KeywordData> {
+async function fetchKeywords(
+  seedKeyword: string,
+  limit: number,
+): Promise<KeywordData> {
   const apiUser = process.env.DATAFORSEO_LOGIN;
   const apiKey = process.env.DATAFORSEO_KEY;
 
@@ -54,21 +73,26 @@ async function fetchKeywords(seedKeyword: string, limit: number): Promise<Keywor
     return generateMockKeywords(seedKeyword, limit);
   }
 
-  const credentials = Buffer.from(`${apiUser}:${apiKey}`).toString('base64');
+  const credentials = Buffer.from(`${apiUser}:${apiKey}`).toString("base64");
 
-  const response = await fetch('https://api.dataforseo.com/v3/keywords_data/google/keywords_for_keywords', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Basic ${credentials}`,
-      'Content-Type': 'application/json',
+  const response = await fetch(
+    "https://api.dataforseo.com/v3/keywords_data/google/keywords_for_keywords",
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${credentials}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify([
+        {
+          keywords: [seedKeyword],
+          language_code: "en",
+          location_code: 2840,
+          limit,
+        },
+      ]),
     },
-    body: JSON.stringify([{
-      keywords: [seedKeyword],
-      language_code: 'en',
-      location_code: 2840,
-      limit,
-    }]),
-  });
+  );
 
   if (!response.ok) {
     return generateMockKeywords(seedKeyword, limit);
@@ -77,19 +101,21 @@ async function fetchKeywords(seedKeyword: string, limit: number): Promise<Keywor
   const data = await response.json();
 
   if (data.status_code === 20000 && data.results?.[0]?.items) {
-    const keywords = data.results[0].items.map((item: {
-      keyword: string;
-      search_volume: number;
-      competition: string;
-      cpc: number;
-      monthly_searches: number[];
-    }) => ({
-      keyword: item.keyword,
-      searchVolume: item.search_volume || 0,
-      competition: item.competition || 'medium',
-      cpc: item.cpc || 0,
-      trend: item.monthly_searches?.slice(-6) || [],
-    }));
+    const keywords = data.results[0].items.map(
+      (item: {
+        keyword: string;
+        search_volume: number;
+        competition: string;
+        cpc: number;
+        monthly_searches: number[];
+      }) => ({
+        keyword: item.keyword,
+        searchVolume: item.search_volume || 0,
+        competition: item.competition || "medium",
+        cpc: item.cpc || 0,
+        trend: item.monthly_searches?.slice(-6) || [],
+      }),
+    );
 
     return { keyword: seedKeyword, keywords, questions: [] };
   }
@@ -99,9 +125,12 @@ async function fetchKeywords(seedKeyword: string, limit: number): Promise<Keywor
 
 function generateMockKeywords(seedKeyword: string, limit: number): KeywordData {
   const keywords = Array.from({ length: Math.min(limit, 10) }, (_, i) => ({
-    keyword: `${seedKeyword} ${['guide', 'tutorial', 'best', 'review', 'price', 'alternative', 'vs', '2024', 'free', 'online'][i] || ''}`.trim(),
+    keyword:
+      `${seedKeyword} ${["guide", "tutorial", "best", "review", "price", "alternative", "vs", "2024", "free", "online"][i] || ""}`.trim(),
     searchVolume: Math.floor(Math.random() * 10000) + 100,
-    competition: ['low', 'medium', 'high'][Math.floor(Math.random() * 3)] as string,
+    competition: ["low", "medium", "high"][
+      Math.floor(Math.random() * 3)
+    ] as string,
     cpc: Math.random() * 5,
     trend: Array.from({ length: 6 }, () => Math.floor(Math.random() * 100)),
   }));

@@ -74,7 +74,8 @@ CREATE TABLE IF NOT EXISTS domain_provider_settings (
     is_active INTEGER DEFAULT 1,
     created_at TEXT DEFAULT (datetime('now')),
     updated_at TEXT DEFAULT (datetime('now')),
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE(user_id, provider)
 );
 
 CREATE INDEX IF NOT EXISTS idx_domain_settings_user ON domain_provider_settings(user_id);
