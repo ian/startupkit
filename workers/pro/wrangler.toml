@@ -1,0 +1,44 @@
+name = "startupkit-pro"
+main = "src/index.ts"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+account_id = "317663104fe4e8ac83fc201c50aec201"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "startupkit-pro"
+database_id = "2b1a5fea-fa91-4e7f-937f-599029fcb2aa"
+
+[vars]
+API_BASE_URL = "https://pro.startupkit.com"
+
+# Environment-specific configuration
+[env.production]
+name = "startupkit-pro"
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "startupkit-pro-production"
+database_id = "PRODUCTION_DB_ID"
+
+# Secrets required (set via `wrangler secret put`):
+# DATA_FOR_SEO_API_KEY
+# DATA_FOR_SEO_API_LOGIN
+# NAME_CHEAP_API_KEY
+# NAME_CHEAP_API_USER
+# NAME_CHEAP_IP
+# PORKBUN_API_KEY
+# PORKBUN_API_SECRET
+# JWT_SECRET
+
+[env.staging]
+name = "startupkit-pro-staging"
+
+[[env.staging.d1_databases]]
+binding = "DB"
+database_name = "startupkit-pro-staging"
+database_id = "STAGING_DB_ID"
+
+# Rate limiting
+[limits]
+max_cpu_ms = 10

@@ -38,3 +38,13 @@ default_agents = ["Cursor", "OpenCode"]
 # [mcp_servers.example_remote]
 # url = "https://api.example.com/mcp"
 # headers = { Authorization = "Bearer REPLACE_ME" }
+
+# --- StartupKit Pro MCP Server ---
+[mcp_servers.startupkit_pro_stdio]
+command = "node"
+args = ["packages/mcp-pro/dist/index.js"]
+env = { STARTUPKIT_API_KEY = "your-api-key-here" }
+
+[mcp_servers.startupkit_pro_remote]
+url = "https://pro.startupkit.com/mcp"
+headers = { Authorization = "Bearer YOUR_API_KEY" }

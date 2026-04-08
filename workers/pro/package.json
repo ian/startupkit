@@ -1,0 +1,32 @@
+{
+  "name": "@startupkit/pro-workers",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "dev:d1": "wrangler dev --local",
+    "deploy": "wrangler deploy",
+    "deploy:staging": "wrangler deploy --env staging",
+    "deploy:production": "wrangler deploy --env production",
+    "typecheck": "wrangler types",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "d1:migrate": "wrangler d1 migrations apply",
+    "d1:create-migration": "wrangler d1 migrations create"
+  },
+  "dependencies": {
+    "@cloudflare/workers-types": "^4.20240117.0",
+    "hono": "^4.12.10",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240117.0",
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3",
+    "vitest": "^2.1.9",
+    "wrangler": "^3.26.0"
+  }
+}

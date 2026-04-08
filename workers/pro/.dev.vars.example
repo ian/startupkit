@@ -1,0 +1,27 @@
+# StartupKit Pro Worker Environment Variables
+# Copy this file to .dev.vars and fill in your values
+
+# API Base URL
+API_BASE_URL="http://localhost:8787"
+
+# DataForSEO API credentials
+# Sign up at https://dataforseo.com/
+DATA_FOR_SEO_API_KEY="your_dataforseo_api_key"
+DATA_FOR_SEO_API_LOGIN="your_dataforseo_email"
+
+# Namecheap API credentials
+# Get from https://www.namecheap.com/settings/api/
+NAME_CHEAP_API_KEY="your_namecheap_api_key"
+NAME_CHEAP_API_USER="your_namecheap_username"
+NAME_CHEAP_IP="your_ip_address"
+
+# Porkbun API credentials
+# Get from https://porkbun.com/account/api
+PORKBUN_API_KEY="your_porkbun_api_key"
+PORKBUN_API_SECRET="your_porkbun_api_secret"
+
+# JWT Secret for session management
+JWT_SECRET="generate-a-secure-random-string"
+
+# Optional: Analytics
+# ANALYTICS_WRITE_KEY="your_segment_write_key"
