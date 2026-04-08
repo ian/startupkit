@@ -30,7 +30,7 @@ creditsRouter.get("/balance", async (c) => {
   return c.json({
     balance: totalCredits,
     used: usage?.used || 0,
-    total: totalCredits,
+    total: totalCredits + (usage?.used || 0),
   });
 });
 

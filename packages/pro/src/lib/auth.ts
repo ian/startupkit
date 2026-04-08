@@ -1,18 +1,19 @@
-import axios from 'axios';
-import { config } from './config.js';
-import chalk from 'chalk';
+import axios from "axios";
+import { config } from "./config.js";
+import chalk from "chalk";
 
 export interface User {
   id: string;
   email: string;
-  plan: 'starter' | 'pro' | 'enterprise';
+  plan: "starter" | "pro" | "enterprise";
   credits: number;
   bonusCredits: number;
   createdAt: string;
 }
 
 export async function login(apiKey: string): Promise<User> {
-  const response = await axios.post(`${config.apiBaseUrl}/auth/login`, { apiKey });
+  const baseUrl = config.apiBaseUrl.replace(/\/api$/, "");
+  const response = await axios.post(`${baseUrl}/auth/login`, { apiKey });
 
   const { user, token } = response.data;
 
@@ -22,7 +23,7 @@ export async function login(apiKey: string): Promise<User> {
   config.plan = user.plan;
   config.credits = user.credits;
 
-  console.log(chalk.green('✓') + ' Logged in successfully');
+  console.log(chalk.green("✓") + " Logged in successfully");
   console.log(chalk.gray(`  Plan: ${user.plan}`));
   console.log(chalk.gray(`  Credits: ${user.credits}`));
 
@@ -32,17 +33,18 @@ export async function login(apiKey: string): Promise<User> {
 export async function logout(): Promise<void> {
   if (config.apiKey) {
     try {
+      const baseUrl = config.apiBaseUrl.replace(/\/api$/, "");
       await axios.post(
-        `${config.apiBaseUrl}/auth/logout`,
+        `${baseUrl}/auth/logout`,
         {},
-        { headers: { Authorization: `Bearer ${config.apiKey}` } }
+        { headers: { Authorization: `Bearer ${config.apiKey}` } },
       );
     } catch {
       // Ignore errors on logout
     }
   }
   config.clear();
-  console.log(chalk.green('✓') + ' Logged out');
+  console.log(chalk.green("✓") + " Logged out");
 }
 
 export async function whoami(): Promise<User | null> {
@@ -51,7 +53,8 @@ export async function whoami(): Promise<User | null> {
   }
 
   try {
-    const response = await axios.get(`${config.apiBaseUrl}/auth/me`, {
+    const baseUrl = config.apiBaseUrl.replace(/\/api$/, "");
+    const response = await axios.get(`${baseUrl}/auth/me`, {
       headers: { Authorization: `Bearer ${config.apiKey}` },
     });
     return response.data.user;
@@ -61,7 +64,11 @@ export async function whoami(): Promise<User | null> {
   }
 }
 
-export async function getCredits(): Promise<{ balance: number; used: number; total: number } | null> {
+export async function getCredits(): Promise<{
+  balance: number;
+  used: number;
+  total: number;
+} | null> {
   if (!config.apiKey) {
     return null;
   }
